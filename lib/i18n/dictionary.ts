@@ -92,6 +92,24 @@ export interface Dictionary {
     high: string;
     urgent: string;
   };
+  /** The login screen. */
+  auth: {
+    title: string;
+    subtitle: string;
+    emailLabel: string;
+    emailPlaceholder: string;
+    consentPrefix: string;
+    privacyPolicy: string;
+    consentSuffix: string;
+    sendOtp: string;
+    codeTitle: string;
+    codeSubtitle: (email: string) => string;
+    verify: string;
+    resend: string;
+    changeEmail: string;
+    staffHint: string;
+    signOut: string;
+  };
   /** Shared UI furniture. */
   common: {
     appName: string;
@@ -174,6 +192,23 @@ export const dictionaries: Record<Locale, Dictionary> = {
       metIn: (text) => `देखा ${text} में`,
     },
     priority: { low: "कम", normal: "नॉर्मल", high: "ज़रूरी", urgent: "अर्जेंट" },
+    auth: {
+      title: "अपना ईमेल डालें",
+      subtitle: "OTP इसी ईमेल पे आएगा।",
+      emailLabel: "ईमेल",
+      emailPlaceholder: "naam@example.com",
+      consentPrefix: "मैं वाक्य की ",
+      privacyPolicy: "प्राइवेसी पॉलिसी",
+      consentSuffix: " से सहमत हूँ।",
+      sendOtp: "OTP भेजो",
+      codeTitle: "6 अंकों का कोड डालें",
+      codeSubtitle: (email) => `कोड ${email} पे भेजा है।`,
+      verify: "आगे बढ़ें",
+      resend: "फिर से भेजें",
+      changeEmail: "ईमेल बदलें",
+      staffHint: "स्टाफ़ को मालिक का भेजा हुआ लिंक चाहिए",
+      signOut: "साइन आउट",
+    },
     common: {
       appName: "वाक्य",
       tagline: "बोलो। हो जाएगा।",
@@ -254,6 +289,23 @@ export const dictionaries: Record<Locale, Dictionary> = {
       metIn: (text) => `Dekha ${text} mein`,
     },
     priority: { low: "Kam", normal: "Normal", high: "Zaroori", urgent: "Urgent" },
+    auth: {
+      title: "Apna email daalein",
+      subtitle: "OTP isi email pe aayega.",
+      emailLabel: "Email",
+      emailPlaceholder: "naam@example.com",
+      consentPrefix: "Main Vaakya ki ",
+      privacyPolicy: "Privacy Policy",
+      consentSuffix: " se sehmat hoon.",
+      sendOtp: "OTP bhejo",
+      codeTitle: "6 ank ka code daalein",
+      codeSubtitle: (email) => `Code ${email} pe bheja hai.`,
+      verify: "Aage badhein",
+      resend: "Phir se bhejein",
+      changeEmail: "Email badlein",
+      staffHint: "Staff ko owner ka bheja hua link chahiye",
+      signOut: "Sign out",
+    },
     common: {
       appName: "Vaakya",
       tagline: "Bolo. Ho jayega.",
@@ -334,6 +386,23 @@ export const dictionaries: Record<Locale, Dictionary> = {
       metIn: (text) => `Seen in ${text}`,
     },
     priority: { low: "Low", normal: "Normal", high: "High", urgent: "Urgent" },
+    auth: {
+      title: "Enter your email",
+      subtitle: "The code comes to this email.",
+      emailLabel: "Email",
+      emailPlaceholder: "name@example.com",
+      consentPrefix: "I agree to the Vaakya ",
+      privacyPolicy: "Privacy Policy",
+      consentSuffix: ".",
+      sendOtp: "Send code",
+      codeTitle: "Enter the six-digit code",
+      codeSubtitle: (email) => `Code sent to ${email}.`,
+      verify: "Continue",
+      resend: "Send again",
+      changeEmail: "Change email",
+      staffHint: "Staff need the link their owner sent",
+      signOut: "Sign out",
+    },
     common: {
       appName: "Vaakya",
       tagline: "Bolo. Ho jayega.",

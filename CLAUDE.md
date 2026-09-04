@@ -53,13 +53,22 @@ Map the DB `task_state` enum to Hindi/Hinglish labels in the UI:
 `delivered→Bheja, acknowledged→Dekh liya, accepted→Ho jayega/Maana, in_progress→Chal raha, done→Ho gaya, verified→Verified`; exceptions as chips (Dekha nahi, Late, Urgent, Dikkat, Samay maanga, Photo chahiye, Verify baaki, Cancelled).
 
 ## 4. Stack (cost-optimized — see STACK.md for the researched breakdown)
-Next.js 14 App Router + TypeScript (strict) · Tailwind + shadcn/ui (themed with the kit) · Supabase
-(Postgres, Auth, RLS, pg_cron for the SLA job) · **email-OTP auth for the MVP** (phone OTP via MSG91 +
+**As installed (authoritative):** Next.js **16.3.4** App Router (Turbopack) + React 19.2 +
+TypeScript (strict) · **Tailwind v4, CSS-first** — there is no `tailwind.config.ts`; the kit's
+`tailwind.tokens.ts` lives as an `@theme` block in `app/globals.css` · Base UI + shadcn 4 primitives,
+themed with the kit · Supabase
+(Postgres, Auth, RLS, a scheduled job for the SLA) · **email-OTP auth for the MVP, with an honest
+email field** (the phone-first Login.png layout stays, behind `activeAuthProvider()`) (phone OTP via MSG91 +
 DLT added before wider launch — start DLT registration on day 0 so it never blocks you) · **Cloudflare
 R2 for proof-photo storage** (Supabase Storage only for tiny assets) · server actions + zod · TanStack
 Query where needed · date-fns (Asia/Kolkata) · Resend for email (free 3k/mo, 100/day) · Sentry (errors) ·
 PWA (manifest + installable). Host on Vercel (Hobby while building; **Pro $20/mo once you charge — Hobby
 forbids commercial use**); repo on GitHub.
+
+Next 16 conventions that differ from older App Router code: `params`/`searchParams`/`cookies()`/
+`headers()` are **async**; `middleware.ts` is renamed **`proxy.ts`** (Node runtime only);
+`next lint` is gone (`eslint` runs directly and `next build` no longer lints). When training data
+and `node_modules/next/dist/docs/` disagree, the installed docs win.
 
 Structure:
 ```
