@@ -3,6 +3,7 @@ import { Plus } from "lucide-react";
 
 import { BottomNav } from "@/components/vaakya/bottom-nav";
 import { Mark } from "@/components/vaakya/mark";
+import { Bell } from "@/components/vaakya/bell";
 import { TaskRow } from "@/components/vaakya/task-row";
 import { buttonVariants } from "@/components/ui/button";
 import { getDictionary, type Locale } from "@/lib/i18n";
@@ -21,12 +22,14 @@ export function OwnerToday({
   orgName,
   ownerName,
   nowIso,
+  unread,
 }: {
   tasks: TaskListItem[];
   locale: Locale;
   orgName: string;
   ownerName: string | null;
   nowIso: string;
+  unread: number;
 }) {
   const t = getDictionary(locale);
   const now = new Date(nowIso);
@@ -46,6 +49,7 @@ export function OwnerToday({
               {ownerName ? ` · ${ownerName}` : ""}
             </p>
           </div>
+          <Bell locale={locale} unread={unread} />
           <Mark size={26} />
         </header>
 

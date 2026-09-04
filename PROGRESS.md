@@ -15,7 +15,7 @@ the CLAUDE.md §7 "not generated" checklist, then a commit.
 | 2 | Org onboarding, team invite, RLS, i18n | ✅ done |
 | 3 | Create task (Confirm card) + task lists | ✅ done |
 | 4 | Task detail + state machine + stepper/clock + thread | ✅ done |
-| 5 | SLA reminders + escalation + notifications | ⬜ |
+| 5 | SLA reminders + escalation + notifications | ✅ done |
 | 6 | Proof of completion | ⬜ |
 | 7 | Owner dashboard polish + completion rate | ⬜ |
 | 8 | Recurring checklists (only if time) | ⬜ |
@@ -316,3 +316,58 @@ dying, and the thread recording both sides.
 **Bug found and fixed by the tests:** `created` and `delivered` are written
 together and both read "Bheja", so the timeline showed the same line twice.
 The trail keeps both rows; the reader sees one.
+
+---
+
+## Slice 5 — SLA reminders, escalation and the inbox ✅
+
+The differentiator. Everything here is keyed, because a job that runs every
+five minutes and nags twice is worse than no job at all.
+
+**Built**
+
+- **`lib/sla/engine.ts`** — pure. Given the tasks, the org and the time, it
+  returns what should be sent. Reminders to the assignee at 50% and 90% of each
+  window; escalation to the owner when either clock runs out. Reminders are
+  compared against absolute instants, so a job that runs late still owes the
+  earlier reminder rather than skipping it.
+- **Quiet hours** wrap midnight (21:00–08:00 is the night, not a nineteen-hour
+  window). During them the escalation **row is still written** — the record has
+  to be true at 11pm — and only the message waits until morning, where the
+  dedupe key makes it arrive once.
+- **`lib/sla/run.ts`** — one tick. Unique `(task_id, reason)` on escalations,
+  a stable dedupe key on every notification, and a single up-front query for
+  which messages already went out.
+- **`/api/cron/sla`** — two ways in. The scheduler with `CRON_SECRET` runs
+  every org through the service-role client; a signed-in **owner** runs their
+  own org through their own session and therefore through RLS. Staff and
+  strangers get a 404. Both paths are idempotent, so an owner tapping twice
+  changes nothing.
+- **`supabase/functions/sla-tick`** — the Edge Function scheduler. It holds no
+  logic on purpose: duplicating the rule that decides whether somebody is late
+  into Deno would mean two copies of it.
+- **The inbox** (`/khabar`), the **bell** with a counted badge (a number and an
+  accessible name, never a bare red dot), and **live notifications** over
+  Supabase Realtime — RLS applies to realtime too, so only your own rows
+  arrive. Each of the three sounds is bound to one moment; reminders make none,
+  which is what keeps the three meaningful.
+
+**Gate:** lint ✅ · typecheck ✅ · build ✅ · Vitest **161/161** ✅ · Playwright **29/29** ✅
+
+**Decision: an SLA breach does not change `task.state`.** `escalated` stays for
+an explicit "nahi ho payega", which genuinely needs a person. A breach is a
+*condition* derived from the clocks, and the design already has words for it —
+*Dekha nahi* and *Late* (§3.3). Writing it into the state would hide how far
+the work had actually got, and would replace the precise chip with a vaguer one.
+
+**Two bugs found by running it rather than reading it**
+
+1. *The summary lied.* It counted a deduplicated message as a send, so a tick
+   that did nothing looked busy. It now reports `alreadySent` separately —
+   which is also how you see idempotency working.
+2. *The job got slower every week.* Recorded escalations were re-attempted on
+   every tick for ever, so a business with one bad month would carry the cost
+   permanently. Retries are now bounded to 24 hours (long enough to outlast a
+   quiet-hours hold-back), already-sent keys are fetched in one query rather
+   than discovered one failed insert at a time, and addresses are looked up
+   once per person per tick. A steady-state tick went from ~15s to ~4s.

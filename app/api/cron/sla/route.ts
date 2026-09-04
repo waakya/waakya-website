@@ -1,0 +1,63 @@
+import { NextResponse } from "next/server";
+import { timingSafeEqual } from "node:crypto";
+
+import { createAdminClient } from "@/lib/supabase/admin";
+import { createClient } from "@/lib/supabase/server";
+import { getViewer, canManage } from "@/lib/auth/session";
+import { runSlaTick } from "@/lib/sla/run";
+
+/**
+ * One tick of the SLA and escalation job.
+ *
+ * Two ways in, and they do different amounts:
+ *
+ *  1. **The scheduler**, with `Authorization: Bearer $CRON_SECRET`. It uses the
+ *     service-role client, so it sees every org. This is the real job.
+ *  2. **An owner**, signed in. It runs for *their org only*, through their own
+ *     session and therefore through RLS. This exists so the job is testable
+ *     and so an owner can force a check; it can never reach another business.
+ *
+ * The work itself is idempotent (unique escalations, keyed notifications), so
+ * a scheduler that retries, or an owner who taps twice, changes nothing.
+ */
+export const dynamic = "force-dynamic";
+
+export async function POST(request: Request) {
+  const secret = process.env.CRON_SECRET;
+  const header = request.headers.get("authorization") ?? "";
+  const presented = header.startsWith("Bearer ") ? header.slice(7) : "";
+
+  if (secret && presented && safeEqual(presented, secret)) {
+    const admin = createAdminClient();
+    if (!admin) {
+      // Documented in BLOCKERS.md as B1.
+      return NextResponse.json(
+        {
+          ok: false,
+          reason:
+            "SUPABASE_SERVICE_ROLE_KEY is not set, so the job cannot see every org.",
+        },
+        { status: 503 },
+      );
+    }
+    const summary = await runSlaTick(admin);
+    return NextResponse.json({ ok: true, scope: "all", summary });
+  }
+
+  // Fall back to the signed-in owner, for their own org.
+  const viewer = await getViewer();
+  if (!viewer?.org || !canManage(viewer.role)) {
+    return new NextResponse("Not found", { status: 404 });
+  }
+
+  const client = await createClient();
+  const summary = await runSlaTick(client, new Date(), viewer.org.id);
+  return NextResponse.json({ ok: true, scope: "org", summary });
+}
+
+function safeEqual(a: string, b: string): boolean {
+  const left = Buffer.from(a);
+  const right = Buffer.from(b);
+  if (left.length !== right.length) return false;
+  return timingSafeEqual(left, right);
+}

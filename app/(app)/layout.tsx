@@ -1,4 +1,5 @@
 import { requireViewer } from "@/lib/auth/session";
+import { LiveNotifications } from "@/components/vaakya/live-notifications";
 
 /**
  * The signed-in shell. The auth check lives here, in the render path, not in
@@ -6,6 +7,11 @@ import { requireViewer } from "@/lib/auth/session";
  * being bypassed, and RLS is the real backstop underneath both.
  */
 export default async function AppLayout({ children }: LayoutProps<"/">) {
-  await requireViewer();
-  return <div className="mx-auto min-h-dvh w-full max-w-md">{children}</div>;
+  const viewer = await requireViewer();
+  return (
+    <div className="mx-auto min-h-dvh w-full max-w-md">
+      {children}
+      <LiveNotifications userId={viewer.userId} />
+    </div>
+  );
 }

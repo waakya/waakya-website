@@ -92,6 +92,16 @@ export interface Dictionary {
     high: string;
     urgent: string;
   };
+  /** The notification inbox. */
+  inbox: {
+    title: string;
+    empty: string;
+    emptyHelp: string;
+    markAllRead: string;
+    unread: (n: number) => string;
+    checkNow: string;
+    checked: string;
+  };
   /** The task detail screens. */
   detail: {
     title: string;
@@ -319,6 +329,15 @@ export const dictionaries: Record<Locale, Dictionary> = {
       metIn: (text) => `देखा ${text} में`,
     },
     priority: { low: "कम", normal: "नॉर्मल", high: "ज़रूरी", urgent: "अर्जेंट" },
+    inbox: {
+      title: "खबर",
+      empty: "कोई नई खबर नहीं",
+      emptyHelp: "काम की हर हलचल यहाँ आएगी।",
+      markAllRead: "सब पढ़ लिया",
+      unread: (n) => `${n} नई`,
+      checkNow: "अभी जाँचें",
+      checked: "जाँच हो गई",
+    },
     detail: {
       title: "काम",
       newTaskTitle: "नया काम",
@@ -530,6 +549,15 @@ export const dictionaries: Record<Locale, Dictionary> = {
       metIn: (text) => `Dekha ${text} mein`,
     },
     priority: { low: "Kam", normal: "Normal", high: "Zaroori", urgent: "Urgent" },
+    inbox: {
+      title: "Khabar",
+      empty: "Koi nayi khabar nahi",
+      emptyHelp: "Kaam ki har halchal yahaan aayegi.",
+      markAllRead: "Sab padh liya",
+      unread: (n) => `${n} nayi`,
+      checkNow: "Abhi jaanchein",
+      checked: "Jaanch ho gayi",
+    },
     detail: {
       title: "Task",
       newTaskTitle: "Naya kaam",
@@ -741,6 +769,15 @@ export const dictionaries: Record<Locale, Dictionary> = {
       metIn: (text) => `Seen in ${text}`,
     },
     priority: { low: "Low", normal: "Normal", high: "High", urgent: "Urgent" },
+    inbox: {
+      title: "Updates",
+      empty: "Nothing new",
+      emptyHelp: "Everything that happens to your work appears here.",
+      markAllRead: "Mark all read",
+      unread: (n) => `${n} new`,
+      checkNow: "Check now",
+      checked: "Checked",
+    },
     detail: {
       title: "Task",
       newTaskTitle: "New task",

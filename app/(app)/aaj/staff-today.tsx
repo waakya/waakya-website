@@ -2,6 +2,7 @@ import { ChevronDown, ListChecks } from "lucide-react";
 
 import { BottomNav } from "@/components/vaakya/bottom-nav";
 import { Mark } from "@/components/vaakya/mark";
+import { Bell } from "@/components/vaakya/bell";
 import { Avatar } from "@/components/ui/avatar";
 import { TaskRow } from "@/components/vaakya/task-row";
 import { getDictionary, type Locale } from "@/lib/i18n";
@@ -19,12 +20,14 @@ export function StaffToday({
   orgName,
   staffName,
   nowIso,
+  unread,
 }: {
   tasks: TaskListItem[];
   locale: Locale;
   orgName: string;
   staffName: string | null;
   nowIso: string;
+  unread: number;
 }) {
   const t = getDictionary(locale);
   const now = new Date(nowIso);
@@ -54,6 +57,7 @@ export function StaffToday({
               {orgName} · {formatIndianDate(now, locale)}
             </p>
           </div>
+          <Bell locale={locale} unread={unread} />
           <Mark size={26} />
           <Avatar name={staffName ?? "?"} size={40} />
         </header>
