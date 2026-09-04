@@ -94,15 +94,16 @@ export interface Dictionary {
   };
   /** The privacy notice. */
   privacy: {
+    /** The document's name; see PRIVACY_POLICY_NAME in lib/i18n/brand.ts. */
     title: string;
     updated: string;
-    intro: string;
+    intro: (brand: string) => string;
     whatHeading: string;
     what: string[];
     whyHeading: string;
     why: string[];
     keepHeading: string;
-    keep: string;
+    keep: (brand: string) => string;
     shareHeading: string;
     share: string;
     rightsHeading: string;
@@ -300,8 +301,8 @@ export interface Dictionary {
     subtitle: string;
     emailLabel: string;
     emailPlaceholder: string;
-    consentPrefix: string;
-    privacyPolicy: string;
+    /** Takes the brand name; see lib/i18n/brand.ts for why it is a parameter. */
+    consentPrefix: (brand: string) => string;
     consentSuffix: string;
     sendOtp: string;
     codeTitle: string;
@@ -314,7 +315,6 @@ export interface Dictionary {
   };
   /** Shared UI furniture. */
   common: {
-    appName: string;
     tagline: string;
     loading: string;
     nothingHere: string;
@@ -395,9 +395,10 @@ export const dictionaries: Record<Locale, Dictionary> = {
     },
     priority: { low: "कम", normal: "नॉर्मल", high: "ज़रूरी", urgent: "अर्जेंट" },
     privacy: {
-      title: "प्राइवेसी पॉलिसी",
+      title: "Privacy Policy",
       updated: "आखिरी बदलाव: 4 सितंबर 2026",
-      intro: "वाक्य सिर्फ़ वही जानकारी रखता है जो आपका काम चलाने के लिए ज़रूरी है। इससे ज़्यादा कुछ नहीं।",
+      intro: (brand) =>
+        `${brand} सिर्फ़ वही जानकारी रखता है जो आपका काम चलाने के लिए ज़रूरी है। इससे ज़्यादा कुछ नहीं।`,
       whatHeading: "हम क्या रखते हैं",
       what: [
         "आपका नाम, ईमेल और फ़ोन नंबर — ताकि आप साइन इन कर सकें और आपका मालिक आपको पहचान सके।",
@@ -412,7 +413,8 @@ export const dictionaries: Record<Locale, Dictionary> = {
         "यह रिकॉर्ड रखने के लिए कि किसने क्या और कब किया।",
       ],
       keepHeading: "कितने समय तक",
-      keep: "जब तक आपका बिज़नेस वाक्य इस्तेमाल करता है। बिज़नेस बंद करने पर मालिक के कहने पर सब हटा दिया जाता है।",
+      keep: (brand) =>
+        `जब तक आपका बिज़नेस ${brand} इस्तेमाल करता है। बिज़नेस बंद करने पर मालिक के कहने पर सब हटा दिया जाता है।`,
       shareHeading: "किसके साथ बाँटते हैं",
       share: "किसी के साथ नहीं बेचा जाता। आपका डेटा सिर्फ़ आपके बिज़नेस के लोग देख सकते हैं। ईमेल भेजने और डेटा रखने के लिए हम भरोसेमंद सर्विस इस्तेमाल करते हैं, और उन्हें भी उतना ही मिलता है जितना ज़रूरी है।",
       rightsHeading: "आपके हक़ (DPDP Act, 2023)",
@@ -598,8 +600,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
       subtitle: "OTP इसी ईमेल पे आएगा।",
       emailLabel: "ईमेल",
       emailPlaceholder: "naam@example.com",
-      consentPrefix: "मैं वाक्य की ",
-      privacyPolicy: "प्राइवेसी पॉलिसी",
+      consentPrefix: (brand) => `मैं ${brand} की `,
       consentSuffix: " से सहमत हूँ।",
       sendOtp: "OTP भेजो",
       codeTitle: "6 अंकों का कोड डालें",
@@ -611,7 +612,6 @@ export const dictionaries: Record<Locale, Dictionary> = {
       signOut: "साइन आउट",
     },
     common: {
-      appName: "वाक्य",
       tagline: "बोलो। हो जाएगा।",
       loading: "खुल रहा है",
       nothingHere: "यहाँ कुछ नहीं है",
@@ -693,7 +693,8 @@ export const dictionaries: Record<Locale, Dictionary> = {
     privacy: {
       title: "Privacy Policy",
       updated: "Aakhri badlaav: 4 September 2026",
-      intro: "Vaakya sirf wahi jaankari rakhta hai jo aapka kaam chalane ke liye zaroori hai. Isse zyada kuch nahi.",
+      intro: (brand) =>
+        `${brand} sirf wahi jaankari rakhta hai jo aapka kaam chalane ke liye zaroori hai. Isse zyada kuch nahi.`,
       whatHeading: "Hum kya rakhte hain",
       what: [
         "Aapka naam, email aur phone number — taaki aap sign in kar sakein aur aapka owner aapko pehchan sake.",
@@ -708,7 +709,8 @@ export const dictionaries: Record<Locale, Dictionary> = {
         "Yeh record rakhne ke liye ki kisne kya aur kab kiya.",
       ],
       keepHeading: "Kitne samay tak",
-      keep: "Jab tak aapka business Vaakya istemaal karta hai. Business band karne par owner ke kehne par sab hata diya jaata hai.",
+      keep: (brand) =>
+        `Jab tak aapka business ${brand} istemaal karta hai. Business band karne par owner ke kehne par sab hata diya jaata hai.`,
       shareHeading: "Kiske saath baantte hain",
       share: "Kisi ke saath becha nahi jaata. Aapka data sirf aapke business ke log dekh sakte hain. Email bhejne aur data rakhne ke liye hum bharosemand service istemaal karte hain, aur unhein bhi utna hi milta hai jitna zaroori hai.",
       rightsHeading: "Aapke haq (DPDP Act, 2023)",
@@ -894,8 +896,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
       subtitle: "OTP isi email pe aayega.",
       emailLabel: "Email",
       emailPlaceholder: "naam@example.com",
-      consentPrefix: "Main Vaakya ki ",
-      privacyPolicy: "Privacy Policy",
+      consentPrefix: (brand) => `Main ${brand} ki `,
       consentSuffix: " se sehmat hoon.",
       sendOtp: "OTP bhejo",
       codeTitle: "6 ank ka code daalein",
@@ -907,7 +908,6 @@ export const dictionaries: Record<Locale, Dictionary> = {
       signOut: "Sign out",
     },
     common: {
-      appName: "Vaakya",
       tagline: "Bolo. Ho jayega.",
       loading: "Khul raha hai",
       nothingHere: "Yahaan kuch nahi hai",
@@ -989,7 +989,8 @@ export const dictionaries: Record<Locale, Dictionary> = {
     privacy: {
       title: "Privacy Policy",
       updated: "Last updated: 4 September 2026",
-      intro: "Vaakya keeps only the information needed to run your work. Nothing more.",
+      intro: (brand) =>
+        `${brand} keeps only the information needed to run your work. Nothing more.`,
       whatHeading: "What we keep",
       what: [
         "Your name, email and phone number, so you can sign in and your owner can recognise you.",
@@ -1004,7 +1005,8 @@ export const dictionaries: Record<Locale, Dictionary> = {
         "To keep a record of who did what, and when.",
       ],
       keepHeading: "How long",
-      keep: "For as long as your business uses Vaakya. When a business closes, everything is deleted at the owner's request.",
+      keep: (brand) =>
+        `For as long as your business uses ${brand}. When a business closes, everything is deleted at the owner's request.`,
       shareHeading: "Who we share it with",
       share: "It is never sold. Only people in your business can see your data. We use trusted services to send email and store data, and they receive only what is necessary.",
       rightsHeading: "Your rights (DPDP Act, 2023)",
@@ -1190,8 +1192,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
       subtitle: "The code comes to this email.",
       emailLabel: "Email",
       emailPlaceholder: "name@example.com",
-      consentPrefix: "I agree to the Vaakya ",
-      privacyPolicy: "Privacy Policy",
+      consentPrefix: (brand) => `I agree to ${brand}'s `,
       consentSuffix: ".",
       sendOtp: "Send code",
       codeTitle: "Enter the six-digit code",
@@ -1203,7 +1204,6 @@ export const dictionaries: Record<Locale, Dictionary> = {
       signOut: "Sign out",
     },
     common: {
-      appName: "Vaakya",
       tagline: "Bolo. Ho jayega.",
       loading: "Loading",
       nothingHere: "Nothing here",

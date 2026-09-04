@@ -8,8 +8,8 @@ before the next one started. `PROGRESS.md` has the slice-by-slice detail.
 
 ```
 lint       ✅   typecheck  ✅   build      ✅
-Vitest     ✅   193 tests
-Playwright ✅   46 tests, against the live Supabase project
+Vitest     ✅   197 tests
+Playwright ✅   50 tests, against the live Supabase project
 ```
 
 ---
@@ -81,6 +81,15 @@ are not an error.
 - **The timeline said "Bheja" twice**, because `created` and `delivered` are
   written together and read the same. The trail keeps both rows; the reader
   sees one.
+- **The language switch only half-worked.** Task screens read the *business's*
+  language while the shell screens read the *reader's*, so switching to English
+  in Settings left the Confirm card in Hinglish. Every screen now uses
+  `getLocale()`, which already resolved cookie → profile → business, so the
+  business's language stays the default for anyone who has not chosen. Found by
+  a test that failed for the "wrong" reason.
+- **Notifications spoke the sender's language.** A message is written for its
+  reader, so `createTask` now looks up the assignee's own language and falls
+  back to the business's.
 - **`reset-demo.mjs` reported deletions it had not made.** There is no DELETE
   policy on `tasks` — by design, a task is cancelled, never removed — so
   PostgREST returned success having matched no rows. The script now counts the

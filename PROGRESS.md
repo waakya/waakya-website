@@ -530,3 +530,57 @@ mistake as the SLA summary that counted duplicates as sends.
 
 See **REPORT.md** for what works, what I could not verify, and the go-live
 checklist.
+
+---
+
+## Follow-ups after the first hands-on session
+
+**1. `npm run dev:login` — signing in without an inbox.** The MVP mails a
+six-digit code, which is no use against `owner@vaakya.test`. The script asks
+Supabase's admin API for a magic-link token and prints a URL.
+
+It is dev-only structurally, not by convention: it is a script, so nothing in
+`app/` or `lib/` imports it and it cannot be bundled; it refuses to run when
+`NODE_ENV` is production; and it needs the service-role key, which is
+server-only. It needs **B1** — the key is still not set, and the script says
+exactly where to get it.
+
+The URL points at the app's own new `/auth/confirm` route rather than
+Supabase's verify endpoint, because Supabase returns the session in the URL
+*fragment*, which never reaches a server — cookie-based auth would never see
+it. `/auth/confirm` verifies the token hash server-side, creates the profile
+row on first sign-in, and only redirects to same-site paths. It is real product
+code: it is also how an emailed link works.
+
+**2. The brand name is out of the translation layer.** *Vaakya* means
+"sentence" in Hindi, so with the name inside translatable copy the consent line
+read "I agree to the sentence's Privacy Policy". `lib/i18n/brand.ts` now holds
+it, `consentPrefix` takes it as an argument, and a test fails the build if the
+name reappears in any dictionary string. It now reads:
+
+- English — *I agree to Vaakya's **Privacy Policy**.* (not "the Vaakya…", which
+  reads as a category rather than a name)
+- Hinglish — *Main Vaakya ki **Privacy Policy** se sehmat hoon.*
+- हिंदी — *मैं वाक्य की **Privacy Policy** से सहमत हूँ।*
+
+The notice's own name stays "Privacy Policy" in all three, so the link and the
+page it opens agree. The audit also found the name baked into `privacy.intro`,
+`privacy.keep` and an unused `common.appName`; all three are gone.
+
+**3. Errors belong to a step and a field.** The login form kept one `error` for
+both steps, and marked the email box invalid for *any* error — so "Too many
+codes sent", which is not a problem with the address, ringed it red. An error
+now records which step and which field it came from, renders only on that step,
+marks only that field, and clears as soon as the reader starts fixing it. The
+OTP boxes gained the same invalid state for a wrong or expired code.
+
+**A real bug this uncovered.** Two tests failed for a reason unrelated to what
+they tested, which turned out to be a genuine defect: task screens rendered in
+the *business's* language while the shell rendered in the *reader's*, so
+switching to English in Settings left the Confirm card in Hinglish. Every
+screen now resolves the reader's language, and notification copy now uses the
+recipient's rather than the sender's. The tests that exposed it were made
+language-agnostic — they read `<html lang>` — and the suite pins its own
+session language so it no longer inherits whatever was last clicked.
+
+**Gate:** lint ✅ · typecheck ✅ · build ✅ · Vitest **197/197** ✅ · Playwright **50/50** ✅

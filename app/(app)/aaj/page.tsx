@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { requireOrg, canManage } from "@/lib/auth/session";
+import { getLocale } from "@/lib/i18n/server";
 import { getMyTasks, getOrgTasks } from "@/lib/tasks/queries";
 import { getUnreadCount } from "@/lib/notify/inbox";
 import { getOrgMembers } from "@/lib/org/members";
@@ -15,6 +16,7 @@ export const metadata: Metadata = { title: "Aaj" };
  */
 export default async function AajPage() {
   const viewer = await requireOrg();
+  const locale = await getLocale();
   const now = new Date();
 
   if (canManage(viewer.role)) {
@@ -26,7 +28,7 @@ export default async function AajPage() {
     return (
       <OwnerToday
         tasks={tasks}
-        locale={viewer.org.language}
+        locale={locale}
         orgName={viewer.org.name}
         ownerName={viewer.fullName}
         nowIso={now.toISOString()}
@@ -45,7 +47,7 @@ export default async function AajPage() {
   return (
     <StaffToday
       tasks={tasks}
-      locale={viewer.org.language}
+      locale={locale}
       orgName={viewer.org.name}
       staffName={viewer.fullName}
       nowIso={now.toISOString()}

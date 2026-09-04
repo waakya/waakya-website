@@ -11,7 +11,12 @@ import { Input } from "@/components/ui/input";
 import { InputOTP } from "@/components/ui/input-otp";
 import { Label } from "@/components/ui/label";
 import { LanguageSwitch } from "@/components/vaakya/language-switch";
-import { getDictionary, type Locale } from "@/lib/i18n";
+import {
+  brandName,
+  getDictionary,
+  PRIVACY_POLICY_NAME,
+  type Locale,
+} from "@/lib/i18n";
 import { requestOtp, setLoginLocale, verifyOtp } from "./actions";
 
 /**
@@ -45,16 +50,36 @@ export function LoginForm({
   const [email, setEmail] = React.useState("");
   const [code, setCode] = React.useState("");
   const [consent, setConsent] = React.useState(false);
-  const [error, setError] = React.useState<string | null>(null);
   const [pending, startTransition] = React.useTransition();
+
+  /**
+   * An error belongs to the step that produced it and, when it is about a
+   * particular field, to that field.
+   *
+   * Both matter. A wrong code must not still be on screen after the reader
+   * goes back to change their email; and "too many codes sent" is not a
+   * problem with the address, so it must not ring the email box red.
+   */
+  const [error, setError] = React.useState<{
+    step: "email" | "code";
+    message: string;
+    field?: string;
+  } | null>(null);
+
+  const stepError = error?.step === step ? error : null;
+  const emailInvalid = stepError?.field === "email";
+  const codeInvalid = stepError?.field === "code";
 
   function send(event: React.FormEvent) {
     event.preventDefault();
     setError(null);
     startTransition(async () => {
       const result = await requestOtp({ email, consent, locale });
-      if (!result.ok) setError(result.message);
-      else setStep("code");
+      if (!result.ok) {
+        setError({ step: "email", message: result.message, field: result.field });
+        return;
+      }
+      setStep("code");
     });
   }
 
@@ -63,8 +88,11 @@ export function LoginForm({
     setError(null);
     startTransition(async () => {
       const result = await verifyOtp({ email, code, locale });
-      if (!result.ok) setError(result.message);
-      else router.replace(next ?? "/aaj");
+      if (!result.ok) {
+        setError({ step: "code", message: result.message, field: result.field });
+        return;
+      }
+      router.replace(next ?? "/aaj");
     });
   }
 
@@ -104,10 +132,14 @@ export function LoginForm({
                 spellCheck={false}
                 required
                 value={email}
-                onChange={(event) => setEmail(event.target.value)}
+                onChange={(event) => {
+                  setEmail(event.target.value);
+                  // They are addressing it; stop telling them.
+                  if (stepError) setError(null);
+                }}
                 placeholder={t.auth.emailPlaceholder}
-                aria-invalid={error ? true : undefined}
-                aria-describedby={error ? "login-error" : undefined}
+                aria-invalid={emailInvalid || undefined}
+                aria-describedby={stepError ? "login-error" : undefined}
                 className="h-tap-staff"
               />
             </div>
@@ -121,18 +153,18 @@ export function LoginForm({
                 />
               </span>
               <span className="text-[15px] leading-[22px] text-ink-900">
-                {t.auth.consentPrefix}
+                {t.auth.consentPrefix(brandName(locale))}
                 <Link
                   href="/privacy"
                   className="font-semibold text-neel-700 underline underline-offset-2"
                 >
-                  {t.auth.privacyPolicy}
+                  {PRIVACY_POLICY_NAME}
                 </Link>
                 {t.auth.consentSuffix}
               </span>
             </label>
 
-            <ErrorLine error={error} />
+            <ErrorLine error={stepError?.message ?? null} />
 
             <Button type="submit" size="block" disabled={pending} className="mt-4">
               {pending ? t.common.loading : t.auth.sendOtp}
@@ -150,12 +182,17 @@ export function LoginForm({
             <div className="mt-5">
               <InputOTP
                 value={code}
-                onValueChange={setCode}
+                onValueChange={(next) => {
+                  setCode(next);
+                  if (stepError) setError(null);
+                }}
                 aria-label={t.auth.codeTitle}
+                aria-invalid={codeInvalid || undefined}
+                aria-describedby={stepError ? "login-error" : undefined}
               />
             </div>
 
-            <ErrorLine error={error} />
+            <ErrorLine error={stepError?.message ?? null} />
 
             <Button
               type="submit"
@@ -185,7 +222,11 @@ export function LoginForm({
                 onClick={() =>
                   startTransition(async () => {
                     const result = await requestOtp({ email, consent: true, locale });
-                    setError(result.ok ? null : result.message);
+                    setError(
+                      result.ok
+                        ? null
+                        : { step: "code", message: result.message },
+                    );
                   })
                 }
               >

@@ -11,12 +11,13 @@ import { StateChip } from "@/components/ui/state-chip";
 import { BottomNav } from "@/components/vaakya/bottom-nav";
 import { InviteSheet } from "./invite-sheet";
 import { PendingInvites } from "./pending-invites";
+import { getLocale } from "@/lib/i18n/server";
 
 export const metadata: Metadata = { title: "Staff" };
 
 export default async function StaffPage() {
   const viewer = await requireOrg();
-  const locale = viewer.org.language;
+  const locale = await getLocale();
   const t = getDictionary(locale);
 
   const supabase = await createClient();

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { requireOrg, canManage } from "@/lib/auth/session";
+import { getLocale } from "@/lib/i18n/server";
 import { getOrgMembers } from "@/lib/org/members";
 import { redirect } from "next/navigation";
 import { ConfirmCard } from "./confirm-card";
@@ -16,12 +17,13 @@ export default async function NayaPage() {
   const viewer = await requireOrg();
   if (!canManage(viewer.role)) redirect("/aaj");
 
+  const locale = await getLocale();
   const members = await getOrgMembers(viewer.org.id);
   const now = new Date();
 
   return (
     <ConfirmCard
-      locale={viewer.org.language}
+      locale={locale}
       ackMinutes={viewer.org.ackMinutes}
       members={members
         .filter((m) => m.userId !== viewer.userId)

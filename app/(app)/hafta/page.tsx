@@ -6,6 +6,7 @@ import { BottomNav } from "@/components/vaakya/bottom-nav";
 import { TaskRow } from "@/components/vaakya/task-row";
 import { dayKey } from "@/lib/tasks/time";
 import { formatIndianDate } from "@/lib/tasks/format-date";
+import { getLocale } from "@/lib/i18n/server";
 
 export const metadata: Metadata = { title: "Hafta" };
 
@@ -17,7 +18,7 @@ export const metadata: Metadata = { title: "Hafta" };
 export default async function HaftaPage() {
   const viewer = await requireOrg();
   const owner = canManage(viewer.role);
-  const locale = viewer.org.language;
+  const locale = await getLocale();
   const t = getDictionary(locale);
   const now = new Date();
 

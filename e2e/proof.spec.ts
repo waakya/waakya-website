@@ -1,7 +1,13 @@
 import { expect, test, type Page } from "@playwright/test";
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/supabase/types";
-import { signInAs, signOut, TEST_USERS } from "./support/auth";
+import {
+  pinLocale,
+  signInAs,
+  signOut,
+  TEST_LOCALE,
+  TEST_USERS,
+} from "./support/auth";
 
 /**
  * Proof of completion. The photo goes straight from the phone to private
@@ -44,6 +50,7 @@ test("finishing a task that needs a photo asks for one first", async ({
   await staff.request.post("/api/test-login", {
     data: { email: TEST_USERS.staff.email, password: TEST_USERS.staff.password },
   });
+  await pinLocale(staff, TEST_LOCALE);
 
   await staff.goto("/aaj");
   await staff.getByText(title).click();
@@ -121,6 +128,7 @@ test("a task without a proof requirement can still be finished plainly", async (
   await staff.request.post("/api/test-login", {
     data: { email: TEST_USERS.staff.email, password: TEST_USERS.staff.password },
   });
+  await pinLocale(staff, TEST_LOCALE);
   await staff.goto("/aaj");
   await staff.getByText(title).click();
   const trail = staff.getByRole("list", { name: "Timeline" });

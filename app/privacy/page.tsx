@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
-import { getDictionary } from "@/lib/i18n";
+import { brandName, getDictionary } from "@/lib/i18n";
 import { getLocale } from "@/lib/i18n/server";
 import { Mark } from "@/components/vaakya/mark";
 
@@ -35,7 +35,7 @@ export default async function PrivacyPage() {
 
       <p className="num mt-4 text-[13px] text-ink-400">{t.privacy.updated}</p>
       <p className="mt-2 text-[17px] leading-[26px] text-ink-900">
-        {t.privacy.intro}
+        {t.privacy.intro(brandName(locale))}
       </p>
 
       <Section title={t.privacy.whatHeading} items={t.privacy.what} />
@@ -45,7 +45,7 @@ export default async function PrivacyPage() {
         {t.privacy.keepHeading}
       </h2>
       <p className="mt-1 text-[15px] leading-[24px] text-ink-700">
-        {t.privacy.keep}
+        {t.privacy.keep(brandName(locale))}
       </p>
 
       <h2 className="mt-6 text-[17px] leading-[24px] font-bold text-ink-900">

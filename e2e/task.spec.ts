@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { signInAs, signOut } from "./support/auth";
+import { pinLocale, signInAs, signOut, TEST_LOCALE } from "./support/auth";
 
 test.describe.configure({ mode: "serial" });
 
@@ -48,6 +48,7 @@ test("the owner sends a task on the Confirm card, and the staff member sees it",
   await staffPage.request.post("/api/test-login", {
     data: { email: "staff@vaakya.test", password: "vaakya-e2e-staff-pass" },
   });
+  await pinLocale(staffPage, TEST_LOCALE);
   await staffPage.goto("/aaj");
   await expect(staffPage.getByText(title)).toBeVisible();
   const staffRow = staffPage.locator("li", { hasText: title }).first();

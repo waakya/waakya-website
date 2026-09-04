@@ -9,6 +9,7 @@ import { getChecklists } from "@/lib/checklists/queries";
 import { getDictionary } from "@/lib/i18n";
 import { TaskRow } from "@/components/vaakya/task-row";
 import { dayKey } from "@/lib/tasks/time";
+import { getLocale } from "@/lib/i18n/server";
 
 export const metadata: Metadata = { title: "Checklist" };
 
@@ -19,7 +20,7 @@ export default async function ChecklistPage({
   const { id } = await params;
   const viewer = await requireOrg();
   const owner = canManage(viewer.role);
-  const locale = viewer.org.language;
+  const locale = await getLocale();
   const t = getDictionary(locale);
   const now = new Date();
 

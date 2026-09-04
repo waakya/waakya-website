@@ -2,6 +2,7 @@ import { expect, test, type Page } from "@playwright/test";
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/supabase/types";
 import { signInAs, signOut, TEST_USERS } from "./support/auth";
+import { pageDictionary } from "./support/i18n";
 
 /**
  * The differentiator: clocks that run out, and an escalation that reaches the
@@ -85,8 +86,9 @@ test("an unacknowledged task past its SLA reaches the owner", async ({ page }) =
   expect(escalations?.map((e) => e.reason)).toContain("ack_sla");
 
   await page.goto("/khabar");
+  const t = await pageDictionary(page);
   await expect(
-    page.getByRole("list", { name: "Khabar" }).getByText(title).first(),
+    page.getByRole("list", { name: t.inbox.title }).getByText(title).first(),
   ).toBeVisible();
 });
 

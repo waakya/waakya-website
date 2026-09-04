@@ -1,7 +1,13 @@
 import { expect, test } from "@playwright/test";
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/supabase/types";
-import { signInAs, signOut, TEST_USERS } from "./support/auth";
+import {
+  pinLocale,
+  signInAs,
+  signOut,
+  TEST_LOCALE,
+  TEST_USERS,
+} from "./support/auth";
 
 /**
  * Daily routines. The template is set up once; the tasks it produces are
@@ -66,6 +72,7 @@ test("an owner sets up a routine and it sends itself", async ({ page, browser })
   await staff.request.post("/api/test-login", {
     data: { email: TEST_USERS.staff.email, password: TEST_USERS.staff.password },
   });
+  await pinLocale(staff, TEST_LOCALE);
   await staff.goto("/aaj");
 
   const card = staff.getByRole("progressbar", { name });

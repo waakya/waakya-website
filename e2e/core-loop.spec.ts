@@ -1,5 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
-import { signInAs, signOut } from "./support/auth";
+import { pinLocale, signInAs, signOut, TEST_LOCALE } from "./support/auth";
 
 /**
  * Finishing always offers the proof sheet. These tasks ask for no photo, so
@@ -50,6 +50,7 @@ test("create → acknowledge → done → verify", async ({ page, browser }) => 
   await staff.request.post("/api/test-login", {
     data: { email: "staff@vaakya.test", password: "vaakya-e2e-staff-pass" },
   });
+  await pinLocale(staff, TEST_LOCALE);
   await openTask(staff, title);
   await expect(staff.getByRole("heading", { name: "Naya kaam" })).toBeVisible();
   await expect(
@@ -123,6 +124,7 @@ test("a verified task is finished — no button moves it again", async ({ page }
   await staff.request.post("/api/test-login", {
     data: { email: "staff@vaakya.test", password: "vaakya-e2e-staff-pass" },
   });
+  await pinLocale(staff, TEST_LOCALE);
   await openTask(staff, title);
   const trail = staff.getByRole("list", { name: "Timeline" });
   await staff.getByRole("button", { name: "Dekh liya, ho jayega" }).click();
@@ -158,6 +160,7 @@ test("the assignee can decline, and it lands with the owner rather than dying", 
   await staff.request.post("/api/test-login", {
     data: { email: "staff@vaakya.test", password: "vaakya-e2e-staff-pass" },
   });
+  await pinLocale(staff, TEST_LOCALE);
   await openTask(staff, title);
   await staff.getByRole("button", { name: "Nahi ho payega" }).first().click();
 
@@ -211,6 +214,7 @@ test("the reply thread records both sides", async ({ page, browser }) => {
   await staff.request.post("/api/test-login", {
     data: { email: "staff@vaakya.test", password: "vaakya-e2e-staff-pass" },
   });
+  await pinLocale(staff, TEST_LOCALE);
   await openTask(staff, title);
   await expect(staff.getByText("Kitna time lagega?")).toBeVisible();
   await staff.getByRole("textbox", { name: "Baat-cheet" }).fill("Do ghante");

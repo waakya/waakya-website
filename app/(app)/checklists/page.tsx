@@ -8,6 +8,7 @@ import { getOrgMembers } from "@/lib/org/members";
 import { getDictionary } from "@/lib/i18n";
 import { BottomNav } from "@/components/vaakya/bottom-nav";
 import { ChecklistEditor } from "./checklist-editor";
+import { getLocale } from "@/lib/i18n/server";
 
 export const metadata: Metadata = { title: "Roz ka kaam" };
 
@@ -20,7 +21,7 @@ export default async function ChecklistsPage() {
   const viewer = await requireOrg();
   if (!canManage(viewer.role)) redirect("/aaj");
 
-  const locale = viewer.org.language;
+  const locale = await getLocale();
   const t = getDictionary(locale);
   const [checklists, members] = await Promise.all([
     getChecklists(viewer.org.id),

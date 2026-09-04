@@ -2,7 +2,14 @@ import { describe, expect, it } from "vitest";
 import { readFileSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 
-import { LOCALES, dictionaries } from "@/lib/i18n";
+import {
+  LOCALES,
+  dictionaries,
+  BRAND_NAME,
+  BRAND_NAME_DEVANAGARI,
+  PRIVACY_POLICY_NAME,
+  brandName,
+} from "@/lib/i18n";
 import {
   TICKS_BAR_COLOUR,
   TICKS_TICK_COLOUR,
@@ -81,11 +88,68 @@ describe("the dictionaries", () => {
     }
   });
 
+  it("never bakes the brand name into a translatable string", () => {
+    // *Vaakya* means "sentence" in Hindi. The moment the name sits inside copy
+    // that somebody translates, the consent line reads "I agree to the
+    // sentence's Privacy Policy" — which is exactly what happened. The name is
+    // a proper noun, so it is interpolated from lib/i18n/brand.ts and never
+    // typed into a dictionary.
+    for (const locale of LOCALES) {
+      for (const line of collectStrings(dictionaries[locale])) {
+        expect(line, `${locale}: ${line}`).not.toContain(BRAND_NAME);
+        expect(line, `${locale}: ${line}`).not.toContain(BRAND_NAME_DEVANAGARI);
+      }
+    }
+  });
+
   it("never writes Devanagari numerals — Latin digits in every language", () => {
     for (const locale of LOCALES) {
       for (const line of collectStrings(dictionaries[locale])) {
         expect(line, `${locale}: ${line}`).not.toMatch(/[०-९]/);
       }
+    }
+  });
+});
+
+describe("the brand name", () => {
+  it("is the same name in both scripts, and never a translation of it", () => {
+    expect(brandName("en")).toBe("Vaakya");
+    expect(brandName("hi-Latn")).toBe("Vaakya");
+    // The Devanagari wordmark, not a different word (Design Direction §2.3).
+    expect(brandName("hi")).toBe("वाक्य");
+  });
+
+  it("reads as a possessive in the consent line, in every language", () => {
+    for (const locale of LOCALES) {
+      const line =
+        dictionaries[locale].auth.consentPrefix(brandName(locale)) +
+        PRIVACY_POLICY_NAME +
+        dictionaries[locale].auth.consentSuffix;
+
+      expect(line, locale).toContain(brandName(locale));
+      expect(line, locale).toContain(PRIVACY_POLICY_NAME);
+      // "the Vaakya Privacy Policy" reads as a category; it is Vaakya's.
+      expect(line, locale).not.toContain("the Vaakya ");
+    }
+
+    expect(
+      dictionaries.en.auth.consentPrefix("Vaakya") +
+        PRIVACY_POLICY_NAME +
+        dictionaries.en.auth.consentSuffix,
+    ).toBe("I agree to Vaakya's Privacy Policy.");
+
+    expect(
+      dictionaries.hi.auth.consentPrefix("वाक्य") +
+        PRIVACY_POLICY_NAME +
+        dictionaries.hi.auth.consentSuffix,
+    ).toBe("मैं वाक्य की Privacy Policy से सहमत हूँ।");
+  });
+
+  it("keeps the notice's own name untranslated, so the link and the page agree", () => {
+    for (const locale of LOCALES) {
+      expect(dictionaries[locale].privacy.title, locale).toBe(
+        PRIVACY_POLICY_NAME,
+      );
     }
   });
 });

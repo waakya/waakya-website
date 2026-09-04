@@ -18,6 +18,21 @@ cp .env.example .env.local     # then fill it in — see below
 npm run dev                    # http://localhost:3000
 ```
 
+**Signing in without an inbox.** The MVP mails a six-digit code, which is no
+use against a test address. With `SUPABASE_SERVICE_ROLE_KEY` set:
+
+```bash
+npm run dev:login                       # owner@vaakya.test
+npm run dev:login -- staff@vaakya.test
+```
+
+It prints a single-use link. It is a script, so nothing in `app/` or `lib/`
+imports it and it can never be bundled; it also refuses to run when `NODE_ENV`
+is production. The link points at the app's own `/auth/confirm` route, which
+verifies the token **server-side** so the session lands in cookies — a link
+straight to Supabase returns the session in the URL fragment, which never
+reaches a server.
+
 `/preview` is the style tile: every primitive, all five ticks states, the whole
 chip vocabulary. It is the fastest way to see whether a change broke the kit.
 
@@ -142,6 +157,11 @@ supabase/migrations/ every schema change, in order
 - **The dictionary holds formatter functions**, which cannot cross the
   server/client boundary. Client components take a `locale` and call
   `getDictionary()` themselves; the dictionary is never a prop.
+- **The brand name is never in the dictionary.** *Vaakya* means "sentence" in
+  Hindi, so a translated brand name turns the consent line into "I agree to the
+  sentence's Privacy Policy". It lives in `lib/i18n/brand.ts` and is
+  interpolated; `lib/brand/rules.test.ts` fails the build if it reappears in a
+  translated string.
 - **The owner cannot acknowledge or accept on a staff member's behalf.** The
   whole product rests on the staff member having said so themselves.
 - **There is no voice input in v1.** `createTask()` takes a plain object and is

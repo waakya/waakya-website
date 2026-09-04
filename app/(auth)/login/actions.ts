@@ -79,7 +79,15 @@ export async function verifyOtp(input: unknown): Promise<ActionResult> {
   const supabase = await createClient();
 
   const result = await activeAuthProvider().verifyCode(supabase, email, code);
-  if (!result.ok) return fail(message(result.reason, locale));
+  if (!result.ok) {
+    // A wrong or expired code is a problem with the code box; a rate limit is
+    // not a problem with any field, so it names none.
+    const field =
+      result.reason === "bad_code" || result.reason === "expired"
+        ? "code"
+        : undefined;
+    return fail(message(result.reason, locale), field);
+  }
 
   const {
     data: { user },

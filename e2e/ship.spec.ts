@@ -8,13 +8,17 @@ test("the privacy notice is readable before anyone has an account", async ({
   page,
 }) => {
   await signOut(page);
-  // A signed-out visitor gets Devanagari, which is the app default.
+
+  // A signed-out visitor gets Devanagari, which is the app default — but the
+  // notice's *title* stays "Privacy Policy" in every language, because it is
+  // the name of a document and the link that opens it says the same thing.
   await page.goto("/privacy");
   await expect(
-    page.getByRole("heading", { name: "प्राइवेसी पॉलिसी" }),
+    page.getByRole("heading", { name: "Privacy Policy" }),
   ).toBeVisible();
+  await expect(page.getByText("आखिरी बदलाव")).toBeVisible();
 
-  // And it follows the language switch on the login screen.
+  // The body follows the language switch on the login screen.
   await page.goto("/login");
   await page.getByRole("radio", { name: "English" }).click();
   // Wait for the choice to land before navigating, or the next request races
@@ -23,7 +27,10 @@ test("the privacy notice is readable before anyone has an account", async ({
     page.getByRole("heading", { name: "Enter your email" }),
   ).toBeVisible();
   await page.goto("/privacy");
-  await expect(page.getByRole("heading", { name: "Privacy Policy" })).toBeVisible();
+  await expect(page.getByText("Last updated")).toBeVisible();
+  await expect(
+    page.getByText("Vaakya keeps only the information needed"),
+  ).toBeVisible();
   // The DPDP rights have to actually be listed, not merely alluded to.
   await expect(page.getByText("DPDP Act, 2023")).toBeVisible();
   await expect(page.getByText(/privacy@waakya\.com/)).toBeVisible();

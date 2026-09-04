@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { requireOrg, canManage } from "@/lib/auth/session";
+import { getLocale } from "@/lib/i18n/server";
 import { getTask } from "@/lib/tasks/queries";
 import { getOrgMembers } from "@/lib/org/members";
 import {
@@ -29,6 +30,7 @@ export default async function TaskPage({ params }: PageProps<"/kaam/[id]">) {
   const task = await getTask(id, viewer.org.id, viewer.org.ackMinutes);
   if (!task) notFound();
 
+  const locale = await getLocale();
   const now = new Date();
   const [timeline, thread, proofs] = await Promise.all([
     getTaskTimeline(task.id, viewer.org.id),
@@ -41,7 +43,7 @@ export default async function TaskPage({ params }: PageProps<"/kaam/[id]">) {
     timeline,
     thread,
     proofs,
-    locale: viewer.org.language,
+    locale,
     nowIso: now.toISOString(),
     stepper: {
       reached: reachedFrom(timeline),

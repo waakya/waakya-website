@@ -83,3 +83,29 @@ test("the week groups by the day work is due", async ({ page }) => {
   await page.goto("/hafta");
   await expect(page.getByRole("heading", { name: "Is hafte" })).toBeVisible();
 });
+
+test("switching language reaches every screen, not just the shell", async ({
+  page,
+}) => {
+  // Before this was fixed, Settings and the inbox followed the reader's own
+  // choice while the task screens stayed in the business's language, so a
+  // switch only half-worked.
+  await signInAs(page, "owner", "en");
+
+  await page.goto("/aaj");
+  await expect(page.locator("html")).toHaveAttribute("lang", "en");
+  await expect(page.getByText("Needs you")).toBeVisible();
+
+  await page.goto("/naya");
+  await expect(page.getByRole("heading", { name: "Send this?" })).toBeVisible();
+  await expect(page.getByRole("button", { name: /^Who/ })).toBeVisible();
+
+  await page.goto("/staff");
+  await expect(page.getByRole("heading", { name: "Staff" })).toBeVisible();
+
+  // And back the other way.
+  await signInAs(page, "owner", "hi");
+  await page.goto("/naya");
+  await expect(page.locator("html")).toHaveAttribute("lang", "hi");
+  await expect(page.getByRole("heading", { name: "यह भेजें?" })).toBeVisible();
+});

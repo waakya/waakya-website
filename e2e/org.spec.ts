@@ -1,5 +1,12 @@
 import { expect, test } from "@playwright/test";
-import { signInAs, signOut, TEST_USERS } from "./support/auth";
+import {
+  pinLocale,
+  signInAs,
+  signOut,
+  TEST_LOCALE,
+  TEST_USERS,
+} from "./support/auth";
+import { pageDictionary } from "./support/i18n";
 
 /**
  * Org setup and the invite flow, end to end against the real database, so RLS
@@ -76,6 +83,7 @@ test("an owner creates a business, invites staff, and the staff member joins", a
       password: TEST_USERS.staff.password,
     },
   });
+  await pinLocale(inviteePage, TEST_LOCALE);
   await inviteePage.goto(path);
   const join = inviteePage.getByRole("button", { name: "Jud jao" });
   if (await join.isVisible().catch(() => false)) {
@@ -129,8 +137,11 @@ test("an unknown invite token says what to do next", async ({ page }) => {
   await signInAs(page, "owner");
   await page.goto(`/join/${"0".repeat(32)}`);
 
-  // No locale cookie was set by the test sign-in, so this also proves the
-  // language falls back to the org's rather than the app default.
-  await expect(page.getByText("Yeh link ab kaam nahi karta.", { exact: false })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Aaj" })).toBeVisible();
+  // No locale cookie was set by the test sign-in, so the language had to be
+  // resolved from the account — profile first, then the business. Which
+  // language that lands on depends on what the owner has chosen, so the
+  // assertion reads the page's own language rather than assuming one.
+  const t = await pageDictionary(page);
+  await expect(page.getByText(t.org.joinNotFound)).toBeVisible();
+  await expect(page.getByRole("link", { name: t.time.aaj })).toBeVisible();
 });

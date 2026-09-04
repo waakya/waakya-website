@@ -112,8 +112,15 @@ export async function createTask(
   ]);
   if (eventError) return fail(errors(locale).generic);
 
-  // The owner is the sender, so the message carries their name, not Vaakya's.
-  const assigneeLocale = toLocale(locale);
+  // The owner is the sender, so the message carries their name. The language
+  // is the assignee's own if they have chosen one, and the org's otherwise —
+  // a message is written for its reader, not for whoever pressed the button.
+  const { data: assigneeProfile } = await supabase
+    .from("profiles")
+    .select("language")
+    .eq("id", task.assigneeId)
+    .maybeSingle();
+  const assigneeLocale = toLocale(assigneeProfile?.language, locale);
   const body = writeMessage("task_assigned", assigneeLocale, {
     actor: viewer.fullName?.trim() || t.org.roles.owner,
     task: task.title,
