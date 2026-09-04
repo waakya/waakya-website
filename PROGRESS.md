@@ -13,7 +13,7 @@ the CLAUDE.md §7 "not generated" checklist, then a commit.
 | 0 | Theme, fonts, design-system primitives | ✅ done |
 | 1 | Supabase clients + email-OTP auth + login | ✅ done |
 | 2 | Org onboarding, team invite, RLS, i18n | ✅ done |
-| 3 | Create task (Confirm card) + task lists | ⬜ |
+| 3 | Create task (Confirm card) + task lists | ✅ done |
 | 4 | Task detail + state machine + stepper/clock + thread | ⬜ |
 | 5 | SLA reminders + escalation + notifications | ⬜ |
 | 6 | Proof of completion | ⬜ |
@@ -205,3 +205,56 @@ columns.
   reader should hear "link".
 - `/login?next=` accepts same-site paths only, so an invite link cannot be
   rewritten to point somewhere else.
+
+---
+
+## Slice 3 — Create task (Confirm card) + task lists ✅
+
+**Reordered on purpose.** `BUILD_STEPS` puts the state machine in Slice 4, but
+`createTask` has to write `created → delivered` into `task_events` and the
+Confirm card has to do deadline maths, so `lib/tasks` was built here in full
+and unit-tested. Slice 4 builds the UI on top of it rather than the logic.
+
+**Built**
+
+- **`lib/tasks/state-machine.ts`** — pure. The six-step ladder, plus the three
+  exceptions as owner decision 5 specifies: `escalated` is reachable from any
+  active state before `done` and can resume (nothing is a dead end, and Late is
+  explicitly never one); `reassigned` is recorded as an event but *settles* to
+  `delivered` so the clocks restart for the new person; `cancelled` is terminal.
+  `transition()` returns both what the row becomes and what the audit trail
+  says, which differ only for a reassignment.
+- **`lib/tasks/sla.ts`** — two clocks, Neel → Amber at 50% → Laal at 90% or
+  breach, with a met clock stopping where it stopped and turning green.
+  Reminders are absolute instants, not recomputed percentages, so a job that
+  runs late still owes the earlier reminder instead of skipping it.
+- **`lib/tasks/time.ts`** — everything in Asia/Kolkata, with the offset
+  measured rather than assumed, and Latin digits pinned via `-u-nu-latn`.
+- **`lib/tasks/deadlines.ts`** — the three chips. "Aaj 5:00 pm" rolls to
+  tomorrow once 5 pm has passed, because a deadline in the past is a trap.
+- **`lib/tasks/present.ts`** — the glyph-or-chip decision and the meta line, as
+  a pure function. Order: Cancelled, Late, Escalated, Dekha nahi, Verify baaki,
+  then the glyph. The meta line always states the state in words.
+- **`lib/tasks/create.ts`** — `createTask()`, the single entry point. It takes
+  a plain object and is deliberately not wired into a form, so a voice
+  transcript can call it unchanged. Writes the task as `delivered`, records
+  both `created` and `delivered` events, and notifies the assignee.
+- **`lib/notify`** — `notify(message, channels)` with in-app and email
+  implementations behind one `NotifyChannel` interface; WhatsApp is a third
+  entry and no caller changes. Channels are independent: a failing email never
+  loses the in-app record. Copy is the munshi's, name before verb.
+- **Migrations** `0005` (proof_required, delivered_at, started_at,
+  cancelled_at, two indexes), `0006` (a partial unique index on
+  `notifications.dedupe_key`, so a retried reminder cannot double-send), `0007`
+  (`org_member_email()` — an RPC rather than a `profiles.email` column, so a
+  colleague's address does not fall out of every profile read).
+- **Screens** — the Confirm card at `/naya` (six rows, sheets for the two that
+  need typing, `Bhejo` the only primary); the owner's day and the staff My
+  Tasks list, one route branching on role.
+
+**Gate:** lint ✅ · typecheck ✅ · build ✅ · Vitest **110/110** ✅ · Playwright 20/20 ✅
+
+**Deviation on purpose.** The Confirm card has no "Aapki awaaz" row and no
+"Phir se bolo": there is no voice in v1, and a player for audio that does not
+exist would be a lie. Both return in the same slot with voice capture. The
+mic's place and prominence on the dashboard is held by "Naya kaam" (D-10).

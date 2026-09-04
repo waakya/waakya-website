@@ -92,6 +92,53 @@ export interface Dictionary {
     high: string;
     urgent: string;
   };
+  /** Creating a task, and the Confirm card. */
+  create: {
+    newTask: string;
+    confirmTitle: string;
+    kisko: string;
+    kya: string;
+    kabTak: string;
+    priorityLabel: string;
+    proof: string;
+    proofOn: string;
+    proofOff: string;
+    note: string;
+    notePlaceholder: string;
+    titlePlaceholder: string;
+    detailsPlaceholder: string;
+    choosePerson: string;
+    chooseTime: string;
+    customTime: string;
+    todayEvening: string;
+    oneHour: string;
+    tomorrowMorning: string;
+    ackLabel: string;
+    ackHelp: string;
+    sent: (name: string) => string;
+    notChosen: string;
+  };
+  /** The task lists. */
+  lists: {
+    /** The staff screen's own title. */
+    mereKaam: string;
+    /** The owner's inbox section — work that needs a decision. */
+    aapkeLiye: string;
+    aajHeading: string;
+    naya: string;
+    late: string;
+    checklist: string;
+    hoGayaSection: string;
+    nothingToday: string;
+    allDone: string;
+    noTasks: string;
+    noTasksHelp: string;
+    bheje: string;
+    dekhe: string;
+    hoGaye: string;
+    verifiedCount: string;
+    completionRate: string;
+  };
   /** Org setup, the team screen and the invite flow. */
   org: {
     setupTitle: string;
@@ -243,6 +290,49 @@ export const dictionaries: Record<Locale, Dictionary> = {
       metIn: (text) => `देखा ${text} में`,
     },
     priority: { low: "कम", normal: "नॉर्मल", high: "ज़रूरी", urgent: "अर्जेंट" },
+    create: {
+      newTask: "नया काम",
+      confirmTitle: "यह भेजें?",
+      kisko: "किसको",
+      kya: "क्या",
+      kabTak: "कब तक",
+      priorityLabel: "ज़रूरी",
+      proof: "प्रूफ़",
+      proofOn: "फ़ोटो चाहिए",
+      proofOff: "ज़रूरत नहीं",
+      note: "नोट",
+      notePlaceholder: "जैसे: क्लाइंट कल आ रहा है",
+      titlePlaceholder: "जैसे: सेक्टर 62 की फ़ोटो",
+      detailsPlaceholder: "और कुछ बताना हो तो लिखिए",
+      choosePerson: "किसको भेजना है?",
+      chooseTime: "कब तक?",
+      customTime: "समय चुनें",
+      todayEvening: "आज",
+      oneHour: "1 घंटा",
+      tomorrowMorning: "कल सुबह",
+      ackLabel: "देखने का समय",
+      ackHelp: "{n} मिनट में न देखा तो आपको बताएँगे।",
+      sent: (name) => `${name} को भेज दिया`,
+      notChosen: "चुनें",
+    },
+    lists: {
+      mereKaam: "मेरे काम",
+      aapkeLiye: "आपके लिए",
+      aajHeading: "आज",
+      naya: "नया",
+      late: "लेट",
+      checklist: "चेकलिस्ट",
+      hoGayaSection: "हो गया",
+      nothingToday: "आज का सब हो गया",
+      allDone: "बढ़िया",
+      noTasks: "अभी कोई काम नहीं",
+      noTasksHelp: "नया काम भेजने के लिए नीचे दबाइए।",
+      bheje: "भेजे",
+      dekhe: "देखे",
+      hoGaye: "हो गए",
+      verifiedCount: "वेरिफ़ाई",
+      completionRate: "काम पूरा",
+    },
     org: {
       setupTitle: "अपना बिज़नेस बनाएँ",
       setupSubtitle: "नाम डालिए। स्टाफ़ को बाद में बुला सकते हैं।",
@@ -383,6 +473,49 @@ export const dictionaries: Record<Locale, Dictionary> = {
       metIn: (text) => `Dekha ${text} mein`,
     },
     priority: { low: "Kam", normal: "Normal", high: "Zaroori", urgent: "Urgent" },
+    create: {
+      newTask: "Naya kaam",
+      confirmTitle: "Yeh bhejein?",
+      kisko: "Kisko",
+      kya: "Kya",
+      kabTak: "Kab tak",
+      priorityLabel: "Priority",
+      proof: "Proof",
+      proofOn: "Photo chahiye",
+      proofOff: "Zaroorat nahi",
+      note: "Note",
+      notePlaceholder: "Jaise: client kal aa raha hai",
+      titlePlaceholder: "Jaise: Sector 62 ki photo",
+      detailsPlaceholder: "Aur kuch batana ho to likhiye",
+      choosePerson: "Kisko bhejna hai?",
+      chooseTime: "Kab tak?",
+      customTime: "Samay chuniye",
+      todayEvening: "Aaj",
+      oneHour: "1 ghanta",
+      tomorrowMorning: "Kal subah",
+      ackLabel: "Dekhne ka samay",
+      ackHelp: "{n} minute mein na dekha to aapko batayenge.",
+      sent: (name) => `${name} ko bhej diya`,
+      notChosen: "Chuniye",
+    },
+    lists: {
+      mereKaam: "Mere kaam",
+      aapkeLiye: "Aapke liye",
+      aajHeading: "Aaj",
+      naya: "Naya",
+      late: "Late",
+      checklist: "Checklist",
+      hoGayaSection: "Ho gaya",
+      nothingToday: "Aaj ka sab ho gaya",
+      allDone: "Badhiya",
+      noTasks: "Abhi koi kaam nahi",
+      noTasksHelp: "Naya kaam bhejne ke liye neeche dabaiye.",
+      bheje: "Bheje",
+      dekhe: "Dekhe",
+      hoGaye: "Ho gaye",
+      verifiedCount: "Verified",
+      completionRate: "Kaam poora",
+    },
     org: {
       setupTitle: "Apna business banayein",
       setupSubtitle: "Naam daaliye. Staff ko baad mein bula sakte hain.",
@@ -523,6 +656,49 @@ export const dictionaries: Record<Locale, Dictionary> = {
       metIn: (text) => `Seen in ${text}`,
     },
     priority: { low: "Low", normal: "Normal", high: "High", urgent: "Urgent" },
+    create: {
+      newTask: "New task",
+      confirmTitle: "Send this?",
+      kisko: "Who",
+      kya: "What",
+      kabTak: "By when",
+      priorityLabel: "Priority",
+      proof: "Proof",
+      proofOn: "Photo needed",
+      proofOff: "Not needed",
+      note: "Note",
+      notePlaceholder: "For example: the client comes tomorrow",
+      titlePlaceholder: "For example: photos of the Sector 62 flat",
+      detailsPlaceholder: "Anything else worth saying",
+      choosePerson: "Who is this for?",
+      chooseTime: "By when?",
+      customTime: "Pick a time",
+      todayEvening: "Today",
+      oneHour: "1 hour",
+      tomorrowMorning: "Tomorrow morning",
+      ackLabel: "Time to acknowledge",
+      ackHelp: "If it is not seen in {n} minutes, you will be told.",
+      sent: (name) => `Sent to ${name}`,
+      notChosen: "Choose",
+    },
+    lists: {
+      mereKaam: "My tasks",
+      aapkeLiye: "Needs you",
+      aajHeading: "Today",
+      naya: "New",
+      late: "Late",
+      checklist: "Checklist",
+      hoGayaSection: "Done",
+      nothingToday: "Everything for today is done",
+      allDone: "Good",
+      noTasks: "No work yet",
+      noTasksHelp: "Press below to send new work.",
+      bheje: "Sent",
+      dekhe: "Seen",
+      hoGaye: "Done",
+      verifiedCount: "Verified",
+      completionRate: "Work done",
+    },
     org: {
       setupTitle: "Create your business",
       setupSubtitle: "Enter the name. You can invite staff afterwards.",

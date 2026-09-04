@@ -1,25 +1,44 @@
 import type { Metadata } from "next";
 import { requireOrg, canManage } from "@/lib/auth/session";
-import { getDictionary } from "@/lib/i18n";
-import { BottomNav } from "@/components/vaakya/bottom-nav";
+import { getMyTasks, getOrgTasks } from "@/lib/tasks/queries";
+import { OwnerToday } from "./owner-today";
+import { StaffToday } from "./staff-today";
 
 export const metadata: Metadata = { title: "Aaj" };
 
-// Slice 3 puts the task lists here; Slice 7 finishes the owner dashboard.
+/**
+ * One route, two screens. An owner sees the business; a staff member sees
+ * their own work, on a quieter screen with one thing to do (D-09).
+ */
 export default async function AajPage() {
   const viewer = await requireOrg();
-  const t = getDictionary(viewer.org.language);
+  const now = new Date();
 
-  return (
-    <div className="flex min-h-dvh flex-col">
-      <main className="flex-1 p-4">
-        <h1 className="text-[24px] leading-[30px] font-bold">{t.time.aaj}</h1>
-        <p className="mt-1 text-[15px] text-ink-500">{viewer.org.name}</p>
-      </main>
-      <BottomNav
+  if (canManage(viewer.role)) {
+    const tasks = await getOrgTasks(viewer.org.id, viewer.org.ackMinutes);
+    return (
+      <OwnerToday
+        tasks={tasks}
         locale={viewer.org.language}
-        variant={canManage(viewer.role) ? "owner" : "staff"}
+        orgName={viewer.org.name}
+        ownerName={viewer.fullName}
+        nowIso={now.toISOString()}
       />
-    </div>
+    );
+  }
+
+  const tasks = await getMyTasks(
+    viewer.org.id,
+    viewer.userId,
+    viewer.org.ackMinutes,
+  );
+  return (
+    <StaffToday
+      tasks={tasks}
+      locale={viewer.org.language}
+      orgName={viewer.org.name}
+      staffName={viewer.fullName}
+      nowIso={now.toISOString()}
+    />
   );
 }

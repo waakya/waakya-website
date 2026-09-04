@@ -140,6 +140,7 @@ export type Database = {
         Row: {
           body: string | null;
           created_at: string;
+          dedupe_key: string | null;
           event: string;
           id: string;
           org_id: string;
@@ -150,6 +151,7 @@ export type Database = {
         Insert: {
           body?: string | null;
           created_at?: string;
+          dedupe_key?: string | null;
           event: string;
           id?: string;
           org_id: string;
@@ -160,6 +162,7 @@ export type Database = {
         Update: {
           body?: string | null;
           created_at?: string;
+          dedupe_key?: string | null;
           event?: string;
           id?: string;
           org_id?: string;
@@ -385,14 +388,18 @@ export type Database = {
           ack_minutes: number | null;
           acknowledged_at: string | null;
           assigned_to: string | null;
+          cancelled_at: string | null;
           created_at: string;
           created_by: string;
+          delivered_at: string | null;
           details: string | null;
           done_at: string | null;
           due_at: string | null;
           id: string;
           org_id: string;
           priority: Database["public"]["Enums"]["task_priority"];
+          proof_required: boolean;
+          started_at: string | null;
           state: Database["public"]["Enums"]["task_state"];
           title: string;
           updated_at: string;
@@ -403,14 +410,18 @@ export type Database = {
           ack_minutes?: number | null;
           acknowledged_at?: string | null;
           assigned_to?: string | null;
+          cancelled_at?: string | null;
           created_at?: string;
           created_by: string;
+          delivered_at?: string | null;
           details?: string | null;
           done_at?: string | null;
           due_at?: string | null;
           id?: string;
           org_id: string;
           priority?: Database["public"]["Enums"]["task_priority"];
+          proof_required?: boolean;
+          started_at?: string | null;
           state?: Database["public"]["Enums"]["task_state"];
           title: string;
           updated_at?: string;
@@ -421,14 +432,18 @@ export type Database = {
           ack_minutes?: number | null;
           acknowledged_at?: string | null;
           assigned_to?: string | null;
+          cancelled_at?: string | null;
           created_at?: string;
           created_by?: string;
+          delivered_at?: string | null;
           details?: string | null;
           done_at?: string | null;
           due_at?: string | null;
           id?: string;
           org_id?: string;
           priority?: Database["public"]["Enums"]["task_priority"];
+          proof_required?: boolean;
+          started_at?: string | null;
           state?: Database["public"]["Enums"]["task_state"];
           title?: string;
           updated_at?: string;
@@ -463,6 +478,7 @@ export type Database = {
           already_accepted: boolean;
         }[];
       };
+      org_member_email: { Args: { p_user: string }; Returns: string | null };
       shares_org_with: { Args: { p_user: string }; Returns: boolean };
       record_otp_request: {
         Args: {
