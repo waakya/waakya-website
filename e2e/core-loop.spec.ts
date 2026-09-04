@@ -160,13 +160,13 @@ test("the assignee can decline, and it lands with the owner rather than dying", 
   });
   await openTask(staff, title);
   await staff.getByRole("button", { name: "Nahi ho payega" }).first().click();
-  await staff
-    .getByRole("textbox", { name: "Kaaran" })
-    .fill("gaadi kharab hai");
-  await staff
-    .getByRole("button", { name: "Nahi ho payega" })
-    .last()
-    .click();
+
+  // Wait for the sheet to finish opening. Clicking through its enter
+  // transition lands on where the button is about to be, not where it is.
+  const sheet = staff.getByRole("dialog");
+  await expect(sheet.getByText("Nahi ho payega?")).toBeVisible();
+  await sheet.getByRole("textbox", { name: "Kaaran" }).fill("gaadi kharab hai");
+  await sheet.getByRole("button", { name: "Nahi ho payega" }).click();
   await expect(staff.getByRole("list", { name: "Timeline" })).toContainText(
     "Aap tak aaya",
   );

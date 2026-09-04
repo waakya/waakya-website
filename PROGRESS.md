@@ -19,7 +19,7 @@ the CLAUDE.md §7 "not generated" checklist, then a commit.
 | 6 | Proof of completion | ✅ done |
 | 7 | Owner dashboard polish + completion rate | ✅ done |
 | 8 | Recurring checklists | ✅ done |
-| 9 | Ship | ⬜ |
+| 9 | Ship | ✅ done |
 
 ## Decisions taken before the build (confirmed by the owner)
 
@@ -492,3 +492,41 @@ itself, the app is part of opening the shop rather than something to remember.
 The e2e sets a routine up through the UI, runs the job, checks a second run
 creates nothing, walks one generated task down the ordinary ladder, and watches
 the card's progress move from 0/2 to 1/2.
+
+---
+
+## Slice 9 — Ship ✅
+
+**Built**
+
+- **The DPDP privacy notice**, readable signed-out and in all three languages,
+  linked from the consent line it belongs to. It lists what is kept, why, for
+  how long, who it is shared with, and the four rights the Act gives.
+- **PWA**: manifest, maskable icons, `theme_color` matching the owner's header,
+  and a service worker that **deliberately caches almost nothing** — offline
+  sync is out of scope, and a worker serving a stale task list would be worse
+  than none, because the whole product is whether what is on screen is true.
+- **README** — environment, migrations in order, how to test, how the SLA job
+  is wired, and the handful of things worth knowing before changing anything.
+- **`scripts/reset-demo.mjs`** — seeds one realistic day.
+- **Two database-linter findings fixed** (`0012`, `0013`): `search_path` pinned
+  on the last two functions; `anon` revoked from `create_org`, `accept_invite`
+  and `org_member_email` (Supabase grants EXECUTE to `anon` by default, so the
+  earlier `revoke ... from public` had not covered it); `auth.uid()` wrapped in
+  a scalar subquery so policies stop re-evaluating it per row; the two
+  overlapping `profiles` SELECT policies merged into the one rule they were;
+  and covering indexes on the foreign keys that cascade.
+- `e2e/rls.spec.ts` now asserts the **pre-auth surface**: exactly two functions
+  are callable without a session, and the other three are refused.
+
+**Gate:** lint ✅ · typecheck ✅ · build ✅ · Vitest **193/193** ✅ · Playwright **46/46** ✅
+
+**A bug in my own tooling, worth recording.** `reset-demo.mjs` reported
+deletions it had not made: there is no DELETE policy on `tasks` — by design, a
+task is *cancelled*, never removed — so PostgREST returned success having
+matched no rows. The script now counts the debris and prints the SQL to run
+with elevated access instead of claiming to have cleaned it. The same class of
+mistake as the SLA summary that counted duplicates as sends.
+
+See **REPORT.md** for what works, what I could not verify, and the go-live
+checklist.

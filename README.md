@@ -1,36 +1,159 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Vaakya
 
-## Getting Started
+**Bolo. Ho jayega.** — an Indian SMB owner assigns work to their team, and the
+work comes back with a record: every task has a deadline, has to be
+acknowledged, and escalates to the owner if it is not.
 
-First, run the development server:
+The brand and the screens were designed before the code. `CLAUDE.md` is the
+spec, `Vaakya_Design_Direction_v1.md` is the reasoning, and
+`vaakya-brand-kit/screens/*.png` are the screens this implements.
+
+---
+
+## Running it
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+cp .env.example .env.local     # then fill it in — see below
+npm run dev                    # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+`/preview` is the style tile: every primitive, all five ticks states, the whole
+chip vocabulary. It is the fastest way to see whether a change broke the kit.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Environment
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Variable | Needed for | Without it |
+|---|---|---|
+| `NEXT_PUBLIC_SUPABASE_URL` | Everything | The app cannot start |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Everything | The app cannot start |
+| `SUPABASE_SERVICE_ROLE_KEY` | The SLA job across every org | An owner can still run a tick for their own business |
+| `CRON_SECRET` | The scheduler calling `/api/cron/sla` | Same as above |
+| `RESEND_API_KEY`, `RESEND_FROM` | Email notifications | In-app notifications still work; the email is logged, not sent |
+| `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET` | Proof photos on Cloudflare R2 | Falls back to a private Supabase Storage bucket (1 GB ceiling) |
+| `NEXT_PUBLIC_SITE_URL` | Invite and notification links | Links point at `localhost` |
+| `ALLOW_TEST_LOGIN` | The Playwright e2e only | The e2e cannot sign in. **Never set this in production** |
 
-## Learn More
+`.env.local` is gitignored and must stay that way.
 
-To learn more about Next.js, take a look at the following resources:
+## Database
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Every change is a migration in `supabase/migrations`, applied in order. Never
+edit the schema by hand.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+0001_init                    tables, RLS on all of them, scoped by org membership
+0002_auth_rate_limit         OTP rate limiting; search_path pinned on the helpers
+0003_orgs_invites            invites, create_org(), accept_invite(), and the
+                             membership policy fix (see below)
+0004_invite_preview_language the invitee's first screen speaks the org's language
+0005_task_fields             proof_required, delivered_at, started_at, cancelled_at
+0006_notification_dedupe     a unique key so a retried reminder cannot double-send
+0007_member_email            org_member_email(), an RPC rather than a column
+0008_sla_idempotency         one escalation per task per reason, ever
+0009_realtime_notifications  the inbox over Supabase Realtime
+0010_proof_storage           the private `proofs` bucket and its policies
+0011_checklists              daily routines
+```
 
-## Deploy on Vercel
+> **0003 fixes a real hole.** The policy shipped in `0001` allowed
+> `insert into memberships … with check (… or user_id = auth.uid())`, which let
+> any signed-in user add themselves to any org and read its work. Joining now
+> only happens through `create_org()` or `accept_invite()`. `e2e/rls.spec.ts`
+> proves it against the live database.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+For a fresh project: run each migration in order, then `supabase/seed-e2e.sql`
+if you want the test users.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Testing
+
+```bash
+npm run lint        # eslint (next lint was removed in Next 16)
+npm run typecheck   # tsc --noEmit
+npm run build
+npm run test        # Vitest — the pure logic
+npm run e2e         # Playwright — the real app against the real database
+npm run gate        # all five, in order
+```
+
+**Vitest** covers what must never quietly drift: the task state machine, the
+SLA maths, Asia/Kolkata's edge cases, the notify fan-out, the checklist
+planner, and the brand rules themselves — Haldi appears on exactly one ticks
+state and on no other token in the tree, the three dictionaries share one key
+shape, and the fixed vocabulary admits no synonyms.
+
+**Playwright** runs against `next dev` and a real Supabase project, including
+the whole core path across two browser contexts: create → acknowledge → done →
+verify. It signs in through `/api/test-login`, which 404s unless `NODE_ENV` is
+not production **and** `ALLOW_TEST_LOGIN` is exactly `"true"`.
+
+`node --env-file=.env.local scripts/reset-demo.mjs` clears the e2e debris and
+seeds one realistic day. It only deletes tasks whose title ends in an epoch
+timestamp — the shape every generated title has.
+
+## The SLA job
+
+The differentiator. Reminders reach the assignee at 50% and 90% of each window;
+a breached clock escalates to the owner.
+
+- `lib/sla/engine.ts` decides *what* should be sent. It is pure: no database,
+  no network, no `Date.now()`, so every rule is a test.
+- `lib/sla/run.ts` does it, idempotently. Escalations are unique per task per
+  reason; every notification carries a key that never changes.
+- `POST /api/cron/sla` with `Authorization: Bearer $CRON_SECRET` runs every org
+  through the service-role client. A signed-in **owner** hitting the same route
+  runs their own org through their own session, which is how the e2e exercises
+  it and how the inbox's "Abhi jaanchein" button works. Staff and strangers get
+  a 404.
+- `supabase/functions/sla-tick` is the scheduler. It holds no logic — the rule
+  that decides whether somebody is late should exist once.
+
+```bash
+supabase functions deploy sla-tick --no-verify-jwt
+supabase secrets set VAAKYA_APP_URL=https://waakya.com CRON_SECRET=<secret>
+# then schedule it every 5 minutes
+```
+
+## Structure
+
+```
+app/(auth)/          login
+app/(app)/           the signed-in app: aaj, kaam/[id], naya, staff, hafta,
+                     pehle, khabar, checklists, settings, setup
+app/join/[token]     the invite screen — outside (app), so it works signed out
+app/api/cron/sla     one tick of the SLA job
+components/ui/       primitives, themed to the kit (not shadcn defaults)
+components/vaakya/   Ticks, Stepper, ClockBars, BottomNav, Bell, TaskRow, Mark
+lib/tasks/           the state machine, SLA maths, presentation — all pure
+lib/sla/             the reminder and escalation engine
+lib/notify/          in-app and email behind one channel interface
+lib/checklists/      daily routines
+lib/i18n/            हिंदी · Hinglish · English
+supabase/migrations/ every schema change, in order
+```
+
+## Things worth knowing before changing anything
+
+- **Haldi has exactly one job**: the tick that means done and waiting for the
+  owner. It is never a button, a chip or a highlight. `lib/brand/rules.test.ts`
+  fails the build if that changes.
+- **A row shows the ticks glyph or an exception chip, never both**, and always
+  states its state in words as well, so nothing depends on colour alone.
+- **The dictionary holds formatter functions**, which cannot cross the
+  server/client boundary. Client components take a `locale` and call
+  `getDictionary()` themselves; the dictionary is never a prop.
+- **The owner cannot acknowledge or accept on a staff member's behalf.** The
+  whole product rests on the staff member having said so themselves.
+- **There is no voice input in v1.** `createTask()` takes a plain object and is
+  deliberately not wired into a form, so a transcript can call it unchanged.
+- Next 16: `params`/`searchParams`/`cookies()`/`headers()` are async,
+  `middleware.ts` is `proxy.ts`, and `next lint` is gone. When training data
+  and `node_modules/next/dist/docs/` disagree, the installed docs win.
+
+## Deploying
+
+Vercel, with the environment above. Vercel **Hobby forbids commercial use** —
+move to Pro before charging anyone (STACK.md). Point `waakya.com` at it, set
+`NEXT_PUBLIC_SITE_URL` to the real origin, and schedule the Edge Function.
+
+See `BLOCKERS.md` for what is still waiting on an account or a key.

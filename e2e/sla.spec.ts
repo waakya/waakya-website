@@ -96,15 +96,19 @@ test("running the job again sends nothing twice", async ({ page }) => {
 
   const first = await (await page.request.post("/api/cron/sla")).json();
   const second = await (await page.request.post("/api/cron/sla")).json();
-  const third = await (await page.request.post("/api/cron/sla")).json();
 
-  // By the third pass there is nothing left owed, and everything the job
-  // still sees is reported as already sent rather than sent again.
-  expect(third.summary.remindersSent).toBe(0);
-  expect(third.summary.escalationsRaised).toBe(0);
-  expect(third.summary.errors).toEqual([]);
-  expect(second.summary.alreadySent).toBeGreaterThan(0);
   expect(first.summary.errors).toEqual([]);
+  expect(second.summary.errors).toEqual([]);
+
+  // The job recognises what it has already sent rather than rediscovering it
+  // through failed inserts.
+  expect(second.summary.alreadySent).toBeGreaterThan(0);
+
+  // Nothing the first pass sent is sent again by the second. Asserting the
+  // second pass sends *nothing* would be asserting that no clock crossed 50%
+  // in the seconds between the two, which is a fact about the wall clock
+  // rather than about idempotency.
+  expect(second.summary.escalationsRaised).toBe(0);
 
   // And the inbox has no duplicate rows.
   const supabase = await asOwner();

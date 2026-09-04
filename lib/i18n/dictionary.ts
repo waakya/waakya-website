@@ -92,6 +92,24 @@ export interface Dictionary {
     high: string;
     urgent: string;
   };
+  /** The privacy notice. */
+  privacy: {
+    title: string;
+    updated: string;
+    intro: string;
+    whatHeading: string;
+    what: string[];
+    whyHeading: string;
+    why: string[];
+    keepHeading: string;
+    keep: string;
+    shareHeading: string;
+    share: string;
+    rightsHeading: string;
+    rights: string[];
+    contactHeading: string;
+    contact: string;
+  };
   /** Daily routines. */
   checklists: {
     title: string;
@@ -376,6 +394,37 @@ export const dictionaries: Record<Locale, Dictionary> = {
       metIn: (text) => `देखा ${text} में`,
     },
     priority: { low: "कम", normal: "नॉर्मल", high: "ज़रूरी", urgent: "अर्जेंट" },
+    privacy: {
+      title: "प्राइवेसी पॉलिसी",
+      updated: "आखिरी बदलाव: 4 सितंबर 2026",
+      intro: "वाक्य सिर्फ़ वही जानकारी रखता है जो आपका काम चलाने के लिए ज़रूरी है। इससे ज़्यादा कुछ नहीं।",
+      whatHeading: "हम क्या रखते हैं",
+      what: [
+        "आपका नाम, ईमेल और फ़ोन नंबर — ताकि आप साइन इन कर सकें और आपका मालिक आपको पहचान सके।",
+        "आपके बिज़नेस का नाम और उसमें कौन-कौन है।",
+        "काम: क्या भेजा गया, किसको, कब तक, और हर कदम कब हुआ।",
+        "प्रूफ़: जो फ़ोटो, आवाज़ या लिखा हुआ आप भेजते हैं।",
+      ],
+      whyHeading: "क्यों रखते हैं",
+      why: [
+        "काम भेजने, देखने और पूरा करने के लिए।",
+        "समय पर याद दिलाने और मालिक को बताने के लिए कि क्या बाकी है।",
+        "यह रिकॉर्ड रखने के लिए कि किसने क्या और कब किया।",
+      ],
+      keepHeading: "कितने समय तक",
+      keep: "जब तक आपका बिज़नेस वाक्य इस्तेमाल करता है। बिज़नेस बंद करने पर मालिक के कहने पर सब हटा दिया जाता है।",
+      shareHeading: "किसके साथ बाँटते हैं",
+      share: "किसी के साथ नहीं बेचा जाता। आपका डेटा सिर्फ़ आपके बिज़नेस के लोग देख सकते हैं। ईमेल भेजने और डेटा रखने के लिए हम भरोसेमंद सर्विस इस्तेमाल करते हैं, और उन्हें भी उतना ही मिलता है जितना ज़रूरी है।",
+      rightsHeading: "आपके हक़ (DPDP Act, 2023)",
+      rights: [
+        "अपना डेटा देखने का हक़।",
+        "गलत जानकारी ठीक करवाने का हक़।",
+        "डेटा हटवाने का हक़, जहाँ कानून इजाज़त देता है।",
+        "शिकायत करने का हक़।",
+      ],
+      contactHeading: "संपर्क",
+      contact: "किसी भी सवाल के लिए अपने बिज़नेस के मालिक से या privacy@waakya.com पर लिखें।",
+    },
     checklists: {
       title: "रोज़ का काम",
       subtitle: "हर दिन अपने आप भेजा जाएगा।",
@@ -641,6 +690,37 @@ export const dictionaries: Record<Locale, Dictionary> = {
       metIn: (text) => `Dekha ${text} mein`,
     },
     priority: { low: "Kam", normal: "Normal", high: "Zaroori", urgent: "Urgent" },
+    privacy: {
+      title: "Privacy Policy",
+      updated: "Aakhri badlaav: 4 September 2026",
+      intro: "Vaakya sirf wahi jaankari rakhta hai jo aapka kaam chalane ke liye zaroori hai. Isse zyada kuch nahi.",
+      whatHeading: "Hum kya rakhte hain",
+      what: [
+        "Aapka naam, email aur phone number — taaki aap sign in kar sakein aur aapka owner aapko pehchan sake.",
+        "Aapke business ka naam aur usmein kaun-kaun hai.",
+        "Kaam: kya bheja gaya, kisko, kab tak, aur har kadam kab hua.",
+        "Proof: jo photo, awaaz ya likha hua aap bhejte hain.",
+      ],
+      whyHeading: "Kyun rakhte hain",
+      why: [
+        "Kaam bhejne, dekhne aur poora karne ke liye.",
+        "Samay par yaad dilane aur owner ko batane ke liye ki kya baaki hai.",
+        "Yeh record rakhne ke liye ki kisne kya aur kab kiya.",
+      ],
+      keepHeading: "Kitne samay tak",
+      keep: "Jab tak aapka business Vaakya istemaal karta hai. Business band karne par owner ke kehne par sab hata diya jaata hai.",
+      shareHeading: "Kiske saath baantte hain",
+      share: "Kisi ke saath becha nahi jaata. Aapka data sirf aapke business ke log dekh sakte hain. Email bhejne aur data rakhne ke liye hum bharosemand service istemaal karte hain, aur unhein bhi utna hi milta hai jitna zaroori hai.",
+      rightsHeading: "Aapke haq (DPDP Act, 2023)",
+      rights: [
+        "Apna data dekhne ka haq.",
+        "Galat jaankari theek karvane ka haq.",
+        "Data hatvane ka haq, jahaan kanoon ijaazat deta hai.",
+        "Shikayat karne ka haq.",
+      ],
+      contactHeading: "Sampark",
+      contact: "Kisi bhi sawaal ke liye apne business ke owner se ya privacy@waakya.com par likhein.",
+    },
     checklists: {
       title: "Roz ka kaam",
       subtitle: "Har din apne aap bheja jayega.",
@@ -906,6 +986,37 @@ export const dictionaries: Record<Locale, Dictionary> = {
       metIn: (text) => `Seen in ${text}`,
     },
     priority: { low: "Low", normal: "Normal", high: "High", urgent: "Urgent" },
+    privacy: {
+      title: "Privacy Policy",
+      updated: "Last updated: 4 September 2026",
+      intro: "Vaakya keeps only the information needed to run your work. Nothing more.",
+      whatHeading: "What we keep",
+      what: [
+        "Your name, email and phone number, so you can sign in and your owner can recognise you.",
+        "Your business name and who is in it.",
+        "Work: what was sent, to whom, by when, and when each step happened.",
+        "Proof: the photos, voice notes or text you send.",
+      ],
+      whyHeading: "Why we keep it",
+      why: [
+        "To send work, see it and finish it.",
+        "To remind on time, and to tell the owner what is still outstanding.",
+        "To keep a record of who did what, and when.",
+      ],
+      keepHeading: "How long",
+      keep: "For as long as your business uses Vaakya. When a business closes, everything is deleted at the owner's request.",
+      shareHeading: "Who we share it with",
+      share: "It is never sold. Only people in your business can see your data. We use trusted services to send email and store data, and they receive only what is necessary.",
+      rightsHeading: "Your rights (DPDP Act, 2023)",
+      rights: [
+        "The right to see your data.",
+        "The right to have wrong information corrected.",
+        "The right to have data erased, where the law allows.",
+        "The right to complain.",
+      ],
+      contactHeading: "Contact",
+      contact: "For any question, ask your business owner or write to privacy@waakya.com.",
+    },
     checklists: {
       title: "Daily routine",
       subtitle: "Sent automatically, every day.",

@@ -128,3 +128,34 @@ test("an invite preview leaks nothing but the business and invitee name", async 
     "org_name",
   ]);
 });
+
+test("the pre-auth surface is exactly two functions, and no more", async () => {
+  // Anonymous callers can reach PostgREST directly, so what they may run is
+  // part of the security boundary, not an implementation detail.
+  const anon = createClient<Database>(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    { auth: { persistSession: false, autoRefreshToken: false } },
+  );
+
+  // Allowed without a session, because sign-up and invites happen before one.
+  const preview = await anon.rpc("invite_preview", { p_token: "0".repeat(32) });
+  expect(preview.error).toBeNull();
+
+  const otp = await anon.rpc("record_otp_request", {
+    p_identifier_hash: "a".repeat(64),
+  });
+  expect(otp.error).toBeNull();
+
+  // Refused without a session.
+  const org = await anon.rpc("create_org", { p_name: "Sneaky", p_language: "en" });
+  expect(org.error).not.toBeNull();
+
+  const join = await anon.rpc("accept_invite", { p_token: "0".repeat(32) });
+  expect(join.error).not.toBeNull();
+
+  const email = await anon.rpc("org_member_email", {
+    p_user: "00000000-0000-4000-8000-000000000000",
+  });
+  expect(email.error).not.toBeNull();
+});
