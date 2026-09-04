@@ -22,6 +22,8 @@ export type ClockTone = "neel" | "amber" | "laal" | "hara";
 export interface Clock {
   /** 0 before it starts, 1 once the window is spent. */
   progress: number;
+  /** How long the clock has actually run — how long it took, once met. */
+  elapsedMs: number;
   /** Milliseconds left; negative once it is breached. */
   remainingMs: number;
   breached: boolean;
@@ -48,7 +50,13 @@ export function clock({ startedAt, endsAt, metAt, now }: ClockInput): Clock {
   const end = toMs(endsAt);
 
   if (start === null || end === null || end <= start) {
-    return { progress: 0, remainingMs: 0, breached: false, tone: "neel" };
+    return {
+      progress: 0,
+      elapsedMs: 0,
+      remainingMs: 0,
+      breached: false,
+      tone: "neel",
+    };
   }
 
   const met = toMs(metAt);
@@ -62,13 +70,20 @@ export function clock({ startedAt, endsAt, metAt, now }: ClockInput): Clock {
   if (met !== null) {
     return {
       progress,
+      elapsedMs: elapsed,
       remainingMs,
       breached,
       tone: breached ? "laal" : "hara",
     };
   }
 
-  return { progress, remainingMs, breached, tone: toneFor(progress, breached) };
+  return {
+    progress,
+    elapsedMs: elapsed,
+    remainingMs,
+    breached,
+    tone: toneFor(progress, breached),
+  };
 }
 
 export function toneFor(progress: number, breached: boolean): ClockTone {

@@ -14,7 +14,7 @@ the CLAUDE.md §7 "not generated" checklist, then a commit.
 | 1 | Supabase clients + email-OTP auth + login | ✅ done |
 | 2 | Org onboarding, team invite, RLS, i18n | ✅ done |
 | 3 | Create task (Confirm card) + task lists | ✅ done |
-| 4 | Task detail + state machine + stepper/clock + thread | ⬜ |
+| 4 | Task detail + state machine + stepper/clock + thread | ✅ done |
 | 5 | SLA reminders + escalation + notifications | ⬜ |
 | 6 | Proof of completion | ⬜ |
 | 7 | Owner dashboard polish + completion rate | ⬜ |
@@ -258,3 +258,61 @@ and unit-tested. Slice 4 builds the UI on top of it rather than the logic.
 "Phir se bolo": there is no voice in v1, and a player for audio that does not
 exist would be a lie. Both return in the same slot with voice capture. The
 mic's place and prominence on the dashboard is held by "Naya kaam" (D-10).
+
+---
+
+## Slice 4 — Task detail, transitions, stepper and thread ✅
+
+**Built**
+
+- **`lib/tasks/authz.ts`** — who may move a task, and where, as a pure function
+  separate from the state machine. A transition can be legal for the task and
+  still not be this person's to make. The assignee walks their own work down
+  the ladder and may decline; the owner verifies, sends back, reassigns and
+  cancels, and **cannot acknowledge or accept on the staff member's behalf** —
+  the whole product rests on the staff member having said so themselves.
+- **`lib/tasks/transition.ts`** — `moveTask()` checks three things in three
+  places: legal for the task, this person's to make, and the row is still in
+  the state the caller thought (`.eq("state", from)`), so two taps or two
+  devices cannot apply the same move twice. Every move writes a `task_events`
+  row and notifies the other side. `reassignTask()` restarts both clocks and
+  clears the previous person's progress. `changeDeadline()` records the moved
+  clock in the trail even though it is not a state change.
+- **`components/vaakya/stepper.tsx`** — the six steps and the two clock bars,
+  **the same component on both task detail screens** (D-06), with the bars as
+  real `progressbar` roles carrying `aria-valuetext`, so the clock is
+  announced, not just coloured.
+- **Owner task detail** (`screens/TaskOwner.png`): stepper and clocks first,
+  then the instruction, then the timeline, then five equal actions with Call
+  primary — and Verify promoted above them when the work is waiting on the
+  owner, which is the one moment they are the bottleneck.
+- **Staff task detail** (`screens/TaskStaff.png`): the owner's name above the
+  title, the deadline in a Neel band, **one 60px button**, two quieter ones,
+  and the line that says every step is on record.
+- **Reply thread** on `task_messages`, both sides timestamped.
+- `remindAction()` — "Yaad dilao" sends a real reminder and is deliberately
+  *not* a transition: nudging must never move a task or restart a clock.
+
+**Gate:** lint ✅ · typecheck ✅ · build ✅ · Vitest **130/130** ✅ · Playwright **24/24** ✅
+
+`e2e/core-loop.spec.ts` runs the whole path across two real browser contexts —
+create → acknowledge → accept → in progress → done → verify — plus a verified
+task refusing to move again, a decline landing with the owner rather than
+dying, and the thread recording both sides.
+
+**Two design decisions taken during the build**
+
+1. **"Dekh liya, ho jayega" is one tap and two facts.** `screens/TaskOwner.png`
+   shows *Dekha 10:05* and *Maana 10:05* at the same timestamp, which is
+   exactly what that button means: seen, and committed to. Two buttons with the
+   same words would have been a UI wart, so the action writes both events.
+   *Shuru kiya* moves to the secondary row, and going straight from accepted to
+   done stays legal — staff who just do the thing are not an error.
+2. **The bottom action bar is `fixed`, not `sticky`.** A sticky bar inside the
+   screen's flex column did not pin reliably under mobile emulation, leaving
+   the primary action below the fold. A primary action that can slip off-screen
+   is the one thing this screen cannot get wrong.
+
+**Bug found and fixed by the tests:** `created` and `delivered` are written
+together and both read "Bheja", so the timeline showed the same line twice.
+The trail keeps both rows; the reader sees one.

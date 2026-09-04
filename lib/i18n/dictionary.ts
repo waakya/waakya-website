@@ -92,6 +92,35 @@ export interface Dictionary {
     high: string;
     urgent: string;
   };
+  /** The task detail screens. */
+  detail: {
+    title: string;
+    newTaskTitle: string;
+    timeline: string;
+    thread: string;
+    threadPlaceholder: string;
+    noMessages: string;
+    sentBy: (name: string, time: string) => string;
+    sentAt: (time: string) => string;
+    remaining: (text: string) => string;
+    proofNeededHelp: string;
+    recordLine: string;
+    declineTitle: string;
+    declineHelp: string;
+    declineReason: string;
+    laterHelp: string;
+    reassignTitle: string;
+    deadlineTitle: string;
+    verifyDone: string;
+    sendBack: string;
+    cancelTitle: string;
+    cancelHelp: string;
+    cancelConfirm: string;
+    startWork: string;
+    reminderSent: string;
+    callNoNumber: string;
+    eventBy: (name: string, what: string) => string;
+  };
   /** Creating a task, and the Confirm card. */
   create: {
     newTask: string;
@@ -290,6 +319,34 @@ export const dictionaries: Record<Locale, Dictionary> = {
       metIn: (text) => `देखा ${text} में`,
     },
     priority: { low: "कम", normal: "नॉर्मल", high: "ज़रूरी", urgent: "अर्जेंट" },
+    detail: {
+      title: "काम",
+      newTaskTitle: "नया काम",
+      timeline: "टाइमलाइन",
+      thread: "बातचीत",
+      threadPlaceholder: "कुछ कहना हो तो लिखिए",
+      noMessages: "अभी कोई बात नहीं हुई",
+      sentBy: (name, time) => `${name} ने ${time} भेजा`,
+      sentAt: (time) => `${time} भेजा`,
+      remaining: (text) => `${text} बाकी`,
+      proofNeededHelp: "हो जाने पर फ़ोटो भेजनी होगी",
+      recordLine: "आपका हर कदम समय के साथ रिकॉर्ड होता है",
+      declineTitle: "नहीं हो पाएगा?",
+      declineHelp: "मालिक को बता देंगे। कारण लिखिए तो अच्छा रहेगा।",
+      declineReason: "कारण",
+      laterHelp: "ठीक है। यह काम आपकी लिस्ट में रहेगा।",
+      reassignTitle: "किसको दें?",
+      deadlineTitle: "नया समय",
+      verifyDone: "वेरिफ़ाई करें",
+      sendBack: "वापस भेजें",
+      cancelTitle: "काम कैंसिल करें?",
+      cancelHelp: "यह वापस नहीं होगा।",
+      cancelConfirm: "हाँ, कैंसिल करें",
+      startWork: "शुरू किया",
+      reminderSent: "याद दिला दिया",
+      callNoNumber: "इनका नंबर नहीं है",
+      eventBy: (name, what) => `${name} ने ${what}`,
+    },
     create: {
       newTask: "नया काम",
       confirmTitle: "यह भेजें?",
@@ -473,6 +530,34 @@ export const dictionaries: Record<Locale, Dictionary> = {
       metIn: (text) => `Dekha ${text} mein`,
     },
     priority: { low: "Kam", normal: "Normal", high: "Zaroori", urgent: "Urgent" },
+    detail: {
+      title: "Task",
+      newTaskTitle: "Naya kaam",
+      timeline: "Timeline",
+      thread: "Baat-cheet",
+      threadPlaceholder: "Kuch kehna ho to likhiye",
+      noMessages: "Abhi koi baat nahi hui",
+      sentBy: (name, time) => `${name} ne ${time} bheja`,
+      sentAt: (time) => `${time} bheja`,
+      remaining: (text) => `${text} baaki`,
+      proofNeededHelp: "Ho jaane par photo bhejni hogi",
+      recordLine: "Aapka har kadam samay ke saath record hota hai",
+      declineTitle: "Nahi ho payega?",
+      declineHelp: "Owner ko bata denge. Kaaran likhiye to achha rahega.",
+      declineReason: "Kaaran",
+      laterHelp: "Theek hai. Yeh kaam aapki list mein rahega.",
+      reassignTitle: "Kisko dein?",
+      deadlineTitle: "Naya samay",
+      verifyDone: "Verify karein",
+      sendBack: "Wapas bhejein",
+      cancelTitle: "Kaam cancel karein?",
+      cancelHelp: "Yeh wapas nahi hoga.",
+      cancelConfirm: "Haan, cancel karein",
+      startWork: "Shuru kiya",
+      reminderSent: "Yaad dila diya",
+      callNoNumber: "Inka number nahi hai",
+      eventBy: (name, what) => `${name} ne ${what}`,
+    },
     create: {
       newTask: "Naya kaam",
       confirmTitle: "Yeh bhejein?",
@@ -656,6 +741,34 @@ export const dictionaries: Record<Locale, Dictionary> = {
       metIn: (text) => `Seen in ${text}`,
     },
     priority: { low: "Low", normal: "Normal", high: "High", urgent: "Urgent" },
+    detail: {
+      title: "Task",
+      newTaskTitle: "New task",
+      timeline: "Timeline",
+      thread: "Messages",
+      threadPlaceholder: "Write something if you need to",
+      noMessages: "Nothing said yet",
+      sentBy: (name, time) => `${name} sent this at ${time}`,
+      sentAt: (time) => `sent ${time}`,
+      remaining: (text) => `${text} left`,
+      proofNeededHelp: "A photo is needed when this is finished",
+      recordLine: "Every step you take is recorded with its time",
+      declineTitle: "Cannot do this?",
+      declineHelp: "The owner will be told. A reason helps.",
+      declineReason: "Reason",
+      laterHelp: "Fine. This stays on your list.",
+      reassignTitle: "Give it to whom?",
+      deadlineTitle: "New time",
+      verifyDone: "Verify",
+      sendBack: "Send back",
+      cancelTitle: "Cancel this task?",
+      cancelHelp: "This cannot be undone.",
+      cancelConfirm: "Yes, cancel it",
+      startWork: "Started",
+      reminderSent: "Reminder sent",
+      callNoNumber: "No number on file",
+      eventBy: (name, what) => `${name} ${what}`,
+    },
     create: {
       newTask: "New task",
       confirmTitle: "Send this?",

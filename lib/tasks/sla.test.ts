@@ -66,6 +66,14 @@ describe("the clock", () => {
     expect(met.tone).toBe("hara");
     expect(met.progress).toBeCloseTo(0.03);
     expect(met.breached).toBe(false);
+    // "Dekha 3 min mein" — how long it actually took, not how long is left.
+    expect(minutes(met.elapsedMs)).toBe(3);
+  });
+
+  it("reports elapsed time while it is still running", () => {
+    expect(minutes(clock({ startedAt: START, endsAt, now: at(37) }).elapsedMs)).toBe(
+      37,
+    );
   });
 
   it("stays Laal when it was met late", () => {

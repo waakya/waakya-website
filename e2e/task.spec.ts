@@ -67,11 +67,21 @@ test("the task is delivered, not merely created, and the audit trail says so", a
   await page.getByRole("button", { name: "Bhejo" }).click();
   await expect(page).toHaveURL(/\/aaj$/);
 
-  // Open it: the detail screen agrees with the list.
+  // Open it: the detail screen agrees with the list, and the audit trail says
+  // the task was delivered, not merely created.
   await page.getByText(title).click();
   await expect(page).toHaveURL(/\/kaam\/[0-9a-f-]{36}$/);
   await expect(page.getByRole("heading", { name: title })).toBeVisible();
-  await expect(page.getByText("Raju · Bheja")).toBeVisible();
+  await expect(page.getByText("Raju", { exact: true }).first()).toBeVisible();
+
+  const timeline = page.getByRole("list", { name: "Timeline" });
+  await expect(timeline).toContainText("Bheja");
+  await expect(timeline).toContainText("Rakesh");
+  // The stepper is on the first step, with the two clocks running beneath it.
+  await expect(page.getByRole("progressbar", { name: /Dekhna/ })).toBeVisible();
+  await expect(
+    page.getByRole("progressbar", { name: "Khatam karna" }),
+  ).toBeVisible();
 });
 
 test("a staff member cannot open the create screen", async ({ page }) => {
