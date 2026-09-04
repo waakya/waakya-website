@@ -45,6 +45,7 @@ export function StaffTaskDetail(props: DetailProps & { role: MemberRole | null }
         state={task.state}
         allowed={allowed}
         proofRequired={task.proofRequired}
+        ownerName={task.createdByName}
       />
     </TaskShell>
   );

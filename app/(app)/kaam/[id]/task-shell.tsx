@@ -12,6 +12,8 @@ import { formatTime } from "@/lib/tasks/time";
 import { stateWord } from "@/lib/tasks/present";
 import type { StepperState } from "@/lib/tasks/state-machine";
 import { Thread } from "./thread";
+import { ProofList } from "./proof-list";
+import type { ProofItem } from "@/lib/tasks/proofs";
 
 export interface StepperData {
   reached: Partial<Record<StepperState, string>>;
@@ -26,6 +28,7 @@ export interface DetailProps {
   task: TaskListItem;
   timeline: TimelineEntry[];
   thread: ThreadMessage[];
+  proofs: ProofItem[];
   locale: Locale;
   nowIso: string;
   stepper: StepperData;
@@ -41,6 +44,7 @@ export function TaskShell({
   task,
   timeline,
   thread,
+  proofs,
   locale,
   nowIso,
   stepper,
@@ -156,6 +160,8 @@ export function TaskShell({
           nextReminderAt={stepper.nextReminderAt}
           className="mt-4"
         />
+
+        <ProofList locale={locale} proofs={proofs} />
 
         <section className="mt-6">
           <h3 className="mb-2 text-[13px] leading-[18px] font-semibold text-ink-700">

@@ -12,6 +12,7 @@ import {
   reachedFrom,
 } from "@/lib/tasks/detail";
 import { taskClocks } from "@/lib/tasks/present";
+import { getTaskProofs } from "@/lib/tasks/proofs";
 import { OwnerTaskDetail } from "./owner-detail";
 import { StaffTaskDetail } from "./staff-detail";
 
@@ -29,15 +30,17 @@ export default async function TaskPage({ params }: PageProps<"/kaam/[id]">) {
   if (!task) notFound();
 
   const now = new Date();
-  const [timeline, thread] = await Promise.all([
+  const [timeline, thread, proofs] = await Promise.all([
     getTaskTimeline(task.id, viewer.org.id),
     getTaskThread(task.id, viewer.org.id),
+    getTaskProofs(task.id, viewer.org.id),
   ]);
 
   const shared = {
     task,
     timeline,
     thread,
+    proofs,
     locale: viewer.org.language,
     nowIso: now.toISOString(),
     stepper: {

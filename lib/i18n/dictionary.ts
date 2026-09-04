@@ -92,6 +92,23 @@ export interface Dictionary {
     high: string;
     urgent: string;
   };
+  /** The proof sheet and the proof list. */
+  proof: {
+    title: string;
+    help: (owner: string) => string;
+    takePhoto: string;
+    photoCount: (n: number) => string;
+    write: string;
+    writePlaceholder: string;
+    send: string;
+    onRecord: string;
+    heading: string;
+    byAt: (name: string, time: string) => string;
+    photoAlt: (name: string) => string;
+    voiceNote: string;
+    skip: string;
+    uploading: string;
+  };
   /** The notification inbox. */
   inbox: {
     title: string;
@@ -329,6 +346,22 @@ export const dictionaries: Record<Locale, Dictionary> = {
       metIn: (text) => `देखा ${text} में`,
     },
     priority: { low: "कम", normal: "नॉर्मल", high: "ज़रूरी", urgent: "अर्जेंट" },
+    proof: {
+      title: "हो गया? प्रूफ़ भेजें",
+      help: (owner) => `${owner} ने फ़ोटो माँगी है। कैमरा खुला है, बस खींचिए।`,
+      takePhoto: "फ़ोटो लें",
+      photoCount: (n) => `${n} फ़ोटो`,
+      write: "लिखें",
+      writePlaceholder: "क्या किया, वह लिखिए",
+      send: "भेजें · हो गया",
+      onRecord: "आपका प्रूफ़ रिकॉर्ड में रहेगा",
+      heading: "प्रूफ़",
+      byAt: (name, time) => `${name} · ${time}`,
+      photoAlt: (name) => `${name} की भेजी फ़ोटो`,
+      voiceNote: "आवाज़",
+      skip: "बिना प्रूफ़ के",
+      uploading: "भेजा जा रहा है",
+    },
     inbox: {
       title: "खबर",
       empty: "कोई नई खबर नहीं",
@@ -549,6 +582,22 @@ export const dictionaries: Record<Locale, Dictionary> = {
       metIn: (text) => `Dekha ${text} mein`,
     },
     priority: { low: "Kam", normal: "Normal", high: "Zaroori", urgent: "Urgent" },
+    proof: {
+      title: "Ho gaya? Proof bhejein",
+      help: (owner) => `${owner} ne photo maangi hai. Camera khula hai, bas khinchiye.`,
+      takePhoto: "Photo lein",
+      photoCount: (n) => `${n} photo`,
+      write: "Likhein",
+      writePlaceholder: "Kya kiya, woh likhiye",
+      send: "Bhejein · ho gaya",
+      onRecord: "Aapka proof record mein rahega",
+      heading: "Proof",
+      byAt: (name, time) => `${name} · ${time}`,
+      photoAlt: (name) => `${name} ki bheji photo`,
+      voiceNote: "Awaaz",
+      skip: "Bina proof ke",
+      uploading: "Bheja ja raha hai",
+    },
     inbox: {
       title: "Khabar",
       empty: "Koi nayi khabar nahi",
@@ -769,6 +818,22 @@ export const dictionaries: Record<Locale, Dictionary> = {
       metIn: (text) => `Seen in ${text}`,
     },
     priority: { low: "Low", normal: "Normal", high: "High", urgent: "Urgent" },
+    proof: {
+      title: "Done? Send the proof",
+      help: (owner) => `${owner} asked for a photo. The camera is open, just take it.`,
+      takePhoto: "Take a photo",
+      photoCount: (n) => `${n} photos`,
+      write: "Write",
+      writePlaceholder: "Write what you did",
+      send: "Send · done",
+      onRecord: "Your proof stays on record",
+      heading: "Proof",
+      byAt: (name, time) => `${name} · ${time}`,
+      photoAlt: (name) => `Photo sent by ${name}`,
+      voiceNote: "Voice note",
+      skip: "Without a proof",
+      uploading: "Sending",
+    },
     inbox: {
       title: "Updates",
       empty: "Nothing new",

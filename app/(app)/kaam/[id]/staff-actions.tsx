@@ -19,6 +19,7 @@ import {
   moveTaskAction,
 } from "@/lib/actions/task-actions";
 import type { TaskState } from "@/lib/supabase/types";
+import { ProofSheet } from "./proof-sheet";
 
 /**
  * One big button, and two quieter ones beneath it (screens/TaskStaff.png).
@@ -33,16 +34,19 @@ export function StaffActions({
   state,
   allowed,
   proofRequired,
+  ownerName,
 }: {
   locale: Locale;
   taskId: string;
   state: TaskState;
   allowed: TaskState[];
   proofRequired: boolean;
+  ownerName: string;
 }) {
   const t = getDictionary(locale);
   const router = useRouter();
   const [declining, setDeclining] = React.useState(false);
+  const [provingDone, setProvingDone] = React.useState(false);
   const [reason, setReason] = React.useState("");
   const [error, setError] = React.useState<string | null>(null);
   const [pending, startTransition] = React.useTransition();
@@ -98,12 +102,11 @@ export function StaffActions({
             size="staffPrimary"
             disabled={pending}
             onClick={() => {
-              if (primary.to === "done" && proofRequired) {
-                // Slice 6 opens the proof sheet here; until then the task
-                // still completes and the proof is asked for afterwards.
-                toast(t.detail.proofNeededHelp);
-              }
-              move(primary.to);
+              // Finishing asks for the proof first: a task marked done with
+              // the photo still to come is exactly the gap the product exists
+              // to close.
+              if (primary.to === "done") setProvingDone(true);
+              else move(primary.to);
             }}
           >
             {primary.icon}
@@ -155,6 +158,19 @@ export function StaffActions({
           {t.detail.recordLine}
         </p>
       </footer>
+
+      <ProofSheet
+        open={provingDone}
+        onOpenChange={setProvingDone}
+        locale={locale}
+        taskId={taskId}
+        ownerName={ownerName}
+        required={proofRequired}
+        onDone={() => {
+          setProvingDone(false);
+          move("done");
+        }}
+      />
 
       <Sheet open={declining} onOpenChange={setDeclining}>
         <SheetContent>

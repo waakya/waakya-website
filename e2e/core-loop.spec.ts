@@ -2,6 +2,15 @@ import { expect, test, type Page } from "@playwright/test";
 import { signInAs, signOut } from "./support/auth";
 
 /**
+ * Finishing always offers the proof sheet. These tasks ask for no photo, so
+ * the sheet offers "without a proof" and the task closes from there.
+ */
+async function finish(page: Page) {
+  await page.getByRole("button", { name: "Ho gaya" }).click();
+  await page.getByRole("button", { name: "Bina proof ke" }).click();
+}
+
+/**
  * The core path the whole product exists for:
  * create → acknowledge → accept → in progress → done → verify.
  *
@@ -65,7 +74,7 @@ test("create → acknowledge → done → verify", async ({ page, browser }) => 
   // --- Chal raha, then Ho gaya.
   await staff.getByRole("button", { name: "Shuru kiya" }).click();
   await expect(staffTimeline).toContainText("Chal raha");
-  await staff.getByRole("button", { name: "Ho gaya" }).click();
+  await finish(staff);
   await expect(staffTimeline).toContainText("Ho gaya");
 
   // The staff member cannot verify their own work.
@@ -116,7 +125,7 @@ test("a verified task is finished — no button moves it again", async ({ page }
   await staff.getByRole("button", { name: "Dekh liya, ho jayega" }).click();
   await expect(trail).toContainText("Maana");
   // Straight to done, without signalling a start: that is allowed on purpose.
-  await staff.getByRole("button", { name: "Ho gaya" }).click();
+  await finish(staff);
   await expect(trail).toContainText("Ho gaya");
   await staffContext.close();
 

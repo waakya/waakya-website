@@ -16,7 +16,7 @@ the CLAUDE.md §7 "not generated" checklist, then a commit.
 | 3 | Create task (Confirm card) + task lists | ✅ done |
 | 4 | Task detail + state machine + stepper/clock + thread | ✅ done |
 | 5 | SLA reminders + escalation + notifications | ✅ done |
-| 6 | Proof of completion | ⬜ |
+| 6 | Proof of completion | ✅ done |
 | 7 | Owner dashboard polish + completion rate | ⬜ |
 | 8 | Recurring checklists (only if time) | ⬜ |
 | 9 | Ship | ⬜ |
@@ -371,3 +371,44 @@ the work had actually got, and would replace the precise chip with a vaguer one.
    quiet-hours hold-back), already-sent keys are fetched in one query rather
    than discovered one failed insert at a time, and addresses are looked up
    once per person per tick. A steady-state tick went from ~15s to ~4s.
+
+---
+
+## Slice 6 — Proof of completion ✅
+
+**Built**
+
+- **`lib/storage`** — one `ProofStorage` interface with two drivers. **R2** is
+  the intended home (10 GB, no egress charge) and is used whenever its four
+  environment variables are present; otherwise a **private Supabase Storage
+  bucket** takes over. Both are private, both hand out only short-lived signed
+  URLs, so which one is in use is an environment question and no caller knows.
+- **Keys carry the org**: `orgs/<org_id>/tasks/<task_id>/<uuid>.<ext>`, because
+  membership of the org in the key *is* the access rule. The storage policies
+  read it with `storage_org_id()`, and `orgIdFromKey()` refuses anything not
+  shaped that way, so a caller cannot attach a file from another business or
+  climb out of the folder with `../`.
+- **`requestProofUpload`** — the server picks the key and checks the type
+  against an allowlist, so the browser can only put a photo or a voice note,
+  only inside its own org's folder, only for 60 seconds. The file goes straight
+  from the phone to storage; the app never handles the bytes.
+- **The proof sheet** (`screens/Proof.png`): the camera tile first, thumbnails
+  with a green tick as they are taken, writing as the alternative, one primary
+  *Bhejein · ho gaya*, and the line that says the proof is on record.
+- **Finishing asks for the proof first.** "Ho gaya" opens the sheet rather than
+  closing the task — a task marked done with the photo still to come is exactly
+  the gap this product exists to close. When the owner did not ask for one,
+  *Bina proof ke* is offered; when they did, it is not.
+- **The proof list** on both task detail screens, so the owner verifies against
+  what was actually sent rather than against a claim.
+
+**Gate:** lint ✅ · typecheck ✅ · build ✅ · Vitest **166/166** ✅ · Playwright **32/32** ✅
+
+`e2e/proof.spec.ts` uploads a real PNG through the signed URL, checks the
+owner's copy is served through a signed link rather than a public key, and
+proves the bucket is closed: somebody in no org can neither list it nor write
+into another business's folder.
+
+**Voice note, not voice input.** A recorded file can be *uploaded* as a proof.
+There is still no voice capture in v1 — that is a different feature, and it
+lands with the Boliye screen.
