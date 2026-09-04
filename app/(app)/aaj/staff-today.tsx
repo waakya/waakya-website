@@ -8,6 +8,8 @@ import { TaskRow } from "@/components/vaakya/task-row";
 import { getDictionary, type Locale } from "@/lib/i18n";
 import { groupBySection, type SectionKey } from "@/lib/tasks/sections";
 import type { TaskListItem } from "@/lib/tasks/queries";
+import type { ChecklistSummary } from "@/lib/checklists/queries";
+import { ChecklistCard } from "@/components/vaakya/checklist-card";
 import { formatIndianDate } from "@/lib/tasks/format-date";
 
 /**
@@ -21,6 +23,7 @@ export function StaffToday({
   staffName,
   nowIso,
   unread,
+  checklists,
 }: {
   tasks: TaskListItem[];
   locale: Locale;
@@ -28,10 +31,17 @@ export function StaffToday({
   staffName: string | null;
   nowIso: string;
   unread: number;
+  checklists: ChecklistSummary[];
 }) {
   const t = getDictionary(locale);
   const now = new Date(nowIso);
-  const groups = groupBySection(tasks, now);
+  // Today's routine reads as one card, so its tasks are not also listed loose
+  // among the day's individual work.
+  const inAChecklist = new Set(checklists.flatMap((c) => c.taskIds));
+  const groups = groupBySection(
+    tasks.filter((task) => !inAChecklist.has(task.id)),
+    now,
+  );
 
   const headings: Record<SectionKey, string> = {
     naya: t.lists.naya,
@@ -62,7 +72,7 @@ export function StaffToday({
           <Avatar name={staffName ?? "?"} size={40} />
         </header>
 
-        {open.length === 0 && groups.done.length === 0 ? (
+        {open.length === 0 && groups.done.length === 0 && checklists.length === 0 ? (
           <EmptyState title={t.lists.noTasks} help={t.lists.nothingToday} />
         ) : null}
 
@@ -96,6 +106,21 @@ export function StaffToday({
             </ul>
           </section>
         ))}
+
+        {checklists.length > 0 ? (
+          <section className="mt-5">
+            <h2 className="mb-2 text-[13px] leading-[18px] font-semibold text-ink-700">
+              {t.lists.checklist}
+            </h2>
+            <ul className="flex flex-col gap-2">
+              {checklists.map((checklist) => (
+                <li key={checklist.id}>
+                  <ChecklistCard locale={locale} checklist={checklist} />
+                </li>
+              ))}
+            </ul>
+          </section>
+        ) : null}
 
         {open.length === 0 && groups.done.length > 0 ? (
           <p className="mt-8 text-center text-[17px] font-bold text-hara-700">

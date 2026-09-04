@@ -17,10 +17,13 @@ export interface TaskListItem extends TaskForDisplay {
   createdAt: string;
   state: TaskState;
   priority: TaskPriority;
+  /** Set when this task is one day's instance of a daily routine. */
+  checklistItemId: string | null;
+  checklistDate: string | null;
 }
 
 const COLUMNS =
-  "id, title, details, state, priority, proof_required, assigned_to, created_by, ack_minutes, due_at, delivered_at, acknowledged_at, accepted_at, started_at, done_at, verified_at, cancelled_at, created_at";
+  "id, title, details, state, priority, proof_required, assigned_to, created_by, ack_minutes, due_at, delivered_at, acknowledged_at, accepted_at, started_at, done_at, verified_at, cancelled_at, created_at, checklist_item_id, checklist_date";
 
 /** Everything in the org, newest first. RLS keeps it to this org. */
 export const getOrgTasks = cache(
@@ -91,6 +94,8 @@ type Row = {
   acknowledged_at: string | null;
   done_at: string | null;
   created_at: string;
+  checklist_item_id: string | null;
+  checklist_date: string | null;
 };
 
 function shape(
@@ -116,5 +121,7 @@ function shape(
     // A task can override the org's acknowledge SLA; most do not.
     ackMinutes: row.ack_minutes ?? orgAckMinutes,
     createdAt: row.created_at,
+    checklistItemId: row.checklist_item_id,
+    checklistDate: row.checklist_date,
   };
 }

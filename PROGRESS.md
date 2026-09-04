@@ -18,7 +18,7 @@ the CLAUDE.md §7 "not generated" checklist, then a commit.
 | 5 | SLA reminders + escalation + notifications | ✅ done |
 | 6 | Proof of completion | ✅ done |
 | 7 | Owner dashboard polish + completion rate | ✅ done |
-| 8 | Recurring checklists (only if time) | ⬜ |
+| 8 | Recurring checklists | ✅ done |
 | 9 | Ship | ⬜ |
 
 ## Decisions taken before the build (confirmed by the owner)
@@ -456,3 +456,39 @@ CI.
 liye*, *Aaj*, *Ho gaya* — because an escalated task legitimately appears both
 as a card and as a row, and neither the tests nor a screen reader should have
 to guess which one they are looking at.
+
+---
+
+## Slice 8 — Recurring checklists ✅
+
+Built, not cut. It is the retention hook: once the morning routine sends
+itself, the app is part of opening the shop rather than something to remember.
+
+**Built**
+
+- **The template is not a second kind of task.** A checklist produces *real*
+  tasks, one per item per day, so the clocks, the ticks, escalation, proof and
+  the audit trail all work on them unchanged.
+- **`lib/checklists/plan.ts`** — pure, and deliberately dull: the interesting
+  property is that running it a hundred times a day produces the same handful
+  of tasks once. It waits for the checklist's hour (a 9am routine should not be
+  in somebody's list at 6am), reckons the day in Asia/Kolkata, and skips a
+  paused checklist, one with nobody to send it to, one with no items, and one
+  whose hour cannot be read.
+- **Generation rides on the SLA tick** rather than having a scheduler of its
+  own: both want to run every few minutes, both are idempotent, and one job is
+  one thing to keep alive. A unique index on `(checklist_item_id,
+  checklist_date)` is the backstop if two ticks ever race.
+- **The staff card** (`screens/MyTasks.png`): one card with a Hara progress bar
+  and the fraction written beside it, and its member tasks are taken out of the
+  loose sections so the routine reads as one thing.
+- **The owner's editor** at `/checklists`, reached from Settings so the nav
+  stays at four items. Pause, resume, delete. Deleting a template leaves the
+  tasks it already produced alone — `on delete set null` — because yesterday's
+  record must not disappear because today's template changed.
+
+**Gate:** lint ✅ · typecheck ✅ · build ✅ · Vitest **193/193** ✅ · Playwright **40/40** ✅
+
+The e2e sets a routine up through the UI, runs the job, checks a second run
+creates nothing, walks one generated task down the ordinary ladder, and watches
+the card's progress move from 0/2 to 1/2.

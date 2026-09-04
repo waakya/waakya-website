@@ -12,6 +12,95 @@ export type Database = {
   __InternalSupabase: { PostgrestVersion: "14.5" };
   public: {
     Tables: {
+      checklist_items: {
+        Row: {
+          checklist_id: string;
+          created_at: string;
+          id: string;
+          org_id: string;
+          position: number;
+          proof_required: boolean;
+          title: string;
+        };
+        Insert: {
+          checklist_id: string;
+          created_at?: string;
+          id?: string;
+          org_id: string;
+          position?: number;
+          proof_required?: boolean;
+          title: string;
+        };
+        Update: {
+          checklist_id?: string;
+          created_at?: string;
+          id?: string;
+          org_id?: string;
+          position?: number;
+          proof_required?: boolean;
+          title?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "checklist_items_checklist_id_fkey";
+            columns: ["checklist_id"];
+            isOneToOne: false;
+            referencedRelation: "checklists";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "checklist_items_org_id_fkey";
+            columns: ["org_id"];
+            isOneToOne: false;
+            referencedRelation: "orgs";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      checklists: {
+        Row: {
+          active: boolean;
+          assigned_to: string | null;
+          created_at: string;
+          created_by: string;
+          id: string;
+          name: string;
+          org_id: string;
+          run_at: string;
+          window_minutes: number;
+        };
+        Insert: {
+          active?: boolean;
+          assigned_to?: string | null;
+          created_at?: string;
+          created_by: string;
+          id?: string;
+          name: string;
+          org_id: string;
+          run_at?: string;
+          window_minutes?: number;
+        };
+        Update: {
+          active?: boolean;
+          assigned_to?: string | null;
+          created_at?: string;
+          created_by?: string;
+          id?: string;
+          name?: string;
+          org_id?: string;
+          run_at?: string;
+          window_minutes?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "checklists_org_id_fkey";
+            columns: ["org_id"];
+            isOneToOne: false;
+            referencedRelation: "orgs";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       escalations: {
         Row: {
           id: string;
@@ -389,6 +478,8 @@ export type Database = {
           acknowledged_at: string | null;
           assigned_to: string | null;
           cancelled_at: string | null;
+          checklist_date: string | null;
+          checklist_item_id: string | null;
           created_at: string;
           created_by: string;
           delivered_at: string | null;
@@ -411,6 +502,8 @@ export type Database = {
           acknowledged_at?: string | null;
           assigned_to?: string | null;
           cancelled_at?: string | null;
+          checklist_date?: string | null;
+          checklist_item_id?: string | null;
           created_at?: string;
           created_by: string;
           delivered_at?: string | null;
@@ -433,6 +526,8 @@ export type Database = {
           acknowledged_at?: string | null;
           assigned_to?: string | null;
           cancelled_at?: string | null;
+          checklist_date?: string | null;
+          checklist_item_id?: string | null;
           created_at?: string;
           created_by?: string;
           delivered_at?: string | null;
@@ -450,6 +545,13 @@ export type Database = {
           verified_at?: string | null;
         };
         Relationships: [
+          {
+            foreignKeyName: "tasks_checklist_item_id_fkey";
+            columns: ["checklist_item_id"];
+            isOneToOne: false;
+            referencedRelation: "checklist_items";
+            referencedColumns: ["id"];
+          },
           {
             foreignKeyName: "tasks_org_id_fkey";
             columns: ["org_id"];

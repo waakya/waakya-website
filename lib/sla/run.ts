@@ -6,6 +6,7 @@ import { notifyWith, writeMessage, writeSubject, type NotifyEvent } from "@/lib/
 import { getDictionary, toLocale } from "@/lib/i18n";
 import { formatDuration } from "@/lib/tasks/sla";
 import { planSlaActions, type SlaAction, type SlaOrg, type SlaTask } from "./engine";
+import { generateChecklistTasks } from "@/lib/checklists/run";
 
 export interface SlaRunSummary {
   orgs: number;
@@ -21,6 +22,8 @@ export interface SlaRunSummary {
   alreadySent: number;
   /** Escalations recorded but whose message is held back by quiet hours. */
   escalationsHeld: number;
+  /** Daily routine tasks brought into being by this tick. */
+  checklistTasksCreated: number;
   errors: string[];
 }
 
@@ -53,12 +56,13 @@ export async function runSlaTick(
     escalationsRaised: 0,
     alreadySent: 0,
     escalationsHeld: 0,
+    checklistTasksCreated: 0,
     errors: [],
   };
 
   let orgQuery = client
     .from("orgs")
-    .select("id, name, language, ack_minutes, quiet_start, quiet_end");
+    .select("id, name, language, ack_minutes, quiet_start, quiet_end, created_by");
   if (onlyOrgId) orgQuery = orgQuery.eq("id", onlyOrgId);
 
   const { data: orgs, error: orgError } = await orgQuery;
@@ -77,6 +81,12 @@ export async function runSlaTick(
     };
     const locale = toLocale(row.language);
     summary.orgs += 1;
+
+    // Today's routines first, so a checklist task created this minute is
+    // scanned by the same tick that made it.
+    const routines = await generateChecklistTasks(client, org.id, row.created_by, now);
+    summary.checklistTasksCreated += routines.created;
+    summary.errors.push(...routines.errors);
 
     const { data: taskRows, error: taskError } = await client
       .from("tasks")

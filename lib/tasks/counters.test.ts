@@ -24,6 +24,8 @@ function task(overrides: Partial<TaskListItem> = {}): TaskListItem {
     doneAt: null,
     ackMinutes: 15,
     createdAt: TODAY,
+    checklistItemId: null,
+    checklistDate: null,
     ...overrides,
   };
 }

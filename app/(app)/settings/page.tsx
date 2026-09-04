@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { LogOut } from "lucide-react";
+import { ListChecks, LogOut } from "lucide-react";
+import Link from "next/link";
 
 import { requireViewer, canManage } from "@/lib/auth/session";
 import { getDictionary, toLocale } from "@/lib/i18n";
@@ -44,6 +45,23 @@ export default async function SettingsPage() {
                 {viewer.role ? t.org.roles[viewer.role] : null}
               </p>
             </Card>
+          </section>
+        ) : null}
+
+        {canManage(viewer.role) ? (
+          <section className="mt-6">
+            <h2 className="mb-2 text-[13px] leading-[18px] font-semibold text-ink-700">
+              {t.checklists.title}
+            </h2>
+            <Link
+              href="/checklists"
+              className="flex min-h-tap items-center gap-3 rounded-card border border-paper-200 bg-paper-0 p-4 shadow-card"
+            >
+              <ListChecks className="size-5 text-neel-700" aria-hidden="true" />
+              <span className="flex-1 text-[15px] font-semibold text-ink-900">
+                {t.checklists.title}
+              </span>
+            </Link>
           </section>
         ) : null}
 

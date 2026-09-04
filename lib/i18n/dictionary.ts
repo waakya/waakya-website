@@ -92,6 +92,28 @@ export interface Dictionary {
     high: string;
     urgent: string;
   };
+  /** Daily routines. */
+  checklists: {
+    title: string;
+    subtitle: string;
+    add: string;
+    name: string;
+    namePlaceholder: string;
+    runAt: string;
+    windowLabel: string;
+    who: string;
+    items: string;
+    addItem: string;
+    itemPlaceholder: string;
+    save: string;
+    empty: string;
+    emptyHelp: string;
+    progress: (done: number, total: number) => string;
+    paused: string;
+    pause: string;
+    resume: string;
+    remove: string;
+  };
   /** The proof sheet and the proof list. */
   proof: {
     title: string;
@@ -354,6 +376,27 @@ export const dictionaries: Record<Locale, Dictionary> = {
       metIn: (text) => `देखा ${text} में`,
     },
     priority: { low: "कम", normal: "नॉर्मल", high: "ज़रूरी", urgent: "अर्जेंट" },
+    checklists: {
+      title: "रोज़ का काम",
+      subtitle: "हर दिन अपने आप भेजा जाएगा।",
+      add: "नई चेकलिस्ट",
+      name: "नाम",
+      namePlaceholder: "जैसे: ओपनिंग चेकलिस्ट",
+      runAt: "कितने बजे",
+      windowLabel: "कितनी देर में",
+      who: "किसको",
+      items: "काम",
+      addItem: "काम जोड़ें",
+      itemPlaceholder: "जैसे: शटर खोलो",
+      save: "सेव करें",
+      empty: "अभी कोई चेकलिस्ट नहीं",
+      emptyHelp: "रोज़ के काम एक बार बनाइए, फिर अपने आप जाएँगे।",
+      progress: (done, total) => `${done}/${total}`,
+      paused: "रुका हुआ",
+      pause: "रोकें",
+      resume: "चालू करें",
+      remove: "हटाएँ",
+    },
     proof: {
       title: "हो गया? प्रूफ़ भेजें",
       help: (owner) => `${owner} ने फ़ोटो माँगी है। कैमरा खुला है, बस खींचिए।`,
@@ -598,6 +641,27 @@ export const dictionaries: Record<Locale, Dictionary> = {
       metIn: (text) => `Dekha ${text} mein`,
     },
     priority: { low: "Kam", normal: "Normal", high: "Zaroori", urgent: "Urgent" },
+    checklists: {
+      title: "Roz ka kaam",
+      subtitle: "Har din apne aap bheja jayega.",
+      add: "Nayi checklist",
+      name: "Naam",
+      namePlaceholder: "Jaise: Opening checklist",
+      runAt: "Kitne baje",
+      windowLabel: "Kitni der mein",
+      who: "Kisko",
+      items: "Kaam",
+      addItem: "Kaam jodein",
+      itemPlaceholder: "Jaise: Shutter kholo",
+      save: "Save karein",
+      empty: "Abhi koi checklist nahi",
+      emptyHelp: "Roz ke kaam ek baar banaiye, phir apne aap jayenge.",
+      progress: (done, total) => `${done}/${total}`,
+      paused: "Ruka hua",
+      pause: "Rokein",
+      resume: "Chaalu karein",
+      remove: "Hatayein",
+    },
     proof: {
       title: "Ho gaya? Proof bhejein",
       help: (owner) => `${owner} ne photo maangi hai. Camera khula hai, bas khinchiye.`,
@@ -842,6 +906,27 @@ export const dictionaries: Record<Locale, Dictionary> = {
       metIn: (text) => `Seen in ${text}`,
     },
     priority: { low: "Low", normal: "Normal", high: "High", urgent: "Urgent" },
+    checklists: {
+      title: "Daily routine",
+      subtitle: "Sent automatically, every day.",
+      add: "New checklist",
+      name: "Name",
+      namePlaceholder: "For example: Opening checklist",
+      runAt: "At what time",
+      windowLabel: "Within",
+      who: "For whom",
+      items: "Tasks",
+      addItem: "Add a task",
+      itemPlaceholder: "For example: Open the shutter",
+      save: "Save",
+      empty: "No checklists yet",
+      emptyHelp: "Set the daily work up once, and it sends itself.",
+      progress: (done, total) => `${done}/${total}`,
+      paused: "Paused",
+      pause: "Pause",
+      resume: "Resume",
+      remove: "Remove",
+    },
     proof: {
       title: "Done? Send the proof",
       help: (owner) => `${owner} asked for a photo. The camera is open, just take it.`,
