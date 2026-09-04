@@ -12,7 +12,7 @@ the CLAUDE.md §7 "not generated" checklist, then a commit.
 |---|---|---|
 | 0 | Theme, fonts, design-system primitives | ✅ done |
 | 1 | Supabase clients + email-OTP auth + login | ✅ done |
-| 2 | Org onboarding, team invite, RLS, i18n | ⬜ |
+| 2 | Org onboarding, team invite, RLS, i18n | ✅ done |
 | 3 | Create task (Confirm card) + task lists | ⬜ |
 | 4 | Task detail + state machine + stepper/clock + thread | ⬜ |
 | 5 | SLA reminders + escalation + notifications | ⬜ |
@@ -143,3 +143,65 @@ signed-out visitor to `/login` and a signed-in owner without an org to
 **Architecture note.** Dictionaries hold formatter functions, which cannot
 cross the server/client boundary. Every client component therefore takes a
 `locale` and calls `getDictionary()` itself; the dictionary is never a prop.
+
+---
+
+## Slice 2 — Org onboarding, team invite, RLS, i18n ✅
+
+**A security fix, first.** The schema in `0001` let *any* signed-in user insert
+a membership for themselves into *any* org id:
+
+```sql
+create policy "membership write" on memberships
+  for insert with check (is_org_admin(org_id) or user_id = auth.uid());
+```
+
+The second half was there so the creator of an org could add their own owner
+row, but it also handed every account a way into every business. Migration
+`0003` drops it. Joining now happens only through two security-definer
+functions, each of which checks a real reason: `create_org()` writes the org
+and its owner membership in one transaction, and `accept_invite()` requires an
+unused, unexpired invite token. Proved by `e2e/rls.spec.ts` — the self-insert
+is refused with `42501`.
+
+**Built**
+
+- **Migration 0003** — `invites`; `profiles.language`; the membership fix;
+  `shares_org_with()` plus a `profiles` policy so co-members can see each
+  other's names (without it a task row shows a uuid); `create_org()`,
+  `invite_preview()`, `accept_invite()`. **0004** adds the org's language to
+  `invite_preview` so the invitee's first screen is already in the language
+  they are about to inherit.
+- **Setup screen** — one field, and one language control with one meaning.
+  Picking the language changes the screen too, so the owner sees what their
+  staff will see before committing. That choice becomes `orgs.language`.
+- **Team screen** (`/staff`) — members with role chips, pending invites with
+  their links recoverable, and an empty state that says what to do next. The
+  invite sheet takes a name and a phone and returns a link the **owner** sends
+  themselves, because staff join when their boss asks, not when an app does.
+- **Join screen** (`/join/[token]`) — outside the protected layout so it works
+  signed-out. It shows the business name and the invited name, and nothing
+  else: `invite_preview` returns no ids and no phone numbers. A dead or used
+  link says what to do next rather than silently redirecting.
+- **Settings** — language switch stored on the profile, business, account,
+  sign out. **Bottom nav** — four items for owners, three for staff.
+- **i18n** — the org, settings and nav vocabulary in all three languages.
+  `getLocale()` now falls back to `profile.language`, then `orgs.language`,
+  when the cookie is missing, and only pays for the query when a Supabase auth
+  cookie is actually present.
+
+**Gate:** lint ✅ · typecheck ✅ · build ✅ · Vitest 10/10 ✅ · Playwright 16/16 ✅
+
+`e2e/rls.spec.ts` talks to PostgREST directly with the publishable key, as a
+signed-in user who belongs to no org: eight tables all come back empty, the
+membership self-insert is refused, a cross-org task insert is refused, the
+rate-limit table is unreadable, and `invite_preview` returns exactly four
+columns.
+
+**Notes**
+
+- Navigation that navigates is a `<Link>` styled with `buttonVariants`, not a
+  `<Button render={<Link/>}>` — Base UI warns about the latter, and a screen
+  reader should hear "link".
+- `/login?next=` accepts same-site paths only, so an invite link cannot be
+  rewritten to point somewhere else.

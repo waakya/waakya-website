@@ -13,11 +13,14 @@ export function LanguageSwitch({
   value,
   onChange,
   className,
+  ...labelling
 }: {
   value: Locale;
   /** Persists the choice. The caller decides where it is stored. */
   onChange: (locale: Locale) => Promise<void>;
   className?: string;
+  "aria-label"?: string;
+  "aria-labelledby"?: string;
 }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
@@ -25,7 +28,10 @@ export function LanguageSwitch({
   return (
     <div
       role="radiogroup"
-      aria-label={LOCALE_LABELS.en}
+      aria-label={
+        labelling["aria-labelledby"] ? undefined : (labelling["aria-label"] ?? "Language")
+      }
+      aria-labelledby={labelling["aria-labelledby"]}
       className={cn(
         "inline-flex items-center gap-1 rounded-chip border border-paper-200 bg-paper-0 p-1",
         className,

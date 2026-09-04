@@ -16,7 +16,7 @@ import {
   ok,
   type ActionResult,
 } from "@/lib/validation";
-import { getDictionary, type Locale } from "@/lib/i18n";
+import { getDictionary, toLocale, type Locale } from "@/lib/i18n";
 import { LOCALE_COOKIE } from "@/lib/i18n/server";
 
 const requestSchema = z.object({
@@ -92,7 +92,10 @@ export async function verifyOtp(input: unknown): Promise<ActionResult> {
     .upsert({ id: user.id }, { onConflict: "id", ignoreDuplicates: true });
   if (error) return fail(copy(locale).generic);
 
-  await setLocaleCookie(locale);
+  // A returning user gets the language they chose; a newly invited staff member
+  // has none yet and inherits the org's. The switch on this screen only decides
+  // the language of the screen itself.
+  await setLocaleCookie(await resolveUserLocale(supabase, user.id, locale));
 
   return ok();
 }
@@ -102,6 +105,27 @@ export async function setLoginLocale(locale: Locale): Promise<void> {
   const parsed = localeSchema.safeParse(locale);
   if (!parsed.success) return;
   await setLocaleCookie(parsed.data);
+}
+
+/** profile.language, else the org's language, else what they picked here. */
+async function resolveUserLocale(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  userId: string,
+  chosen: Locale,
+): Promise<Locale> {
+  const [{ data: profile }, { data: membership }] = await Promise.all([
+    supabase.from("profiles").select("language").eq("id", userId).maybeSingle(),
+    supabase
+      .from("memberships")
+      .select("orgs(language)")
+      .eq("user_id", userId)
+      .order("created_at", { ascending: true })
+      .limit(1)
+      .maybeSingle(),
+  ]);
+  if (profile?.language) return toLocale(profile.language, chosen);
+  if (membership?.orgs?.language) return toLocale(membership.orgs.language, chosen);
+  return chosen;
 }
 
 async function setLocaleCookie(locale: Locale): Promise<void> {

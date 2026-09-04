@@ -1,17 +1,14 @@
 import type { Metadata } from "next";
-import { requireViewer } from "@/lib/auth/session";
 import { redirect } from "next/navigation";
+import { requireViewer } from "@/lib/auth/session";
+import { getLocale } from "@/lib/i18n/server";
+import { SetupForm } from "./setup-form";
 
 export const metadata: Metadata = { title: "Setup" };
 
-// Slice 2 builds org creation here.
 export default async function SetupPage() {
   const viewer = await requireViewer();
   if (viewer.org) redirect("/aaj");
 
-  return (
-    <main className="p-4">
-      <h1 className="text-[24px] leading-[30px] font-bold">Business banayein</h1>
-    </main>
-  );
+  return <SetupForm locale={await getLocale()} />;
 }

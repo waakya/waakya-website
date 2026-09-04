@@ -1,0 +1,15 @@
+import { chromium } from '@playwright/test';
+const [url, out, email, password, full = 'false'] = process.argv.slice(2);
+const browser = await chromium.launch();
+const ctx = await browser.newContext({ viewport: { width: 412, height: 915 }, deviceScaleFactor: 2 });
+const page = await ctx.newPage();
+const errors = [];
+page.on('console', m => { if (m.type() === 'error' && !/hmr|WebSocket/i.test(m.text())) errors.push(m.text()); });
+page.on('pageerror', e => errors.push(String(e)));
+const base = new URL(url).origin;
+await page.request.post(`${base}/api/test-login`, { data: { email, password } });
+await page.goto(url, { waitUntil: 'networkidle' });
+await page.waitForTimeout(700);
+await page.screenshot({ path: out, fullPage: full === 'true' });
+console.log(errors.length ? 'CONSOLE ERRORS:\n' + errors.join('\n') : 'no console errors');
+await browser.close();

@@ -68,8 +68,8 @@ test("signed-out visitors cannot reach the app", async ({ page }) => {
   await expect(page).toHaveURL(/\/login$/);
 });
 
-test("a signed-in owner with no org lands on setup", async ({ page }) => {
-  await signInAs(page, "owner");
+test("a signed-in user with no business lands on setup", async ({ page }) => {
+  await signInAs(page, "noorg");
   await page.goto("/aaj");
   await expect(page).toHaveURL(/\/setup$/);
 });

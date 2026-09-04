@@ -7,6 +7,8 @@ import type { Page } from "@playwright/test";
 export const TEST_USERS = {
   owner: { email: "owner@vaakya.test", password: "vaakya-e2e-owner-pass", name: "Rakesh" },
   staff: { email: "staff@vaakya.test", password: "vaakya-e2e-staff-pass", name: "Raju" },
+  /** Never joins an org, so the "no business yet" path stays testable. */
+  noorg: { email: "noorg@vaakya.test", password: "vaakya-e2e-noorg-pass", name: "Naya Owner" },
 } as const;
 
 export type TestUserKey = keyof typeof TEST_USERS;

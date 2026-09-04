@@ -1,4 +1,19 @@
 import { defineConfig, devices } from "@playwright/test";
+import { readFileSync } from "node:fs";
+
+// The e2e talks to Supabase directly to prove RLS, so the test process needs
+// the same public credentials the app uses. Next loads .env.local itself; this
+// config runs outside that, so it reads the file once.
+try {
+  for (const line of readFileSync(".env.local", "utf8").split("\n")) {
+    const match = /^([A-Z0-9_]+)=(.*)$/.exec(line.trim());
+    if (match && !process.env[match[1]]) {
+      process.env[match[1]] = match[2].replace(/^["']|["']$/g, "");
+    }
+  }
+} catch {
+  // No .env.local: the app itself will report what is missing.
+}
 
 const PORT = Number(process.env.E2E_PORT ?? 3100);
 const BASE_URL = `http://127.0.0.1:${PORT}`;

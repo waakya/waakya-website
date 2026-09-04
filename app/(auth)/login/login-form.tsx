@@ -28,7 +28,14 @@ import { requestOtp, setLoginLocale, verifyOtp } from "./actions";
  * lie. The phone layout returns unchanged the day MSG91 and DLT are ready —
  * only `activeAuthProvider()` and this one field change.
  */
-export function LoginForm({ locale }: { locale: Locale }) {
+export function LoginForm({
+  locale,
+  next,
+}: {
+  locale: Locale;
+  /** Where to land after sign-in — an invite link, usually. Same-site only. */
+  next?: string | null;
+}) {
   // The dictionary is looked up here rather than passed in: it holds formatter
   // functions, and functions cannot cross the server/client boundary. Every
   // client component in Vaakya takes a `locale` and resolves its own copy.
@@ -57,7 +64,7 @@ export function LoginForm({ locale }: { locale: Locale }) {
     startTransition(async () => {
       const result = await verifyOtp({ email, code, locale });
       if (!result.ok) setError(result.message);
-      else router.replace("/aaj");
+      else router.replace(next ?? "/aaj");
     });
   }
 

@@ -92,6 +92,57 @@ export interface Dictionary {
     high: string;
     urgent: string;
   };
+  /** Org setup, the team screen and the invite flow. */
+  org: {
+    setupTitle: string;
+    setupSubtitle: string;
+    businessName: string;
+    businessNamePlaceholder: string;
+    languageLabel: string;
+    createBusiness: string;
+    teamTitle: string;
+    teamSubtitle: (count: number) => string;
+    invite: string;
+    inviteTitle: string;
+    inviteSubtitle: string;
+    staffName: string;
+    staffNamePlaceholder: string;
+    staffPhone: string;
+    staffPhonePlaceholder: string;
+    roleLabel: string;
+    makeInvite: string;
+    linkReady: string;
+    linkHelp: string;
+    copyLink: string;
+    copied: string;
+    share: string;
+    pendingInvites: string;
+    you: string;
+    noStaffYet: string;
+    noStaffHelp: string;
+    removeInvite: string;
+    joinTitle: (org: string) => string;
+    joinSubtitle: (name: string) => string;
+    joinAccept: string;
+    joinUsed: string;
+    joinNotFound: string;
+    joinSignIn: string;
+    roles: { owner: string; admin: string; manager: string; member: string };
+  };
+  /** Settings and the bottom nav. */
+  settings: {
+    title: string;
+    language: string;
+    business: string;
+    account: string;
+  };
+  nav: {
+    aaj: string;
+    hafta: string;
+    staff: string;
+    settings: string;
+    pehle: string;
+  };
   /** The login screen. */
   auth: {
     title: string;
@@ -192,6 +243,49 @@ export const dictionaries: Record<Locale, Dictionary> = {
       metIn: (text) => `देखा ${text} में`,
     },
     priority: { low: "कम", normal: "नॉर्मल", high: "ज़रूरी", urgent: "अर्जेंट" },
+    org: {
+      setupTitle: "अपना बिज़नेस बनाएँ",
+      setupSubtitle: "नाम डालिए। स्टाफ़ को बाद में बुला सकते हैं।",
+      businessName: "बिज़नेस का नाम",
+      businessNamePlaceholder: "जैसे: राकेश प्रॉपर्टीज़",
+      languageLabel: "स्टाफ़ की भाषा",
+      createBusiness: "बिज़नेस बनाओ",
+      teamTitle: "स्टाफ़",
+      teamSubtitle: (count) => `${count} लोग`,
+      invite: "स्टाफ़ बुलाओ",
+      inviteTitle: "स्टाफ़ बुलाओ",
+      inviteSubtitle: "नाम और नंबर डालिए। लिंक आप भेजेंगे।",
+      staffName: "नाम",
+      staffNamePlaceholder: "जैसे: राजू",
+      staffPhone: "फ़ोन नंबर",
+      staffPhonePlaceholder: "98765 43210",
+      roleLabel: "काम",
+      makeInvite: "लिंक बनाओ",
+      linkReady: "लिंक तैयार है",
+      linkHelp: "यह लिंक अपने स्टाफ़ को WhatsApp पे भेजिए।",
+      copyLink: "लिंक कॉपी करो",
+      copied: "कॉपी हो गया",
+      share: "भेजो",
+      pendingInvites: "बुलावा भेजा है",
+      you: "आप",
+      noStaffYet: "अभी कोई स्टाफ़ नहीं",
+      noStaffHelp: "पहले स्टाफ़ को बुलाइए, फिर काम भेजिए।",
+      removeInvite: "हटाओ",
+      joinTitle: (org) => `${org} में आपको बुलाया गया है`,
+      joinSubtitle: (name) => `${name} के नाम से।`,
+      joinAccept: "जुड़ जाओ",
+      joinUsed: "यह लिंक पहले इस्तेमाल हो चुका है। मालिक से नया लिंक माँगें।",
+      joinNotFound: "यह लिंक अब काम नहीं करता। मालिक से नया लिंक माँगें।",
+      joinSignIn: "जुड़ने के लिए पहले साइन इन करें",
+      roles: { owner: "मालिक", admin: "एडमिन", manager: "मैनेजर", member: "स्टाफ़" },
+    },
+    settings: {
+      title: "सेटिंग",
+      language: "भाषा",
+      business: "बिज़नेस",
+      account: "अकाउंट",
+    },
+    nav: { aaj: "आज", hafta: "हफ़्ता", staff: "स्टाफ़", settings: "सेटिंग", pehle: "पहले के काम" },
     auth: {
       title: "अपना ईमेल डालें",
       subtitle: "OTP इसी ईमेल पे आएगा।",
@@ -289,6 +383,49 @@ export const dictionaries: Record<Locale, Dictionary> = {
       metIn: (text) => `Dekha ${text} mein`,
     },
     priority: { low: "Kam", normal: "Normal", high: "Zaroori", urgent: "Urgent" },
+    org: {
+      setupTitle: "Apna business banayein",
+      setupSubtitle: "Naam daaliye. Staff ko baad mein bula sakte hain.",
+      businessName: "Business ka naam",
+      businessNamePlaceholder: "Jaise: Rakesh Properties",
+      languageLabel: "Staff ki bhasha",
+      createBusiness: "Business banao",
+      teamTitle: "Staff",
+      teamSubtitle: (count) => `${count} log`,
+      invite: "Staff bulao",
+      inviteTitle: "Staff bulao",
+      inviteSubtitle: "Naam aur number daaliye. Link aap bhejenge.",
+      staffName: "Naam",
+      staffNamePlaceholder: "Jaise: Raju",
+      staffPhone: "Phone number",
+      staffPhonePlaceholder: "98765 43210",
+      roleLabel: "Kaam",
+      makeInvite: "Link banao",
+      linkReady: "Link taiyar hai",
+      linkHelp: "Yeh link apne staff ko WhatsApp pe bhejiye.",
+      copyLink: "Link copy karo",
+      copied: "Copy ho gaya",
+      share: "Bhejo",
+      pendingInvites: "Bulawa bheja hai",
+      you: "Aap",
+      noStaffYet: "Abhi koi staff nahi",
+      noStaffHelp: "Pehle staff ko bulaiye, phir kaam bhejiye.",
+      removeInvite: "Hatao",
+      joinTitle: (org) => `${org} mein aapko bulaya gaya hai`,
+      joinSubtitle: (name) => `${name} ke naam se.`,
+      joinAccept: "Jud jao",
+      joinUsed: "Yeh link pehle istemaal ho chuka hai. Owner se naya link maangein.",
+      joinNotFound: "Yeh link ab kaam nahi karta. Owner se naya link maangein.",
+      joinSignIn: "Judne ke liye pehle sign in karein",
+      roles: { owner: "Owner", admin: "Admin", manager: "Manager", member: "Staff" },
+    },
+    settings: {
+      title: "Setting",
+      language: "Bhasha",
+      business: "Business",
+      account: "Account",
+    },
+    nav: { aaj: "Aaj", hafta: "Hafta", staff: "Staff", settings: "Setting", pehle: "Pehle ke kaam" },
     auth: {
       title: "Apna email daalein",
       subtitle: "OTP isi email pe aayega.",
@@ -386,6 +523,49 @@ export const dictionaries: Record<Locale, Dictionary> = {
       metIn: (text) => `Seen in ${text}`,
     },
     priority: { low: "Low", normal: "Normal", high: "High", urgent: "Urgent" },
+    org: {
+      setupTitle: "Create your business",
+      setupSubtitle: "Enter the name. You can invite staff afterwards.",
+      businessName: "Business name",
+      businessNamePlaceholder: "For example: Rakesh Properties",
+      languageLabel: "Staff language",
+      createBusiness: "Create business",
+      teamTitle: "Staff",
+      teamSubtitle: (count) => `${count} people`,
+      invite: "Invite staff",
+      inviteTitle: "Invite staff",
+      inviteSubtitle: "Enter a name and number. You send the link yourself.",
+      staffName: "Name",
+      staffNamePlaceholder: "For example: Raju",
+      staffPhone: "Phone number",
+      staffPhonePlaceholder: "98765 43210",
+      roleLabel: "Role",
+      makeInvite: "Make the link",
+      linkReady: "The link is ready",
+      linkHelp: "Send this link to your staff on WhatsApp.",
+      copyLink: "Copy link",
+      copied: "Copied",
+      share: "Send",
+      pendingInvites: "Invited",
+      you: "You",
+      noStaffYet: "No staff yet",
+      noStaffHelp: "Invite your staff first, then send work.",
+      removeInvite: "Remove",
+      joinTitle: (org) => `${org} has invited you`,
+      joinSubtitle: (name) => `As ${name}.`,
+      joinAccept: "Join",
+      joinUsed: "This link has already been used. Ask the owner for a new one.",
+      joinNotFound: "This link no longer works. Ask the owner for a new one.",
+      joinSignIn: "Sign in first to join",
+      roles: { owner: "Owner", admin: "Admin", manager: "Manager", member: "Staff" },
+    },
+    settings: {
+      title: "Settings",
+      language: "Language",
+      business: "Business",
+      account: "Account",
+    },
+    nav: { aaj: "Today", hafta: "Week", staff: "Staff", settings: "Settings", pehle: "Earlier" },
     auth: {
       title: "Enter your email",
       subtitle: "The code comes to this email.",

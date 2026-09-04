@@ -54,6 +54,56 @@ export type Database = {
           },
         ];
       };
+      invites: {
+        Row: {
+          accepted_at: string | null;
+          accepted_by: string | null;
+          created_at: string;
+          created_by: string;
+          expires_at: string;
+          full_name: string;
+          id: string;
+          org_id: string;
+          phone: string;
+          role: Database["public"]["Enums"]["member_role"];
+          token: string;
+        };
+        Insert: {
+          accepted_at?: string | null;
+          accepted_by?: string | null;
+          created_at?: string;
+          created_by: string;
+          expires_at?: string;
+          full_name: string;
+          id?: string;
+          org_id: string;
+          phone: string;
+          role?: Database["public"]["Enums"]["member_role"];
+          token: string;
+        };
+        Update: {
+          accepted_at?: string | null;
+          accepted_by?: string | null;
+          created_at?: string;
+          created_by?: string;
+          expires_at?: string;
+          full_name?: string;
+          id?: string;
+          org_id?: string;
+          phone?: string;
+          role?: Database["public"]["Enums"]["member_role"];
+          token?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "invites_org_id_fkey";
+            columns: ["org_id"];
+            isOneToOne: false;
+            referencedRelation: "orgs";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       memberships: {
         Row: {
           created_at: string;
@@ -172,18 +222,21 @@ export type Database = {
           created_at: string;
           full_name: string | null;
           id: string;
+          language: string | null;
           phone: string | null;
         };
         Insert: {
           created_at?: string;
           full_name?: string | null;
           id: string;
+          language?: string | null;
           phone?: string | null;
         };
         Update: {
           created_at?: string;
           full_name?: string | null;
           id?: string;
+          language?: string | null;
           phone?: string | null;
         };
         Relationships: [];
@@ -396,6 +449,21 @@ export type Database = {
     Functions: {
       is_org_admin: { Args: { p_org: string }; Returns: boolean };
       is_org_member: { Args: { p_org: string }; Returns: boolean };
+      accept_invite: { Args: { p_token: string }; Returns: string };
+      create_org: {
+        Args: { p_name: string; p_language?: string };
+        Returns: string;
+      };
+      invite_preview: {
+        Args: { p_token: string };
+        Returns: {
+          org_name: string;
+          org_language: string;
+          full_name: string;
+          already_accepted: boolean;
+        }[];
+      };
+      shares_org_with: { Args: { p_user: string }; Returns: boolean };
       record_otp_request: {
         Args: {
           p_identifier_hash: string;
