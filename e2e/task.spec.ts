@@ -35,7 +35,10 @@ test("the owner sends a task on the Confirm card, and the staff member sees it",
   await expect(page.getByText(title)).toBeVisible();
 
   // The owner's row states the state in words, not by colour alone.
-  const row = page.locator("li", { hasText: title }).first();
+  const row = page
+    .getByRole("list", { name: "Aaj" })
+    .locator("li", { hasText: title })
+    .first();
   await expect(row.getByText(/Bheja/)).toBeVisible();
   await expect(row.getByText(/Urgent/)).toBeVisible();
 

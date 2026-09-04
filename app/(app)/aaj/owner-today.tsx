@@ -2,19 +2,24 @@ import Link from "next/link";
 import { Plus } from "lucide-react";
 
 import { BottomNav } from "@/components/vaakya/bottom-nav";
-import { Mark } from "@/components/vaakya/mark";
-import { Bell } from "@/components/vaakya/bell";
 import { TaskRow } from "@/components/vaakya/task-row";
 import { buttonVariants } from "@/components/ui/button";
 import { getDictionary, type Locale } from "@/lib/i18n";
 import { groupBySection } from "@/lib/tasks/sections";
+import { countDay, needsYou, type NeedsYouReason } from "@/lib/tasks/counters";
 import type { TaskListItem } from "@/lib/tasks/queries";
-import { formatIndianDate } from "@/lib/tasks/format-date";
+import { formatDuration } from "@/lib/tasks/sla";
+import { OwnerHeader } from "./owner-header";
+import { needsYouMeta } from "@/lib/tasks/present";
+import { NeedsYouCard } from "./needs-you-card";
 
 /**
- * The owner's day (screens/Dashboard.png). Slice 3 builds the list; Slice 7
- * adds the Neel header with the four counters, the "Aapke liye" cards with
- * inline actions, and the completion rate.
+ * The owner's day (screens/Dashboard.png).
+ *
+ * The screen leads with what needs a decision, not with charts: the Neel
+ * header for one glance, then *Aapke liye* with the actions inline on each
+ * card, then the day's list. The primary way in sits in the bottom third,
+ * thumb-height, holding the mic's place until voice capture ships (D-10).
  */
 export function OwnerToday({
   tasks,
@@ -23,6 +28,7 @@ export function OwnerToday({
   ownerName,
   nowIso,
   unread,
+  phones,
 }: {
   tasks: TaskListItem[];
   locale: Locale;
@@ -30,28 +36,61 @@ export function OwnerToday({
   ownerName: string | null;
   nowIso: string;
   unread: number;
+  /** Assignee phone numbers, so Call on a card really dials. */
+  phones: Record<string, string | null>;
 }) {
   const t = getDictionary(locale);
   const now = new Date(nowIso);
+  const counters = countDay(tasks, now);
+  const attention = needsYou(tasks, now);
   const groups = groupBySection(tasks, now);
   const live = [...groups.late, ...groups.naya, ...groups.aaj, ...groups.later];
 
   return (
     <div className="flex min-h-dvh flex-col">
+      <OwnerHeader
+        locale={locale}
+        orgName={orgName}
+        ownerName={ownerName}
+        counters={counters}
+        unread={unread}
+        now={now}
+      />
+
       <main className="flex-1 p-4 pb-6">
-        <header className="flex items-start gap-3">
-          <div className="min-w-0 flex-1">
-            <h1 className="text-[24px] leading-[30px] font-bold text-ink-900">
-              {t.lists.aajHeading}
-            </h1>
-            <p className="num mt-0.5 text-[15px] leading-[20px] text-ink-500">
-              {orgName} · {formatIndianDate(now, locale)}
-              {ownerName ? ` · ${ownerName}` : ""}
-            </p>
-          </div>
-          <Bell locale={locale} unread={unread} />
-          <Mark size={26} />
-        </header>
+        {attention.length > 0 ? (
+          <section>
+            <h2 className="mb-2 text-[15px] leading-[20px] font-bold text-ink-700">
+              {t.lists.aapkeLiye}{" "}
+              <span className="num font-normal text-ink-400">
+                {attention.length}
+              </span>
+            </h2>
+            <ul
+              aria-label={t.lists.aapkeLiye}
+              className="flex flex-col gap-2.5"
+            >
+              {attention.slice(0, 5).map(({ task, reason }) => (
+                <li key={task.id}>
+                  <NeedsYouCard
+                    locale={locale}
+                    taskId={task.id}
+                    reason={reason}
+                    headline={headline(t, reason, task)}
+                    meta={needsYouMeta(
+                      locale,
+                      task.deliveredAt,
+                      extraMeta(t, reason, task, now),
+                    )}
+                    phone={
+                      task.assigneeId ? (phones[task.assigneeId] ?? null) : null
+                    }
+                  />
+                </li>
+              ))}
+            </ul>
+          </section>
+        ) : null}
 
         {live.length === 0 && groups.done.length === 0 ? (
           <div className="mt-10 flex flex-col items-center gap-2 text-center">
@@ -65,13 +104,19 @@ export function OwnerToday({
         ) : null}
 
         {live.length > 0 ? (
-          <ul className="mt-5 flex flex-col gap-2">
-            {live.map((task) => (
-              <li key={task.id}>
-                <TaskRow task={task} locale={locale} viewer="owner" now={now} />
-              </li>
-            ))}
-          </ul>
+          <section className={attention.length > 0 ? "mt-6" : ""}>
+            <h2 className="mb-2 text-[15px] leading-[20px] font-bold text-ink-700">
+              {t.lists.aajHeading}{" "}
+              <span className="num font-normal text-ink-400">{live.length}</span>
+            </h2>
+            <ul aria-label={t.lists.aajHeading} className="flex flex-col gap-2">
+              {live.map((task) => (
+                <li key={task.id}>
+                  <TaskRow task={task} locale={locale} viewer="owner" now={now} />
+                </li>
+              ))}
+            </ul>
+          </section>
         ) : null}
 
         {groups.done.length > 0 ? (
@@ -82,7 +127,10 @@ export function OwnerToday({
                 {groups.done.length}
               </span>
             </h2>
-            <ul className="flex flex-col gap-2">
+            <ul
+              aria-label={t.lists.hoGayaSection}
+              className="flex flex-col gap-2"
+            >
               {groups.done.map((task) => (
                 <li key={task.id}>
                   <TaskRow task={task} locale={locale} viewer="owner" now={now} />
@@ -93,14 +141,19 @@ export function OwnerToday({
         ) : null}
       </main>
 
-      {/*
-        The primary way in, in the bottom third and thumb-height. It takes the
-        mic's place and its prominence until voice capture ships (D-10).
-      */}
+      {/* The primary floats above a fade, as the mic does (D-10), so the row
+          beneath it reads as continuing rather than as cut off. */}
       <div className="sticky bottom-16 z-20 px-4 pb-3">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 -top-8 h-8 bg-gradient-to-b from-transparent to-paper-50"
+        />
         <Link
           href="/naya"
-          className={buttonVariants({ size: "block", className: "shadow-mic" })}
+          className={buttonVariants({
+            size: "block",
+            className: "relative shadow-mic",
+          })}
         >
           <Plus />
           {t.create.newTask}
@@ -110,4 +163,39 @@ export function OwnerToday({
       <BottomNav locale={locale} variant="owner" />
     </div>
   );
+}
+
+function headline(
+  t: ReturnType<typeof getDictionary>,
+  reason: NeedsYouReason,
+  task: TaskListItem,
+): string {
+  const who = task.assigneeName;
+  switch (reason) {
+    case "late":
+      return t.lists.lateCard(who, task.title);
+    case "unseen":
+      return t.lists.unseenCard(who, task.title);
+    case "escalated":
+      return t.lists.escalatedCard(who, task.title);
+    case "verify":
+      return t.lists.doneCard(who, task.title);
+  }
+}
+
+function extraMeta(
+  t: ReturnType<typeof getDictionary>,
+  reason: NeedsYouReason,
+  task: TaskListItem,
+  now: Date,
+): string[] {
+  const out: string[] = [];
+  if (reason === "late" && task.dueAt) {
+    out.push(
+      t.chips.lateBy(formatDuration(now.getTime() - Date.parse(task.dueAt), t.time)),
+    );
+  }
+  if (reason === "verify") out.push(t.chips.verifyBaaki);
+  if (task.priority === "urgent") out.push(t.chips.urgent);
+  return out;
 }

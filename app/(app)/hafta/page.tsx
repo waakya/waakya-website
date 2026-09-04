@@ -1,24 +1,84 @@
 import type { Metadata } from "next";
 import { requireOrg, canManage } from "@/lib/auth/session";
+import { getMyTasks, getOrgTasks } from "@/lib/tasks/queries";
 import { getDictionary } from "@/lib/i18n";
 import { BottomNav } from "@/components/vaakya/bottom-nav";
+import { TaskRow } from "@/components/vaakya/task-row";
+import { dayKey } from "@/lib/tasks/time";
+import { formatIndianDate } from "@/lib/tasks/format-date";
 
 export const metadata: Metadata = { title: "Hafta" };
 
-// Slice 7 fills this in. It exists now so no nav item points at a 404.
+/**
+ * The week, grouped by the day the work is due — the same rows as Aaj, read
+ * forwards instead of now. Anything already late stays on Aaj where it can be
+ * acted on; this screen is for planning, not for chasing.
+ */
 export default async function HaftaPage() {
   const viewer = await requireOrg();
-  const t = getDictionary(viewer.org.language);
+  const owner = canManage(viewer.role);
+  const locale = viewer.org.language;
+  const t = getDictionary(locale);
+  const now = new Date();
+
+  const tasks = owner
+    ? await getOrgTasks(viewer.org.id, viewer.org.ackMinutes)
+    : await getMyTasks(viewer.org.id, viewer.userId, viewer.org.ackMinutes);
+
+  const weekEnd = new Date(now.getTime() + 7 * 86_400_000);
+  const upcoming = tasks
+    .filter(
+      (task) =>
+        task.dueAt !== null &&
+        !["verified", "cancelled"].includes(task.state) &&
+        Date.parse(task.dueAt) >= now.getTime() &&
+        Date.parse(task.dueAt) <= weekEnd.getTime(),
+    )
+    .sort((a, b) => Date.parse(a.dueAt!) - Date.parse(b.dueAt!));
+
+  const days = new Map<string, typeof upcoming>();
+  for (const task of upcoming) {
+    const key = dayKey(task.dueAt!);
+    days.set(key, [...(days.get(key) ?? []), task]);
+  }
 
   return (
     <div className="flex min-h-dvh flex-col">
-      <main className="flex-1 p-4">
-        <h1 className="text-[24px] leading-[30px] font-bold">{t.nav.hafta}</h1>
+      <main className="flex-1 p-4 pb-6">
+        <h1 className="text-[24px] leading-[30px] font-bold text-ink-900">
+          {t.lists.weekTitle}
+        </h1>
+
+        {days.size === 0 ? (
+          <p className="mt-10 text-center text-[17px] text-ink-500">
+            {t.lists.weekEmpty}
+          </p>
+        ) : null}
+
+        {[...days.entries()].map(([key, dayTasks]) => (
+          <section key={key} className="mt-5">
+            <h2 className="num mb-2 text-[13px] leading-[18px] font-semibold text-ink-700">
+              {formatIndianDate(dayTasks[0].dueAt!, locale)}{" "}
+              <span className="font-normal text-ink-400">{dayTasks.length}</span>
+            </h2>
+            <ul className="flex flex-col gap-2">
+              {dayTasks.map((task) => (
+                <li key={task.id}>
+                  <TaskRow
+                    task={task}
+                    locale={locale}
+                    viewer={owner ? "owner" : "staff"}
+                    now={now}
+                    showAssignee={owner}
+                  />
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))}
       </main>
-      <BottomNav
-        locale={viewer.org.language}
-        variant={canManage(viewer.role) ? "owner" : "staff"}
-      />
+
+      <BottomNav locale={locale} variant={owner ? "owner" : "staff"} />
     </div>
   );
 }

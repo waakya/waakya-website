@@ -194,6 +194,14 @@ export interface Dictionary {
     hoGaye: string;
     verifiedCount: string;
     completionRate: string;
+    greeting: (name: string) => string;
+    nothingNeedsYou: string;
+    unseenCard: (who: string, task: string) => string;
+    doneCard: (who: string, task: string) => string;
+    escalatedCard: (who: string, task: string) => string;
+    lateCard: (who: string, task: string) => string;
+    weekTitle: string;
+    weekEmpty: string;
   };
   /** Org setup, the team screen and the invite flow. */
   org: {
@@ -441,6 +449,14 @@ export const dictionaries: Record<Locale, Dictionary> = {
       hoGaye: "हो गए",
       verifiedCount: "वेरिफ़ाई",
       completionRate: "काम पूरा",
+      greeting: (name) => `नमस्ते, ${name} जी`,
+      nothingNeedsYou: "आपके लिए अभी कुछ नहीं",
+      unseenCard: (who, task) => `${who} ने '${task}' अभी तक नहीं देखा`,
+      doneCard: (who, task) => `${who}: '${task}' हो गया`,
+      escalatedCard: (who, task) => `${who} से '${task}' नहीं हो पाएगा`,
+      lateCard: (who, task) => `${who} का '${task}' लेट है`,
+      weekTitle: "इस हफ़्ते",
+      weekEmpty: "इस हफ़्ते कुछ नहीं",
     },
     org: {
       setupTitle: "अपना बिज़नेस बनाएँ",
@@ -677,6 +693,14 @@ export const dictionaries: Record<Locale, Dictionary> = {
       hoGaye: "Ho gaye",
       verifiedCount: "Verified",
       completionRate: "Kaam poora",
+      greeting: (name) => `Namaste, ${name} ji`,
+      nothingNeedsYou: "Aapke liye abhi kuch nahi",
+      unseenCard: (who, task) => `${who} ne '${task}' abhi tak nahi dekha`,
+      doneCard: (who, task) => `${who}: '${task}' ho gaya`,
+      escalatedCard: (who, task) => `${who} se '${task}' nahi ho payega`,
+      lateCard: (who, task) => `${who} ka '${task}' late hai`,
+      weekTitle: "Is hafte",
+      weekEmpty: "Is hafte kuch nahi",
     },
     org: {
       setupTitle: "Apna business banayein",
@@ -913,6 +937,14 @@ export const dictionaries: Record<Locale, Dictionary> = {
       hoGaye: "Done",
       verifiedCount: "Verified",
       completionRate: "Work done",
+      greeting: (name) => `Hello, ${name}`,
+      nothingNeedsYou: "Nothing needs you right now",
+      unseenCard: (who, task) => `${who} has not seen '${task}' yet`,
+      doneCard: (who, task) => `${who}: '${task}' is done`,
+      escalatedCard: (who, task) => `${who} cannot do '${task}'`,
+      lateCard: (who, task) => `${who}'s '${task}' is late`,
+      weekTitle: "This week",
+      weekEmpty: "Nothing this week",
     },
     org: {
       setupTitle: "Create your business",

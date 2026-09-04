@@ -203,3 +203,21 @@ export function taskClocks(task: TaskForDisplay, now: Date) {
     }),
   };
 }
+
+/**
+ * The line under an "Aapke liye" headline: when it was sent, then whatever
+ * else the card wants to say. It lives here rather than beside the card
+ * because the card is a client component and this is called while rendering
+ * on the server.
+ */
+export function needsYouMeta(
+  locale: Locale,
+  deliveredAt: string | null,
+  extra: string[],
+): string {
+  const t = getDictionary(locale);
+  const parts: string[] = [];
+  if (deliveredAt) parts.push(`${t.stepper.bheja} ${formatTime(deliveredAt)}`);
+  parts.push(...extra);
+  return parts.join(" · ");
+}

@@ -17,7 +17,7 @@ the CLAUDE.md §7 "not generated" checklist, then a commit.
 | 4 | Task detail + state machine + stepper/clock + thread | ✅ done |
 | 5 | SLA reminders + escalation + notifications | ✅ done |
 | 6 | Proof of completion | ✅ done |
-| 7 | Owner dashboard polish + completion rate | ⬜ |
+| 7 | Owner dashboard polish + completion rate | ✅ done |
 | 8 | Recurring checklists (only if time) | ⬜ |
 | 9 | Ship | ⬜ |
 
@@ -412,3 +412,47 @@ into another business's folder.
 **Voice note, not voice input.** A recorded file can be *uploaded* as a proof.
 There is still no voice capture in v1 — that is a different feature, and it
 lands with the Boliye screen.
+
+---
+
+## Slice 7 — Owner dashboard, week and history ✅
+
+**Built**
+
+- **`lib/tasks/counters.ts`** — pure. The four header numbers count *today's*
+  work and read as a funnel: a verified task was also done, also seen, also
+  sent, so `bheje ≥ dekhe ≥ ho gaye ≥ verified` always holds. A cumulative
+  all-time count would only go up and stop meaning anything by week two. The
+  two chips deliberately look at **all** open work, because a task that went
+  late yesterday is still late.
+- **The completion rate** is verified out of sent, and is `null` — shown as
+  nothing — before anything has been sent, rather than a flattering 0%.
+- **`needsYou()`** — the "Aapke liye" list, most pressing first: late,
+  escalated, unseen, then waiting to be verified. Each task appears once, with
+  one reason.
+- **The Neel 700 header** (D-09) with the greeting, four Baloo counters with
+  tabular figures, and Late and Dekha nahi as chips inside it. Staff screens
+  still have no coloured header and no counters at all.
+- **"Aapke liye" cards** with the actions inline — Call, Yaad dilao, Kisi aur
+  ko, or Verify and Dekhein — so the owner acts from the list instead of
+  navigating into a task to find a button.
+- **The primary floats above a fade** (D-10), holding the mic's place and
+  prominence until voice capture ships.
+- **`/hafta`** groups the coming week by the day work is due; **`/pehle`** is
+  the staff member's record of what they have already done, newest first —
+  the thing that makes the app worth keeping rather than only worth obeying.
+
+**Gate:** lint ✅ · typecheck ✅ · build ✅ · Vitest **180/180** ✅ · Playwright **37/37** ✅
+
+**A tooling failure worth recording.** Installing two packages mid-build left
+`node_modules` inconsistent: Playwright's runner threw on a `playwright-core`
+internal, and then the `next` CLI began exiting 0 with no output at all — no
+build, no dev server, no version string. A partial reinstall did not fix it;
+`rm -rf node_modules .next && npm ci` did. Nothing in the app was wrong, but it
+cost a full gate cycle to find, and it is why `npm ci` is the right command in
+CI.
+
+**Note on the lists.** Both owner lists now carry an accessible name — *Aapke
+liye*, *Aaj*, *Ho gaya* — because an escalated task legitimately appears both
+as a card and as a row, and neither the tests nor a screen reader should have
+to guess which one they are looking at.

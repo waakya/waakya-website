@@ -93,7 +93,10 @@ test("create → acknowledge → done → verify", async ({ page, browser }) => 
 
   // The glyph on the list is now the green verified tick.
   await page.goto("/aaj");
-  const row = page.locator("li", { hasText: title }).first();
+  const row = page
+    .getByRole("list", { name: "Ho gaya" })
+    .locator("li", { hasText: title })
+    .first();
   await expect(row.getByRole("img", { name: "Verified" })).toBeVisible();
 
   // And the timeline records every step, in order, with who did it.
@@ -171,8 +174,13 @@ test("the assignee can decline, and it lands with the owner rather than dying", 
 
   // The owner's row says so twice — in the meta line and on the chip that
   // replaces the glyph — so the state never depends on colour alone (D-03).
+  // Scoped to the day's list: a declined task is also an "Aapke liye" card,
+  // which is a different thing with different chrome.
   await page.goto("/aaj");
-  const row = page.locator("li", { hasText: title }).first();
+  const row = page
+    .getByRole("list", { name: "Aaj" })
+    .locator("li", { hasText: title })
+    .first();
   await expect(row.locator("p", { hasText: "Aap tak aaya" })).toBeVisible();
   await expect(
     row.locator("[data-slot='state-chip']", { hasText: "Aap tak aaya" }),

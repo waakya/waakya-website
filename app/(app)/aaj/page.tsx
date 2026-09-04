@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { requireOrg, canManage } from "@/lib/auth/session";
 import { getMyTasks, getOrgTasks } from "@/lib/tasks/queries";
 import { getUnreadCount } from "@/lib/notify/inbox";
+import { getOrgMembers } from "@/lib/org/members";
 import { OwnerToday } from "./owner-today";
 import { StaffToday } from "./staff-today";
 
@@ -16,9 +17,10 @@ export default async function AajPage() {
   const now = new Date();
 
   if (canManage(viewer.role)) {
-    const [tasks, unread] = await Promise.all([
+    const [tasks, unread, members] = await Promise.all([
       getOrgTasks(viewer.org.id, viewer.org.ackMinutes),
       getUnreadCount(),
+      getOrgMembers(viewer.org.id),
     ]);
     return (
       <OwnerToday
@@ -28,6 +30,9 @@ export default async function AajPage() {
         ownerName={viewer.fullName}
         nowIso={now.toISOString()}
         unread={unread}
+        phones={Object.fromEntries(
+          members.map((member) => [member.userId, member.phone]),
+        )}
       />
     );
   }

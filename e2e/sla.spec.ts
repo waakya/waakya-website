@@ -68,7 +68,10 @@ test("an unacknowledged task past its SLA reaches the owner", async ({ page }) =
   // The row already says so, before any job runs: the chip is derived from
   // the clock, not from a flag somebody has to remember to set.
   await page.goto("/aaj");
-  const row = page.locator("li", { hasText: title }).first();
+  const row = page
+    .getByRole("list", { name: "Aaj" })
+    .locator("li", { hasText: title })
+    .first();
   await expect(row.getByText("Dekha nahi")).toBeVisible();
 
   // Now the job runs, and the owner is told.
@@ -137,7 +140,10 @@ test("an overdue task reads Late, in words and in red", async ({ page }) => {
     .eq("id", task!.id);
 
   await page.goto("/aaj");
-  const row = page.locator("li", { hasText: title }).first();
+  const row = page
+    .getByRole("list", { name: "Aaj" })
+    .locator("li", { hasText: title })
+    .first();
   await expect(row.getByText("Late 40 min")).toBeVisible();
   // The row never shows the glyph as well as the chip (D-11).
   await expect(row.locator("[data-slot='ticks']")).toHaveCount(0);
