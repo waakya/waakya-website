@@ -76,7 +76,7 @@ export function StaffActions({
 
   if (!primary && !canDecline) {
     return (
-      <footer className="fixed inset-x-0 bottom-0 z-30 mx-auto w-full max-w-md border-t border-paper-200 bg-paper-50 p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+      <footer className="fixed inset-x-0 bottom-0 z-30 mx-auto w-full max-w-md border-t border-paper-200 bg-paper-50 p-4 pb-[max(1rem,env(safe-area-inset-bottom))] lg:static lg:mt-6 lg:max-w-none lg:rounded-card lg:border lg:border-paper-200 lg:p-5">
         <p className="flex items-center justify-center gap-2 text-center text-[13px] text-ink-400">
           <Shield className="size-4" aria-hidden="true" />
           {t.detail.recordLine}
@@ -87,7 +87,7 @@ export function StaffActions({
 
   return (
     <>
-      <footer className="fixed inset-x-0 bottom-0 z-30 mx-auto w-full max-w-md border-t border-paper-200 bg-paper-50 p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+      <footer className="fixed inset-x-0 bottom-0 z-30 mx-auto w-full max-w-md border-t border-paper-200 bg-paper-50 p-4 pb-[max(1rem,env(safe-area-inset-bottom))] lg:static lg:mt-6 lg:max-w-none lg:rounded-card lg:border lg:border-paper-200 lg:p-5">
         {error ? (
           <p
             role="alert"

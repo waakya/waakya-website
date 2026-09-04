@@ -88,7 +88,7 @@ export function TaskShell({
         thing this screen cannot get wrong. The padding here is the room the
         bar occupies.
       */}
-      <main className="flex-1 px-4 pb-56">
+      <main className="flex-1 px-4 pb-56 lg:pb-8">
         {lead}
 
         <h2 className="mt-2 text-[28px] leading-[36px] font-bold text-ink-900">
@@ -150,6 +150,8 @@ export function TaskShell({
           </p>
         ) : null}
 
+        <div className="lg:grid lg:grid-cols-5 lg:gap-8">
+        <div className="lg:col-span-3">
         <Stepper
           locale={locale}
           reached={stepper.reached}
@@ -162,7 +164,9 @@ export function TaskShell({
         />
 
         <ProofList locale={locale} proofs={proofs} />
+        </div>
 
+        <div className="lg:col-span-2">
         <section className="mt-6">
           <h3 className="mb-2 text-[13px] leading-[18px] font-semibold text-ink-700">
             {t.detail.timeline}
@@ -201,9 +205,14 @@ export function TaskShell({
           messages={thread}
           viewerId={viewerId}
         />
+        </div>
+        </div>
       </main>
 
-      {children}
+      {/* One instance at every width. On a phone the bar inside is fixed to
+          the bottom of the viewport; from lg it sits in flow under the
+          columns, where there is no fold for it to fall below. */}
+      <div className="px-4">{children}</div>
     </div>
   );
 }

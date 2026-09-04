@@ -1,4 +1,4 @@
-// The three Vaakya families, self-hosted at build time by next/font (no runtime
+// The three Waakya families, self-hosted at build time by next/font (no runtime
 // Google request). Baloo 2 is display-only; Inter and Noto Sans Devanagari do
 // all the working UI. Design Direction §4.
 import { Inter, Baloo_2, Noto_Sans_Devanagari } from "next/font/google";

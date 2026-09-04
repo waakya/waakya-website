@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 import { getDictionary, DEFAULT_LOCALE, type Locale } from "@/lib/i18n";
 
 /**
- * The Vaakya ticks glyph — two sound bars and a tick, the same three strokes as
+ * The Waakya ticks glyph — two sound bars and a tick, the same three strokes as
  * the logo, reporting a task's real state at the right edge of a row.
  *
  * Character document §2.1 and the spec comment in vaakya-brand-kit/tokens.css:

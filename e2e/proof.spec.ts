@@ -8,6 +8,7 @@ import {
   TEST_LOCALE,
   TEST_USERS,
 } from "./support/auth";
+import { onScreen } from "./support/visible";
 
 /**
  * Proof of completion. The photo goes straight from the phone to private
@@ -53,7 +54,7 @@ test("finishing a task that needs a photo asks for one first", async ({
   await pinLocale(staff, TEST_LOCALE);
 
   await staff.goto("/aaj");
-  await staff.getByText(title).click();
+  await onScreen(staff.getByText(title)).click();
   // The row and the screen both say a photo is wanted, in words.
   await expect(staff.getByText("Photo chahiye").first()).toBeVisible();
 
@@ -88,7 +89,7 @@ test("finishing a task that needs a photo asks for one first", async ({
 
   // The owner sees the proof, and only then verifies.
   await page.goto("/aaj");
-  await page.getByText(title).click();
+  await onScreen(page.getByText(title)).click();
   await expect(
     page.getByRole("heading", { name: "Proof", exact: true }),
   ).toBeVisible();
@@ -121,7 +122,7 @@ test("a task without a proof requirement can still be finished plainly", async (
   await page.getByRole("button", { name: "Bhejo" }).click();
   // Wait for the send to land before another browser looks for it.
   await expect(page).toHaveURL(/\/aaj$/);
-  await expect(page.getByText(title)).toBeVisible();
+  await expect(onScreen(page.getByText(title))).toBeVisible();
 
   const staffContext = await browser.newContext();
   const staff = await staffContext.newPage();
@@ -130,7 +131,7 @@ test("a task without a proof requirement can still be finished plainly", async (
   });
   await pinLocale(staff, TEST_LOCALE);
   await staff.goto("/aaj");
-  await staff.getByText(title).click();
+  await onScreen(staff.getByText(title)).click();
   const trail = staff.getByRole("list", { name: "Timeline" });
   await staff.getByRole("button", { name: "Dekh liya, ho jayega" }).click();
   await expect(trail).toContainText("Maana");

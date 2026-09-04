@@ -26,6 +26,12 @@ It prints a URL. Paste it into the browser and you are signed in. The link is
 single-use and expires; it goes through the app's own `/auth/confirm` route so
 the session lands in cookies, which a link straight to Supabase would not do.
 
+## Reviewing without logging in
+
+`DEV_DISABLE_AUTH=true` in `.env.local` skips the login screen entirely and
+signs you in as a seeded user, with an Owner / Staff switcher in the corner.
+It needs neither B1 nor B2. Refused when `NODE_ENV=production`.
+
 ## Notes
 
 - **B4 detail.** Supabase's built-in SMTP is rate-limited to a handful of

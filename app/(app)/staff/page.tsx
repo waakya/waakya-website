@@ -8,7 +8,7 @@ import { getDictionary } from "@/lib/i18n";
 import { Avatar } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
 import { StateChip } from "@/components/ui/state-chip";
-import { BottomNav } from "@/components/vaakya/bottom-nav";
+import { AppShell } from "@/components/vaakya/app-shell";
 import { InviteSheet } from "./invite-sheet";
 import { PendingInvites } from "./pending-invites";
 import { getLocale } from "@/lib/i18n/server";
@@ -35,7 +35,14 @@ export default async function StaffPage() {
   const manages = canManage(viewer.role);
 
   return (
-    <div className="flex min-h-dvh flex-col">
+    <AppShell
+      locale={locale}
+      variant={"owner"}
+      orgName={viewer.org.name}
+      personName={viewer.fullName ?? "—"}
+      roleLabel={viewer.role ? getDictionary(locale).org.roles[viewer.role] : ""}
+      unread={0}
+    >
       <main className="flex-1 p-4 pb-6">
         <h1 className="text-[24px] leading-[30px] font-bold text-ink-900">
           {t.org.teamTitle}
@@ -89,7 +96,6 @@ export default async function StaffPage() {
         </div>
       ) : null}
 
-      <BottomNav locale={locale} variant="owner" />
-    </div>
+    </AppShell>
   );
 }

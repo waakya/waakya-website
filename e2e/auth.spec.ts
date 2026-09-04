@@ -82,7 +82,7 @@ test("the dev-only test-login refuses a wrong password", async ({ page }) => {
 });
 
 test("the brand name is never translated, in any language", async ({ page }) => {
-  // *Vaakya* means "sentence" in Hindi, so a translated brand name turns the
+  // *Waakya* means "sentence" in Hindi, so a translated brand name turns the
   // consent line into "I agree to the sentence's Privacy Policy".
   await page.goto("/login");
 
@@ -95,15 +95,15 @@ test("the brand name is never translated, in any language", async ({ page }) => 
   await expect(
     page.getByRole("heading", { name: "Apna email daalein" }),
   ).toBeVisible();
-  await expect(consent).toContainText("Main Vaakya ki Privacy Policy");
+  await expect(consent).toContainText("Main Waakya ki Privacy Policy");
 
   await page.getByRole("radio", { name: "English" }).click();
   await expect(
     page.getByRole("heading", { name: "Enter your email" }),
   ).toBeVisible();
-  // Vaakya's, not "the Vaakya" — it is a name, not a category.
-  await expect(consent).toContainText("I agree to Vaakya's Privacy Policy.");
-  await expect(consent).not.toContainText("the Vaakya");
+  // Waakya's, not "the Waakya" — it is a name, not a category.
+  await expect(consent).toContainText("I agree to Waakya's Privacy Policy.");
+  await expect(consent).not.toContainText("the Waakya");
 
   // The notice the link opens carries the same name.
   await page.getByRole("link", { name: "Privacy Policy" }).click();

@@ -1,0 +1,11 @@
+import { chromium } from '@playwright/test';
+const [url, out, role, width = '1440', height = '900', full = 'false'] = process.argv.slice(2);
+const browser = await chromium.launch();
+const ctx = await browser.newContext({ viewport: { width: +width, height: +height } });
+const page = await ctx.newPage();
+const origin = new URL(url).origin;
+await ctx.addCookies([{ name: 'waakya_dev_role', value: role, url: origin }]);
+await page.goto(url, { waitUntil: 'networkidle' });
+await page.waitForTimeout(1200);
+await page.screenshot({ path: out, fullPage: full === 'true' });
+await browser.close();

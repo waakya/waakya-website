@@ -14,6 +14,9 @@ import {
 } from "@/lib/tasks/detail";
 import { taskClocks } from "@/lib/tasks/present";
 import { getTaskProofs } from "@/lib/tasks/proofs";
+import { AppShell } from "@/components/vaakya/app-shell";
+import { getUnreadCount } from "@/lib/notify/inbox";
+import { getDictionary } from "@/lib/i18n";
 import { OwnerTaskDetail } from "./owner-detail";
 import { StaffTaskDetail } from "./staff-detail";
 
@@ -55,9 +58,20 @@ export default async function TaskPage({ params }: PageProps<"/kaam/[id]">) {
     viewerId: viewer.userId,
   };
 
+  const unread = await getUnreadCount();
+  const t = getDictionary(locale);
+  const shell = {
+    locale,
+    orgName: viewer.org.name,
+    personName: viewer.fullName ?? "—",
+    roleLabel: viewer.role ? t.org.roles[viewer.role] : "",
+    unread,
+  } as const;
+
   if (canManage(viewer.role)) {
     const members = await getOrgMembers(viewer.org.id);
     return (
+      <AppShell {...shell} variant="owner">
       <OwnerTaskDetail
         {...shared}
         role={viewer.role}
@@ -70,8 +84,13 @@ export default async function TaskPage({ params }: PageProps<"/kaam/[id]">) {
           .filter((m) => m.userId !== task.assigneeId)
           .map((m) => ({ id: m.userId, name: m.name }))}
       />
+      </AppShell>
     );
   }
 
-  return <StaffTaskDetail {...shared} role={viewer.role} />;
+  return (
+    <AppShell {...shell} variant="staff">
+      <StaffTaskDetail {...shared} role={viewer.role} />
+    </AppShell>
+  );
 }

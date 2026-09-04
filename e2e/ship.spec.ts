@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { signInAs, signOut } from "./support/auth";
+import { onScreen } from "./support/visible";
 
 /**
  * The things that have to be true on the day this goes live.
@@ -29,7 +30,7 @@ test("the privacy notice is readable before anyone has an account", async ({
   await page.goto("/privacy");
   await expect(page.getByText("Last updated")).toBeVisible();
   await expect(
-    page.getByText("Vaakya keeps only the information needed"),
+    page.getByText("Waakya keeps only the information needed"),
   ).toBeVisible();
   // The DPDP rights have to actually be listed, not merely alluded to.
   await expect(page.getByText("DPDP Act, 2023")).toBeVisible();
@@ -59,7 +60,7 @@ test("the app is installable: manifest, icons and theme colour", async ({
   expect(manifestHref).toBe("/manifest.webmanifest");
 
   const manifest = await (await request.get(manifestHref!)).json();
-  expect(manifest.name).toBe("Vaakya");
+  expect(manifest.name).toBe("Waakya");
   expect(manifest.display).toBe("standalone");
   expect(manifest.start_url).toBe("/");
   // Neel 600, so the Android status bar matches the owner's header.
@@ -92,7 +93,7 @@ test("text scales to 130% without the primary action being lost", async ({
   await page.addStyleTag({ content: "html { font-size: 130% }" });
   await page.goto("/aaj");
 
-  const nav = page.getByRole("link", { name: "Aaj" });
+  const nav = onScreen(page.getByRole("link", { name: "Aaj" }));
   await expect(nav).toBeVisible();
   const box = await nav.boundingBox();
   expect(box).not.toBeNull();

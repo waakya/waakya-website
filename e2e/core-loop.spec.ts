@@ -1,5 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 import { pinLocale, signInAs, signOut, TEST_LOCALE } from "./support/auth";
+import { onScreen } from "./support/visible";
 
 /**
  * Finishing always offers the proof sheet. These tasks ask for no photo, so
@@ -32,7 +33,7 @@ async function createTask(page: Page, title: string) {
 
 async function openTask(page: Page, title: string) {
   await page.goto("/aaj");
-  await page.getByText(title).click();
+  await onScreen(page.getByText(title)).click();
   await expect(page).toHaveURL(/\/kaam\/[0-9a-f-]{36}$/);
 }
 

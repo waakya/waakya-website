@@ -5,15 +5,15 @@ import type { NotifyEvent } from "./types";
  * one moment so it keeps its meaning: reminders deliberately have none and use
  * the phone's own sound instead.
  */
-export type VaakyaSound = "naya" | "hogaya" | "dhyan";
+export type WaakyaSound = "naya" | "hogaya" | "dhyan";
 
-export const SOUND_FILES: Record<VaakyaSound, string> = {
+export const SOUND_FILES: Record<WaakyaSound, string> = {
   naya: "/sound/vaakya-naya.wav",
   hogaya: "/sound/vaakya-hogaya.wav",
   dhyan: "/sound/vaakya-dhyan.wav",
 };
 
-const FOR_EVENT: Partial<Record<NotifyEvent, VaakyaSound>> = {
+const FOR_EVENT: Partial<Record<NotifyEvent, WaakyaSound>> = {
   // New work, on the staff phone.
   task_assigned: "naya",
   reassigned: "naya",
@@ -27,6 +27,6 @@ const FOR_EVENT: Partial<Record<NotifyEvent, VaakyaSound>> = {
 };
 
 /** `null` means this event is not one of the three moments. */
-export function soundFor(event: string): VaakyaSound | null {
+export function soundFor(event: string): WaakyaSound | null {
   return FOR_EVENT[event as NotifyEvent] ?? null;
 }

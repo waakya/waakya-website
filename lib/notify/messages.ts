@@ -2,11 +2,11 @@ import type { Locale } from "@/lib/i18n";
 import type { NotifyEvent } from "./types";
 
 /**
- * The words Vaakya uses when it tells somebody something.
+ * The words Waakya uses when it tells somebody something.
  *
  * Voice: the good munshi (Character document §2.5). Names before verbs —
  * "Raju ne dekh liya", never "Task acknowledged". The owner is the sender to
- * staff; the product never speaks as "Vaakya" to them. One line, no
+ * staff; the product never speaks as "Waakya" to them. One line, no
  * exclamation marks, no emoji.
  */
 export interface MessageContext {

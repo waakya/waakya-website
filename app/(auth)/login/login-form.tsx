@@ -25,7 +25,7 @@ import { requestOtp, setLoginLocale, verifyOtp } from "./actions";
  * and the staff hint below that.
  *
  * The forms are `noValidate` on purpose: the browser's own validation bubble
- * speaks the browser's language and cannot be styled, so Vaakya answers in the
+ * speaks the browser's language and cannot be styled, so Waakya answers in the
  * reader's language instead (§9 — errors say what to do next).
  *
  * The field is an *email* field, not the phone field in the PNG: the MVP signs
@@ -43,7 +43,7 @@ export function LoginForm({
 }) {
   // The dictionary is looked up here rather than passed in: it holds formatter
   // functions, and functions cannot cross the server/client boundary. Every
-  // client component in Vaakya takes a `locale` and resolves its own copy.
+  // client component in Waakya takes a `locale` and resolves its own copy.
   const t = getDictionary(locale);
   const router = useRouter();
   const [step, setStep] = React.useState<"email" | "code">("email");
@@ -101,7 +101,7 @@ export function LoginForm({
       <div className="flex flex-1 flex-col pt-[8vh]">
         <Image
           src="/brand/logo/logo-stacked.svg"
-          alt="Vaakya — Bolo. Ho jayega."
+          alt="Waakya — Bolo. Ho jayega."
           width={281}
           height={203}
           priority

@@ -89,11 +89,11 @@ describe("the dictionaries", () => {
   });
 
   it("never bakes the brand name into a translatable string", () => {
-    // *Vaakya* means "sentence" in Hindi. The moment the name sits inside copy
-    // that somebody translates, the consent line reads "I agree to the
-    // sentence's Privacy Policy" — which is exactly what happened. The name is
-    // a proper noun, so it is interpolated from lib/i18n/brand.ts and never
-    // typed into a dictionary.
+    // वाक्य is also the ordinary Hindi word for "sentence". With the name
+    // inside copy that somebody translates, the consent line read "I agree to
+    // the sentence's Privacy Policy" — which is exactly what happened. The
+    // name is a proper noun, so it is interpolated from lib/i18n/brand.ts and
+    // never typed into a dictionary.
     for (const locale of LOCALES) {
       for (const line of collectStrings(dictionaries[locale])) {
         expect(line, `${locale}: ${line}`).not.toContain(BRAND_NAME);
@@ -113,8 +113,8 @@ describe("the dictionaries", () => {
 
 describe("the brand name", () => {
   it("is the same name in both scripts, and never a translation of it", () => {
-    expect(brandName("en")).toBe("Vaakya");
-    expect(brandName("hi-Latn")).toBe("Vaakya");
+    expect(brandName("en")).toBe("Waakya");
+    expect(brandName("hi-Latn")).toBe("Waakya");
     // The Devanagari wordmark, not a different word (Design Direction §2.3).
     expect(brandName("hi")).toBe("वाक्य");
   });
@@ -128,15 +128,15 @@ describe("the brand name", () => {
 
       expect(line, locale).toContain(brandName(locale));
       expect(line, locale).toContain(PRIVACY_POLICY_NAME);
-      // "the Vaakya Privacy Policy" reads as a category; it is Vaakya's.
-      expect(line, locale).not.toContain("the Vaakya ");
+      // "the Waakya Privacy Policy" reads as a category; it is Waakya's.
+      expect(line, locale).not.toContain("the Waakya ");
     }
 
     expect(
-      dictionaries.en.auth.consentPrefix("Vaakya") +
+      dictionaries.en.auth.consentPrefix("Waakya") +
         PRIVACY_POLICY_NAME +
         dictionaries.en.auth.consentSuffix,
-    ).toBe("I agree to Vaakya's Privacy Policy.");
+    ).toBe("I agree to Waakya's Privacy Policy.");
 
     expect(
       dictionaries.hi.auth.consentPrefix("वाक्य") +
@@ -161,7 +161,10 @@ describe("the source tree", () => {
     // Prose may name the rule ("never Haldi"); only real token usage counts.
     const usage = /(?:bg|text|border|stroke|fill|from|to|via)-haldi-|var\(--haldi|--haldi-\d|#F4B41A/i;
     const allowed = new Set([
+      // The glyph, where Haldi means done and waiting for the owner…
       "components/vaakya/ticks.tsx",
+      // …and the logo, whose tick is the same colour for the same reason.
+      // Every other place that shows the mark composes this one file.
       "components/vaakya/mark.tsx",
       "lib/brand/rules.test.ts",
       "app/globals.css",

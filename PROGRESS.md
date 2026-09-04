@@ -1,4 +1,4 @@
-# Vaakya — build progress
+# Waakya — build progress
 
 Slices from `BUILD_STEPS.md §3`, built strictly in order. Each slice must pass
 the gate before the next one starts:
@@ -552,15 +552,15 @@ it. `/auth/confirm` verifies the token hash server-side, creates the profile
 row on first sign-in, and only redirects to same-site paths. It is real product
 code: it is also how an emailed link works.
 
-**2. The brand name is out of the translation layer.** *Vaakya* means
+**2. The brand name is out of the translation layer.** *Waakya* means
 "sentence" in Hindi, so with the name inside translatable copy the consent line
 read "I agree to the sentence's Privacy Policy". `lib/i18n/brand.ts` now holds
 it, `consentPrefix` takes it as an argument, and a test fails the build if the
 name reappears in any dictionary string. It now reads:
 
-- English — *I agree to Vaakya's **Privacy Policy**.* (not "the Vaakya…", which
+- English — *I agree to Waakya's **Privacy Policy**.* (not "the Waakya…", which
   reads as a category rather than a name)
-- Hinglish — *Main Vaakya ki **Privacy Policy** se sehmat hoon.*
+- Hinglish — *Main Waakya ki **Privacy Policy** se sehmat hoon.*
 - हिंदी — *मैं वाक्य की **Privacy Policy** से सहमत हूँ।*
 
 The notice's own name stays "Privacy Policy" in all three, so the link and the
@@ -584,3 +584,51 @@ language-agnostic — they read `<html lang>` — and the suite pins its own
 session language so it no longer inherits whatever was last clicked.
 
 **Gate:** lint ✅ · typecheck ✅ · build ✅ · Vitest **197/197** ✅ · Playwright **50/50** ✅
+
+---
+
+## Follow-ups: the rename, the website, and the dev bypass
+
+**1. Waakya, not Vaakya.** The Roman spelling now matches waakya.com across
+every rendered surface, the manifest, metadata, email defaults and the docs.
+`lib/i18n/brand.ts` is the one source and a test fails the build if the name
+reappears in translatable copy. The Devanagari वाक्य is unchanged — same name,
+other script — and so is the mark. The outlined wordmark SVGs still read
+"Vaakya" and are listed in REPORT.md for redrawing; everywhere except the login
+screen the wordmark is now composed from `Mark` plus the display face, so it
+picked up the new name without any art.
+
+**2. A real website, not a phone column.** One tree, one breakpoint:
+
+- `AppShell` swaps the bottom nav for a Neel sidebar from `lg`, and the phone
+  layout below it is untouched.
+- The desktop dashboard follows `DashboardDesktop.png`: six counter cards, the
+  needs-you cards two across, the day's work as a table with named columns, and
+  a right rail for the week's completion and who is on today. It reads the same
+  `rowStatus` and `stateWord` as the phone rows, so the glyph-or-chip rule
+  (D-11) and the state-in-words rule (D-03) hold identically at both widths.
+- Task detail spreads into two columns and its action bar leaves the fixed
+  strip for normal flow, because on a wide screen there is no fold to fall
+  below.
+- `/` is a marketing landing page following `LandingDesktop.png`: hero over the
+  doodle, the ticks ladder built from the real glyph, the problem, three steps,
+  features, the Neel WhatsApp section, who it is for, pricing, FAQ and a final
+  card. Its copy is in all three languages and **describes only what v1 does** —
+  the two WhatsApp pieces that are not built are labelled *Jald / Coming*
+  rather than promised.
+
+**3. `DEV_DISABLE_AUTH`.** Off by default and refused in production, exactly
+like `ALLOW_TEST_LOGIN`. It lives in `proxy.ts` rather than the layout, because
+that is the only place that can persist the session cookies — signing in during
+a render would establish a session for one request and throw it away. Nothing
+in `app/` or `lib/auth/session.ts` knows it exists, so turning it off restores
+normal login with no code change, and the Playwright config pins it off so the
+suite always exercises the real path.
+
+**A bug the brand test caught.** The landing page used Haldi for icons and for
+the pricing checkmarks. Haldi has exactly one job. Fixing it also removed a
+real duplication: the mark's three strokes had been copied into three files, so
+`Wordmark` now composes `Mark` and `SideNav` composes `Wordmark` — one file
+draws the logo, and the allowlist has one entry.
+
+**Gate:** lint ✅ · typecheck ✅ · build ✅ · Vitest **197/197** ✅ · Playwright **57/57** ✅

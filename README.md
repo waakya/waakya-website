@@ -1,11 +1,11 @@
-# Vaakya
+# Waakya
 
 **Bolo. Ho jayega.** — an Indian SMB owner assigns work to their team, and the
 work comes back with a record: every task has a deadline, has to be
 acknowledged, and escalates to the owner if it is not.
 
 The brand and the screens were designed before the code. `CLAUDE.md` is the
-spec, `Vaakya_Design_Direction_v1.md` is the reasoning, and
+spec, `Waakya_Design_Direction_v1.md` is the reasoning, and
 `vaakya-brand-kit/screens/*.png` are the screens this implements.
 
 ---
@@ -17,6 +17,19 @@ npm install
 cp .env.example .env.local     # then fill it in — see below
 npm run dev                    # http://localhost:3000
 ```
+
+### Testing
+
+**Skip login altogether.** Set `DEV_DISABLE_AUTH=true` in `.env.local` and the
+proxy signs you in as a seeded user, so every screen is reachable without an
+inbox or a password. A small **Owner / Staff** switcher appears in the corner
+so both sides of the product can be looked at.
+
+It is refused when `NODE_ENV=production`, exactly like `ALLOW_TEST_LOGIN`, and
+nothing in `app/` or `lib/auth/session.ts` knows it exists — it is a
+short-circuit in front of the real path. Setting the flag to anything else, or
+deleting it, restores normal login with **no code change**. The Playwright
+config pins it off, so the suite always exercises the real login.
 
 **Signing in without an inbox.** The MVP mails a six-digit code, which is no
 use against a test address. With `SUPABASE_SERVICE_ROLE_KEY` set:
@@ -129,6 +142,25 @@ supabase secrets set VAAKYA_APP_URL=https://waakya.com CRON_SECRET=<secret>
 # then schedule it every 5 minutes
 ```
 
+## Responsive
+
+One component tree serves every width; a Tailwind breakpoint chooses the
+layout, and there is no separate desktop app.
+
+- **Below `lg`** it is the phone product the brand kit designed: a centred
+  column, the Neel header, and the bottom nav.
+- **From `lg`** `AppShell` swaps the bottom nav for a Neel sidebar, the
+  dashboard's counters become their own cards, "Aapke liye" goes two across,
+  the day's work becomes a table with named columns, and a right rail carries
+  the week's completion and who is on today.
+- **`/`** is a marketing landing page for logged-out visitors. A signed-in
+  visitor is redirected to their day rather than sold to.
+
+Both layouts are in the DOM at once, hidden by CSS. That is the ordinary cost
+of a responsive tree, and it is why the e2e scopes text selectors with
+`onScreen()` — a plain selector matches the layout you can see *and* the one
+you cannot.
+
 ## Structure
 
 ```
@@ -157,7 +189,7 @@ supabase/migrations/ every schema change, in order
 - **The dictionary holds formatter functions**, which cannot cross the
   server/client boundary. Client components take a `locale` and call
   `getDictionary()` themselves; the dictionary is never a prop.
-- **The brand name is never in the dictionary.** *Vaakya* means "sentence" in
+- **The brand name is never in the dictionary.** *Waakya* means "sentence" in
   Hindi, so a translated brand name turns the consent line into "I agree to the
   sentence's Privacy Policy". It lives in `lib/i18n/brand.ts` and is
   interpolated; `lib/brand/rules.test.ts` fails the build if it reappears in a

@@ -10,12 +10,12 @@ import "./globals.css";
 // theme_color is Neel 600 so the Android status bar matches the owner header.
 export const metadata: Metadata = {
   title: {
-    default: "Vaakya — Bolo. Ho jayega.",
-    template: "%s · Vaakya",
+    default: "Waakya — Bolo. Ho jayega.",
+    template: "%s · Waakya",
   },
   description:
     "Kaam bhejo, dekha jaaye, ho jaaye. Har kaam ka deadline, acknowledgement aur record.",
-  applicationName: "Vaakya",
+  applicationName: "Waakya",
   manifest: "/manifest.webmanifest",
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://waakya.com"),
   icons: {
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
   },
   appleWebApp: {
     capable: true,
-    title: "Vaakya",
+    title: "Waakya",
     statusBarStyle: "default",
   },
   formatDetection: { telephone: false },

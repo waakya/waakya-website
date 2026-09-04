@@ -59,7 +59,7 @@ export default async function PreviewPage() {
           Style tile
         </h1>
         <p className="ml-2 text-[13px] text-ink-500">
-          Vaakya primitives, kit tokens
+          Waakya primitives, kit tokens
         </p>
       </header>
 
@@ -115,7 +115,7 @@ export default async function PreviewPage() {
         </Section>
 
         <Section
-          title="The Vaakya ticks"
+          title="The Waakya ticks"
           note="The normal path, as a glyph you learn once. Haldi is the done tick and nothing else."
         >
           <div className="rounded-card bg-paper-100 p-4">
@@ -266,7 +266,7 @@ export default async function PreviewPage() {
         <Section title="Inputs" note="One toggle style, one checkbox style, six OTP boxes.">
           <PreviewInteractive
             proofLabel={t.chips.photoChahiye}
-            consentLabel="Main Vaakya ki Privacy Policy se sehmat hoon."
+            consentLabel="Main Waakya ki Privacy Policy se sehmat hoon."
             priorityLabels={[t.priority.normal, t.priority.urgent]}
             sheetTitle="Ho gaya? Proof bhejein"
             sheetPrimary={t.actions.bhejenHoGaya}

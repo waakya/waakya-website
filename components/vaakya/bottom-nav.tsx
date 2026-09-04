@@ -38,7 +38,7 @@ export function BottomNav({
   return (
     <nav
       aria-label={t.nav.aaj}
-      className="sticky bottom-0 z-30 border-t border-paper-200 bg-paper-0 pb-[env(safe-area-inset-bottom)]"
+      className="sticky bottom-0 z-30 border-t border-paper-200 bg-paper-0 pb-[env(safe-area-inset-bottom)] lg:hidden"
     >
       <ul className="mx-auto flex max-w-md">
         {items.map(({ href, label, icon: Icon }) => {

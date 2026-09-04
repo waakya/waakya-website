@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { pinLocale, signInAs, signOut, TEST_LOCALE } from "./support/auth";
+import { onScreen } from "./support/visible";
 
 test.describe.configure({ mode: "serial" });
 
@@ -32,7 +33,7 @@ test("the owner sends a task on the Confirm card, and the staff member sees it",
   await page.getByRole("button", { name: "Bhejo" }).click();
 
   await expect(page).toHaveURL(/\/aaj$/);
-  await expect(page.getByText(title)).toBeVisible();
+  await expect(onScreen(page.getByText(title))).toBeVisible();
 
   // The owner's row states the state in words, not by colour alone.
   const row = page
@@ -73,7 +74,7 @@ test("the task is delivered, not merely created, and the audit trail says so", a
 
   // Open it: the detail screen agrees with the list, and the audit trail says
   // the task was delivered, not merely created.
-  await page.getByText(title).click();
+  await onScreen(page.getByText(title)).click();
   await expect(page).toHaveURL(/\/kaam\/[0-9a-f-]{36}$/);
   await expect(page.getByRole("heading", { name: title })).toBeVisible();
   await expect(page.getByText("Raju", { exact: true }).first()).toBeVisible();

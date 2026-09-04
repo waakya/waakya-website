@@ -3,7 +3,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 /**
- * Vaakya buttons. Design Direction §5.1/§5.2 and screens/StyleTile.png.
+ * Waakya buttons. Design Direction §5.1/§5.2 and screens/StyleTile.png.
  *
  * Neel is the only working accent, so `primary` is the single Neel-filled
  * button on a screen. Haldi is never a button (D-01/D-12). Heights come from

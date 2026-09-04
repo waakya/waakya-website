@@ -1,0 +1,12 @@
+import { chromium } from '@playwright/test';
+const [url, out, width = '1440', height = '900', full = 'false'] = process.argv.slice(2);
+const browser = await chromium.launch();
+const page = await browser.newPage({ viewport: { width: +width, height: +height }, deviceScaleFactor: 1 });
+const errors = [];
+page.on('console', m => { if (m.type() === 'error' && !/hmr|WebSocket/i.test(m.text())) errors.push(m.text()); });
+page.on('pageerror', e => errors.push(String(e)));
+await page.goto(url, { waitUntil: 'networkidle' });
+await page.waitForTimeout(1000);
+await page.screenshot({ path: out, fullPage: full === 'true' });
+console.log(errors.length ? 'CONSOLE ERRORS:\n' + errors.join('\n') : 'no console errors');
+await browser.close();

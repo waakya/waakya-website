@@ -1,12 +1,12 @@
-# CLAUDE.md — Vaakya build spec
+# CLAUDE.md — Waakya build spec
 
-Single source of truth for building Vaakya. Read fully before writing code. Follow it exactly; ask
+Single source of truth for building Waakya. Read fully before writing code. Follow it exactly; ask
 when ambiguous. The **brand and UI are already designed** — implement them, do not reinvent them.
 
 ---
 
 ## 1. Product
-Vaakya lets an Indian SMB owner assign tasks to their team with built-in **accountability**: every
+Waakya lets an Indian SMB owner assign tasks to their team with built-in **accountability**: every
 task has deadlines, must be acknowledged, and auto-escalates to the owner if it isn't accepted or
 done in time. Tagline: **Bolo. Ho jayega.** ("Say it. It gets done.")
 
@@ -30,8 +30,8 @@ Users: real-estate brokers and small store/office owners (2–30 staff). Launch 
 Out of scope v1: voice input, WhatsApp, CRM/leads, khata/finance, offline sync, extra languages beyond the three below. Keep interfaces clean so these slot in later.
 
 ## 3. Brand & UI — use the kit, don't invent
-The full system is in `vaakya-brand-kit/` and documented in `Vaakya_Design_Direction_v1.md` and
-`Vaakya_Character_and_Website_v1.md`. Hi-fi screens for every flow are in `vaakya-brand-kit/screens/`.
+The full system is in `vaakya-brand-kit/` and documented in `Waakya_Design_Direction_v1.md` and
+`Waakya_Character_and_Website_v1.md`. Hi-fi screens for every flow are in `vaakya-brand-kit/screens/`.
 Match them. Setup:
 - Copy `vaakya-brand-kit/tokens.css` into `app/globals.css` (replace shadcn `:root`). HSL vars feed shadcn; hex tokens feed custom components.
 - Merge `vaakya-brand-kit/tailwind.tokens.ts` into `tailwind.config.ts` `theme.extend`.

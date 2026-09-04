@@ -7,6 +7,7 @@ import {
   TEST_USERS,
 } from "./support/auth";
 import { pageDictionary } from "./support/i18n";
+import { onScreen } from "./support/visible";
 
 /**
  * Org setup and the invite flow, end to end against the real database, so RLS
@@ -52,7 +53,7 @@ test("an owner creates a business, invites staff, and the staff member joins", a
 
   await clearPendingInvites(page);
   await expect(page.getByRole("heading", { name: "Staff" })).toBeVisible();
-  await expect(page.getByText("Rakesh Properties")).toBeVisible();
+  await expect(onScreen(page.getByText("Rakesh Properties")).first()).toBeVisible();
 
   // Invite the staff member and capture the link the owner would send.
   await page.getByRole("button", { name: "Staff bulao" }).click();
@@ -93,7 +94,7 @@ test("an owner creates a business, invites staff, and the staff member joins", a
 
   // The staff member is now in the org, and sees a three-item nav, not four.
   await inviteePage.goto("/settings");
-  await expect(inviteePage.getByText("Rakesh Properties")).toBeVisible();
+  await expect(onScreen(inviteePage.getByText("Rakesh Properties")).first()).toBeVisible();
   await expect(
     inviteePage.getByRole("link", { name: "Staff", exact: true }),
   ).toHaveCount(0);

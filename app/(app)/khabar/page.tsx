@@ -7,7 +7,7 @@ import { getInbox } from "@/lib/notify/inbox";
 import { getDictionary, toLocale } from "@/lib/i18n";
 import { getLocale } from "@/lib/i18n/server";
 import { Card } from "@/components/ui/card";
-import { BottomNav } from "@/components/vaakya/bottom-nav";
+import { AppShell } from "@/components/vaakya/app-shell";
 import { formatTime } from "@/lib/tasks/time";
 import { formatIndianDate } from "@/lib/tasks/format-date";
 import { InboxActions } from "./inbox-actions";
@@ -26,7 +26,14 @@ export default async function InboxPage() {
   const unread = items.filter((item) => !item.readAt).length;
 
   return (
-    <div className="flex min-h-dvh flex-col">
+    <AppShell
+      locale={locale}
+      variant={canManage(viewer.role) ? "owner" : "staff"}
+      orgName={viewer.org?.name ?? ""}
+      personName={viewer.fullName ?? "—"}
+      roleLabel={viewer.role ? getDictionary(locale).org.roles[viewer.role] : ""}
+      unread={unread}
+    >
       <main className="flex-1 p-4">
         <header className="flex items-start gap-3">
           <div className="flex-1">
@@ -87,10 +94,6 @@ export default async function InboxPage() {
         )}
       </main>
 
-      <BottomNav
-        locale={locale}
-        variant={canManage(viewer.role) ? "owner" : "staff"}
-      />
-    </div>
+    </AppShell>
   );
 }

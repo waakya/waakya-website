@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 
 /**
- * The Vaakya mark, inline (never an image request — §7). Two Neel sound bars
+ * The Waakya mark, inline (never an image request — §7). Two Neel sound bars
  * and a Haldi tick, drawn on the 64-unit grid from vaakya-brand-kit/logo/mark.svg.
  * Minimum 16px alone, 24px in the app header.
  */
@@ -9,7 +9,7 @@ export function Mark({
   size = 24,
   className,
   onNeel = false,
-  title = "Vaakya",
+  title = "Waakya",
 }: {
   size?: number;
   className?: string;

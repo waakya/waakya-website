@@ -22,6 +22,11 @@ const BASE_URL = `http://127.0.0.1:${PORT}`;
  * The e2e runs against `next dev` on purpose: the dev-only test-login route
  * that seeds a session refuses to exist when NODE_ENV is production, so a
  * production build could not sign in without real OTP email delivery.
+ *
+ * Next 16 allows only one `next dev` per project, so stop any server you have
+ * running before `npm run e2e` — or point the suite at it with
+ * `E2E_PORT=3000`, remembering that it will then use that server's
+ * environment, including DEV_DISABLE_AUTH.
  */
 export default defineConfig({
   testDir: "./e2e",
@@ -43,6 +48,11 @@ export default defineConfig({
     url: BASE_URL,
     reuseExistingServer: !process.env.CI,
     timeout: 180_000,
-    env: { ALLOW_TEST_LOGIN: "true" },
+    env: {
+      ALLOW_TEST_LOGIN: "true",
+      // The suite tests the real login path, so the dev bypass must be off
+      // here however it is set in .env.local for hands-on review.
+      DEV_DISABLE_AUTH: "false",
+    },
   },
 });

@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { signInAs, signOut } from "./support/auth";
+import { onScreen } from "./support/visible";
 
 /**
  * The owner's dashboard. The header is the one glance at the day, so the
@@ -94,18 +95,18 @@ test("switching language reaches every screen, not just the shell", async ({
 
   await page.goto("/aaj");
   await expect(page.locator("html")).toHaveAttribute("lang", "en");
-  await expect(page.getByText("Needs you")).toBeVisible();
+  await expect(onScreen(page.getByText("Needs you")).first()).toBeVisible();
 
   await page.goto("/naya");
-  await expect(page.getByRole("heading", { name: "Send this?" })).toBeVisible();
-  await expect(page.getByRole("button", { name: /^Who/ })).toBeVisible();
+  await expect(onScreen(page.getByRole("heading", { name: "Send this?" }))).toBeVisible();
+  await expect(onScreen(page.getByRole("button", { name: /^Who/ }))).toBeVisible();
 
   await page.goto("/staff");
-  await expect(page.getByRole("heading", { name: "Staff" })).toBeVisible();
+  await expect(onScreen(page.getByRole("heading", { name: "Staff" }))).toBeVisible();
 
   // And back the other way.
   await signInAs(page, "owner", "hi");
   await page.goto("/naya");
   await expect(page.locator("html")).toHaveAttribute("lang", "hi");
-  await expect(page.getByRole("heading", { name: "यह भेजें?" })).toBeVisible();
+  await expect(onScreen(page.getByRole("heading", { name: "यह भेजें?" }))).toBeVisible();
 });

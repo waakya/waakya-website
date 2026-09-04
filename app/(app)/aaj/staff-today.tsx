@@ -1,6 +1,5 @@
 import { ChevronDown, ListChecks } from "lucide-react";
 
-import { BottomNav } from "@/components/vaakya/bottom-nav";
 import { Mark } from "@/components/vaakya/mark";
 import { Bell } from "@/components/vaakya/bell";
 import { Avatar } from "@/components/ui/avatar";
@@ -158,7 +157,6 @@ export function StaffToday({
         ) : null}
       </main>
 
-      <BottomNav locale={locale} variant="staff" />
     </div>
   );
 }

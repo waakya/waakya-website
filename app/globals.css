@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /* ---------------------------------------------------------------------------
-   Vaakya design tokens.
+   Waakya design tokens.
    Ported from vaakya-brand-kit/tokens.css + tailwind.tokens.ts.
    Tailwind v4 is CSS-first: @theme replaces tailwind.config.ts theme.extend,
    and every token below is also a plain CSS variable for custom components.

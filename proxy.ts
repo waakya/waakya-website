@@ -1,6 +1,13 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 
+import {
+  DEV_ROLE_COOKIE,
+  DEV_USERS,
+  devAuthDisabled,
+  toDevRole,
+} from "@/lib/auth/dev-bypass";
+
 /**
  * Renamed from `middleware` in Next 16. It runs before rendering and does one
  * job: refresh the Supabase session and write the rotated cookies onto the
@@ -37,7 +44,34 @@ export async function proxy(request: NextRequest) {
     },
   });
 
-  await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  /*
+   * Development only, and off unless DEV_DISABLE_AUTH is exactly "true".
+   *
+   * It happens here rather than in the layout because this is the only place
+   * that can write cookies onto the response — signing in during a render
+   * would establish a session for that one request and then throw it away, so
+   * every navigation would sign in again.
+   */
+  // The landing page is for logged-out visitors, so signing in there would
+  // make it unreachable while the flag is on.
+  const onMarketing =
+    request.nextUrl.pathname === "/" ||
+    request.nextUrl.pathname.startsWith("/privacy");
+
+  if (!user && !onMarketing && devAuthDisabled()) {
+    const wanted = DEV_USERS[toDevRole(request.cookies.get(DEV_ROLE_COOKIE)?.value)];
+    const { error } = await supabase.auth.signInWithPassword(wanted);
+    if (error) {
+      console.warn(
+        `[dev] DEV_DISABLE_AUTH is on but signing in as ${wanted.email} failed: ` +
+          `${error.message}. Run supabase/seed-e2e.sql against this project.`,
+      );
+    }
+  }
 
   return response;
 }

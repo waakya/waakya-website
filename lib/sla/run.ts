@@ -258,7 +258,7 @@ async function deliver(
       : undefined;
 
   const body = writeMessage(event, context.locale, {
-    // The product never speaks as "Vaakya" to staff; a reminder is the
+    // The product never speaks as "Waakya" to staff; a reminder is the
     // business reminding them, so the business is the sender.
     actor: context.orgName,
     task: context.title,

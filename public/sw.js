@@ -1,5 +1,5 @@
 /*
- * The smallest service worker that makes Vaakya installable.
+ * The smallest service worker that makes Waakya installable.
  *
  * It deliberately caches almost nothing. Offline sync is out of scope for v1
  * (CLAUDE.md §2), and a worker that served stale task lists would be worse

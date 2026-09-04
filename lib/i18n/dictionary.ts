@@ -1,4 +1,4 @@
-// The Vaakya copy sheet. Character document §2.4 fixes the vocabulary:
+// The Waakya copy sheet. Character document §2.4 fixes the vocabulary:
 // Bolo, Dekh liya, Ho jayega, Ho gaya, Aapke liye, Verify, Late. Copy uses
 // those words and does not invent synonyms — a task is never "completed",
 // "closed" or "resolved"; it is *ho gaya* and then *verified*.
@@ -294,6 +294,25 @@ export interface Dictionary {
     staff: string;
     settings: string;
     pehle: string;
+    /** The sidebar's label above the business name, on desktop. */
+    businessLabel: string;
+    checklists: string;
+    khabar: string;
+  };
+  /** Panels that only appear where there is room for them. */
+  desktop: {
+    thisWeek: string;
+    onTime: string;
+    staffToday: string;
+    staffActive: (n: number) => string;
+    columnTask: string;
+    columnWho: string;
+    columnWhen: string;
+    columnStatus: string;
+    columnAction: string;
+    todaysWork: string;
+    filterAll: string;
+    noOne: string;
   };
   /** The login screen. */
   auth: {
@@ -594,7 +613,30 @@ export const dictionaries: Record<Locale, Dictionary> = {
       business: "बिज़नेस",
       account: "अकाउंट",
     },
-    nav: { aaj: "आज", hafta: "हफ़्ता", staff: "स्टाफ़", settings: "सेटिंग", pehle: "पहले के काम" },
+    nav: {
+      aaj: "आज",
+      hafta: "हफ़्ता",
+      staff: "स्टाफ़",
+      settings: "सेटिंग",
+      pehle: "पहले के काम",
+      businessLabel: "बिज़नेस",
+      checklists: "रोज़ का काम",
+      khabar: "खबर",
+    },
+    desktop: {
+      thisWeek: "इस हफ़्ते",
+      onTime: "समय पे",
+      staffToday: "आज का स्टाफ़",
+      staffActive: (n) => `${n} लोग`,
+      columnTask: "काम",
+      columnWho: "किसको",
+      columnWhen: "कब तक",
+      columnStatus: "स्टेटस",
+      columnAction: "एक्शन",
+      todaysWork: "आज के काम",
+      filterAll: "सब",
+      noOne: "कोई नहीं",
+    },
     auth: {
       title: "अपना ईमेल डालें",
       subtitle: "OTP इसी ईमेल पे आएगा।",
@@ -890,7 +932,30 @@ export const dictionaries: Record<Locale, Dictionary> = {
       business: "Business",
       account: "Account",
     },
-    nav: { aaj: "Aaj", hafta: "Hafta", staff: "Staff", settings: "Setting", pehle: "Pehle ke kaam" },
+    nav: {
+      aaj: "Aaj",
+      hafta: "Hafta",
+      staff: "Staff",
+      settings: "Setting",
+      pehle: "Pehle ke kaam",
+      businessLabel: "Business",
+      checklists: "Roz ka kaam",
+      khabar: "Khabar",
+    },
+    desktop: {
+      thisWeek: "Is hafte",
+      onTime: "samay pe",
+      staffToday: "Staff aaj",
+      staffActive: (n) => `${n} staff active`,
+      columnTask: "Kaam",
+      columnWho: "Kisko",
+      columnWhen: "Kab tak",
+      columnStatus: "Status",
+      columnAction: "Action",
+      todaysWork: "Aaj ke kaam",
+      filterAll: "Sab",
+      noOne: "Koi nahi",
+    },
     auth: {
       title: "Apna email daalein",
       subtitle: "OTP isi email pe aayega.",
@@ -1186,7 +1251,30 @@ export const dictionaries: Record<Locale, Dictionary> = {
       business: "Business",
       account: "Account",
     },
-    nav: { aaj: "Today", hafta: "Week", staff: "Staff", settings: "Settings", pehle: "Earlier" },
+    nav: {
+      aaj: "Today",
+      hafta: "Week",
+      staff: "Staff",
+      settings: "Settings",
+      pehle: "Earlier",
+      businessLabel: "Business",
+      checklists: "Daily routine",
+      khabar: "Updates",
+    },
+    desktop: {
+      thisWeek: "This week",
+      onTime: "on time",
+      staffToday: "Staff today",
+      staffActive: (n) => `${n} staff active`,
+      columnTask: "Task",
+      columnWho: "Who",
+      columnWhen: "By when",
+      columnStatus: "Status",
+      columnAction: "Action",
+      todaysWork: "Today's work",
+      filterAll: "All",
+      noOne: "Nobody",
+    },
     auth: {
       title: "Enter your email",
       subtitle: "The code comes to this email.",

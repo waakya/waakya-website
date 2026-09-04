@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { requireOrg, canManage } from "@/lib/auth/session";
 import { getMyTasks, getOrgTasks } from "@/lib/tasks/queries";
 import { getDictionary } from "@/lib/i18n";
-import { BottomNav } from "@/components/vaakya/bottom-nav";
+import { AppShell } from "@/components/vaakya/app-shell";
 import { TaskRow } from "@/components/vaakya/task-row";
 import { dayKey } from "@/lib/tasks/time";
 import { formatIndianDate } from "@/lib/tasks/format-date";
@@ -40,7 +40,14 @@ export default async function PehlePage() {
   }
 
   return (
-    <div className="flex min-h-dvh flex-col">
+    <AppShell
+      locale={locale}
+      variant={owner ? "owner" : "staff"}
+      orgName={viewer.org.name}
+      personName={viewer.fullName ?? "—"}
+      roleLabel={viewer.role ? getDictionary(locale).org.roles[viewer.role] : ""}
+      unread={0}
+    >
       <main className="flex-1 p-4 pb-6">
         <h1 className="text-[24px] leading-[30px] font-bold text-ink-900">
           {t.nav.pehle}
@@ -75,7 +82,6 @@ export default async function PehlePage() {
         ))}
       </main>
 
-      <BottomNav locale={locale} variant={owner ? "owner" : "staff"} />
-    </div>
+    </AppShell>
   );
 }

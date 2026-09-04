@@ -3,17 +3,18 @@ import type { Locale } from "./locales";
 /**
  * The brand name is a proper noun and is **never translated**.
  *
- * It lives here rather than in the dictionary on purpose. *Vaakya* means
- * "sentence" in Hindi, so the moment the name sits inside translatable copy
- * somebody eventually renders it as the common noun and the consent line reads
- * "I agree to the sentence's Privacy Policy". Keeping it out of the dictionary
- * makes that impossible rather than merely discouraged — `lib/brand/rules.test.ts`
- * fails the build if the name reappears in a dictionary string.
+ * It lives here rather than in the dictionary on purpose. The Devanagari form
+ * वाक्य is also the ordinary Hindi word for "sentence", so the moment the name
+ * sits inside translatable copy somebody eventually renders it as the common
+ * noun and the consent line reads "I agree to the sentence's Privacy Policy".
+ * Keeping it out of the dictionary makes that impossible rather than merely
+ * discouraged — `lib/brand/rules.test.ts` fails the build if the name reappears
+ * in a dictionary string.
  *
- * The Devanagari wordmark is वाक्य: the same name in the other script, not a
- * translation of it (Design Direction §2.3, `logo/logo-hindi.svg`).
+ * The Roman spelling is **Waakya**, after waakya.com. वाक्य is the same name in
+ * the other script, not a translation of it (Design Direction §2.3).
  */
-export const BRAND_NAME = "Vaakya";
+export const BRAND_NAME = "Waakya";
 export const BRAND_NAME_DEVANAGARI = "वाक्य";
 
 export function brandName(locale: Locale): string {

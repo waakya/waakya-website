@@ -1,4 +1,4 @@
-# Vaakya — build report
+# Waakya — build report
 
 Built from `CLAUDE.md`, `BUILD_STEPS.md` and `vaakya-brand-kit/screens/*.png`,
 in ten slices, each gated on lint → typecheck → build → Vitest → Playwright
@@ -9,8 +9,30 @@ before the next one started. `PROGRESS.md` has the slice-by-slice detail.
 ```
 lint       ✅   typecheck  ✅   build      ✅
 Vitest     ✅   197 tests
-Playwright ✅   50 tests, against the live Supabase project
+Playwright ✅   57 tests, against the live Supabase project
 ```
+
+## Known: the wordmark art still says "Vaakya"
+
+The product is **Waakya**, after waakya.com. Every rendered surface uses the new
+spelling — UI copy, `<title>` and metadata, the manifest, email templates, the
+README — and `lib/i18n/brand.ts` is the single source, guarded by a test.
+
+The outlined SVGs in `public/brand/logo/` are the exception: they are letter
+art, not text, so they still read "Vaakya" and **need regenerating**:
+
+```
+logo-stacked.svg          logo-stacked-white.svg
+logo-horizontal.svg       logo-horizontal-white.svg
+logo-horizontal-tagline.svg   logo-horizontal-tagline-white.svg
+logo-bilingual.svg        logo-bilingual-white.svg
+```
+
+Only `logo-stacked.svg` is on screen today — the login screen — so that is the
+one to redraw first. Everywhere else the wordmark is composed from `Mark` plus
+the display face (`components/vaakya/wordmark.tsx`), which picks up the name
+from the brand constant and needed no art. The Devanagari वाक्य and the mark
+itself are unchanged: the name changed, the glyph did not.
 
 ---
 

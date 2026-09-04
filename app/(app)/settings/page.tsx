@@ -6,7 +6,7 @@ import { requireViewer, canManage } from "@/lib/auth/session";
 import { getDictionary, toLocale } from "@/lib/i18n";
 import { getLocale } from "@/lib/i18n/server";
 import { Card } from "@/components/ui/card";
-import { BottomNav } from "@/components/vaakya/bottom-nav";
+import { AppShell } from "@/components/vaakya/app-shell";
 import { SettingsLanguage } from "./settings-language";
 import { SignOutButton } from "./sign-out-button";
 
@@ -19,7 +19,14 @@ export default async function SettingsPage() {
   const t = getDictionary(locale);
 
   return (
-    <div className="flex min-h-dvh flex-col">
+    <AppShell
+      locale={locale}
+      variant={canManage(viewer.role) ? "owner" : "staff"}
+      orgName={viewer.org?.name ?? ""}
+      personName={viewer.fullName ?? "—"}
+      roleLabel={viewer.role ? getDictionary(locale).org.roles[viewer.role] : ""}
+      unread={0}
+    >
       <main className="flex-1 p-4">
         <h1 className="text-[24px] leading-[30px] font-bold text-ink-900">
           {t.settings.title}
@@ -76,10 +83,6 @@ export default async function SettingsPage() {
         </section>
       </main>
 
-      <BottomNav
-        locale={locale}
-        variant={canManage(viewer.role) ? "owner" : "staff"}
-      />
-    </div>
+    </AppShell>
   );
 }

@@ -1,17 +1,14 @@
 import Link from "next/link";
 import { Plus } from "lucide-react";
 
-import { BottomNav } from "@/components/vaakya/bottom-nav";
 import { TaskRow } from "@/components/vaakya/task-row";
 import { buttonVariants } from "@/components/ui/button";
 import { getDictionary, type Locale } from "@/lib/i18n";
 import { groupBySection } from "@/lib/tasks/sections";
-import { countDay, needsYou, type NeedsYouReason } from "@/lib/tasks/counters";
+import { countDay, needsYou } from "@/lib/tasks/counters";
 import type { TaskListItem } from "@/lib/tasks/queries";
-import { formatDuration } from "@/lib/tasks/sla";
 import { OwnerHeader } from "./owner-header";
-import { needsYouMeta } from "@/lib/tasks/present";
-import { NeedsYouCard } from "./needs-you-card";
+import { NeedsYouList } from "./needs-you-list";
 
 /**
  * The owner's day (screens/Dashboard.png).
@@ -47,7 +44,7 @@ export function OwnerToday({
   const live = [...groups.late, ...groups.naya, ...groups.aaj, ...groups.later];
 
   return (
-    <div className="flex min-h-dvh flex-col">
+    <div className="flex min-h-dvh flex-col lg:hidden">
       <OwnerHeader
         locale={locale}
         orgName={orgName}
@@ -66,29 +63,12 @@ export function OwnerToday({
                 {attention.length}
               </span>
             </h2>
-            <ul
-              aria-label={t.lists.aapkeLiye}
-              className="flex flex-col gap-2.5"
-            >
-              {attention.slice(0, 5).map(({ task, reason }) => (
-                <li key={task.id}>
-                  <NeedsYouCard
-                    locale={locale}
-                    taskId={task.id}
-                    reason={reason}
-                    headline={headline(t, reason, task)}
-                    meta={needsYouMeta(
-                      locale,
-                      task.deliveredAt,
-                      extraMeta(t, reason, task, now),
-                    )}
-                    phone={
-                      task.assigneeId ? (phones[task.assigneeId] ?? null) : null
-                    }
-                  />
-                </li>
-              ))}
-            </ul>
+            <NeedsYouList
+              locale={locale}
+              attention={attention}
+              phones={phones}
+              nowIso={nowIso}
+            />
           </section>
         ) : null}
 
@@ -160,42 +140,6 @@ export function OwnerToday({
         </Link>
       </div>
 
-      <BottomNav locale={locale} variant="owner" />
     </div>
   );
-}
-
-function headline(
-  t: ReturnType<typeof getDictionary>,
-  reason: NeedsYouReason,
-  task: TaskListItem,
-): string {
-  const who = task.assigneeName;
-  switch (reason) {
-    case "late":
-      return t.lists.lateCard(who, task.title);
-    case "unseen":
-      return t.lists.unseenCard(who, task.title);
-    case "escalated":
-      return t.lists.escalatedCard(who, task.title);
-    case "verify":
-      return t.lists.doneCard(who, task.title);
-  }
-}
-
-function extraMeta(
-  t: ReturnType<typeof getDictionary>,
-  reason: NeedsYouReason,
-  task: TaskListItem,
-  now: Date,
-): string[] {
-  const out: string[] = [];
-  if (reason === "late" && task.dueAt) {
-    out.push(
-      t.chips.lateBy(formatDuration(now.getTime() - Date.parse(task.dueAt), t.time)),
-    );
-  }
-  if (reason === "verify") out.push(t.chips.verifyBaaki);
-  if (task.priority === "urgent") out.push(t.chips.urgent);
-  return out;
 }

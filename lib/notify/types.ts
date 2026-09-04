@@ -1,7 +1,7 @@
 import type { Locale } from "@/lib/i18n";
 
 /**
- * Everything Vaakya ever tells somebody. The list is closed on purpose: a new
+ * Everything Waakya ever tells somebody. The list is closed on purpose: a new
  * kind of message is a decision, not a string someone adds in passing.
  */
 export type NotifyEvent =

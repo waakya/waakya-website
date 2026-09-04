@@ -1,4 +1,4 @@
--- Vaakya — Postgres / Supabase schema (v1, message-based task management)
+-- Waakya — Postgres / Supabase schema (v1, message-based task management)
 -- Run in the Supabase SQL editor (or as a migration). Enables multi-tenant RLS.
 -- Assumes Supabase Auth (auth.users) provides identities.
 
