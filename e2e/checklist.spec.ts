@@ -35,6 +35,8 @@ test.beforeAll(async () => {
 });
 
 test("an owner sets up a routine and it sends itself", async ({ page, browser }) => {
+  // Two actors and a job tick, on a cold compile this brushes the 60s budget.
+  test.slow();
   const name = `Opening ${Date.now()}`;
 
   await signOut(page);

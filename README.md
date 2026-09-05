@@ -204,8 +204,17 @@ supabase/migrations/ every schema change, in order
 
 ## Deploying
 
-Vercel, with the environment above. Vercel **Hobby forbids commercial use** —
-move to Pro before charging anyone (STACK.md). Point `waakya.com` at it, set
-`NEXT_PUBLIC_SITE_URL` to the real origin, and schedule the Edge Function.
+Vercel, with the environment above; the step-by-step is in `GOLIVE.md`.
+Vercel **Hobby forbids commercial use** — move to Pro before charging anyone
+(STACK.md). Point `waakya.com` at it and set `NEXT_PUBLIC_SITE_URL` to the
+real origin. Never set `ALLOW_TEST_LOGIN` or `DEV_DISABLE_AUTH` there; both
+are refused in production anyway.
+
+**The SLA job** is scheduled by `vercel.json`: Vercel Cron calls
+`GET /api/cron/sla` every five minutes and presents `Authorization: Bearer
+$CRON_SECRET` itself, so `CRON_SECRET` must be set in the project. Note that
+Vercel Hobby only runs crons once a day; on Hobby, schedule the tick from
+Supabase instead (`supabase/functions/sla-tick`, or pg_cron calling the same
+URL with the same header) until the project is on Pro.
 
 See `BLOCKERS.md` for what is still waiting on an account or a key.
