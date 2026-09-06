@@ -43,3 +43,8 @@ next-env.d.ts
 # Playwright
 /test-results/
 /playwright-report/
+
+# local GitHub token used once for gh auth (never commit)
+github.env
+*.env
+!.env.example
