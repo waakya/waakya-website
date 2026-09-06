@@ -210,11 +210,13 @@ Vercel **Hobby forbids commercial use** — move to Pro before charging anyone
 real origin. Never set `ALLOW_TEST_LOGIN` or `DEV_DISABLE_AUTH` there; both
 are refused in production anyway.
 
-**The SLA job** is scheduled by `vercel.json`: Vercel Cron calls
-`GET /api/cron/sla` every five minutes and presents `Authorization: Bearer
-$CRON_SECRET` itself, so `CRON_SECRET` must be set in the project. Note that
-Vercel Hobby only runs crons once a day; on Hobby, schedule the tick from
-Supabase instead (`supabase/functions/sla-tick`, or pg_cron calling the same
-URL with the same header) until the project is on Pro.
+**The SLA job** is scheduled from Supabase, not Vercel: migration
+`0014_sla_schedule.sql` enables pg_cron and pg_net and posts to
+`/api/cron/sla` every five minutes with `Authorization: Bearer $CRON_SECRET`.
+The URL and the secret live in Supabase Vault (`sla_tick_url`, `cron_secret`,
+see the migration's header), so `CRON_SECRET` must be the same value in the
+Vercel project. Vercel Hobby only runs its own crons once a day; on Pro the
+same route can be scheduled from `vercel.json` instead. The route also
+accepts GET for that case.
 
 See `BLOCKERS.md` for what is still waiting on an account or a key.

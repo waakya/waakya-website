@@ -46,8 +46,9 @@ get a code. That's why Resend (or Supabase's built-in mailer) matters for the de
 ## 4. Wire the backend for production
 11. **Supabase → Authentication → SMTP:** point it at **Resend** (built-in mailer is a few emails/hour,
     not for production). Also set **Site URL** and redirect URLs to `https://waakya.com`.
-12. **SLA job:** deploy `supabase/functions/sla-tick` and schedule it every 5 minutes (Supabase scheduled
-    function), OR add a Vercel Cron hitting `/api/cron/sla` every 5 min with `Authorization: Bearer <CRON_SECRET>`.
+12. **SLA job:** done by migration `0014_sla_schedule.sql` (pg_cron + pg_net, every 5 min). The two Vault
+    secrets `sla_tick_url` and `cron_secret` are set on the project; rotate `CRON_SECRET` in both places
+    together. (Vercel Cron is Hobby-limited to once a day; on Pro a `vercel.json` cron can replace this.)
 13. Turn on **leaked-password protection** in Supabase Auth (linter flags it; costs nothing).
 
 ## 5. Point waakya.com at Vercel
