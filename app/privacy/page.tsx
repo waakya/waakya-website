@@ -4,7 +4,8 @@ import { ArrowLeft } from "lucide-react";
 
 import { brandName, getDictionary } from "@/lib/i18n";
 import { getLocale } from "@/lib/i18n/server";
-import { Mark } from "@/components/vaakya/mark";
+import { Mark } from "@/components/waakya/mark";
+import { BrandText } from "@/components/waakya/brand-text";
 
 export const metadata: Metadata = { title: "Privacy" };
 
@@ -35,7 +36,7 @@ export default async function PrivacyPage() {
 
       <p className="num mt-4 text-[13px] text-ink-400">{t.privacy.updated}</p>
       <p className="mt-2 text-[17px] leading-[26px] text-ink-900">
-        {t.privacy.intro(brandName(locale))}
+        <BrandText text={t.privacy.intro(brandName(locale))} brand={brandName(locale)} />
       </p>
 
       <Section title={t.privacy.whatHeading} items={t.privacy.what} />
@@ -45,7 +46,7 @@ export default async function PrivacyPage() {
         {t.privacy.keepHeading}
       </h2>
       <p className="mt-1 text-[15px] leading-[24px] text-ink-700">
-        {t.privacy.keep(brandName(locale))}
+        <BrandText text={t.privacy.keep(brandName(locale))} brand={brandName(locale)} />
       </p>
 
       <h2 className="mt-6 text-[17px] leading-[24px] font-bold text-ink-900">

@@ -14,7 +14,7 @@ import {
 } from "@/lib/tasks/detail";
 import { taskClocks } from "@/lib/tasks/present";
 import { getTaskProofs } from "@/lib/tasks/proofs";
-import { AppShell } from "@/components/vaakya/app-shell";
+import { AppShell } from "@/components/waakya/app-shell";
 import { getUnreadCount } from "@/lib/notify/inbox";
 import { getDictionary } from "@/lib/i18n";
 import { OwnerTaskDetail } from "./owner-detail";

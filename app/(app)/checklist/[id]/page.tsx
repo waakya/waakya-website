@@ -7,7 +7,7 @@ import { requireOrg, canManage } from "@/lib/auth/session";
 import { getOrgTasks, getMyTasks } from "@/lib/tasks/queries";
 import { getChecklists } from "@/lib/checklists/queries";
 import { getDictionary } from "@/lib/i18n";
-import { TaskRow } from "@/components/vaakya/task-row";
+import { TaskRow } from "@/components/waakya/task-row";
 import { dayKey } from "@/lib/tasks/time";
 import { getLocale } from "@/lib/i18n/server";
 

@@ -7,17 +7,17 @@
 //
 // Deploy:
 //   supabase functions deploy sla-tick --no-verify-jwt
-//   supabase secrets set VAAKYA_APP_URL=https://waakya.com CRON_SECRET=<secret>
+//   supabase secrets set WAAKYA_APP_URL=https://waakya.com CRON_SECRET=<secret>
 //
 // Schedule (Supabase dashboard → Edge Functions → Schedules, or pg_cron):
 //   */5 * * * *
 Deno.serve(async () => {
-  const appUrl = Deno.env.get("VAAKYA_APP_URL");
+  const appUrl = Deno.env.get("WAAKYA_APP_URL");
   const secret = Deno.env.get("CRON_SECRET");
 
   if (!appUrl || !secret) {
     return new Response(
-      JSON.stringify({ ok: false, reason: "VAAKYA_APP_URL or CRON_SECRET missing" }),
+      JSON.stringify({ ok: false, reason: "WAAKYA_APP_URL or CRON_SECRET missing" }),
       { status: 500, headers: { "content-type": "application/json" } },
     );
   }

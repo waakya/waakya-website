@@ -10,7 +10,7 @@ import { getLocale } from "@/lib/i18n/server";
 import { countDay, needsYou } from "@/lib/tasks/counters";
 import { groupBySection } from "@/lib/tasks/sections";
 import { isLate } from "@/lib/tasks/present";
-import { AppShell } from "@/components/vaakya/app-shell";
+import { AppShell } from "@/components/waakya/app-shell";
 import { OwnerToday } from "./owner-today";
 import { OwnerDesktop } from "./owner-desktop";
 import { NeedsYouList } from "./needs-you-list";

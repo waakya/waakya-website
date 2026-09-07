@@ -19,8 +19,8 @@ export const DEV_ROLE_COOKIE = "waakya_dev_role";
 
 /** Which side of the product to look at. */
 export const DEV_USERS = {
-  owner: { email: "owner@vaakya.test", password: "vaakya-e2e-owner-pass" },
-  staff: { email: "staff@vaakya.test", password: "vaakya-e2e-staff-pass" },
+  owner: { email: "owner@waakya.test", password: "waakya-e2e-owner-pass" },
+  staff: { email: "staff@waakya.test", password: "waakya-e2e-staff-pass" },
 } as const;
 
 export type DevRole = keyof typeof DEV_USERS;

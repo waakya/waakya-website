@@ -5,10 +5,10 @@ import type { Page } from "@playwright/test";
  * development project, and only /api/test-login (dev-only) can use them.
  */
 export const TEST_USERS = {
-  owner: { email: "owner@vaakya.test", password: "vaakya-e2e-owner-pass", name: "Rakesh" },
-  staff: { email: "staff@vaakya.test", password: "vaakya-e2e-staff-pass", name: "Raju" },
+  owner: { email: "owner@waakya.test", password: "waakya-e2e-owner-pass", name: "Rakesh" },
+  staff: { email: "staff@waakya.test", password: "waakya-e2e-staff-pass", name: "Raju" },
   /** Never joins an org, so the "no business yet" path stays testable. */
-  noorg: { email: "noorg@vaakya.test", password: "vaakya-e2e-noorg-pass", name: "Naya Owner" },
+  noorg: { email: "noorg@waakya.test", password: "waakya-e2e-noorg-pass", name: "Naya Owner" },
 } as const;
 
 export type TestUserKey = keyof typeof TEST_USERS;
@@ -54,7 +54,7 @@ export async function pinLocale(page: Page, locale: string): Promise<void> {
   const auth = cookies.find((cookie) => cookie.name.includes("auth-token"));
   if (!auth) return;
   await page.context().addCookies([
-    { name: "vaakya_lang", value: locale, domain: auth.domain, path: "/" },
+    { name: "waakya_lang", value: locale, domain: auth.domain, path: "/" },
   ]);
 }
 

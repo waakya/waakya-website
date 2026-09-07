@@ -18,16 +18,17 @@ import { redirect } from "next/navigation";
 import { buttonVariants } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { StateChip } from "@/components/ui/state-chip";
-import { Ticks, type TicksState } from "@/components/vaakya/ticks";
-import { Wordmark } from "@/components/vaakya/wordmark";
-import { Doodle } from "@/components/vaakya/doodle";
-import { LanguageSwitch } from "@/components/vaakya/language-switch";
+import { Ticks, type TicksState } from "@/components/waakya/ticks";
+import { Wordmark } from "@/components/waakya/wordmark";
+import { Doodle } from "@/components/waakya/doodle";
+import { LanguageSwitch } from "@/components/waakya/language-switch";
 import { getLanding } from "@/lib/i18n/landing";
 import { brandName, getDictionary, BRAND_NAME } from "@/lib/i18n";
 import { getLocale } from "@/lib/i18n/server";
 import { getViewer } from "@/lib/auth/session";
 import { setLoginLocale } from "@/app/(auth)/login/actions";
 import { cn } from "@/lib/utils";
+import { BrandText } from "@/components/waakya/brand-text";
 
 export const metadata: Metadata = {
   title: `${BRAND_NAME} — Bolo. Ho jayega.`,
@@ -214,7 +215,7 @@ export default async function LandingPage() {
           ))}
         </ul>
         <p className="mt-5 rounded-card bg-neel-50 px-4 py-3 text-[15px] leading-[24px] text-neel-800">
-          {c.problemFooter(brand)}
+          <BrandText text={c.problemFooter(brand)} brand={brand} />
         </p>
       </Section>
 
@@ -274,7 +275,7 @@ export default async function LandingPage() {
             {c.whatsappTitle}
           </h2>
           <p className="mt-3 text-[17px] text-white/70">
-            {c.whatsappLead(brand)}
+            <BrandText text={c.whatsappLead(brand)} brand={brand} />
           </p>
 
           <ul className="mt-8 grid gap-4 md:grid-cols-3">

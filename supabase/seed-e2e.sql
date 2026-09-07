@@ -13,11 +13,11 @@ declare
 begin
   for seed in
     select * from (values
-      ('owner@vaakya.test', 'vaakya-e2e-owner-pass'),
-      ('staff@vaakya.test', 'vaakya-e2e-staff-pass'),
+      ('owner@waakya.test', 'waakya-e2e-owner-pass'),
+      ('staff@waakya.test', 'waakya-e2e-staff-pass'),
       -- Never joins an org, so the "no business yet" path stays testable
       -- however many times the suite has run before.
-      ('noorg@vaakya.test', 'vaakya-e2e-noorg-pass')
+      ('noorg@waakya.test', 'waakya-e2e-noorg-pass')
     ) as t(email, password)
   loop
     if exists (select 1 from auth.users u where u.email = seed.email) then
@@ -47,12 +47,12 @@ end $$;
 insert into profiles (id, full_name)
 select u.id,
        case u.email
-         when 'owner@vaakya.test' then 'Rakesh'
-         when 'staff@vaakya.test' then 'Raju'
+         when 'owner@waakya.test' then 'Rakesh'
+         when 'staff@waakya.test' then 'Raju'
          else 'Naya Owner'
        end
 from auth.users u
-where u.email in ('owner@vaakya.test', 'staff@vaakya.test', 'noorg@vaakya.test')
+where u.email in ('owner@waakya.test', 'staff@waakya.test', 'noorg@waakya.test')
 on conflict (id) do update set full_name = excluded.full_name;
 
 -- GoTrue scans these varchar columns into Go strings, so NULL makes every
@@ -67,7 +67,7 @@ update auth.users
        phone_change               = coalesce(phone_change, ''),
        phone_change_token         = coalesce(phone_change_token, ''),
        reauthentication_token     = coalesce(reauthentication_token, '')
- where email in ('owner@vaakya.test', 'staff@vaakya.test', 'noorg@vaakya.test');
+ where email in ('owner@waakya.test', 'staff@waakya.test', 'noorg@waakya.test');
 
 -- Password sign-in needs an identity row for the email provider.
 insert into auth.identities (
@@ -78,7 +78,7 @@ select u.id::text, u.id,
                           'email_verified', true, 'phone_verified', false),
        'email', now(), now(), now()
 from auth.users u
-where u.email in ('owner@vaakya.test', 'staff@vaakya.test', 'noorg@vaakya.test')
+where u.email in ('owner@waakya.test', 'staff@waakya.test', 'noorg@waakya.test')
   and not exists (
     select 1 from auth.identities i
     where i.user_id = u.id and i.provider = 'email'

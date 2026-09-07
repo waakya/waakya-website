@@ -13,7 +13,7 @@ import {
 import {
   TICKS_BAR_COLOUR,
   TICKS_TICK_COLOUR,
-} from "@/components/vaakya/ticks";
+} from "@/components/waakya/ticks";
 
 /**
  * These are not tests of behaviour, they are tests of the brand rules the
@@ -162,16 +162,28 @@ describe("the source tree", () => {
     const usage = /(?:bg|text|border|stroke|fill|from|to|via)-haldi-|var\(--haldi|--haldi-\d|#F4B41A/i;
     const allowed = new Set([
       // The glyph, where Haldi means done and waiting for the owner…
-      "components/vaakya/ticks.tsx",
+      "components/waakya/ticks.tsx",
       // …and the logo, whose tick is the same colour for the same reason.
       // Every other place that shows the mark composes this one file.
-      "components/vaakya/mark.tsx",
+      "components/waakya/mark.tsx",
       "lib/brand/rules.test.ts",
       "app/globals.css",
     ]);
     const offenders = sourceFiles.filter(
       (file) => !allowed.has(file) && usage.test(stripComments(readFileSync(file, "utf8"))),
     );
+    expect(offenders).toEqual([]);
+  });
+
+  it("never spells the name the old way", () => {
+    // The product was renamed; the only place the old spelling may appear
+    // is the path of the supplied brand kit, which lives outside this tree.
+    const everything = sourceFiles.concat(walk("e2e"), walk("public"), walk("scripts"), walk("supabase"));
+    const offenders = everything.filter((file) => {
+      if (file === "lib/brand/rules.test.ts") return false;
+      const text = readFileSync(file, "utf8").replace(/vaakya-brand-kit/gi, "");
+      return /vaakya/i.test(text);
+    });
     expect(offenders).toEqual([]);
   });
 

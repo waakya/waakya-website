@@ -3,7 +3,7 @@ import { getDictionary, type Locale } from "@/lib/i18n";
 import { ticksFor } from "./state-machine";
 import { clock, formatDuration, ackDeadline } from "./sla";
 import { formatTime } from "./time";
-import type { TicksState } from "@/components/vaakya/ticks";
+import type { TicksState } from "@/components/waakya/ticks";
 
 /**
  * What a task row shows on its right edge, and what its meta line says.

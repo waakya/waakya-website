@@ -78,7 +78,7 @@ test("a signed-in user with no business lands on setup", async ({ page }) => {
 
 test("the dev-only test-login refuses a wrong password", async ({ page }) => {
   const response = await page.request.post("/api/test-login", {
-    data: { email: "owner@vaakya.test", password: "definitely-wrong" },
+    data: { email: "owner@waakya.test", password: "definitely-wrong" },
   });
   expect(response.status()).toBe(401);
 });

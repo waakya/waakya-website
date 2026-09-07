@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 
 import { Avatar } from "@/components/ui/avatar";
-import { Wordmark } from "@/components/vaakya/wordmark";
+import { Wordmark } from "@/components/waakya/wordmark";
 import { getDictionary, type Locale } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 

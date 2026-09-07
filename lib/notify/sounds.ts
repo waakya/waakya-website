@@ -8,9 +8,9 @@ import type { NotifyEvent } from "./types";
 export type WaakyaSound = "naya" | "hogaya" | "dhyan";
 
 export const SOUND_FILES: Record<WaakyaSound, string> = {
-  naya: "/sound/vaakya-naya.wav",
-  hogaya: "/sound/vaakya-hogaya.wav",
-  dhyan: "/sound/vaakya-dhyan.wav",
+  naya: "/sound/waakya-naya.wav",
+  hogaya: "/sound/waakya-hogaya.wav",
+  dhyan: "/sound/waakya-dhyan.wav",
 };
 
 const FOR_EVENT: Partial<Record<NotifyEvent, WaakyaSound>> = {

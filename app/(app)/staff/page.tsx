@@ -8,7 +8,7 @@ import { getDictionary } from "@/lib/i18n";
 import { Avatar } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
 import { StateChip } from "@/components/ui/state-chip";
-import { AppShell } from "@/components/vaakya/app-shell";
+import { AppShell } from "@/components/waakya/app-shell";
 import { InviteSheet } from "./invite-sheet";
 import { PendingInvites } from "./pending-invites";
 import { getLocale } from "@/lib/i18n/server";

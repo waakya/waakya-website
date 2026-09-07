@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Plus } from "lucide-react";
 
-import { TaskRow } from "@/components/vaakya/task-row";
+import { TaskRow } from "@/components/waakya/task-row";
 import { buttonVariants } from "@/components/ui/button";
 import { getDictionary, type Locale } from "@/lib/i18n";
 import { groupBySection } from "@/lib/tasks/sections";

@@ -7,7 +7,7 @@
  * true. It caches the app shell's static assets and lets everything else go to
  * the network.
  */
-const CACHE = "vaakya-shell-v1";
+const CACHE = "waakya-shell-v2";
 const SHELL = [
   "/favicon.svg",
   "/icons/icon-192.png",

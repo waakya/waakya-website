@@ -7,7 +7,7 @@ import { getInbox } from "@/lib/notify/inbox";
 import { getDictionary, toLocale } from "@/lib/i18n";
 import { getLocale } from "@/lib/i18n/server";
 import { Card } from "@/components/ui/card";
-import { AppShell } from "@/components/vaakya/app-shell";
+import { AppShell } from "@/components/waakya/app-shell";
 import { formatTime } from "@/lib/tasks/time";
 import { formatIndianDate } from "@/lib/tasks/format-date";
 import { InboxActions } from "./inbox-actions";

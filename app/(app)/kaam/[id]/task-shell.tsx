@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ArrowLeft, Camera, Clock, MessageSquare, Zap } from "lucide-react";
 
 import { StateChip } from "@/components/ui/state-chip";
-import { Stepper } from "@/components/vaakya/stepper";
+import { Stepper } from "@/components/waakya/stepper";
 import { getDictionary, type Locale } from "@/lib/i18n";
 import type { TimelineEntry, ThreadMessage } from "@/lib/tasks/detail";
 import type { TaskListItem } from "@/lib/tasks/queries";

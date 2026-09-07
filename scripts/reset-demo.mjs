@@ -21,7 +21,7 @@ import { createClient } from "@supabase/supabase-js";
 
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-const owner = { email: "owner@vaakya.test", password: "vaakya-e2e-owner-pass" };
+const owner = { email: "owner@waakya.test", password: "waakya-e2e-owner-pass" };
 
 if (!url || !key) {
   console.error("NEXT_PUBLIC_SUPABASE_URL / _ANON_KEY are not set.");

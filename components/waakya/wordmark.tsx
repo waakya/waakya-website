@@ -1,14 +1,14 @@
 import { cn } from "@/lib/utils";
 import { BRAND_NAME } from "@/lib/i18n";
-import { Mark } from "@/components/vaakya/mark";
+import { Mark } from "@/components/waakya/mark";
 
 /**
  * The mark plus the name.
  *
  * The name is set in the display face rather than pulled from
- * `logo/logo-horizontal.svg`, because that art is outlined and still reads
- * "Vaakya" until it is regenerated. The mark itself is unchanged and comes
- * from `Mark`, which is the only place its three strokes are drawn.
+ * `logo/logo-horizontal.svg`, so it inherits the surrounding colour and
+ * size like text. The mark comes from `Mark`, which is the only place its
+ * three strokes are drawn.
  */
 export function Wordmark({
   size = 28,

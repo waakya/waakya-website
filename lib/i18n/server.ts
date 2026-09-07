@@ -6,7 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 import { DEFAULT_LOCALE, VISITOR_LOCALE, isLocale, toLocale, type Locale } from "./locales";
 import { getDictionary, type Dictionary } from "./dictionary";
 
-export const LOCALE_COOKIE = "vaakya_lang";
+export const LOCALE_COOKIE = "waakya_lang";
 
 /**
  * The locale for this request.

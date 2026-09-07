@@ -32,7 +32,7 @@ describe("the three sounds", () => {
 
   it("point at files that ship in public/", () => {
     for (const path of Object.values(SOUND_FILES)) {
-      expect(path).toMatch(/^\/sound\/vaakya-[a-z]+\.wav$/);
+      expect(path).toMatch(/^\/sound\/waakya-[a-z]+\.wav$/);
     }
   });
 });

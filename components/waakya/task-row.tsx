@@ -14,8 +14,8 @@ import {
 import { Avatar } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
 import { StateChip } from "@/components/ui/state-chip";
-import { Ticks } from "@/components/vaakya/ticks";
-import { NayaDot } from "@/components/vaakya/naya-dot";
+import { Ticks } from "@/components/waakya/ticks";
+import { NayaDot } from "@/components/waakya/naya-dot";
 import { rowMeta, rowStatus, type ChipIcon } from "@/lib/tasks/present";
 import type { TaskListItem } from "@/lib/tasks/queries";
 import type { Locale } from "@/lib/i18n";

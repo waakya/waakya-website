@@ -1,8 +1,8 @@
 /**
  * Print a sign-in link, so you can get into the app without an inbox.
  *
- *   npm run dev:login                        # owner@vaakya.test
- *   npm run dev:login -- staff@vaakya.test
+ *   npm run dev:login                        # owner@waakya.test
+ *   npm run dev:login -- staff@waakya.test
  *
  * Development only, and structurally so:
  *
@@ -31,7 +31,7 @@ const appUrl = (process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000").rep
   /\/$/,
   "",
 );
-const email = process.argv[2] ?? "owner@vaakya.test";
+const email = process.argv[2] ?? "owner@waakya.test";
 const next = process.argv[3] ?? "/aaj";
 
 if (!url) {

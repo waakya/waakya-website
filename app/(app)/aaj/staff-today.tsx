@@ -1,14 +1,14 @@
 import { ChevronDown, ListChecks } from "lucide-react";
 
-import { Mark } from "@/components/vaakya/mark";
-import { Bell } from "@/components/vaakya/bell";
+import { Mark } from "@/components/waakya/mark";
+import { Bell } from "@/components/waakya/bell";
 import { Avatar } from "@/components/ui/avatar";
-import { TaskRow } from "@/components/vaakya/task-row";
+import { TaskRow } from "@/components/waakya/task-row";
 import { getDictionary, type Locale } from "@/lib/i18n";
 import { groupBySection, type SectionKey } from "@/lib/tasks/sections";
 import type { TaskListItem } from "@/lib/tasks/queries";
 import type { ChecklistSummary } from "@/lib/checklists/queries";
-import { ChecklistCard } from "@/components/vaakya/checklist-card";
+import { ChecklistCard } from "@/components/waakya/checklist-card";
 import { formatIndianDate } from "@/lib/tasks/format-date";
 
 /**

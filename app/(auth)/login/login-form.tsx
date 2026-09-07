@@ -10,7 +10,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { InputOTP } from "@/components/ui/input-otp";
 import { Label } from "@/components/ui/label";
-import { LanguageSwitch } from "@/components/vaakya/language-switch";
+import { LanguageSwitch } from "@/components/waakya/language-switch";
 import {
   brandName,
   getDictionary,
@@ -18,6 +18,7 @@ import {
   type Locale,
 } from "@/lib/i18n";
 import { requestOtp, setLoginLocale, verifyOtp } from "./actions";
+import { BrandText } from "@/components/waakya/brand-text";
 
 /**
  * Login, in the layout of screens/Login.png: the stacked logo, one field, the
@@ -102,7 +103,7 @@ export function LoginForm({
         <Image
           src="/brand/logo/logo-stacked.svg"
           alt="Waakya — Bolo. Ho jayega."
-          width={281}
+          width={300}
           height={203}
           priority
           unoptimized
@@ -153,7 +154,7 @@ export function LoginForm({
                 />
               </span>
               <span className="text-[15px] leading-[22px] text-ink-900">
-                {t.auth.consentPrefix(brandName(locale))}
+                <BrandText text={t.auth.consentPrefix(brandName(locale))} brand={brandName(locale)} />
                 <Link
                   href="/privacy"
                   className="font-semibold text-neel-700 underline underline-offset-2"

@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getViewer } from "@/lib/auth/session";
 import { getDictionary, toLocale } from "@/lib/i18n";
 import { getLocale } from "@/lib/i18n/server";
-import { Mark } from "@/components/vaakya/mark";
+import { Mark } from "@/components/waakya/mark";
 import { buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
 import { JoinForm } from "./join-form";

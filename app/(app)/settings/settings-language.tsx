@@ -1,6 +1,6 @@
 "use client";
 
-import { LanguageSwitch } from "@/components/vaakya/language-switch";
+import { LanguageSwitch } from "@/components/waakya/language-switch";
 import { setUserLocale } from "@/lib/actions/org";
 import type { Locale } from "@/lib/i18n";
 

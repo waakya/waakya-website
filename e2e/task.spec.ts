@@ -47,7 +47,7 @@ test("the owner sends a task on the Confirm card, and the staff member sees it",
   const staffContext = await browser.newContext();
   const staffPage = await staffContext.newPage();
   await staffPage.request.post("/api/test-login", {
-    data: { email: "staff@vaakya.test", password: "vaakya-e2e-staff-pass" },
+    data: { email: "staff@waakya.test", password: "waakya-e2e-staff-pass" },
   });
   await pinLocale(staffPage, TEST_LOCALE);
   await staffPage.goto("/aaj");

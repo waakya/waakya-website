@@ -3,7 +3,7 @@ import { fontVariables } from "./fonts";
 import { getLocale } from "@/lib/i18n/server";
 import { htmlLang } from "@/lib/i18n";
 import { Toaster } from "@/components/ui/sonner";
-import { RegisterServiceWorker } from "@/components/vaakya/register-sw";
+import { RegisterServiceWorker } from "@/components/waakya/register-sw";
 import "./globals.css";
 
 // head-snippet.html from the brand kit, expressed as Next metadata.

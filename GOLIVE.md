@@ -22,7 +22,7 @@ get a code. That's why Resend (or Supabase's built-in mailer) matters for the de
 4. **Supabase** → Project Settings → API keys → copy `service_role` (this is `SUPABASE_SERVICE_ROLE_KEY`).
 5. **Resend** → create account → API Keys → copy key. To start you can send from `onboarding@resend.dev`;
    verify your own domain later for `no-reply@waakya.com`.
-6. **Cloudflare R2** (optional now — app falls back to Supabase storage) → create bucket `vaakya-proofs`
+6. **Cloudflare R2** (optional now — app falls back to Supabase storage) → create bucket `waakya-proofs`
    → create an R2 API token → gives `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`.
 7. Generate the cron secret:
    ```bash
@@ -62,7 +62,7 @@ get a code. That's why Resend (or Supabase's built-in mailer) matters for the de
 18. Run the core loop: create a task → (as staff) Dekh liya → Ho jayega → Ho gaya → (as owner) Verify.
 19. Upload a proof photo; check it stores (Supabase bucket, or R2 if configured).
 20. Trigger one SLA tick and confirm a reminder/escalation appears.
-21. Before real customers: **delete the three `@vaakya.test` users + the demo org** from production.
+21. Before real customers: **delete the three `@waakya.test` users + the demo org** from production.
 
 ## 7. Before you charge anyone (not yet, but note it)
 22. Move **Vercel → Pro** ($20/mo) — Hobby forbids commercial use.
@@ -70,5 +70,4 @@ get a code. That's why Resend (or Supabase's built-in mailer) matters for the de
 24. Then: MSG91 + DLT for phone OTP, the real-device pass, and the WhatsApp/digest growth loop.
 
 ## Not blocking, but pending
-- The login-page wordmark SVG still spells "Vaakya" — regenerate the 8 logo SVGs to "Waakya".
 - "Aapke liye" shows 5 of many — add paging before pilots see a full day.

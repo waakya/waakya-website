@@ -1,5 +1,5 @@
-import { SideNav } from "@/components/vaakya/side-nav";
-import { BottomNav } from "@/components/vaakya/bottom-nav";
+import { SideNav } from "@/components/waakya/side-nav";
+import { BottomNav } from "@/components/waakya/bottom-nav";
 import type { Locale } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 

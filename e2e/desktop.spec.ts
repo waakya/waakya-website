@@ -24,10 +24,9 @@ test("the landing page sells the product to a logged-out visitor", async ({
     "notranslate",
   );
 
-  // The name, and only the new spelling of it; marked so no translator
-  // treats it as a word.
+  // The name, marked so no translator treats it as a word. (The unit brand
+  // test guards the whole tree against the old spelling.)
   await expect(page.getByRole("banner")).toContainText("Waakya");
-  expect(await page.getByText("Vaakya").count()).toBe(0);
   await expect(
     page.getByRole("banner").locator('[translate="no"]', { hasText: "Waakya" }),
   ).toBeVisible();

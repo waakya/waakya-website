@@ -1,7 +1,7 @@
 import { Clock, EyeOff } from "lucide-react";
 
-import { Mark } from "@/components/vaakya/mark";
-import { Bell } from "@/components/vaakya/bell";
+import { Mark } from "@/components/waakya/mark";
+import { Bell } from "@/components/waakya/bell";
 import { getDictionary, type Locale } from "@/lib/i18n";
 import type { DayCounters } from "@/lib/tasks/counters";
 import { formatIndianDate } from "@/lib/tasks/format-date";

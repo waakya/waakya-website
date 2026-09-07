@@ -42,7 +42,7 @@ Match them. Setup:
 Design rules to honour (from the design doc — do not deviate):
 - **Colour = meaning.** Neel is the only working accent. **Haldi only ever = the "done" tick** (logo + ticks glyph), never a button/chip/link. Amber only after a clock passes 50% or an SLA misses; Laal only for Late/Urgent/Cancel; Hara for Done/Verified. Never state-by-colour-alone: every chip has an icon + a word; every row states its state in words.
 - **The ticks glyph** (two bars + a tick, coloured by state) is the signature component. Build `<Ticks state="sent|seen|accepted|done|verified" />` with the state word as `aria-label`. Spec in `tokens.css` comment and Character doc §2.1.
-- **The stepper + clock bars** (`components/vaakya/`): six steps *Bheja → Dekha → Maana → Chal raha → Ho gaya → Verified*; two thin bars = ack clock + completion clock, fill Neel → Amber at 50% → Laal at 90%/breach. **Same component on owner and staff task detail**; only the actions differ.
+- **The stepper + clock bars** (`components/waakya/`): six steps *Bheja → Dekha → Maana → Chal raha → Ho gaya → Verified*; two thin bars = ack clock + completion clock, fill Neel → Amber at 50% → Laal at 90%/breach. **Same component on owner and staff task detail**; only the actions differ.
 - **Three UI languages:** हिंदी (Devanagari, Noto Sans), Hinglish (Roman Hindi — the staff default), English (Inter). Language switch: हिंदी · Hinglish · English. Latin digits in all three (5:00, not ५:००). Hindi line-height ≥ 1.5; never letter-space Devanagari.
 - **Typography:** Baloo 2 (display only — counters, wordmark, big "Boliye"), Inter + Noto Sans Devanagari (all working UI). Tabular numerals for anything compared.
 - **Touch/one-hand:** owner tap targets 48px, staff 56px, staff primary button 60px; primary actions in the bottom third. Owner header Neel 700 with counters; staff screens have no coloured header, one big button.
@@ -72,7 +72,7 @@ and `node_modules/next/dist/docs/` disagree, the installed docs win.
 
 Structure:
 ```
-app/ (auth)/ (app)/          components/ui/  components/vaakya/ (Ticks, Stepper, ClockBars, VoiceOverlay-later, BottomNav)
+app/ (auth)/ (app)/          components/ui/  components/waakya/ (Ticks, Stepper, ClockBars, VoiceOverlay-later, BottomNav)
 lib/supabase  lib/tasks (state machine + SLA math, pure, unit-tested)  lib/notify  lib/i18n  lib/validation
 supabase/migrations/  public/ (favicons, icons, manifest)
 ```

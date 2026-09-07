@@ -35,8 +35,8 @@ config pins it off, so the suite always exercises the real login.
 use against a test address. With `SUPABASE_SERVICE_ROLE_KEY` set:
 
 ```bash
-npm run dev:login                       # owner@vaakya.test
-npm run dev:login -- staff@vaakya.test
+npm run dev:login                       # owner@waakya.test
+npm run dev:login -- staff@waakya.test
 ```
 
 It prints a single-use link. It is a script, so nothing in `app/` or `lib/`
@@ -138,7 +138,7 @@ a breached clock escalates to the owner.
 
 ```bash
 supabase functions deploy sla-tick --no-verify-jwt
-supabase secrets set VAAKYA_APP_URL=https://waakya.com CRON_SECRET=<secret>
+supabase secrets set WAAKYA_APP_URL=https://waakya.com CRON_SECRET=<secret>
 # then schedule it every 5 minutes
 ```
 
@@ -170,7 +170,7 @@ app/(app)/           the signed-in app: aaj, kaam/[id], naya, staff, hafta,
 app/join/[token]     the invite screen — outside (app), so it works signed out
 app/api/cron/sla     one tick of the SLA job
 components/ui/       primitives, themed to the kit (not shadcn defaults)
-components/vaakya/   Ticks, Stepper, ClockBars, BottomNav, Bell, TaskRow, Mark
+components/waakya/   Ticks, Stepper, ClockBars, BottomNav, Bell, TaskRow, Mark
 lib/tasks/           the state machine, SLA maths, presentation — all pure
 lib/sla/             the reminder and escalation engine
 lib/notify/          in-app and email behind one channel interface
@@ -183,7 +183,7 @@ supabase/migrations/ every schema change, in order
 
 - **Language defaults.** A signed-out visitor (landing, login, privacy) reads
   English (`VISITOR_LOCALE`) until they use the switch, which sets the
-  `vaakya_lang` cookie. A signed-in account without a cookie falls back to its
+  `waakya_lang` cookie. A signed-in account without a cookie falls back to its
   profile language, then its org's (`orgs.language` defaults to `hi`). The
   page also declares `notranslate`, because Chrome's translator was turning
   the brand name into a dictionary word.

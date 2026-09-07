@@ -12,29 +12,13 @@ Vitest     ✅   197 tests
 Playwright ✅   57 tests, against the live Supabase project
 ```
 
-## Known: the wordmark art still says "Vaakya"
+## The wordmark art
 
-The product is **Waakya**, after waakya.com. Every rendered surface uses the new
-spelling — UI copy, `<title>` and metadata, the manifest, email templates, the
-README — and `lib/i18n/brand.ts` is the single source, guarded by a test.
-
-The outlined SVGs in `public/brand/logo/` are the exception: they are letter
-art, not text, so they still read "Vaakya" and **need regenerating**:
-
-```
-logo-stacked.svg          logo-stacked-white.svg
-logo-horizontal.svg       logo-horizontal-white.svg
-logo-horizontal-tagline.svg   logo-horizontal-tagline-white.svg
-logo-bilingual.svg        logo-bilingual-white.svg
-```
-
-Only `logo-stacked.svg` is on screen today — the login screen — so that is the
-one to redraw first. Everywhere else the wordmark is composed from `Mark` plus
-the display face (`components/vaakya/wordmark.tsx`), which picks up the name
-from the brand constant and needed no art. The Devanagari वाक्य and the mark
-itself are unchanged: the name changed, the glyph did not.
-
----
+The eight logo SVGs in `public/brand/logo/` carry the name as outlined
+Baloo 2 ExtraBold paths, regenerated to the current spelling (the mark, the
+Devanagari and the tagline art are as supplied). The header wordmark is
+composed at runtime from `Mark` plus the display face
+(`components/waakya/wordmark.tsx`), so it needs no art at all.
 
 ## What works, end to end
 
@@ -156,7 +140,7 @@ are not an error.
 6. Create the R2 bucket and set its four variables; storage switches by itself.
 7. Turn on leaked-password protection in Supabase Auth (the linter flags it;
    it only affects the dev-only password path today, but it costs nothing).
-8. Delete the three `@vaakya.test` users and the demo org from production.
+8. Delete the three `@waakya.test` users and the demo org from production.
 9. Point `waakya.com` at Vercel and re-run `npm run gate` against it.
 
 ## Where to look in the code
@@ -165,8 +149,8 @@ are not an error.
 - `lib/tasks/authz.ts` — who may move a task, and where
 - `lib/sla/engine.ts` — the differentiator, pure and exhaustively tested
 - `lib/tasks/present.ts` — the glyph-or-chip rule (D-11) and the meta line (D-03)
-- `components/vaakya/ticks.tsx` — the signature glyph
-- `components/vaakya/stepper.tsx` — one component on both task screens (D-06)
+- `components/waakya/ticks.tsx` — the signature glyph
+- `components/waakya/stepper.tsx` — one component on both task screens (D-06)
 - `lib/brand/rules.test.ts` — the brand rules as tests, so they cannot drift
 - `/preview` — the style tile, running
 

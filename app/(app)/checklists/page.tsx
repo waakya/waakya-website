@@ -6,7 +6,7 @@ import { requireOrg, canManage } from "@/lib/auth/session";
 import { getChecklists } from "@/lib/checklists/queries";
 import { getOrgMembers } from "@/lib/org/members";
 import { getDictionary } from "@/lib/i18n";
-import { AppShell } from "@/components/vaakya/app-shell";
+import { AppShell } from "@/components/waakya/app-shell";
 import { ChecklistEditor } from "./checklist-editor";
 import { getLocale } from "@/lib/i18n/server";
 

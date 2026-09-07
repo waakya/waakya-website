@@ -63,7 +63,7 @@ the CLAUDE.md §7 "not generated" checklist, then a commit.
   StateChip (8 tones, icon + word always), Card, Input, Label, InputOTP (6
   boxes), Switch (Hara when on), Checkbox, ToggleGroup, Sheet (bottom drawer,
   radius 24), Toaster with Undo, Avatar (Neel).
-- `components/vaakya/` — **`<Ticks state=… />`**, the signature glyph, built to
+- `components/waakya/` — **`<Ticks state=… />`**, the signature glyph, built to
   the tokens.css spec (viewBox 0 0 28 20, stroke 3.2, round caps; bars and tick
   coloured per state) with the state word as its accessible name; `Mark` (the
   logo, inline SVG); `NayaDot` (the pulsing new-task dot).
@@ -278,7 +278,7 @@ mic's place and prominence on the dashboard is held by "Naya kaam" (D-10).
   row and notifies the other side. `reassignTask()` restarts both clocks and
   clears the previous person's progress. `changeDeadline()` records the moved
   clock in the trail even though it is not a state change.
-- **`components/vaakya/stepper.tsx`** — the six steps and the two clock bars,
+- **`components/waakya/stepper.tsx`** — the six steps and the two clock bars,
   **the same component on both task detail screens** (D-06), with the bars as
   real `progressbar` roles carrying `aria-valuetext`, so the clock is
   announced, not just coloured.
@@ -536,7 +536,7 @@ checklist.
 ## Follow-ups after the first hands-on session
 
 **1. `npm run dev:login` — signing in without an inbox.** The MVP mails a
-six-digit code, which is no use against `owner@vaakya.test`. The script asks
+six-digit code, which is no use against `owner@waakya.test`. The script asks
 Supabase's admin API for a magic-link token and prints a URL.
 
 It is dev-only structurally, not by convention: it is a script, so nothing in
@@ -589,12 +589,12 @@ session language so it no longer inherits whatever was last clicked.
 
 ## Follow-ups: the rename, the website, and the dev bypass
 
-**1. Waakya, not Vaakya.** The Roman spelling now matches waakya.com across
+**1. The Roman spelling is Waakya.** The Roman spelling now matches waakya.com across
 every rendered surface, the manifest, metadata, email defaults and the docs.
 `lib/i18n/brand.ts` is the one source and a test fails the build if the name
 reappears in translatable copy. The Devanagari वाक्य is unchanged — same name,
 other script — and so is the mark. The outlined wordmark SVGs still read
-"Vaakya" and are listed in REPORT.md for redrawing; everywhere except the login
+the old spelling and were listed in REPORT.md for redrawing (since regenerated); everywhere except the login
 screen the wordmark is now composed from `Mark` plus the display face, so it
 picked up the new name without any art.
 

@@ -49,7 +49,7 @@ test("create → acknowledge → done → verify", async ({ page, browser }) => 
   const staffContext = await browser.newContext();
   const staff = await staffContext.newPage();
   await staff.request.post("/api/test-login", {
-    data: { email: "staff@vaakya.test", password: "vaakya-e2e-staff-pass" },
+    data: { email: "staff@waakya.test", password: "waakya-e2e-staff-pass" },
   });
   await pinLocale(staff, TEST_LOCALE);
   await openTask(staff, title);
@@ -123,7 +123,7 @@ test("a verified task is finished — no button moves it again", async ({ page }
   const staffContext = await page.context().browser()!.newContext();
   const staff = await staffContext.newPage();
   await staff.request.post("/api/test-login", {
-    data: { email: "staff@vaakya.test", password: "vaakya-e2e-staff-pass" },
+    data: { email: "staff@waakya.test", password: "waakya-e2e-staff-pass" },
   });
   await pinLocale(staff, TEST_LOCALE);
   await openTask(staff, title);
@@ -159,7 +159,7 @@ test("the assignee can decline, and it lands with the owner rather than dying", 
   const staffContext = await browser.newContext();
   const staff = await staffContext.newPage();
   await staff.request.post("/api/test-login", {
-    data: { email: "staff@vaakya.test", password: "vaakya-e2e-staff-pass" },
+    data: { email: "staff@waakya.test", password: "waakya-e2e-staff-pass" },
   });
   await pinLocale(staff, TEST_LOCALE);
   await openTask(staff, title);
@@ -213,7 +213,7 @@ test("the reply thread records both sides", async ({ page, browser }) => {
   const staffContext = await browser.newContext();
   const staff = await staffContext.newPage();
   await staff.request.post("/api/test-login", {
-    data: { email: "staff@vaakya.test", password: "vaakya-e2e-staff-pass" },
+    data: { email: "staff@waakya.test", password: "waakya-e2e-staff-pass" },
   });
   await pinLocale(staff, TEST_LOCALE);
   await openTask(staff, title);

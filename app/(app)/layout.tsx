@@ -1,8 +1,8 @@
 import { cookies } from "next/headers";
 
 import { requireViewer } from "@/lib/auth/session";
-import { LiveNotifications } from "@/components/vaakya/live-notifications";
-import { DevRoleSwitch } from "@/components/vaakya/dev-role-switch";
+import { LiveNotifications } from "@/components/waakya/live-notifications";
+import { DevRoleSwitch } from "@/components/waakya/dev-role-switch";
 import {
   DEV_ROLE_COOKIE,
   devAuthDisabled,

@@ -15,7 +15,7 @@ import {
 
 import { Avatar } from "@/components/ui/avatar";
 import { StateChip } from "@/components/ui/state-chip";
-import { Ticks } from "@/components/vaakya/ticks";
+import { Ticks } from "@/components/waakya/ticks";
 import { rowStatus, stateWord, type ChipIcon } from "@/lib/tasks/present";
 import type { TaskListItem } from "@/lib/tasks/queries";
 import { getDictionary, type Locale } from "@/lib/i18n";

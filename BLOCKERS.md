@@ -18,8 +18,8 @@ Until B2 lands there is no inbox, so the OTP code has nowhere to arrive.
 
 ```bash
 # once: paste SUPABASE_SERVICE_ROLE_KEY into .env.local
-npm run dev:login                       # owner@vaakya.test
-npm run dev:login -- staff@vaakya.test
+npm run dev:login                       # owner@waakya.test
+npm run dev:login -- staff@waakya.test
 ```
 
 It prints a URL. Paste it into the browser and you are signed in. The link is
