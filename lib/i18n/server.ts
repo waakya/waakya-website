@@ -3,7 +3,7 @@ import "server-only";
 import { cache } from "react";
 import { cookies } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
-import { DEFAULT_LOCALE, isLocale, toLocale, type Locale } from "./locales";
+import { DEFAULT_LOCALE, VISITOR_LOCALE, isLocale, toLocale, type Locale } from "./locales";
 import { getDictionary, type Dictionary } from "./dictionary";
 
 export const LOCALE_COOKIE = "vaakya_lang";
@@ -17,7 +17,8 @@ export const LOCALE_COOKIE = "vaakya_lang";
  * org's, which is what a newly invited staff member inherits (owner decision 3).
  *
  * The fallback only runs when a Supabase auth cookie is actually present, so a
- * signed-out page like /login still costs zero queries.
+ * signed-out page like /login still costs zero queries: a visitor gets
+ * `VISITOR_LOCALE` (English) until they use the switch.
  */
 export const getLocale = cache(async (): Promise<Locale> => {
   const store = await cookies();
@@ -28,7 +29,7 @@ export const getLocale = cache(async (): Promise<Locale> => {
   const signedIn = store
     .getAll()
     .some((c) => c.name.startsWith("sb-") && c.name.includes("auth-token"));
-  if (!signedIn) return DEFAULT_LOCALE;
+  if (!signedIn) return VISITOR_LOCALE;
 
   return localeFromAccount();
 });

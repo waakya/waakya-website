@@ -181,6 +181,13 @@ supabase/migrations/ every schema change, in order
 
 ## Things worth knowing before changing anything
 
+- **Language defaults.** A signed-out visitor (landing, login, privacy) reads
+  English (`VISITOR_LOCALE`) until they use the switch, which sets the
+  `vaakya_lang` cookie. A signed-in account without a cookie falls back to its
+  profile language, then its org's (`orgs.language` defaults to `hi`). The
+  page also declares `notranslate`, because Chrome's translator was turning
+  the brand name into a dictionary word.
+
 - **Haldi has exactly one job**: the tick that means done and waiting for the
   owner. It is never a button, a chip or a highlight. `lib/brand/rules.test.ts`
   fails the build if that changes.

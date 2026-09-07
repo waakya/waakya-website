@@ -1,6 +1,7 @@
 export {
   LOCALES,
   DEFAULT_LOCALE,
+  VISITOR_LOCALE,
   LOCALE_LABELS,
   isLocale,
   toLocale,

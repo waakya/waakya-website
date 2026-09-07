@@ -12,14 +12,14 @@ test("the style tile renders every ticks state with its state word", async ({
 
   await expect(page.getByRole("heading", { name: "Style tile" })).toBeVisible();
 
-  // Devanagari is the default language, so the accessible names are Hindi.
-  for (const word of ["भेजा", "देख लिया", "हो जाएगा", "हो गया", "वेरिफ़ाई"]) {
+  // A signed-out visitor reads English, so the accessible names are English.
+  for (const word of ["Sent", "Seen", "Accepted", "Done", "Verified"]) {
     await expect(page.getByRole("img", { name: word }).first()).toBeVisible();
   }
 
   // Every chip carries a word, never colour alone.
-  await expect(page.getByText("देखा नहीं").first()).toBeVisible();
-  await expect(page.getByText("अर्जेंट").first()).toBeVisible();
+  await expect(page.getByText("Not seen").first()).toBeVisible();
+  await expect(page.getByText("Urgent").first()).toBeVisible();
 });
 
 test("the staff primary button is 60px and the owner target is 48px", async ({
@@ -28,7 +28,7 @@ test("the staff primary button is 60px and the owner target is 48px", async ({
   await page.goto("/preview");
 
   const staffPrimary = page.getByRole("button", {
-    name: "देख लिया, हो जाएगा",
+    name: "Seen, will do",
   });
   await expect(staffPrimary).toBeVisible();
   expect((await staffPrimary.boundingBox())?.height).toBe(60);

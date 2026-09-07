@@ -6,7 +6,18 @@ export const LOCALES = ["hi", "hi-Latn", "en"] as const;
 
 export type Locale = (typeof LOCALES)[number];
 
+/**
+ * The fallback for a signed-in account that has said nothing: their profile's
+ * language, else their org's, else this (the org column also defaults to `hi`).
+ */
 export const DEFAULT_LOCALE: Locale = "hi";
+
+/**
+ * What a signed-out visitor sees — the landing page, login, privacy — until
+ * they pick from the switch. English, so a browser set to English is not
+ * offered a machine translation of a page that already has its own.
+ */
+export const VISITOR_LOCALE: Locale = "en";
 
 /** The switch reads हिंदी · Hinglish · English, in that order. */
 export const LOCALE_LABELS: Record<Locale, string> = {

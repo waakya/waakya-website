@@ -23,6 +23,7 @@ export function Wordmark({
     <span className={cn("flex items-center gap-2", className)}>
       <Mark size={size} onNeel={onNeel} title="" />
       <span
+        translate="no"
         style={{ fontSize: size }}
         className={cn(
           "font-display leading-none font-extrabold",

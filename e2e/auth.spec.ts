@@ -10,14 +10,21 @@ test("login shows an honest email field and the three languages", async ({
 }) => {
   await page.goto("/login");
 
-  // Devanagari is the default (the org language default is `hi`).
+  // A signed-out visitor reads English (the org language default, `hi`,
+  // applies to accounts, not to the door).
   await expect(
-    page.getByRole("heading", { name: "अपना ईमेल डालें" }),
+    page.getByRole("heading", { name: "Enter your email" }),
   ).toBeVisible();
-  await expect(page.getByPlaceholder("naam@example.com")).toHaveAttribute(
+  await expect(page.getByPlaceholder("name@example.com")).toHaveAttribute(
     "type",
     "email",
   );
+  await expect(page.getByText("Staff need the link their owner sent")).toBeVisible();
+
+  await page.getByRole("radio", { name: "हिंदी" }).click();
+  await expect(
+    page.getByRole("heading", { name: "अपना ईमेल डालें" }),
+  ).toBeVisible();
   await expect(page.getByText("स्टाफ़ को मालिक का भेजा हुआ लिंक चाहिए")).toBeVisible();
 
   await page.getByRole("radio", { name: "Hinglish" }).click();
@@ -25,11 +32,6 @@ test("login shows an honest email field and the three languages", async ({
     page.getByRole("heading", { name: "Apna email daalein" }),
   ).toBeVisible();
   await expect(page.getByText("Staff ko owner ka bheja hua link chahiye")).toBeVisible();
-
-  await page.getByRole("radio", { name: "English" }).click();
-  await expect(
-    page.getByRole("heading", { name: "Enter your email" }),
-  ).toBeVisible();
 });
 
 // Next.js renders its own role="alert" route announcer, so these assertions
@@ -85,8 +87,12 @@ test("the brand name is never translated, in any language", async ({ page }) => 
   // *Waakya* means "sentence" in Hindi, so a translated brand name turns the
   // consent line into "I agree to the sentence's Privacy Policy".
   await page.goto("/login");
-
   const consent = page.locator("label", { hasText: "Privacy Policy" });
+
+  await page.getByRole("radio", { name: "हिंदी" }).click();
+  await expect(
+    page.getByRole("heading", { name: "अपना ईमेल डालें" }),
+  ).toBeVisible();
   await expect(consent).toContainText("वाक्य");
   await expect(consent).toContainText("Privacy Policy");
   await expect(consent).not.toContainText("प्राइवेसी पॉलिसी");

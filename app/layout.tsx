@@ -31,6 +31,10 @@ export const metadata: Metadata = {
     statusBarStyle: "default",
   },
   formatDetection: { telephone: false },
+  // The page carries its own three languages (the switch). Without this,
+  // Chrome offers to machine-translate whichever one is showing and turns
+  // the brand name into a dictionary word.
+  other: { google: "notranslate" },
 };
 
 export const viewport: Viewport = {

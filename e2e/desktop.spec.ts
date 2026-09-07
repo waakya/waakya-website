@@ -16,12 +16,24 @@ test("the landing page sells the product to a logged-out visitor", async ({
   await signOut(page);
   await page.goto("/");
 
-  // The name, and only the new spelling of it.
+  // A visitor reads English until they choose otherwise, and the page says
+  // so, which is also what keeps the browser from offering to translate it.
+  await expect(page.locator("html")).toHaveAttribute("lang", "en");
+  await expect(page.locator('meta[name="google"]')).toHaveAttribute(
+    "content",
+    "notranslate",
+  );
+
+  // The name, and only the new spelling of it; marked so no translator
+  // treats it as a word.
   await expect(page.getByRole("banner")).toContainText("Waakya");
   expect(await page.getByText("Vaakya").count()).toBe(0);
+  await expect(
+    page.getByRole("banner").locator('[translate="no"]', { hasText: "Waakya" }),
+  ).toBeVisible();
 
   // The ladder is the product's own glyph, not a picture of one.
-  for (const word of ["भेजा", "देख लिया", "हो जाएगा", "हो गया", "वेरिफ़ाई"]) {
+  for (const word of ["Sent", "Seen", "Accepted", "Done", "Verified"]) {
     await expect(page.getByRole("img", { name: word }).first()).toBeVisible();
   }
 
@@ -32,17 +44,33 @@ test("the landing page sells the product to a logged-out visitor", async ({
 
   // Both calls to action lead into the product.
   await expect(
-    page.getByRole("link", { name: "शुरू करें" }).first(),
+    page.getByRole("link", { name: "Get started" }).first(),
   ).toHaveAttribute("href", "/login");
 
   // Nothing here claims a feature that does not ship: the two WhatsApp
   // pieces that are not built are labelled.
-  await expect(page.getByText("जल्द").first()).toBeVisible();
+  await expect(page.getByText("Coming").first()).toBeVisible();
 });
 
 test("the landing page follows the language switch", async ({ page }) => {
   await signOut(page);
   await page.goto("/");
+
+  await page.getByRole("radio", { name: "हिंदी" }).click();
+  await expect(
+    page.getByRole("heading", { name: "बोलो। हो जाएगा।" }),
+  ).toBeVisible();
+  await expect(page.locator("html")).toHaveAttribute("lang", "hi");
+  await expect(page.getByText("WhatsApp के साथ। WhatsApp के खिलाफ़ नहीं।")).toBeVisible();
+  // The brand does not change script with the copy on this page.
+  await expect(page.getByRole("banner")).toContainText("Waakya");
+
+  await page.getByRole("radio", { name: "Hinglish" }).click();
+  await expect(
+    page.getByRole("heading", { name: "Bolo. Ho jayega." }),
+  ).toBeVisible();
+  await expect(page.locator("html")).toHaveAttribute("lang", "hi-Latn");
+
   await page.getByRole("radio", { name: "English" }).click();
   await expect(
     page.getByRole("heading", { name: "Say it. It gets done." }),

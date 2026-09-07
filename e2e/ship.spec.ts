@@ -10,20 +10,32 @@ test("the privacy notice is readable before anyone has an account", async ({
 }) => {
   await signOut(page);
 
-  // A signed-out visitor gets Devanagari, which is the app default — but the
+  // A signed-out visitor reads English until they choose otherwise. The
   // notice's *title* stays "Privacy Policy" in every language, because it is
   // the name of a document and the link that opens it says the same thing.
   await page.goto("/privacy");
   await expect(
     page.getByRole("heading", { name: "Privacy Policy" }),
   ).toBeVisible();
-  await expect(page.getByText("आखिरी बदलाव")).toBeVisible();
+  await expect(page.getByText("Last updated")).toBeVisible();
 
   // The body follows the language switch on the login screen.
   await page.goto("/login");
-  await page.getByRole("radio", { name: "English" }).click();
+  await page.getByRole("radio", { name: "हिंदी" }).click();
   // Wait for the choice to land before navigating, or the next request races
   // the Set-Cookie that carries it.
+  await expect(
+    page.getByRole("heading", { name: "अपना ईमेल डालें" }),
+  ).toBeVisible();
+  await page.goto("/privacy");
+  await expect(page.getByText("आखिरी बदलाव")).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Privacy Policy" }),
+  ).toBeVisible();
+
+  // And back to English, where the rest of this test reads.
+  await page.goto("/login");
+  await page.getByRole("radio", { name: "English" }).click();
   await expect(
     page.getByRole("heading", { name: "Enter your email" }),
   ).toBeVisible();
@@ -40,7 +52,6 @@ test("the privacy notice is readable before anyone has an account", async ({
 test("the consent line on login reaches it", async ({ page }) => {
   await signOut(page);
   await page.goto("/login");
-  await page.getByRole("radio", { name: "English" }).click();
   await expect(
     page.getByRole("heading", { name: "Enter your email" }),
   ).toBeVisible();
