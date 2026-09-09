@@ -31,6 +31,14 @@ short-circuit in front of the real path. Setting the flag to anything else, or
 deleting it, restores normal login with **no code change**. The Playwright
 config pins it off, so the suite always exercises the real login.
 
+**Guest login.** Set `ALLOW_GUEST_LOGIN=true` in `.env.local` and the login
+screen shows a **Continue as guest** button under *Send code*. It signs you in
+as `guest@waakya.test` with no OTP, so every feature can be tried. The first
+click on a project creates that user, which needs `SUPABASE_SERVICE_ROLE_KEY`;
+after that the key is not needed. A guest starts with no business, so the
+first screen is setup. With the flag off, the button does not render and the
+action refuses, so the normal login is untouched. Never set it in production.
+
 **Signing in without an inbox.** The MVP mails a six-digit code, which is no
 use against a test address. With `SUPABASE_SERVICE_ROLE_KEY` set:
 
@@ -61,6 +69,7 @@ chip vocabulary. It is the fastest way to see whether a change broke the kit.
 | `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET` | Proof photos on Cloudflare R2 | Falls back to a private Supabase Storage bucket (1 GB ceiling) |
 | `NEXT_PUBLIC_SITE_URL` | Invite and notification links | Links point at `localhost` |
 | `ALLOW_TEST_LOGIN` | The Playwright e2e only | The e2e cannot sign in. **Never set this in production** |
+| `ALLOW_GUEST_LOGIN` | The guest button on the login screen | No guest button; normal OTP login only. **Never set this in production** |
 
 `.env.local` is gitignored and must stay that way.
 

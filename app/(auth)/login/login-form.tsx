@@ -18,6 +18,7 @@ import {
   type Locale,
 } from "@/lib/i18n";
 import { requestOtp, setLoginLocale, verifyOtp } from "./actions";
+import { guestLogin } from "./guest-actions";
 import { BrandText } from "@/components/waakya/brand-text";
 
 /**
@@ -37,10 +38,13 @@ import { BrandText } from "@/components/waakya/brand-text";
 export function LoginForm({
   locale,
   next,
+  guest = false,
 }: {
   locale: Locale;
   /** Where to land after sign-in — an invite link, usually. Same-site only. */
   next?: string | null;
+  /** Show the guest button. The page passes it only when ALLOW_GUEST_LOGIN is on. */
+  guest?: boolean;
 }) {
   // The dictionary is looked up here rather than passed in: it holds formatter
   // functions, and functions cannot cross the server/client boundary. Every
@@ -81,6 +85,18 @@ export function LoginForm({
         return;
       }
       setStep("code");
+    });
+  }
+
+  function enterAsGuest() {
+    setError(null);
+    startTransition(async () => {
+      const result = await guestLogin({ locale });
+      if (!result.ok) {
+        setError({ step: "email", message: result.message });
+        return;
+      }
+      router.replace(next ?? "/aaj");
     });
   }
 
@@ -170,6 +186,19 @@ export function LoginForm({
             <Button type="submit" size="block" disabled={pending} className="mt-4">
               {pending ? t.common.loading : t.auth.sendOtp}
             </Button>
+
+            {guest ? (
+              <Button
+                type="button"
+                variant="outline"
+                size="block"
+                disabled={pending}
+                onClick={enterAsGuest}
+                className="mt-3"
+              >
+                {t.auth.guestLogin}
+              </Button>
+            ) : null}
           </form>
         ) : (
           <form onSubmit={verify} noValidate className="mt-9">
