@@ -53,6 +53,7 @@ export default defineConfig({
       // The suite tests the real login path, so the dev bypass must be off
       // here however it is set in .env.local for hands-on review.
       DEV_DISABLE_AUTH: "false",
+      ALLOW_GUEST_LOGIN: "false",
     },
   },
 });

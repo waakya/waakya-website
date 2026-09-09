@@ -330,6 +330,8 @@ export interface Dictionary {
     resend: string;
     changeEmail: string;
     staffHint: string;
+    /** The guest button; shown only when ALLOW_GUEST_LOGIN is on. */
+    guestLogin: string;
     signOut: string;
   };
   /** Shared UI furniture. */
@@ -651,6 +653,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
       resend: "फिर से भेजें",
       changeEmail: "ईमेल बदलें",
       staffHint: "स्टाफ़ को मालिक का भेजा हुआ लिंक चाहिए",
+      guestLogin: "गेस्ट बनकर देखें",
       signOut: "साइन आउट",
     },
     common: {
@@ -970,6 +973,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
       resend: "Phir se bhejein",
       changeEmail: "Email badlein",
       staffHint: "Staff ko owner ka bheja hua link chahiye",
+      guestLogin: "Guest banke dekhein",
       signOut: "Sign out",
     },
     common: {
@@ -1289,6 +1293,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
       resend: "Send again",
       changeEmail: "Change email",
       staffHint: "Staff need the link their owner sent",
+      guestLogin: "Continue as guest",
       signOut: "Sign out",
     },
     common: {
