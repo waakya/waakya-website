@@ -21,6 +21,8 @@ import { runSlaTick } from "@/lib/sla/run";
  * a scheduler that retries, or an owner who taps twice, changes nothing.
  */
 export const dynamic = "force-dynamic";
+/** A tick across every org can take a while; do not let the platform cut it short. */
+export const maxDuration = 60;
 
 /**
  * Vercel Cron calls the path with GET and presents `Authorization: Bearer

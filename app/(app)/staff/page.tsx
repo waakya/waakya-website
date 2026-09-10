@@ -37,7 +37,7 @@ export default async function StaffPage() {
   return (
     <AppShell
       locale={locale}
-      variant={"owner"}
+      variant={canManage(viewer.role) ? "owner" : "staff"}
       orgName={viewer.org.name}
       personName={viewer.fullName ?? "—"}
       roleLabel={viewer.role ? getDictionary(locale).org.roles[viewer.role] : ""}

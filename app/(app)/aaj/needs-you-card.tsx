@@ -102,23 +102,26 @@ export function NeedsYouCard({
                 {t.actions.call}
               </Button>
             ) : null}
+            {reason !== "escalated" ? (
+              <Button
+                size="sm"
+                variant="secondary"
+                disabled={pending}
+                onClick={() =>
+                  startTransition(async () => {
+                    const result = await remindAction(taskId);
+                    toast(result.ok ? t.detail.reminderSent : result.message);
+                  })
+                }
+              >
+                <Bell />
+                {t.actions.yaadDilao}
+              </Button>
+            ) : null}
+            {/* Somebody who said "cannot do" needs a replacement, not a reminder. */}
             <Button
               size="sm"
-              variant="secondary"
-              disabled={pending}
-              onClick={() =>
-                startTransition(async () => {
-                  const result = await remindAction(taskId);
-                  toast(result.ok ? t.detail.reminderSent : result.message);
-                })
-              }
-            >
-              <Bell />
-              {t.actions.yaadDilao}
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
+              variant={reason === "escalated" ? "primary" : "outline"}
               render={<Link href={`/kaam/${taskId}`} />}
               nativeButton={false}
             >

@@ -11,7 +11,15 @@ export interface Viewer {
   email: string | null;
   fullName: string | null;
   /** null until the user creates or joins an org. */
-  org: { id: string; name: string; language: Locale; ackMinutes: number } | null;
+  org: {
+    id: string;
+    name: string;
+    language: Locale;
+    ackMinutes: number;
+    /** "21:00" / "08:00" in Asia/Kolkata: no reminders in between. */
+    quietStart: string;
+    quietEnd: string;
+  } | null;
   role: MemberRole | null;
 }
 
@@ -32,7 +40,7 @@ export const getViewer = cache(async (): Promise<Viewer | null> => {
     supabase.from("profiles").select("full_name").eq("id", user.id).maybeSingle(),
     supabase
       .from("memberships")
-      .select("role, org_id, orgs(id, name, language, ack_minutes)")
+      .select("role, org_id, orgs(id, name, language, ack_minutes, quiet_start, quiet_end)")
       .eq("user_id", user.id)
       .order("created_at", { ascending: true })
       .limit(1)
@@ -51,6 +59,8 @@ export const getViewer = cache(async (): Promise<Viewer | null> => {
           name: org.name,
           language: toLocale(org.language),
           ackMinutes: org.ack_minutes,
+          quietStart: org.quiet_start,
+          quietEnd: org.quiet_end,
         }
       : null,
     role: membership?.role ?? null,

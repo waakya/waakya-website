@@ -1,5 +1,6 @@
 import type { TaskState } from "@/lib/supabase/types";
 import { REMINDER_FRACTIONS, ackDeadline, reminderTimes } from "@/lib/tasks/sla";
+import { atIstTime } from "@/lib/tasks/time";
 
 /**
  * The SLA engine: given what the database holds and what time it is, decide
@@ -135,6 +136,9 @@ export function planSlaActions(
 
   for (const task of tasks) {
     if (FINISHED.includes(task.state)) continue;
+    // "Cannot do" hands the task to the owner; reminding or alarming about
+    // the assignee would chase the wrong person.
+    if (task.state === "escalated") continue;
     if (!task.deliveredAt) continue;
 
     const assignee = task.assignedTo;
@@ -235,6 +239,25 @@ export function isQuietHour(org: SlaOrg, now: Date): boolean {
   return start < end
     ? minutes >= start && minutes < end
     : minutes >= start || minutes < end;
+}
+
+/**
+ * When a message due at `at` will really be delivered: unchanged outside
+ * quiet hours, else the end of the quiet window (next morning). The screen
+ * uses it so "reminder 5:20 am" reads "reminder 8:00 am" instead.
+ */
+export function deliveredAfterQuiet(
+  org: Pick<SlaOrg, "quietStart" | "quietEnd">,
+  at: Date,
+): Date {
+  if (!isQuietHour(org as SlaOrg, at)) return at;
+  const end = parseClock(org.quietEnd);
+  const start = parseClock(org.quietStart);
+  if (end === null || start === null) return at;
+  const minutes = istMinutesOfDay(at);
+  // Wrapping window (21:00–08:00): before midnight the end is tomorrow's.
+  const dayOffset = start > end && minutes >= start ? 1 : 0;
+  return atIstTime(at, Math.floor(end / 60), end % 60, dayOffset);
 }
 
 function parseClock(value: string): number | null {

@@ -71,7 +71,13 @@ export async function runSlaTick(
     return summary;
   }
 
-  for (const row of orgs ?? []) {
+  /*
+   * Businesses are independent, so they are ticked a few at a time rather
+   * than one after another. Each org costs several round trips to a database
+   * on another continent; in series that ran past the scheduler's timeout as
+   * soon as there were a handful of orgs, although the work still completed.
+   */
+  await inBatches(orgs ?? [], ORG_CONCURRENCY, async (row) => {
     const org: SlaOrg = {
       id: row.id,
       name: row.name,
@@ -98,9 +104,9 @@ export async function runSlaTick(
 
     if (taskError) {
       summary.errors.push(`tasks(${org.id}): ${taskError.message}`);
-      continue;
+      return;
     }
-    if (!taskRows?.length) continue;
+    if (!taskRows?.length) return;
     summary.tasksScanned += taskRows.length;
 
     // Which escalations are already on record, so the plan does not re-raise
@@ -138,6 +144,18 @@ export async function runSlaTick(
     const titles = new Map(tasks.map((t) => [t.id, t.title]));
     const dueAt = new Map(tasks.map((t) => [t.id, t.dueAt]));
     const plan = planSlaActions(tasks, org, now);
+
+    // An escalation tells the owner *who* has not seen or finished the work,
+    // so it needs the assignee's name, not the business's. One lookup per org.
+    const assigneeIds = [...new Set(tasks.map((t) => t.assignedTo).filter((id): id is string => !!id))];
+    const { data: profiles } = assigneeIds.length
+      ? await client.from("profiles").select("id, full_name").in("id", assigneeIds)
+      : { data: [] as { id: string; full_name: string | null }[] };
+    const nameOf = new Map((profiles ?? []).map((p) => [p.id, p.full_name?.trim() || null]));
+    const assigneeNameFor = (taskId: string): string | null => {
+      const assignedTo = tasks.find((t) => t.id === taskId)?.assignedTo;
+      return assignedTo ? (nameOf.get(assignedTo) ?? null) : null;
+    };
 
     // One address lookup per person per tick, not one per message: a busy
     // morning can owe a dozen messages to the same phone.
@@ -202,6 +220,7 @@ export async function runSlaTick(
       const outcome = await deliver(client, action, {
         locale,
         orgName: org.name,
+        assigneeName: assigneeNameFor(action.taskId),
         title: titles.get(action.taskId) ?? "",
         dueAt: dueAt.get(action.taskId) ?? null,
         now,
@@ -218,7 +237,7 @@ export async function runSlaTick(
         summary.escalationsRaised += 1;
       }
     }
-  }
+    });
 
   return summary;
 }
@@ -238,6 +257,8 @@ async function deliver(
   context: {
     locale: ReturnType<typeof toLocale>;
     orgName: string;
+    /** The person doing the work; named in escalations to the owner. */
+    assigneeName: string | null;
     title: string;
     dueAt: string | null;
     now: Date;
@@ -258,9 +279,13 @@ async function deliver(
       : undefined;
 
   const body = writeMessage(event, context.locale, {
-    // The product never speaks as "Waakya" to staff; a reminder is the
-    // business reminding them, so the business is the sender.
-    actor: context.orgName,
+    // A reminder goes to staff: the product never speaks as "Waakya" to them,
+    // so the business is the sender. An escalation goes to the owner and is
+    // about a person: "Bittu has not seen …", never "Patel Hardware has not".
+    actor:
+      action.kind === "escalation"
+        ? (context.assigneeName ?? context.orgName)
+        : context.orgName,
     task: context.title,
     when: remaining,
   });
@@ -290,4 +315,17 @@ function siteUrl(): string {
     process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ??
     "http://localhost:3000"
   );
+}
+
+/** How many orgs are ticked at once. Small: the database is shared. */
+const ORG_CONCURRENCY = 5;
+
+async function inBatches<T>(
+  items: readonly T[],
+  size: number,
+  each: (item: T) => Promise<void>,
+): Promise<void> {
+  for (let i = 0; i < items.length; i += size) {
+    await Promise.all(items.slice(i, i + size).map(each));
+  }
 }

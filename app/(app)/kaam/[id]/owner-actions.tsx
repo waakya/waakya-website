@@ -87,6 +87,20 @@ export function OwnerActions({
           </p>
         ) : null}
 
+        {state === "escalated" && allowed.includes("reassigned") ? (
+          <div className="mb-3 flex gap-2">
+            <Button
+              size="staff"
+              className="flex-1"
+              disabled={pending}
+              onClick={() => setSheet("reassign")}
+            >
+              <RefreshCw />
+              {t.actions.kisiAurKo}
+            </Button>
+          </div>
+        ) : null}
+
         {canVerify ? (
           <div className="mb-3 flex gap-2">
             <Button
@@ -127,7 +141,7 @@ export function OwnerActions({
           <ActionTile
             label={t.actions.yaadDilao}
             icon={<Bell />}
-            disabled={pending || ["done", "verified", "cancelled"].includes(state)}
+            disabled={pending || ["done", "verified", "cancelled", "escalated"].includes(state)}
             onClick={() =>
               startTransition(async () => {
                 const result = await remindAction(taskId);

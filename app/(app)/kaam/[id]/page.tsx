@@ -53,7 +53,7 @@ export default async function TaskPage({ params }: PageProps<"/kaam/[id]">) {
       current: currentStep(task.state, timeline),
       ...taskClocks(task, now),
       ackMinutes: task.ackMinutes,
-      nextReminderAt: nextReminder(task.deliveredAt, task.dueAt, now),
+      nextReminderAt: nextReminder(task.deliveredAt, task.dueAt, now, viewer.org),
     },
     viewerId: viewer.userId,
   };

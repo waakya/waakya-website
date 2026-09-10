@@ -3,6 +3,7 @@ import { Check } from "lucide-react";
 import { getDictionary, type Locale } from "@/lib/i18n";
 import { STEPPER_STATES, type StepperState } from "@/lib/tasks/state-machine";
 import { formatTime } from "@/lib/tasks/time";
+import { formatDeadline } from "@/lib/tasks/present";
 import { formatDuration, percent, type Clock } from "@/lib/tasks/sla";
 import { cn } from "@/lib/utils";
 
@@ -30,6 +31,8 @@ export interface StepperProps {
   ackMinutes: number;
   /** "reminder 3:30" — the next reminder, if one is still coming. */
   nextReminderAt?: string | null;
+  /** So a reminder that is not today reads "kal 8:00 am". */
+  nowIso?: string;
   /** How the completion clock is doing, in words. */
   className?: string;
 }
@@ -49,6 +52,7 @@ export function Stepper({
   completion,
   ackMinutes,
   nextReminderAt,
+  nowIso,
   className,
 }: StepperProps) {
   const t = getDictionary(locale);
@@ -151,7 +155,11 @@ export function Stepper({
               ? t.chips.lateBy(formatDuration(completion.remainingMs, t.time))
               : [
                   t.time.percentGaya(percent(completion.progress)),
-                  nextReminderAt ? t.time.reminderAt(formatTime(nextReminderAt)) : null,
+                  nextReminderAt
+                    ? t.time.reminderAt(
+                        nowIso ? formatDeadline(nextReminderAt, locale, new Date(nowIso)) : formatTime(nextReminderAt),
+                      )
+                    : null,
                 ]
                   .filter(Boolean)
                   .join(" · ")
