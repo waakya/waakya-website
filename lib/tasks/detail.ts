@@ -2,6 +2,7 @@ import "server-only";
 
 import { createClient } from "@/lib/supabase/server";
 import { getMemberNames } from "@/lib/org/members";
+import { deliveredAfterQuiet } from "@/lib/sla/engine";
 import type { TaskState } from "@/lib/supabase/types";
 import type { StepperState } from "./state-machine";
 import { STEPPER_STATES } from "./state-machine";
@@ -139,9 +140,12 @@ export function nextReminder(
   deliveredAt: string | null,
   dueAt: string | null,
   now: Date,
+  /** The org's quiet hours; a reminder due in the night is shown at their end. */
+  quiet?: { quietStart: string; quietEnd: string },
 ): string | null {
   const upcoming = reminderTimes(deliveredAt, dueAt).find(
     (time) => time.getTime() > now.getTime(),
   );
-  return upcoming ? upcoming.toISOString() : null;
+  if (!upcoming) return null;
+  return (quiet ? deliveredAfterQuiet(quiet, upcoming) : upcoming).toISOString();
 }

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { isQuietHour, planSlaActions, type SlaOrg, type SlaTask } from "./engine";
+import { deliveredAfterQuiet, isQuietHour, planSlaActions, type SlaOrg, type SlaTask } from "./engine";
 
 const ORG: SlaOrg = {
   id: "org",
@@ -322,5 +322,26 @@ describe("an escalation stops being retried", () => {
     };
     const later = new Date("2026-09-04T06:00:00.000Z");
     expect(planSlaActions([broken], ORG, later).send).toEqual([]);
+  });
+});
+
+
+describe("deliveredAfterQuiet", () => {
+  const quiet = { quietStart: "21:00", quietEnd: "08:00" };
+  const iso = (d: Date) => d.toISOString();
+
+  it("leaves a daytime reminder alone", () => {
+    const at = new Date("2026-09-10T12:00:00.000Z"); // 5:30 pm IST
+    expect(iso(deliveredAfterQuiet(quiet, at))).toBe(iso(at));
+  });
+
+  it("moves a small-hours reminder to 8:00 am the same morning", () => {
+    const at = new Date("2026-09-10T23:50:00.000Z"); // 5:20 am IST, 11 Sept
+    expect(iso(deliveredAfterQuiet(quiet, at))).toBe("2026-09-11T02:30:00.000Z");
+  });
+
+  it("moves a late-evening reminder to 8:00 am the next morning", () => {
+    const at = new Date("2026-09-10T17:00:00.000Z"); // 10:30 pm IST, 10 Sept
+    expect(iso(deliveredAfterQuiet(quiet, at))).toBe("2026-09-11T02:30:00.000Z");
   });
 });

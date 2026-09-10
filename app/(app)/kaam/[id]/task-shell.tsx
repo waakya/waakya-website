@@ -160,6 +160,7 @@ export function TaskShell({
           completion={stepper.completion}
           ackMinutes={stepper.ackMinutes}
           nextReminderAt={stepper.nextReminderAt}
+          nowIso={nowIso}
           className="mt-4"
         />
 
