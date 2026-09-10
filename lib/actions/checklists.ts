@@ -37,7 +37,9 @@ const saveSchema = z.object({
  * because `tasks.checklist_item_id` is `on delete set null` — yesterday's
  * record never disappears because today's template changed.
  */
-export async function saveChecklist(input: unknown): Promise<ActionResult> {
+export async function saveChecklist(
+  input: unknown,
+): Promise<ActionResult<{ id: string }>> {
   const viewer = await requireOrg();
   const locale = viewer.org.language;
   if (!canManage(viewer.role)) return fail(errors(locale).notAllowed);
@@ -95,7 +97,7 @@ export async function saveChecklist(input: unknown): Promise<ActionResult> {
 
   revalidatePath("/checklists");
   revalidatePath("/aaj");
-  return ok();
+  return ok({ id: checklistId! });
 }
 
 export async function setChecklistActive(

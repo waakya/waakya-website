@@ -132,6 +132,8 @@ export interface Dictionary {
     pause: string;
     resume: string;
     remove: string;
+    /** The toast after Save, so a slow refresh never looks like a failure. */
+    saved: string;
   };
   /** The proof sheet and the proof list. */
   proof: {
@@ -476,6 +478,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
       pause: "रोकें",
       resume: "चालू करें",
       remove: "हटाएँ",
+      saved: "सेव हो गया",
     },
     proof: {
       title: "हो गया? प्रूफ़ भेजें",
@@ -804,6 +807,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
       pause: "Rokein",
       resume: "Chaalu karein",
       remove: "Hatayein",
+      saved: "Save ho gaya",
     },
     proof: {
       title: "Ho gaya? Proof bhejein",
@@ -1132,6 +1136,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
       pause: "Pause",
       resume: "Resume",
       remove: "Remove",
+      saved: "Saved",
     },
     proof: {
       title: "Done? Send the proof",
