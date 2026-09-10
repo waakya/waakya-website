@@ -190,6 +190,8 @@ export interface Dictionary {
     reminderSent: string;
     callNoNumber: string;
     eventBy: (name: string, what: string) => string;
+    /** Timeline row after Change time; follows the actor's name. */
+    timeChanged: (when: string) => string;
   };
   /** Creating a task, and the Confirm card. */
   create: {
@@ -532,6 +534,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
       reminderSent: "याद दिला दिया",
       callNoNumber: "इनका नंबर नहीं है",
       eventBy: (name, what) => `${name} ने ${what}`,
+      timeChanged: (when) => `ने समय बदला · ${when}`,
     },
     create: {
       newTask: "नया काम",
@@ -861,6 +864,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
       reminderSent: "Yaad dila diya",
       callNoNumber: "Inka number nahi hai",
       eventBy: (name, what) => `${name} ne ${what}`,
+      timeChanged: (when) => `ne samay badla · ${when}`,
     },
     create: {
       newTask: "Naya kaam",
@@ -1190,6 +1194,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
       reminderSent: "Reminder sent",
       callNoNumber: "No number on file",
       eventBy: (name, what) => `${name} ${what}`,
+      timeChanged: (when) => `changed the time to ${when}`,
     },
     create: {
       newTask: "New task",

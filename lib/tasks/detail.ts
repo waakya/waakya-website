@@ -15,7 +15,17 @@ export interface TimelineEntry {
   actorName: string;
   note: string | null;
   at: string;
+  /**
+   * A state change, or the clock being moved. `changeDeadline` records the
+   * latter as a same-state event whose note carries the new due time; the
+   * screen reads it as "changed the time to …" rather than as a state word.
+   */
+  kind: "state" | "time_changed";
+  /** The new deadline, for `time_changed` rows. */
+  dueAt: string | null;
 }
+
+const DUE_NOTE = /^due_at=(.+)$/;
 
 export interface ThreadMessage {
   id: string;
@@ -49,15 +59,21 @@ export async function getTaskTimeline(
     // The reader only cares that it was sent, so the row that says so once is
     // `delivered`; `created` stays in the table as the audit record.
     .filter((row) => row.to_state !== "created")
-    .map((row) => ({
-      id: row.id,
-      from: row.from_state,
-      to: row.to_state,
-      actorId: row.actor_id,
-      actorName: row.actor_id ? (names.get(row.actor_id) ?? "—") : "—",
-      note: row.note,
-      at: row.created_at,
-    }));
+    .map((row) => {
+      const due =
+        row.from_state === row.to_state ? DUE_NOTE.exec(row.note ?? "") : null;
+      return {
+        id: row.id,
+        from: row.from_state,
+        to: row.to_state,
+        actorId: row.actor_id,
+        actorName: row.actor_id ? (names.get(row.actor_id) ?? "—") : "—",
+        note: due ? null : row.note,
+        at: row.created_at,
+        kind: due ? ("time_changed" as const) : ("state" as const),
+        dueAt: due ? due[1] : null,
+      };
+    });
 }
 
 export async function getTaskThread(

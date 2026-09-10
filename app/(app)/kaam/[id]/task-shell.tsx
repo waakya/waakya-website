@@ -9,7 +9,7 @@ import type { TaskListItem } from "@/lib/tasks/queries";
 import type { Clock as SlaClock } from "@/lib/tasks/sla";
 import { formatDuration } from "@/lib/tasks/sla";
 import { formatTime } from "@/lib/tasks/time";
-import { stateWord } from "@/lib/tasks/present";
+import { formatDeadline, stateWord } from "@/lib/tasks/present";
 import type { StepperState } from "@/lib/tasks/state-machine";
 import { Thread } from "./thread";
 import { ProofList } from "./proof-list";
@@ -183,7 +183,9 @@ export function TaskShell({
                 <span className="flex-1 pb-3">
                   <span className="text-[15px] leading-[20px] text-ink-900">
                     <strong className="font-bold">{entry.actorName}</strong>{" "}
-                    {stateWord(entry.to, locale)}
+                    {entry.kind === "time_changed" && entry.dueAt
+                      ? t.detail.timeChanged(formatDeadline(entry.dueAt, locale, now))
+                      : stateWord(entry.to, locale)}
                   </span>
                   {entry.note ? (
                     <span className="block text-[13px] text-ink-500">
