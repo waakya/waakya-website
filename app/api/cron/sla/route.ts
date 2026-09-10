@@ -45,8 +45,9 @@ export async function POST(request: Request) {
   }
 
   const client = await createClient();
+  const startedAt = Date.now();
   const summary = await runSlaTick(client, new Date(), viewer.org.id);
-  return NextResponse.json({ ok: true, scope: "org", summary });
+  return NextResponse.json({ ok: true, scope: "org", durationMs: Date.now() - startedAt, summary });
 }
 
 /** The scheduler's path; null when the request did not present the secret. */
@@ -68,8 +69,10 @@ async function runAsScheduler(request: Request): Promise<NextResponse | null> {
         { status: 503 },
       );
     }
+    // The scheduler stores this reply, so the run time is on record.
+    const startedAt = Date.now();
     const summary = await runSlaTick(admin);
-    return NextResponse.json({ ok: true, scope: "all", summary });
+    return NextResponse.json({ ok: true, scope: "all", durationMs: Date.now() - startedAt, summary });
   }
   return null;
 }
