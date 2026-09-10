@@ -35,7 +35,7 @@ const TIMESTAMP_COLUMN: Partial<Record<TaskState, TimestampColumn>> = {
 
 /** Who hears about a transition, and what it is called in their inbox. */
 const NOTIFY_AS: Partial<Record<TaskState, { event: NotifyEvent; to: "owner" | "assignee" }>> = {
-  acknowledged: { event: "task_done", to: "owner" },
+  acknowledged: { event: "task_seen", to: "owner" },
   done: { event: "task_done", to: "owner" },
   verified: { event: "task_verified", to: "assignee" },
   escalated: { event: "escalated", to: "owner" },

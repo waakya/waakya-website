@@ -137,6 +137,18 @@ describe("the words", () => {
     );
   });
 
+  it("tells the owner a task was seen, not finished", () => {
+    expect(writeMessage("task_seen", "hi-Latn", context)).toBe(
+      'Rakesh ne "Sector 62 photos" dekh liya',
+    );
+    expect(writeMessage("task_seen", "hi", context)).toBe(
+      'Rakesh ने "Sector 62 photos" देख लिया',
+    );
+    expect(writeMessage("task_seen", "en", context)).toBe(
+      'Rakesh has seen "Sector 62 photos"',
+    );
+  });
+
   it("writes every event in every language", () => {
     const events = [
       "task_assigned",
@@ -145,6 +157,7 @@ describe("the words", () => {
       "not_seen",
       "overdue",
       "escalated",
+      "task_seen",
       "task_done",
       "task_verified",
       "reassigned",

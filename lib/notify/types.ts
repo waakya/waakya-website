@@ -11,6 +11,7 @@ export type NotifyEvent =
   | "not_seen"
   | "overdue"
   | "escalated"
+  | "task_seen"
   | "task_done"
   | "task_verified"
   | "reassigned"
