@@ -71,7 +71,13 @@ export async function runSlaTick(
     return summary;
   }
 
-  for (const row of orgs ?? []) {
+  /*
+   * Businesses are independent, so they are ticked a few at a time rather
+   * than one after another. Each org costs several round trips to a database
+   * on another continent; in series that ran past the scheduler's timeout as
+   * soon as there were a handful of orgs, although the work still completed.
+   */
+  await inBatches(orgs ?? [], ORG_CONCURRENCY, async (row) => {
     const org: SlaOrg = {
       id: row.id,
       name: row.name,
@@ -98,9 +104,9 @@ export async function runSlaTick(
 
     if (taskError) {
       summary.errors.push(`tasks(${org.id}): ${taskError.message}`);
-      continue;
+      return;
     }
-    if (!taskRows?.length) continue;
+    if (!taskRows?.length) return;
     summary.tasksScanned += taskRows.length;
 
     // Which escalations are already on record, so the plan does not re-raise
@@ -231,7 +237,7 @@ export async function runSlaTick(
         summary.escalationsRaised += 1;
       }
     }
-  }
+    });
 
   return summary;
 }
@@ -309,4 +315,17 @@ function siteUrl(): string {
     process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ??
     "http://localhost:3000"
   );
+}
+
+/** How many orgs are ticked at once. Small: the database is shared. */
+const ORG_CONCURRENCY = 5;
+
+async function inBatches<T>(
+  items: readonly T[],
+  size: number,
+  each: (item: T) => Promise<void>,
+): Promise<void> {
+  for (let i = 0; i < items.length; i += size) {
+    await Promise.all(items.slice(i, i + size).map(each));
+  }
 }
