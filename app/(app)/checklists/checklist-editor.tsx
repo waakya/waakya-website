@@ -66,13 +66,15 @@ export function ChecklistEditor({
    * and an owner who watches "No checklists yet" for that long saves twice.
    * Fresh props replace it.
    */
-  const [justSaved, setJustSaved] = React.useState<ChecklistWithItems[]>([]);
-  React.useEffect(() => {
-    setJustSaved([]);
-  }, [checklists]);
+  const [justSaved, setJustSaved] = React.useState<{
+    /** The server list these rows were added on top of; fresh props retire them. */
+    base: ChecklistWithItems[];
+    rows: ChecklistWithItems[];
+  }>({ base: checklists, rows: [] });
+  const pendingRows = justSaved.base === checklists ? justSaved.rows : [];
   const visible = [
-    ...checklists.map((c) => justSaved.find((j) => j.id === c.id) ?? c),
-    ...justSaved.filter((j) => !checklists.some((c) => c.id === j.id)),
+    ...checklists.map((c) => pendingRows.find((j) => j.id === c.id) ?? c),
+    ...pendingRows.filter((j) => !checklists.some((c) => c.id === j.id)),
   ];
 
   const nameOf = (id: string | null) =>
@@ -90,20 +92,26 @@ export function ChecklistEditor({
       else {
         const saved = draft;
         const before = checklists.find((c) => c.id === result.data.id);
-        setJustSaved((rows) => [
-          ...rows.filter((row) => row.id !== result.data.id),
-          {
-            id: result.data.id,
-            name: saved.name,
-            assignedTo: saved.assignedTo,
-            runAt: saved.runAt,
-            windowMinutes: saved.windowMinutes,
-            active: before?.active ?? true,
-            items: saved.items
-              .filter((item) => item.title.trim().length > 0)
-              .map((item, index) => ({ id: `${result.data.id}-${index}`, ...item })),
-          },
-        ]);
+        setJustSaved({
+          base: checklists,
+          rows: [
+            ...pendingRows.filter((row) => row.id !== result.data.id),
+            {
+              id: result.data.id,
+              name: saved.name,
+              assignedTo: saved.assignedTo,
+              runAt: saved.runAt,
+              windowMinutes: saved.windowMinutes,
+              active: before?.active ?? true,
+              items: saved.items
+                .filter((item) => item.title.trim().length > 0)
+                .map((item, index) => ({
+                  id: `${result.data.id}-${index}`,
+                  ...item,
+                })),
+            },
+          ],
+        });
         setDraft(null);
         toast(t.checklists.saved);
         router.refresh();
@@ -125,8 +133,9 @@ export function ChecklistEditor({
                     {checklist.name}
                   </p>
                   <p className="num mt-0.5 text-[13px] text-ink-500">
-                    {checklist.runAt.slice(0, 5)} · {nameOf(checklist.assignedTo)} ·{" "}
-                    {checklist.items.length} {t.checklists.items}
+                    {checklist.runAt.slice(0, 5)} ·{" "}
+                    {nameOf(checklist.assignedTo)} · {checklist.items.length}{" "}
+                    {t.checklists.items}
                   </p>
                 </div>
                 {!checklist.active ? (
@@ -194,12 +203,19 @@ export function ChecklistEditor({
         ))}
       </ul>
 
-      <Button size="block" className="mt-5" onClick={() => setDraft({ ...BLANK })}>
+      <Button
+        size="block"
+        className="mt-5"
+        onClick={() => setDraft({ ...BLANK })}
+      >
         <Plus />
         {t.checklists.add}
       </Button>
 
-      <Sheet open={draft !== null} onOpenChange={(open) => !open && setDraft(null)}>
+      <Sheet
+        open={draft !== null}
+        onOpenChange={(open) => !open && setDraft(null)}
+      >
         <SheetContent>
           <SheetTitle>{t.checklists.add}</SheetTitle>
           <SheetDescription>{t.checklists.subtitle}</SheetDescription>
@@ -345,7 +361,10 @@ export function ChecklistEditor({
                   onClick={() =>
                     setDraft({
                       ...draft,
-                      items: [...draft.items, { title: "", proofRequired: false }],
+                      items: [
+                        ...draft.items,
+                        { title: "", proofRequired: false },
+                      ],
                     })
                   }
                 >

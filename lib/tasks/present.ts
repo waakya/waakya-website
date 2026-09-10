@@ -136,7 +136,7 @@ export function rowStatus(
  */
 export function rowMeta(
   task: TaskForDisplay,
-  { locale }: PresentOptions,
+  { locale, now }: PresentOptions,
   who?: string,
 ): string {
   const t = getDictionary(locale);
@@ -152,7 +152,7 @@ export function rowMeta(
     parts.push(t.chips.photoChahiye);
   }
   if (task.dueAt && !["verified", "cancelled"].includes(task.state)) {
-    parts.push(t.time.tak(formatTime(task.dueAt)));
+    parts.push(t.time.tak(formatDeadline(task.dueAt, locale, now)));
   }
 
   return parts.join(" · ");

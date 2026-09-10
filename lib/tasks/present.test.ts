@@ -162,6 +162,13 @@ describe("the meta line", () => {
     ).toBe("Raju · Maana · 5:00 pm tak");
   });
 
+  it("says the day when the deadline is not today", () => {
+    const tomorrow = new Date(new Date(DUE).getTime() + 86_400_000).toISOString();
+    expect(
+      rowMeta(task({ state: "accepted", dueAt: tomorrow }), owner, "Raju"),
+    ).toBe("Raju · Maana · kal 5:00 pm tak");
+  });
+
   it("adds Urgent and Photo chahiye as facts, not as the only signal", () => {
     const line = rowMeta(
       task({ priority: "urgent", proofRequired: true }),

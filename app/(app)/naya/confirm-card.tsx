@@ -44,6 +44,7 @@ export function ConfirmCard({
 }: {
   locale: Locale;
   members: Member[];
+  /** Server-resolved: the evening chip's whole label, and the times of the others. */
   presetTimes: Record<DeadlinePreset, string>;
   ackMinutes: number;
 }) {
@@ -152,11 +153,11 @@ export function ConfirmCard({
           >
             <ToggleGroupItem value="today_evening">
               <Clock />
-              {t.create.todayEvening} {presetTimes.today_evening}
+              {presetTimes.today_evening}
             </ToggleGroupItem>
             <ToggleGroupItem value="one_hour">{t.create.oneHour}</ToggleGroupItem>
             <ToggleGroupItem value="tomorrow_morning">
-              {t.create.tomorrowMorning}
+              {t.create.tomorrowMorning} {presetTimes.tomorrow_morning}
             </ToggleGroupItem>
           </ToggleGroup>
         </StaticRow>

@@ -28,6 +28,7 @@ import {
   changeDeadlineAction,
   remindAction,
 } from "@/lib/actions/task-actions";
+import { resolvePreset } from "@/lib/tasks/deadlines";
 import type { TaskState } from "@/lib/supabase/types";
 import { cn } from "@/lib/utils";
 
@@ -196,11 +197,12 @@ export function OwnerActions({
           <SheetTitle>{t.detail.deadlineTitle}</SheetTitle>
           <ul className="mt-4 flex flex-col gap-2">
             {[
-              { hours: 1, label: t.create.oneHour },
-              { hours: 4, label: `4 ${t.time.hourShort}` },
-              { hours: 24, label: t.create.tomorrowMorning },
-            ].map(({ hours, label }) => (
-              <li key={hours}>
+              { key: "1h", label: t.create.oneHour, at: () => new Date(Date.now() + 60 * 60_000) },
+              { key: "4h", label: `4 ${t.time.hourShort}`, at: () => new Date(Date.now() + 4 * 60 * 60_000) },
+              // The same 9:00 am the Confirm card means, not "24 hours from now".
+              { key: "kal", label: t.create.tomorrowMorning, at: () => resolvePreset("tomorrow_morning", new Date()) },
+            ].map(({ key, label, at }) => (
+              <li key={key}>
                 <Button
                   variant="outline"
                   size="staff"
@@ -210,9 +212,7 @@ export function OwnerActions({
                     run(() =>
                       changeDeadlineAction({
                         taskId,
-                        dueAt: new Date(
-                          Date.now() + hours * 60 * 60_000,
-                        ).toISOString(),
+                        dueAt: at().toISOString(),
                       }),
                     )
                   }

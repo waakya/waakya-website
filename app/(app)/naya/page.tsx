@@ -5,6 +5,9 @@ import { getOrgMembers } from "@/lib/org/members";
 import { redirect } from "next/navigation";
 import { ConfirmCard } from "./confirm-card";
 import { resolvePreset } from "@/lib/tasks/deadlines";
+import { formatDeadline } from "@/lib/tasks/present";
+import { getDictionary } from "@/lib/i18n";
+import { isToday } from "@/lib/tasks/time";
 import { formatTime } from "@/lib/tasks/time";
 
 export const metadata: Metadata = { title: "Naya kaam" };
@@ -28,12 +31,24 @@ export default async function NayaPage() {
       members={members
         .filter((m) => m.userId !== viewer.userId)
         .map((m) => ({ id: m.userId, name: m.name }))}
-      // Resolved on the server so the chip reads "Aaj 5:00 pm", not "Aaj".
+      // Resolved on the server so the chip reads "Aaj 5:00 pm", not "Aaj" —
+      // and "Kal 5:00 pm" once today's 5 pm has passed, because that is where
+      // the preset then lands.
       presetTimes={{
-        today_evening: formatTime(resolvePreset("today_evening", now)),
+        today_evening: (() => {
+          const at = resolvePreset("today_evening", now);
+          return isToday(at, now)
+            ? `${getDictionary(locale).create.todayEvening} ${formatTime(at)}`
+            : capitalise(formatDeadline(at, locale, now));
+        })(),
         one_hour: formatTime(resolvePreset("one_hour", now)),
         tomorrow_morning: formatTime(resolvePreset("tomorrow_morning", now)),
       }}
     />
   );
+}
+
+/** "kal 5:00 pm" is mid-sentence copy; a chip starts with a capital. */
+function capitalise(text: string): string {
+  return text.charAt(0).toUpperCase() + text.slice(1);
 }
