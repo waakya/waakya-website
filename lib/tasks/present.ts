@@ -2,7 +2,8 @@ import type { TaskPriority, TaskState } from "@/lib/supabase/types";
 import { getDictionary, type Locale } from "@/lib/i18n";
 import { ticksFor } from "./state-machine";
 import { clock, formatDuration, ackDeadline } from "./sla";
-import { formatTime } from "./time";
+import { dayKey, formatTime } from "./time";
+import { formatIndianDate } from "./format-date";
 import type { TicksState } from "@/components/waakya/ticks";
 
 /**
@@ -220,4 +221,27 @@ export function needsYouMeta(
   if (deliveredAt) parts.push(`${t.stepper.bheja} ${formatTime(deliveredAt)}`);
   parts.push(...extra);
   return parts.join(" · ");
+}
+
+
+/**
+ * A deadline as a person would say it: "5:00 pm" today, "kal 5:00 pm"
+ * tomorrow, and "Shukr, 12 Sept · 5:00 pm" beyond that. A bare time for a
+ * deadline that is not today is how "by 5:00 pm" came to mean tomorrow.
+ */
+export function formatDeadline(
+  value: string | Date,
+  locale: Locale,
+  now: Date,
+): string {
+  const t = getDictionary(locale);
+  const time = formatTime(value);
+  const target = dayKey(value);
+  if (target === dayKey(now)) return time;
+  if (target === dayKey(new Date(now.getTime() + 86_400_000))) {
+    // Mid-sentence ("by tomorrow 5:00 pm"), so the Latin-script word is lower case.
+    const kal = locale === "hi" ? t.time.kal : t.time.kal.toLowerCase();
+    return `${kal} ${time}`;
+  }
+  return `${formatIndianDate(value, locale)} · ${time}`;
 }

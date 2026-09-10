@@ -9,6 +9,7 @@ import {
   type TaskForDisplay,
 } from "./present";
 import { TASK_STATES } from "./state-machine";
+import { formatDeadline } from "./present";
 
 const DELIVERED = "2026-09-04T04:30:00.000Z"; // 10:00 IST
 const DUE = "2026-09-04T11:30:00.000Z"; //  5:00 pm IST
@@ -203,5 +204,30 @@ describe("the two clocks", () => {
     // 10:00 to 17:00 is 7 hours; 90% is 16:18.
     const clocks = taskClocks(task(), now("2026-09-04T10:48:00.000Z"));
     expect(clocks.completion.tone).toBe("laal");
+  });
+});
+
+
+describe("a deadline says the day when it is not today", () => {
+  // 10 Sept 2026, 5:41 pm IST
+  const now = new Date("2026-09-10T12:11:00.000Z");
+
+  it("is a bare time for today", () => {
+    expect(formatDeadline("2026-09-10T14:00:00.000Z", "en", now)).toBe("7:30 pm");
+  });
+
+  it("says tomorrow, in the reader's language", () => {
+    const due = "2026-09-11T11:30:00.000Z";
+    expect(formatDeadline(due, "en", now)).toBe("tomorrow 5:00 pm");
+    expect(formatDeadline(due, "hi-Latn", now)).toBe("kal 5:00 pm");
+    expect(formatDeadline(due, "hi", now)).toBe("कल 5:00 pm");
+  });
+
+  it("gives the date beyond tomorrow", () => {
+    expect(formatDeadline("2026-09-14T03:30:00.000Z", "en", now)).toBe("Mon, 14 Sept · 9:00 am");
+  });
+
+  it("uses Latin digits in Hindi", () => {
+    expect(formatDeadline("2026-09-14T03:30:00.000Z", "hi", now)).toMatch(/9:00 am$/);
   });
 });
