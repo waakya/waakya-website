@@ -40,7 +40,9 @@ export function BottomNav({
       aria-label={t.nav.aaj}
       className="sticky bottom-0 z-30 border-t border-paper-200 bg-paper-0 pb-[env(safe-area-inset-bottom)] lg:hidden"
     >
-      <ul className="mx-auto flex max-w-md">
+      {/* A fixed 4rem tall, so a screen with its own bottom bar (task actions)
+          can pin that bar exactly above this one. */}
+      <ul className="mx-auto flex h-16 max-w-md">
         {items.map(({ href, label, icon: Icon }) => {
           const active = pathname === href || pathname.startsWith(`${href}/`);
           return (

@@ -85,10 +85,10 @@ export function TaskShell({
         The action bar below is fixed to the bottom of the viewport — a sticky
         bar inside this flex column did not pin reliably under mobile
         emulation, and a primary action that can slip below the fold is the one
-        thing this screen cannot get wrong. The padding here is the room the
-        bar occupies.
+        thing this screen cannot get wrong. The bar sits above the 4rem bottom
+        nav, and the padding here is the room the two together occupy.
       */}
-      <main className="flex-1 px-4 pb-56 lg:pb-8">
+      <main className="flex-1 px-4 pb-64 lg:pb-8">
         {lead}
 
         <h2 className="mt-2 text-[28px] leading-[36px] font-bold text-ink-900">
