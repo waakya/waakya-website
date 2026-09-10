@@ -139,6 +139,18 @@ export async function runSlaTick(
     const dueAt = new Map(tasks.map((t) => [t.id, t.dueAt]));
     const plan = planSlaActions(tasks, org, now);
 
+    // An escalation tells the owner *who* has not seen or finished the work,
+    // so it needs the assignee's name, not the business's. One lookup per org.
+    const assigneeIds = [...new Set(tasks.map((t) => t.assignedTo).filter((id): id is string => !!id))];
+    const { data: profiles } = assigneeIds.length
+      ? await client.from("profiles").select("id, full_name").in("id", assigneeIds)
+      : { data: [] as { id: string; full_name: string | null }[] };
+    const nameOf = new Map((profiles ?? []).map((p) => [p.id, p.full_name?.trim() || null]));
+    const assigneeNameFor = (taskId: string): string | null => {
+      const assignedTo = tasks.find((t) => t.id === taskId)?.assignedTo;
+      return assignedTo ? (nameOf.get(assignedTo) ?? null) : null;
+    };
+
     // One address lookup per person per tick, not one per message: a busy
     // morning can owe a dozen messages to the same phone.
     const emails = new Map<string, string | null>();
@@ -202,6 +214,7 @@ export async function runSlaTick(
       const outcome = await deliver(client, action, {
         locale,
         orgName: org.name,
+        assigneeName: assigneeNameFor(action.taskId),
         title: titles.get(action.taskId) ?? "",
         dueAt: dueAt.get(action.taskId) ?? null,
         now,
@@ -238,6 +251,8 @@ async function deliver(
   context: {
     locale: ReturnType<typeof toLocale>;
     orgName: string;
+    /** The person doing the work; named in escalations to the owner. */
+    assigneeName: string | null;
     title: string;
     dueAt: string | null;
     now: Date;
@@ -258,9 +273,13 @@ async function deliver(
       : undefined;
 
   const body = writeMessage(event, context.locale, {
-    // The product never speaks as "Waakya" to staff; a reminder is the
-    // business reminding them, so the business is the sender.
-    actor: context.orgName,
+    // A reminder goes to staff: the product never speaks as "Waakya" to them,
+    // so the business is the sender. An escalation goes to the owner and is
+    // about a person: "Bittu has not seen …", never "Patel Hardware has not".
+    actor:
+      action.kind === "escalation"
+        ? (context.assigneeName ?? context.orgName)
+        : context.orgName,
     task: context.title,
     when: remaining,
   });
