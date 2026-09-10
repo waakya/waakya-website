@@ -45,22 +45,21 @@ export default async function ChecklistsPage() {
           {t.checklists.subtitle}
         </p>
 
-        {checklists.length === 0 ? (
-          <div className="mt-6 flex flex-col items-center gap-2 rounded-card border border-dashed border-paper-300 p-6 text-center">
-            <ListChecks className="size-7 text-ink-400" aria-hidden="true" />
-            <p className="text-[17px] font-bold text-ink-900">
-              {t.checklists.empty}
-            </p>
-            <p className="text-[15px] leading-[20px] text-ink-500">
-              {t.checklists.emptyHelp}
-            </p>
-          </div>
-        ) : null}
-
         <ChecklistEditor
           locale={locale}
           checklists={checklists}
           members={members.map((m) => ({ id: m.userId, name: m.name }))}
+          empty={
+            <div className="mt-6 flex flex-col items-center gap-2 rounded-card border border-dashed border-paper-300 p-6 text-center">
+              <ListChecks className="size-7 text-ink-400" aria-hidden="true" />
+              <p className="text-[17px] font-bold text-ink-900">
+                {t.checklists.empty}
+              </p>
+              <p className="text-[15px] leading-[20px] text-ink-500">
+                {t.checklists.emptyHelp}
+              </p>
+            </div>
+          }
         />
       </main>
 

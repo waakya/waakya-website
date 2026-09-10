@@ -46,16 +46,34 @@ export function ChecklistEditor({
   locale,
   checklists,
   members,
+  empty,
 }: {
   locale: Locale;
   checklists: ChecklistWithItems[];
   members: { id: string; name: string }[];
+  /** Shown when there is nothing to list — owned here so a just-saved row can replace it at once. */
+  empty?: React.ReactNode;
 }) {
   const t = getDictionary(locale);
   const router = useRouter();
   const [draft, setDraft] = React.useState<Draft | null>(null);
   const [error, setError] = React.useState<string | null>(null);
   const [pending, startTransition] = React.useTransition();
+
+  /*
+   * What was just saved, shown until the server's list catches up. The save
+   * itself is quick, but the refreshed page can take a few seconds to arrive,
+   * and an owner who watches "No checklists yet" for that long saves twice.
+   * Fresh props replace it.
+   */
+  const [justSaved, setJustSaved] = React.useState<ChecklistWithItems[]>([]);
+  React.useEffect(() => {
+    setJustSaved([]);
+  }, [checklists]);
+  const visible = [
+    ...checklists.map((c) => justSaved.find((j) => j.id === c.id) ?? c),
+    ...justSaved.filter((j) => !checklists.some((c) => c.id === j.id)),
+  ];
 
   const nameOf = (id: string | null) =>
     members.find((m) => m.id === id)?.name ?? t.create.notChosen;
@@ -70,7 +88,24 @@ export function ChecklistEditor({
       });
       if (!result.ok) setError(result.message);
       else {
+        const saved = draft;
+        const before = checklists.find((c) => c.id === result.data.id);
+        setJustSaved((rows) => [
+          ...rows.filter((row) => row.id !== result.data.id),
+          {
+            id: result.data.id,
+            name: saved.name,
+            assignedTo: saved.assignedTo,
+            runAt: saved.runAt,
+            windowMinutes: saved.windowMinutes,
+            active: before?.active ?? true,
+            items: saved.items
+              .filter((item) => item.title.trim().length > 0)
+              .map((item, index) => ({ id: `${result.data.id}-${index}`, ...item })),
+          },
+        ]);
         setDraft(null);
+        toast(t.checklists.saved);
         router.refresh();
       }
     });
@@ -78,8 +113,10 @@ export function ChecklistEditor({
 
   return (
     <>
+      {visible.length === 0 ? empty : null}
+
       <ul className="mt-5 flex flex-col gap-2">
-        {checklists.map((checklist) => (
+        {visible.map((checklist) => (
           <li key={checklist.id}>
             <Card className="p-3.5">
               <div className="flex items-start gap-3">
