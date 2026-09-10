@@ -330,8 +330,16 @@ export interface Dictionary {
     resend: string;
     changeEmail: string;
     staffHint: string;
-    /** The guest button; shown only when ALLOW_GUEST_LOGIN is on. */
+    /** The guest door; shown only when ALLOW_GUEST_LOGIN is on. */
     guestLogin: string;
+    guestTitle: string;
+    guestSubtitle: string;
+    guestNameLabel: string;
+    guestNamePlaceholder: string;
+    guestReasonLabel: string;
+    guestReasonPlaceholder: string;
+    guestEnter: string;
+    guestBack: string;
     signOut: string;
   };
   /** Shared UI furniture. */
@@ -654,6 +662,14 @@ export const dictionaries: Record<Locale, Dictionary> = {
       changeEmail: "ईमेल बदलें",
       staffHint: "स्टाफ़ को मालिक का भेजा हुआ लिंक चाहिए",
       guestLogin: "गेस्ट बनकर देखें",
+      guestTitle: "गेस्ट बनकर देखें",
+      guestSubtitle: "बस नाम, ईमेल और वजह बताएँ। कोई OTP नहीं।",
+      guestNameLabel: "नाम",
+      guestNamePlaceholder: "आपका नाम",
+      guestReasonLabel: "वजह",
+      guestReasonPlaceholder: "आप ऐप क्यों देखना चाहते हैं?",
+      guestEnter: "अंदर जाएँ",
+      guestBack: "वापस",
       signOut: "साइन आउट",
     },
     common: {
@@ -974,6 +990,14 @@ export const dictionaries: Record<Locale, Dictionary> = {
       changeEmail: "Email badlein",
       staffHint: "Staff ko owner ka bheja hua link chahiye",
       guestLogin: "Guest banke dekhein",
+      guestTitle: "Guest banke dekhein",
+      guestSubtitle: "Bas naam, email aur wajah batayein. Koi OTP nahi.",
+      guestNameLabel: "Naam",
+      guestNamePlaceholder: "Aapka naam",
+      guestReasonLabel: "Wajah",
+      guestReasonPlaceholder: "Aap app kyun dekhna chahte hain?",
+      guestEnter: "Andar jaayein",
+      guestBack: "Wapas",
       signOut: "Sign out",
     },
     common: {
@@ -1294,6 +1318,14 @@ export const dictionaries: Record<Locale, Dictionary> = {
       changeEmail: "Change email",
       staffHint: "Staff need the link their owner sent",
       guestLogin: "Continue as guest",
+      guestTitle: "Try it as a guest",
+      guestSubtitle: "Just your name, email and reason. No OTP.",
+      guestNameLabel: "Name",
+      guestNamePlaceholder: "Your name",
+      guestReasonLabel: "Reason",
+      guestReasonPlaceholder: "Why would you like to try the app?",
+      guestEnter: "Enter",
+      guestBack: "Back",
       signOut: "Sign out",
     },
     common: {

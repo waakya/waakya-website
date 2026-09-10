@@ -4,77 +4,87 @@ import { z } from "zod";
 import { cookies } from "next/headers";
 
 import { createClient } from "@/lib/supabase/server";
-import { createAdminClient } from "@/lib/supabase/admin";
-import { GUEST_NAME, GUEST_USER, guestLoginEnabled } from "@/lib/auth/guest";
-import { localeSchema, fail, ok, type ActionResult } from "@/lib/validation";
+import {
+  GUEST_NAME_MAX,
+  GUEST_REASON_MAX,
+  guestLoginEnabled,
+} from "@/lib/auth/guest";
+import {
+  emailSchema,
+  localeSchema,
+  fail,
+  ok,
+  type ActionResult,
+} from "@/lib/validation";
 import { getDictionary, type Locale } from "@/lib/i18n";
 import { LOCALE_COOKIE } from "@/lib/i18n/server";
 
-const inputSchema = z.object({ locale: localeSchema });
+const inputSchema = z.object({
+  name: z.string().trim().min(1).max(GUEST_NAME_MAX),
+  email: emailSchema,
+  reason: z.string().trim().min(1).max(GUEST_REASON_MAX),
+  locale: localeSchema,
+});
 
 /**
- * Sign in as the guest account without an OTP.
+ * Sign in as a guest without an OTP.
  *
- * Fast path: a password sign-in against the guest user. The first time on a
- * project the user does not exist yet, so the service-role client creates it
- * (already confirmed) and mints a magic-link token that is verified right here
- * on the server — the same exchange `/auth/confirm` does — so the session
- * lands in cookies. After that first time the password path is enough and the
- * service-role key is not needed.
+ * Supabase's anonymous sign-in creates a fresh user with a live session using
+ * only the public key, so no service-role key is needed anywhere. What the
+ * guest typed travels as user metadata, and the name lands in `profiles` the
+ * same way the OTP path fills it, so the app has something to show.
+ *
+ * The email is what the guest says it is: nothing is sent to it and nothing is
+ * verified. That is the point of a guest door, and why it only opens while
+ * `ALLOW_GUEST_LOGIN` is on.
  */
 export async function guestLogin(input: unknown): Promise<ActionResult> {
-  const parsed = inputSchema.safeParse(input);
-  const locale: Locale = parsed.success ? parsed.data.locale : "en";
+  const locale = pickLocale(input);
   const c = copy(locale);
 
   if (!guestLoginEnabled()) return fail(c.disabled);
 
-  const supabase = await createClient();
-
-  const { error: passwordError } = await supabase.auth.signInWithPassword(
-    GUEST_USER,
-  );
-
-  if (passwordError) {
-    const admin = createAdminClient();
-    if (!admin) return fail(c.needsKey);
-
-    // Create the guest if it is missing. "Already registered" is fine: the
-    // password may have been changed by hand, and the link below still works.
-    const { error: createError } = await admin.auth.admin.createUser({
-      email: GUEST_USER.email,
-      password: GUEST_USER.password,
-      email_confirm: true,
-      user_metadata: { full_name: GUEST_NAME },
-    });
-    if (createError && !/already|exists/i.test(createError.message)) {
-      return fail(c.generic);
-    }
-
-    const { data: link, error: linkError } = await admin.auth.admin.generateLink({
-      type: "magiclink",
-      email: GUEST_USER.email,
-    });
-    const hash = link?.properties?.hashed_token;
-    if (linkError || !hash) return fail(c.generic);
-
-    const { error: verifyError } = await supabase.auth.verifyOtp({
-      type: "magiclink",
-      token_hash: hash,
-    });
-    if (verifyError) return fail(c.generic);
+  const parsed = inputSchema.safeParse(input);
+  if (!parsed.success) {
+    const field = parsed.error.issues[0]?.path[0];
+    if (field === "name") return fail(c.badName, "name");
+    if (field === "email") return fail(c.badEmail, "email");
+    if (field === "reason") return fail(c.badReason, "reason");
+    return fail(c.generic);
   }
+
+  const { name, email, reason } = parsed.data;
+  const supabase = await createClient();
 
   const {
     data: { user },
-  } = await supabase.auth.getUser();
+    error,
+  } = await supabase.auth.signInAnonymously({
+    options: {
+      data: {
+        full_name: name,
+        guest: true,
+        guest_email: email,
+        guest_reason: reason,
+      },
+    },
+  });
+
+  if (error) {
+    const text = error.message.toLowerCase();
+    if (text.includes("anonymous")) return fail(c.anonymousOff);
+    if (error.status === 429 || text.includes("rate limit")) {
+      return fail(c.rateLimited);
+    }
+    return fail(c.generic);
+  }
   if (!user) return fail(c.generic);
 
   // Same as the OTP path: the first sign-in creates the profile row.
   const { error: profileError } = await supabase
     .from("profiles")
     .upsert(
-      { id: user.id, full_name: GUEST_NAME },
+      { id: user.id, full_name: name },
       { onConflict: "id", ignoreDuplicates: true },
     );
   if (profileError) return fail(c.generic);
@@ -89,30 +99,50 @@ export async function guestLogin(input: unknown): Promise<ActionResult> {
   return ok();
 }
 
+function pickLocale(input: unknown): Locale {
+  const candidate =
+    typeof input === "object" && input !== null && "locale" in input
+      ? (input as { locale: unknown }).locale
+      : undefined;
+  const parsed = localeSchema.safeParse(candidate);
+  return parsed.success ? parsed.data : "en";
+}
+
+/** Errors say what to do next, in the reader's language (CLAUDE.md §6). */
 function copy(locale: Locale) {
   const shared = getDictionary(locale);
+  const stop = locale === "hi" ? "।" : ".";
   const generic =
-    shared.common.somethingWentWrong +
-    (locale === "hi" ? "। " : ". ") +
-    shared.common.tryAgain +
-    (locale === "hi" ? "।" : ".");
+    shared.common.somethingWentWrong + stop + " " + shared.common.tryAgain + stop;
   const table = {
     hi: {
       disabled: "गेस्ट लॉगिन बंद है।",
-      needsKey:
-        "गेस्ट लॉगिन सेट नहीं है। .env.local में SUPABASE_SERVICE_ROLE_KEY डालें।",
+      badName: "अपना नाम लिखें।",
+      badEmail: "ईमेल सही नहीं लग रहा। फिर से लिखें।",
+      badReason: "बताएँ कि आप ऐप क्यों देखना चाहते हैं।",
+      anonymousOff:
+        "गेस्ट लॉगिन Supabase में चालू नहीं है। Authentication में “Allow anonymous sign-ins” चालू करें।",
+      rateLimited: "बहुत बार कोशिश हुई। कुछ देर बाद फिर से कोशिश करें।",
       generic,
     },
     "hi-Latn": {
       disabled: "Guest login band hai.",
-      needsKey:
-        "Guest login set nahi hai. .env.local mein SUPABASE_SERVICE_ROLE_KEY daalein.",
+      badName: "Apna naam likhein.",
+      badEmail: "Email sahi nahi lag raha. Phir se likhein.",
+      badReason: "Batayein ki aap app kyun dekhna chahte hain.",
+      anonymousOff:
+        "Guest login Supabase mein chalu nahi hai. Authentication mein “Allow anonymous sign-ins” chalu karein.",
+      rateLimited: "Bahut baar koshish hui. Kuch der baad phir se koshish karein.",
       generic,
     },
     en: {
       disabled: "Guest login is turned off.",
-      needsKey:
-        "Guest login is not set up. Add SUPABASE_SERVICE_ROLE_KEY to .env.local.",
+      badName: "Please write your name.",
+      badEmail: "That email does not look right. Please write it again.",
+      badReason: "Tell us why you would like to try the app.",
+      anonymousOff:
+        "Guest login is not switched on in Supabase. Turn on “Allow anonymous sign-ins” under Authentication.",
+      rateLimited: "Too many tries. Please try again in a little while.",
       generic,
     },
   } as const;
