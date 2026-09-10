@@ -51,8 +51,10 @@ export function LoginForm({
   // client component in Waakya takes a `locale` and resolves its own copy.
   const t = getDictionary(locale);
   const router = useRouter();
-  const [step, setStep] = React.useState<"email" | "code">("email");
+  const [step, setStep] = React.useState<"email" | "code" | "guest">("email");
   const [email, setEmail] = React.useState("");
+  const [guestName, setGuestName] = React.useState("");
+  const [guestReason, setGuestReason] = React.useState("");
   const [code, setCode] = React.useState("");
   const [consent, setConsent] = React.useState(false);
   const [pending, startTransition] = React.useTransition();
@@ -66,7 +68,7 @@ export function LoginForm({
    * problem with the address, so it must not ring the email box red.
    */
   const [error, setError] = React.useState<{
-    step: "email" | "code";
+    step: "email" | "code" | "guest";
     message: string;
     field?: string;
   } | null>(null);
@@ -74,6 +76,8 @@ export function LoginForm({
   const stepError = error?.step === step ? error : null;
   const emailInvalid = stepError?.field === "email";
   const codeInvalid = stepError?.field === "code";
+  const nameInvalid = stepError?.field === "name";
+  const reasonInvalid = stepError?.field === "reason";
 
   function send(event: React.FormEvent) {
     event.preventDefault();
@@ -88,12 +92,18 @@ export function LoginForm({
     });
   }
 
-  function enterAsGuest() {
+  function enterAsGuest(event: React.FormEvent) {
+    event.preventDefault();
     setError(null);
     startTransition(async () => {
-      const result = await guestLogin({ locale });
+      const result = await guestLogin({
+        name: guestName,
+        email,
+        reason: guestReason,
+        locale,
+      });
       if (!result.ok) {
-        setError({ step: "email", message: result.message });
+        setError({ step: "guest", message: result.message, field: result.field });
         return;
       }
       router.replace(next ?? "/aaj");
@@ -193,12 +203,110 @@ export function LoginForm({
                 variant="outline"
                 size="block"
                 disabled={pending}
-                onClick={enterAsGuest}
+                onClick={() => {
+                  setStep("guest");
+                  setError(null);
+                }}
                 className="mt-3"
               >
                 {t.auth.guestLogin}
               </Button>
             ) : null}
+          </form>
+        ) : step === "guest" ? (
+          <form onSubmit={enterAsGuest} noValidate className="mt-9">
+            <h1 className="text-[24px] leading-[30px] font-bold text-ink-900">
+              {t.auth.guestTitle}
+            </h1>
+            <p className="mt-1 text-[15px] leading-[20px] text-ink-500">
+              {t.auth.guestSubtitle}
+            </p>
+
+            <div className="mt-5 flex flex-col gap-3">
+              <div>
+                <Label htmlFor="guest-name" className="sr-only">
+                  {t.auth.guestNameLabel}
+                </Label>
+                <Input
+                  id="guest-name"
+                  name="name"
+                  autoComplete="name"
+                  required
+                  value={guestName}
+                  onChange={(event) => {
+                    setGuestName(event.target.value);
+                    if (stepError) setError(null);
+                  }}
+                  placeholder={t.auth.guestNamePlaceholder}
+                  aria-invalid={nameInvalid || undefined}
+                  aria-describedby={stepError ? "login-error" : undefined}
+                  className="h-tap-staff"
+                />
+              </div>
+              <div>
+                <Label htmlFor="guest-email" className="sr-only">
+                  {t.auth.emailLabel}
+                </Label>
+                <Input
+                  id="guest-email"
+                  name="email"
+                  type="email"
+                  inputMode="email"
+                  autoComplete="email"
+                  autoCapitalize="none"
+                  spellCheck={false}
+                  required
+                  value={email}
+                  onChange={(event) => {
+                    setEmail(event.target.value);
+                    if (stepError) setError(null);
+                  }}
+                  placeholder={t.auth.emailPlaceholder}
+                  aria-invalid={emailInvalid || undefined}
+                  aria-describedby={stepError ? "login-error" : undefined}
+                  className="h-tap-staff"
+                />
+              </div>
+              <div>
+                <Label htmlFor="guest-reason" className="sr-only">
+                  {t.auth.guestReasonLabel}
+                </Label>
+                <textarea
+                  id="guest-reason"
+                  name="reason"
+                  required
+                  rows={3}
+                  value={guestReason}
+                  onChange={(event) => {
+                    setGuestReason(event.target.value);
+                    if (stepError) setError(null);
+                  }}
+                  placeholder={t.auth.guestReasonPlaceholder}
+                  aria-invalid={reasonInvalid || undefined}
+                  aria-describedby={stepError ? "login-error" : undefined}
+                  className="w-full rounded-button border-2 border-paper-200 bg-paper-0 px-4 py-3 text-[17px] font-semibold text-ink-900 outline-none transition-colors placeholder:font-normal placeholder:text-ink-400 focus:border-neel-600 aria-invalid:border-laal-600"
+                />
+              </div>
+            </div>
+
+            <ErrorLine error={stepError?.message ?? null} />
+
+            <Button type="submit" size="block" disabled={pending} className="mt-4">
+              {pending ? t.common.loading : t.auth.guestEnter}
+            </Button>
+
+            <div className="mt-2 flex justify-start">
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => {
+                  setStep("email");
+                  setError(null);
+                }}
+              >
+                {t.auth.guestBack}
+              </Button>
+            </div>
           </form>
         ) : (
           <form onSubmit={verify} noValidate className="mt-9">
