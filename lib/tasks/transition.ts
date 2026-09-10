@@ -69,7 +69,7 @@ export async function moveTask(
 
   const { data: task } = await supabase
     .from("tasks")
-    .select("id, org_id, title, state, assigned_to, created_by, due_at")
+    .select("id, org_id, title, state, assigned_to, created_by, due_at, acknowledged_at")
     .eq("id", input.taskId)
     .maybeSingle();
 
@@ -92,6 +92,15 @@ export async function moveTask(
   if (column) patch[column] = now.toISOString();
   // A reassignment restarts both clocks for the new person.
   if (input.to === "reassigned") patch.delivered_at = now.toISOString();
+  // "Cannot do" from the person it was sent to means they saw it: stop the
+  // acknowledge clock rather than raising a "not seen" alarm on top.
+  if (
+    input.to === "escalated" &&
+    !task.acknowledged_at &&
+    viewer.userId === task.assigned_to
+  ) {
+    patch.acknowledged_at = now.toISOString();
+  }
 
   const { data: updated, error } = await supabase
     .from("tasks")

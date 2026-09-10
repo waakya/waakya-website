@@ -136,6 +136,9 @@ export function planSlaActions(
 
   for (const task of tasks) {
     if (FINISHED.includes(task.state)) continue;
+    // "Cannot do" hands the task to the owner; reminding or alarming about
+    // the assignee would chase the wrong person.
+    if (task.state === "escalated") continue;
     if (!task.deliveredAt) continue;
 
     const assignee = task.assignedTo;

@@ -345,3 +345,28 @@ describe("deliveredAfterQuiet", () => {
     expect(iso(deliveredAfterQuiet(quiet, at))).toBe("2026-09-11T02:30:00.000Z");
   });
 });
+
+
+describe("an escalated task is with the owner", () => {
+  it("gets no reminders and no not-seen alarm", () => {
+    const org: SlaOrg = { id: "o", name: "Org", ackMinutes: 15, quietStart: "21:00", quietEnd: "08:00" };
+    const now = new Date("2026-09-10T12:00:00.000Z");
+    const task: SlaTask = {
+      id: "t",
+      orgId: "o",
+      title: "Collect rent",
+      state: "escalated",
+      assignedTo: "staff",
+      createdBy: "owner",
+      deliveredAt: "2026-09-10T11:00:00.000Z",
+      dueAt: "2026-09-10T13:00:00.000Z",
+      acknowledgedAt: null,
+      doneAt: null,
+      ackMinutes: 15,
+      escalated: [],
+    };
+    const plan = planSlaActions([task], org, now);
+    expect(plan.send).toEqual([]);
+    expect(plan.recordOnly).toEqual([]);
+  });
+});
