@@ -124,7 +124,7 @@ export function TaskShell({
               }
             >
               <Clock className="size-5" aria-hidden="true" />
-              {t.time.tak(formatTime(task.dueAt))}
+              {t.time.tak(formatDeadline(task.dueAt, locale, now))}
             </p>
             <p
               className={
