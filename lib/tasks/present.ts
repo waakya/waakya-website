@@ -112,7 +112,9 @@ export function rowStatus(
   }
 
   if (task.state === "escalated") {
-    return { kind: "chip", chip: { tone: "amber", icon: "bell", label: t.chips.escalated } };
+    // "Escalated to you" is the owner's view; the person who raised it reads "Sent to owner".
+    const label = viewer === "staff" ? t.chips.escalatedToOwner : t.chips.escalated;
+    return { kind: "chip", chip: { tone: "amber", icon: "bell", label } };
   }
 
   if (isUnseen(task, now)) {
@@ -136,14 +138,18 @@ export function rowStatus(
  */
 export function rowMeta(
   task: TaskForDisplay,
-  { locale, now }: PresentOptions,
+  { locale, now, viewer }: PresentOptions,
   who?: string,
 ): string {
   const t = getDictionary(locale);
   const parts: string[] = [];
 
   if (who) parts.push(who);
-  parts.push(stateWord(task.state, locale));
+  parts.push(
+    task.state === "escalated" && viewer === "staff"
+      ? t.chips.escalatedToOwner
+      : stateWord(task.state, locale),
+  );
 
   if (task.priority === "urgent" && task.state !== "verified") {
     parts.push(t.chips.urgent);

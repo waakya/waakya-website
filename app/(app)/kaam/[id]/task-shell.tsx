@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowLeft, Camera, Clock, MessageSquare, Zap } from "lucide-react";
+import { ArrowLeft, Camera, Clock, MessageSquare, X, Zap } from "lucide-react";
 
 import { StateChip } from "@/components/ui/state-chip";
 import { Stepper } from "@/components/waakya/stepper";
@@ -96,6 +96,11 @@ export function TaskShell({
         </h2>
 
         <div className="mt-3 flex flex-wrap items-center gap-2">
+          {task.state === "cancelled" ? (
+            <StateChip tone="laal" icon={<X />}>
+              {t.chips.cancelled}
+            </StateChip>
+          ) : null}
           {task.priority === "urgent" ? (
             <StateChip tone="laalSolid" icon={<Zap />}>
               {t.chips.urgent}

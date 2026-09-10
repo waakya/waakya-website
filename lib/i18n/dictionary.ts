@@ -42,6 +42,8 @@ export interface Dictionary {
     verifyBaaki: string;
     cancelled: string;
     escalated: string;
+    /** The same state seen by the staff member who raised it. */
+    escalatedToOwner: string;
     reassigned: string;
     naya: string;
   };
@@ -132,6 +134,8 @@ export interface Dictionary {
     pause: string;
     resume: string;
     remove: string;
+    /** Opens the editor for an existing checklist. */
+    edit: string;
     /** The toast after Save, so a slow refresh never looks like a failure. */
     saved: string;
   };
@@ -139,6 +143,8 @@ export interface Dictionary {
   proof: {
     title: string;
     help: (owner: string) => string;
+    /** When no photo was asked for: proof is welcome, not required. */
+    helpOptional: string;
     takePhoto: string;
     photoCount: (n: number) => string;
     write: string;
@@ -385,6 +391,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
       verifyBaaki: "वेरिफ़ाई बाकी",
       cancelled: "कैंसिल",
       escalated: "आप तक आया",
+      escalatedToOwner: "मालिक को बताया",
       reassigned: "किसी और को",
       naya: "नया",
     },
@@ -480,11 +487,13 @@ export const dictionaries: Record<Locale, Dictionary> = {
       pause: "रोकें",
       resume: "चालू करें",
       remove: "हटाएँ",
+      edit: "बदलें",
       saved: "सेव हो गया",
     },
     proof: {
       title: "हो गया? प्रूफ़ भेजें",
       help: (owner) => `${owner} ने फ़ोटो माँगी है। कैमरा खुला है, बस खींचिए।`,
+      helpOptional: "चाहें तो फ़ोटो या नोट जोड़ें, फिर भेजें।",
       takePhoto: "फ़ोटो लें",
       photoCount: (n) => `${n} फ़ोटो`,
       write: "लिखें",
@@ -715,6 +724,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
       verifyBaaki: "Verify baaki",
       cancelled: "Cancelled",
       escalated: "Aap tak aaya",
+      escalatedToOwner: "Malik ko bataya",
       reassigned: "Kisi aur ko",
       naya: "Naya",
     },
@@ -810,11 +820,13 @@ export const dictionaries: Record<Locale, Dictionary> = {
       pause: "Rokein",
       resume: "Chaalu karein",
       remove: "Hatayein",
+      edit: "Badlein",
       saved: "Save ho gaya",
     },
     proof: {
       title: "Ho gaya? Proof bhejein",
       help: (owner) => `${owner} ne photo maangi hai. Camera khula hai, bas khinchiye.`,
+      helpOptional: "Chahein to photo ya note jodein, phir bhejein.",
       takePhoto: "Photo lein",
       photoCount: (n) => `${n} photo`,
       write: "Likhein",
@@ -1045,6 +1057,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
       verifyBaaki: "Verify pending",
       cancelled: "Cancelled",
       escalated: "Escalated to you",
+      escalatedToOwner: "Sent to owner",
       reassigned: "Reassigned",
       naya: "New",
     },
@@ -1140,11 +1153,13 @@ export const dictionaries: Record<Locale, Dictionary> = {
       pause: "Pause",
       resume: "Resume",
       remove: "Remove",
+      edit: "Edit",
       saved: "Saved",
     },
     proof: {
       title: "Done? Send the proof",
       help: (owner) => `${owner} asked for a photo. The camera is open, just take it.`,
+      helpOptional: "Add a photo or a note if you like, then send.",
       takePhoto: "Take a photo",
       photoCount: (n) => `${n} photos`,
       write: "Write",

@@ -163,7 +163,7 @@ export function ChecklistEditor({
                     })
                   }
                 >
-                  {t.actions.save}
+                  {t.checklists.edit}
                 </Button>
                 <Button
                   size="sm"
@@ -217,7 +217,7 @@ export function ChecklistEditor({
         onOpenChange={(open) => !open && setDraft(null)}
       >
         <SheetContent>
-          <SheetTitle>{t.checklists.add}</SheetTitle>
+          <SheetTitle>{draft?.id ? draft.name || t.checklists.edit : t.checklists.add}</SheetTitle>
           <SheetDescription>{t.checklists.subtitle}</SheetDescription>
 
           {draft ? (

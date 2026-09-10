@@ -137,7 +137,9 @@ export function ProofSheet({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent>
         <SheetTitle>{t.proof.title}</SheetTitle>
-        <SheetDescription>{t.proof.help(ownerName)}</SheetDescription>
+        <SheetDescription>
+          {required ? t.proof.help(ownerName) : t.proof.helpOptional}
+        </SheetDescription>
 
         <div className="mt-4 flex items-center gap-3 overflow-x-auto pb-1">
           <label
