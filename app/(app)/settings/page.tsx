@@ -76,9 +76,11 @@ export default async function SettingsPage() {
           <h2 className="mb-2 text-[13px] leading-[18px] font-semibold text-ink-700">
             {t.settings.account}
           </h2>
-          <Card className="p-4">
-            <p className="text-[15px] break-all text-ink-700">{viewer.email}</p>
-          </Card>
+          {viewer.email ? (
+            <Card className="p-4">
+              <p className="text-[15px] break-all text-ink-700">{viewer.email}</p>
+            </Card>
+          ) : null}
           <SignOutButton label={t.auth.signOut} icon={<LogOut />} />
         </section>
       </main>
