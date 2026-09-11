@@ -47,6 +47,19 @@ export async function GET(request: Request) {
     .upsert({ id: user.id }, { onConflict: "id", ignoreDuplicates: true });
   if (profileError) return failed;
 
+  // Google knows the person's name; email sign-in never asked for one, which
+  // left owners as "—". Fill it only while the profile has none, so a name
+  // someone set in Settings (or an owner's invite) is never overwritten.
+  const meta = user.user_metadata ?? {};
+  const googleName = String(meta.full_name ?? meta.name ?? "").trim().slice(0, 60);
+  if (googleName) {
+    await supabase
+      .from("profiles")
+      .update({ full_name: googleName })
+      .eq("id", user.id)
+      .is("full_name", null);
+  }
+
   await setLocaleCookie(await resolveUserLocale(supabase, user.id, await getLocale()));
 
   const next = safeNextPath(url.searchParams.get("next")) ?? "/aaj";
