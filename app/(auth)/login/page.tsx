@@ -10,7 +10,7 @@ export const metadata: Metadata = { title: "Login" };
 export default async function LoginPage({
   searchParams,
 }: PageProps<"/login">) {
-  const { next } = await searchParams;
+  const { next, oauth } = await searchParams;
   // Only same-site paths: an open redirect here would let an invite link be
   // rewritten to point at somebody else's site.
   const safeNext =
@@ -21,6 +21,11 @@ export default async function LoginPage({
 
   const locale = await getLocale();
   return (
-    <LoginForm locale={locale} next={safeNext} guest={guestLoginEnabled()} />
+    <LoginForm
+      locale={locale}
+      next={safeNext}
+      guest={guestLoginEnabled()}
+      oauthFailed={oauth === "failed"}
+    />
   );
 }

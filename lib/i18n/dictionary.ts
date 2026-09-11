@@ -328,6 +328,12 @@ export interface Dictionary {
   auth: {
     title: string;
     subtitle: string;
+    /** The Google button. "Google" is a proper noun and stays in Latin script. */
+    google: string;
+    /** The line between the Google button and the email field. */
+    orEmail: string;
+    /** Shown when Google sends someone back without a session. */
+    oauthFailed: string;
     emailLabel: string;
     emailPlaceholder: string;
     /** Takes the brand name; see lib/i18n/brand.ts for why it is a parameter. */
@@ -663,8 +669,11 @@ export const dictionaries: Record<Locale, Dictionary> = {
       noOne: "कोई नहीं",
     },
     auth: {
-      title: "अपना ईमेल डालें",
-      subtitle: "OTP इसी ईमेल पे आएगा।",
+      title: "लॉग इन करें",
+      subtitle: "Google से, या ईमेल पे OTP से।",
+      google: "Google से आगे बढ़ें",
+      orEmail: "या ईमेल से",
+      oauthFailed: "Google से लॉग इन नहीं हुआ। फिर से कोशिश करें।",
       emailLabel: "ईमेल",
       emailPlaceholder: "naam@example.com",
       consentPrefix: (brand) => `मैं ${brand} की `,
@@ -996,8 +1005,11 @@ export const dictionaries: Record<Locale, Dictionary> = {
       noOne: "Koi nahi",
     },
     auth: {
-      title: "Apna email daalein",
-      subtitle: "OTP isi email pe aayega.",
+      title: "Login karein",
+      subtitle: "Google se, ya email pe OTP se.",
+      google: "Google se aage badhein",
+      orEmail: "ya email se",
+      oauthFailed: "Google se login nahi hua. Phir se koshish karein.",
       emailLabel: "Email",
       emailPlaceholder: "naam@example.com",
       consentPrefix: (brand) => `Main ${brand} ki `,
@@ -1329,8 +1341,11 @@ export const dictionaries: Record<Locale, Dictionary> = {
       noOne: "Nobody",
     },
     auth: {
-      title: "Enter your email",
-      subtitle: "The code comes to this email.",
+      title: "Sign in",
+      subtitle: "With Google, or with a code by email.",
+      google: "Continue with Google",
+      orEmail: "or with email",
+      oauthFailed: "Google sign-in did not finish. Please try again.",
       emailLabel: "Email",
       emailPlaceholder: "name@example.com",
       consentPrefix: (brand) => `I agree to ${brand}'s `,

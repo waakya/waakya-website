@@ -34,7 +34,7 @@ export function JoinForm({
           href={`/login?next=/join/${token}`}
           className={buttonVariants({ size: "block", className: "mt-3" })}
         >
-          {t.auth.sendOtp}
+          {t.auth.title}
         </Link>
       </div>
     );
