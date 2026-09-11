@@ -75,7 +75,7 @@ test("an owner creates a business, invites staff, and the staff member joins", a
     inviteePage.getByText("Rakesh Properties mein aapko bulaya gaya hai"),
   ).toBeVisible();
   await expect(inviteePage.getByText("Judne ke liye pehle sign in")).toBeVisible();
-  await expect(inviteePage.getByRole("link", { name: "OTP bhejo" })).toBeVisible();
+  await expect(inviteePage.getByRole("link", { name: "Login karein" })).toBeVisible();
 
   // Sign in as the staff member and accept.
   await inviteePage.request.post("/api/test-login", {

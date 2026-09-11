@@ -13,7 +13,7 @@ test("login shows an honest email field and the three languages", async ({
   // A signed-out visitor reads English (the org language default, `hi`,
   // applies to accounts, not to the door).
   await expect(
-    page.getByRole("heading", { name: "Enter your email" }),
+    page.getByRole("heading", { name: "Sign in" }),
   ).toBeVisible();
   await expect(page.getByPlaceholder("name@example.com")).toHaveAttribute(
     "type",
@@ -23,13 +23,13 @@ test("login shows an honest email field and the three languages", async ({
 
   await page.getByRole("radio", { name: "हिंदी" }).click();
   await expect(
-    page.getByRole("heading", { name: "अपना ईमेल डालें" }),
+    page.getByRole("heading", { name: "लॉग इन करें" }),
   ).toBeVisible();
   await expect(page.getByText("स्टाफ़ को मालिक का भेजा हुआ लिंक चाहिए")).toBeVisible();
 
   await page.getByRole("radio", { name: "Hinglish" }).click();
   await expect(
-    page.getByRole("heading", { name: "Apna email daalein" }),
+    page.getByRole("heading", { name: "Login karein" }),
   ).toBeVisible();
   await expect(page.getByText("Staff ko owner ka bheja hua link chahiye")).toBeVisible();
 });
@@ -91,7 +91,7 @@ test("the brand name is never translated, in any language", async ({ page }) => 
 
   await page.getByRole("radio", { name: "हिंदी" }).click();
   await expect(
-    page.getByRole("heading", { name: "अपना ईमेल डालें" }),
+    page.getByRole("heading", { name: "लॉग इन करें" }),
   ).toBeVisible();
   await expect(consent).toContainText("वाक्य");
   await expect(consent).toContainText("Privacy Policy");
@@ -99,13 +99,13 @@ test("the brand name is never translated, in any language", async ({ page }) => 
 
   await page.getByRole("radio", { name: "Hinglish" }).click();
   await expect(
-    page.getByRole("heading", { name: "Apna email daalein" }),
+    page.getByRole("heading", { name: "Login karein" }),
   ).toBeVisible();
   await expect(consent).toContainText("Main Waakya ki Privacy Policy");
 
   await page.getByRole("radio", { name: "English" }).click();
   await expect(
-    page.getByRole("heading", { name: "Enter your email" }),
+    page.getByRole("heading", { name: "Sign in" }),
   ).toBeVisible();
   // Waakya's, not "the Waakya" — it is a name, not a category.
   await expect(consent).toContainText("I agree to Waakya's Privacy Policy.");
@@ -124,7 +124,7 @@ test("the email step starts clean, and a rate limit does not blame the address",
   await page.goto("/login");
   await page.getByRole("radio", { name: "English" }).click();
   await expect(
-    page.getByRole("heading", { name: "Enter your email" }),
+    page.getByRole("heading", { name: "Sign in" }),
   ).toBeVisible();
 
   // Nothing has been submitted, so there is nothing to complain about.
@@ -149,7 +149,7 @@ test("a missing consent is not blamed on the email box", async ({ page }) => {
   await page.goto("/login");
   await page.getByRole("radio", { name: "English" }).click();
   await expect(
-    page.getByRole("heading", { name: "Enter your email" }),
+    page.getByRole("heading", { name: "Sign in" }),
   ).toBeVisible();
 
   const emailBox = page.getByPlaceholder("name@example.com");
@@ -161,4 +161,103 @@ test("a missing consent is not blamed on the email box", async ({ page }) => {
   );
   // The address is fine. Only the consent is missing.
   await expect(emailBox).not.toHaveAttribute("aria-invalid", "true");
+});
+
+// Google sign-in. These stop before Google itself: the real consent screen
+// needs a real account, and none of these steps write to the database.
+test("Google is the first door, in every language", async ({ page }) => {
+  await page.goto("/login");
+
+  await page.getByRole("radio", { name: "English" }).click();
+  const google = page.getByRole("button", { name: "Continue with Google" });
+  await expect(google).toBeVisible();
+  // Above the email field, because it is the quicker way in.
+  const googleBox = await google.boundingBox();
+  const emailBox = await page.getByPlaceholder("name@example.com").boundingBox();
+  expect(googleBox!.y).toBeLessThan(emailBox!.y);
+  await expect(page.getByText("or with email")).toBeVisible();
+
+  await page.getByRole("radio", { name: "हिंदी" }).click();
+  await expect(page.getByRole("button", { name: "Google से आगे बढ़ें" })).toBeVisible();
+
+  await page.getByRole("radio", { name: "Hinglish" }).click();
+  await expect(page.getByRole("button", { name: "Google se aage badhein" })).toBeVisible();
+});
+
+test("Google also needs consent first, and says so under its own button", async ({
+  page,
+}) => {
+  await page.goto("/login");
+  await page.getByRole("radio", { name: "English" }).click();
+
+  await page.getByRole("button", { name: "Continue with Google" }).click();
+
+  await expect(page.locator("#google-error")).toHaveText(
+    "Tick the Privacy Policy to continue.",
+  );
+  // Not blamed on the email path, and the browser never left.
+  await expect(page.locator("#login-error")).toHaveCount(0);
+  await expect(page).toHaveURL(/\/login/);
+
+  // Ticking consent is the reader answering; the message goes.
+  await page.getByRole("checkbox").click();
+  await expect(page.locator("#google-error")).toHaveCount(0);
+});
+
+test("with consent, Google hands off to Supabase's Google authorize step", async ({
+  page,
+}) => {
+  await page.goto("/login");
+  await page.getByRole("radio", { name: "English" }).click();
+  await page.getByRole("checkbox").click();
+
+  // Stop at the hand-off: going further would need a real Google account.
+  const handoff = page.waitForRequest((request) =>
+    /\/auth\/v1\/authorize\?/.test(request.url()),
+  );
+  await page.route(/\/auth\/v1\/authorize\?/, (route) => route.abort());
+  await page.getByRole("button", { name: "Continue with Google" }).click();
+
+  const url = new URL((await handoff).url());
+  expect(url.searchParams.get("provider")).toBe("google");
+  const redirectTo = new URL(url.searchParams.get("redirect_to")!);
+  expect(redirectTo.pathname).toBe("/auth/callback");
+  expect(url.searchParams.get("code_challenge")).toBeTruthy();
+});
+
+test("an invite link survives the trip through Google", async ({ page }) => {
+  await page.goto("/login?next=/join/some-token");
+  await page.getByRole("radio", { name: "English" }).click();
+  await page.getByRole("checkbox").click();
+
+  const handoff = page.waitForRequest((request) =>
+    /\/auth\/v1\/authorize\?/.test(request.url()),
+  );
+  await page.route(/\/auth\/v1\/authorize\?/, (route) => route.abort());
+  await page.getByRole("button", { name: "Continue with Google" }).click();
+
+  const redirectTo = new URL(
+    new URL((await handoff).url()).searchParams.get("redirect_to")!,
+  );
+  expect(redirectTo.searchParams.get("next")).toBe("/join/some-token");
+});
+
+test("a failed or cancelled Google return lands on login with a next step", async ({
+  page,
+}) => {
+  // Cancelled at Google's consent screen.
+  await page.goto("/auth/callback?error=access_denied");
+  await expect(page).toHaveURL(/\/login\?oauth=failed$/);
+  await page.getByRole("radio", { name: "English" }).click();
+  await expect(page.locator("#google-error")).toHaveText(
+    "Google sign-in did not finish. Please try again.",
+  );
+
+  // A code with no matching verifier cookie is refused, not trusted.
+  await page.goto("/auth/callback?code=not-a-real-code-at-all");
+  await expect(page).toHaveURL(/\/login\?oauth=failed$/);
+
+  // And no code at all.
+  await page.goto("/auth/callback");
+  await expect(page).toHaveURL(/\/login\?oauth=failed$/);
 });

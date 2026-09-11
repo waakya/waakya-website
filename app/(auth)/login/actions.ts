@@ -1,7 +1,7 @@
 "use server";
 
 import { z } from "zod";
-import { cookies } from "next/headers";
+import { headers } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 import {
   activeAuthProvider,
@@ -16,13 +16,20 @@ import {
   ok,
   type ActionResult,
 } from "@/lib/validation";
-import { getDictionary, toLocale, type Locale } from "@/lib/i18n";
-import { LOCALE_COOKIE } from "@/lib/i18n/server";
+import { getDictionary, type Locale } from "@/lib/i18n";
+import { resolveUserLocale, setLocaleCookie } from "@/lib/auth/locale";
+import { safeNextPath } from "@/lib/auth/next";
 
 const requestSchema = z.object({
   email: emailSchema,
   consent: z.literal(true),
   locale: localeSchema,
+});
+
+const googleSchema = z.object({
+  consent: z.literal(true),
+  locale: localeSchema,
+  next: z.string().max(512).nullable().optional(),
 });
 
 const verifySchema = z.object({
@@ -108,41 +115,68 @@ export async function verifyOtp(input: unknown): Promise<ActionResult> {
   return ok();
 }
 
+/**
+ * Sign in with Google: returns the address to send the browser to.
+ *
+ * The same DPDP consent as the OTP path is required first. The PKCE verifier
+ * is written to a cookie here, so only this browser can finish the sign-in at
+ * /auth/callback. Google accounts need no rate limit of ours: there is no
+ * code for anyone to guess and no email for anyone to spam.
+ */
+export async function startGoogleSignIn(
+  input: unknown,
+): Promise<ActionResult<{ url: string }>> {
+  const parsed = googleSchema.safeParse(input);
+  if (!parsed.success) {
+    const locale = pickLocale(input);
+    const issue = parsed.error.issues[0];
+    if (issue?.path[0] === "consent") {
+      return fail(copy(locale).consentRequired, "consent");
+    }
+    return fail(copy(locale).generic);
+  }
+
+  const { locale } = parsed.data;
+  // The language picked here is the one the callback falls back to.
+  await setLocaleCookie(locale);
+
+  const callback = new URL("/auth/callback", await siteOrigin());
+  const next = safeNextPath(parsed.data.next);
+  if (next) callback.searchParams.set("next", next);
+
+  const supabase = await createClient();
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo: callback.toString(),
+      skipBrowserRedirect: true,
+      // A shared shop phone often has several Google accounts on it.
+      queryParams: { prompt: "select_account" },
+    },
+  });
+  if (error || !data.url) return fail(copy(locale).generic);
+
+  return ok({ url: data.url });
+}
+
+/**
+ * This site's origin, for the callback address. Next checks a server action's
+ * Origin against its Host before running it, so the header is this site's own.
+ * Supabase then checks the callback against its redirect allow-list as well.
+ */
+async function siteOrigin(): Promise<string> {
+  const origin = (await headers()).get("origin");
+  if (origin && /^https?:\/\/[a-z0-9.-]+(:\d+)?$/i.test(origin)) return origin;
+  return (
+    process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ?? "http://localhost:3000"
+  );
+}
+
 /** The language switch on the login screen, before there is a user to store it on. */
 export async function setLoginLocale(locale: Locale): Promise<void> {
   const parsed = localeSchema.safeParse(locale);
   if (!parsed.success) return;
   await setLocaleCookie(parsed.data);
-}
-
-/** profile.language, else the org's language, else what they picked here. */
-async function resolveUserLocale(
-  supabase: Awaited<ReturnType<typeof createClient>>,
-  userId: string,
-  chosen: Locale,
-): Promise<Locale> {
-  const [{ data: profile }, { data: membership }] = await Promise.all([
-    supabase.from("profiles").select("language").eq("id", userId).maybeSingle(),
-    supabase
-      .from("memberships")
-      .select("orgs(language)")
-      .eq("user_id", userId)
-      .order("created_at", { ascending: true })
-      .limit(1)
-      .maybeSingle(),
-  ]);
-  if (profile?.language) return toLocale(profile.language, chosen);
-  if (membership?.orgs?.language) return toLocale(membership.orgs.language, chosen);
-  return chosen;
-}
-
-async function setLocaleCookie(locale: Locale): Promise<void> {
-  const store = await cookies();
-  store.set(LOCALE_COOKIE, locale, {
-    path: "/",
-    maxAge: 60 * 60 * 24 * 365,
-    sameSite: "lax",
-  });
 }
 
 function pickLocale(input: unknown): Locale {

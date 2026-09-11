@@ -17,9 +17,15 @@ import {
   PRIVACY_POLICY_NAME,
   type Locale,
 } from "@/lib/i18n";
-import { requestOtp, setLoginLocale, verifyOtp } from "./actions";
+import {
+  requestOtp,
+  setLoginLocale,
+  startGoogleSignIn,
+  verifyOtp,
+} from "./actions";
 import { guestLogin } from "./guest-actions";
 import { BrandText } from "@/components/waakya/brand-text";
+import { GoogleMark } from "@/components/waakya/google-mark";
 
 /**
  * Login, in the layout of screens/Login.png: the stacked logo, one field, the
@@ -34,17 +40,23 @@ import { BrandText } from "@/components/waakya/brand-text";
  * in with an email OTP, and showing a phone box that mails a code would be a
  * lie. The phone layout returns unchanged the day MSG91 and DLT are ready —
  * only `activeAuthProvider()` and this one field change.
+ *
+ * Google comes first: one tap, no code to wait for, nothing to pay per login.
+ * The consent line sits above both doors because it gates both.
  */
 export function LoginForm({
   locale,
   next,
   guest = false,
+  oauthFailed = false,
 }: {
   locale: Locale;
   /** Where to land after sign-in — an invite link, usually. Same-site only. */
   next?: string | null;
   /** Show the guest button. The page passes it only when ALLOW_GUEST_LOGIN is on. */
   guest?: boolean;
+  /** Google sent the reader back without a session. */
+  oauthFailed?: boolean;
 }) {
   // The dictionary is looked up here rather than passed in: it holds formatter
   // functions, and functions cannot cross the server/client boundary. Every
@@ -58,6 +70,13 @@ export function LoginForm({
   const [code, setCode] = React.useState("");
   const [consent, setConsent] = React.useState(false);
   const [pending, startTransition] = React.useTransition();
+  /**
+   * The Google door's own error, shown under its button. "oauthFailed" is a
+   * marker rather than text so it follows the language switch.
+   */
+  const [googleError, setGoogleError] = React.useState<string | null>(
+    oauthFailed ? "oauthFailed" : null,
+  );
 
   /**
    * An error belongs to the step that produced it and, when it is about a
@@ -89,6 +108,19 @@ export function LoginForm({
         return;
       }
       setStep("code");
+    });
+  }
+
+  function continueWithGoogle() {
+    setError(null);
+    setGoogleError(null);
+    startTransition(async () => {
+      const result = await startGoogleSignIn({ consent, locale, next: next ?? null });
+      if (!result.ok) {
+        setGoogleError(result.message);
+        return;
+      }
+      window.location.assign(result.data.url);
     });
   }
 
@@ -145,7 +177,58 @@ export function LoginForm({
               {t.auth.subtitle}
             </p>
 
-            <div className="mt-5">
+            <label className="mt-5 flex min-h-tap items-start gap-3">
+              <span className="pt-0.5">
+                <Checkbox
+                  checked={consent}
+                  onCheckedChange={(checked) => {
+                    setConsent(checked);
+                    setGoogleError(null);
+                  }}
+                  name="consent"
+                />
+              </span>
+              <span className="text-[15px] leading-[22px] text-ink-900">
+                <BrandText text={t.auth.consentPrefix(brandName(locale))} brand={brandName(locale)} />
+                <Link
+                  href="/privacy"
+                  className="font-semibold text-neel-700 underline underline-offset-2"
+                >
+                  {PRIVACY_POLICY_NAME}
+                </Link>
+                {t.auth.consentSuffix}
+              </span>
+            </label>
+
+            <Button
+              type="button"
+              variant="outline"
+              size="block"
+              disabled={pending}
+              onClick={continueWithGoogle}
+              aria-describedby={googleError ? "google-error" : undefined}
+              className="mt-4 gap-3"
+            >
+              <GoogleMark className="size-5" />
+              {t.auth.google}
+            </Button>
+
+            <ErrorLine
+              id="google-error"
+              error={
+                googleError === "oauthFailed" ? t.auth.oauthFailed : googleError
+              }
+            />
+
+            <div className="mt-5 flex items-center gap-3">
+              <span aria-hidden="true" className="h-px flex-1 bg-paper-200" />
+              <span className="text-[13px] leading-[18px] text-ink-400">
+                {t.auth.orEmail}
+              </span>
+              <span aria-hidden="true" className="h-px flex-1 bg-paper-200" />
+            </div>
+
+            <div className="mt-4">
               <Label htmlFor="email" className="sr-only">
                 {t.auth.emailLabel}
               </Label>
@@ -170,26 +253,6 @@ export function LoginForm({
                 className="h-tap-staff"
               />
             </div>
-
-            <label className="mt-4 flex min-h-tap items-start gap-3">
-              <span className="pt-0.5">
-                <Checkbox
-                  checked={consent}
-                  onCheckedChange={setConsent}
-                  name="consent"
-                />
-              </span>
-              <span className="text-[15px] leading-[22px] text-ink-900">
-                <BrandText text={t.auth.consentPrefix(brandName(locale))} brand={brandName(locale)} />
-                <Link
-                  href="/privacy"
-                  className="font-semibold text-neel-700 underline underline-offset-2"
-                >
-                  {PRIVACY_POLICY_NAME}
-                </Link>
-                {t.auth.consentSuffix}
-              </span>
-            </label>
 
             <ErrorLine error={stepError?.message ?? null} />
 
@@ -383,11 +446,17 @@ export function LoginForm({
   );
 }
 
-function ErrorLine({ error }: { error: string | null }) {
+function ErrorLine({
+  error,
+  id = "login-error",
+}: {
+  error: string | null;
+  id?: string;
+}) {
   if (!error) return null;
   return (
     <p
-      id="login-error"
+      id={id}
       role="alert"
       className="mt-3 rounded-card bg-laal-100 px-3 py-2 text-[15px] leading-[20px] text-laal-700"
     >

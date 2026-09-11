@@ -25,7 +25,7 @@ test("the privacy notice is readable before anyone has an account", async ({
   // Wait for the choice to land before navigating, or the next request races
   // the Set-Cookie that carries it.
   await expect(
-    page.getByRole("heading", { name: "अपना ईमेल डालें" }),
+    page.getByRole("heading", { name: "लॉग इन करें" }),
   ).toBeVisible();
   await page.goto("/privacy");
   await expect(page.getByText("आखिरी बदलाव")).toBeVisible();
@@ -37,7 +37,7 @@ test("the privacy notice is readable before anyone has an account", async ({
   await page.goto("/login");
   await page.getByRole("radio", { name: "English" }).click();
   await expect(
-    page.getByRole("heading", { name: "Enter your email" }),
+    page.getByRole("heading", { name: "Sign in" }),
   ).toBeVisible();
   await page.goto("/privacy");
   await expect(page.getByText("Last updated")).toBeVisible();
@@ -53,7 +53,7 @@ test("the consent line on login reaches it", async ({ page }) => {
   await signOut(page);
   await page.goto("/login");
   await expect(
-    page.getByRole("heading", { name: "Enter your email" }),
+    page.getByRole("heading", { name: "Sign in" }),
   ).toBeVisible();
   await page.getByRole("link", { name: "Privacy Policy" }).click();
   await expect(page).toHaveURL(/\/privacy$/);
