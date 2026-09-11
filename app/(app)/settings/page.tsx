@@ -8,6 +8,7 @@ import { getLocale } from "@/lib/i18n/server";
 import { Card } from "@/components/ui/card";
 import { AppShell } from "@/components/waakya/app-shell";
 import { SettingsLanguage } from "./settings-language";
+import { SettingsName } from "./settings-name";
 import { SignOutButton } from "./sign-out-button";
 
 export const metadata: Metadata = { title: "Settings" };
@@ -37,6 +38,13 @@ export default async function SettingsPage() {
             {t.settings.language}
           </h2>
           <SettingsLanguage locale={locale} />
+        </section>
+
+        <section className="mt-6">
+          <h2 className="mb-2 text-[13px] leading-[18px] font-semibold text-ink-700">
+            {t.settings.yourName}
+          </h2>
+          <SettingsName locale={locale} initialName={viewer.fullName ?? ""} />
         </section>
 
         {viewer.org ? (

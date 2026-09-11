@@ -297,6 +297,13 @@ export interface Dictionary {
     language: string;
     business: string;
     account: string;
+    /** The person's own name, editable, shown to their team on every task. */
+    yourName: string;
+    namePlaceholder: string;
+    saveName: string;
+    nameSaved: string;
+    nameInvalid: string;
+    nameSaveFailed: string;
   };
   nav: {
     aaj: string;
@@ -643,6 +650,12 @@ export const dictionaries: Record<Locale, Dictionary> = {
       language: "भाषा",
       business: "बिज़नेस",
       account: "अकाउंट",
+      yourName: "आपका नाम",
+      namePlaceholder: "जैसे राकेश शर्मा",
+      saveName: "नाम सेव करें",
+      nameSaved: "नाम सेव हो गया।",
+      nameInvalid: "नाम लिखें, 60 अक्षर तक।",
+      nameSaveFailed: "नाम सेव नहीं हुआ। फिर से कोशिश करें।",
     },
     nav: {
       aaj: "आज",
@@ -979,6 +992,12 @@ export const dictionaries: Record<Locale, Dictionary> = {
       language: "Bhasha",
       business: "Business",
       account: "Account",
+      yourName: "Aapka naam",
+      namePlaceholder: "Jaise Rakesh Sharma",
+      saveName: "Naam save karein",
+      nameSaved: "Naam save ho gaya.",
+      nameInvalid: "Naam likhein, 60 akshar tak.",
+      nameSaveFailed: "Naam save nahi hua. Phir se koshish karein.",
     },
     nav: {
       aaj: "Aaj",
@@ -1315,6 +1334,12 @@ export const dictionaries: Record<Locale, Dictionary> = {
       language: "Language",
       business: "Business",
       account: "Account",
+      yourName: "Your name",
+      namePlaceholder: "For example, Rakesh Sharma",
+      saveName: "Save name",
+      nameSaved: "Name saved.",
+      nameInvalid: "Write your name, up to 60 letters.",
+      nameSaveFailed: "Your name was not saved. Please try again.",
     },
     nav: {
       aaj: "Today",
