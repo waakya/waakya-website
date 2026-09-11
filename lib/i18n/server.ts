@@ -37,10 +37,11 @@ export const getLocale = cache(async (): Promise<Locale> => {
 /** profile.language, else the org's language, else the app default. */
 async function localeFromAccount(): Promise<Locale> {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return DEFAULT_LOCALE;
+  // Local JWT verification; see lib/auth/session.ts.
+  const { data: claimsData } = await supabase.auth.getClaims();
+  const sub = claimsData?.claims?.sub;
+  if (!sub) return DEFAULT_LOCALE;
+  const user = { id: sub };
 
   const [{ data: profile }, { data: membership }] = await Promise.all([
     supabase.from("profiles").select("language").eq("id", user.id).maybeSingle(),
