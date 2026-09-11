@@ -44,9 +44,11 @@ export async function proxy(request: NextRequest) {
     },
   });
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  // getClaims verifies the session JWT locally against the project's cached
+  // public keys (ES256), refreshing it first if it has expired. getUser would
+  // ask the auth server on every request, and this runs on every request.
+  const { data: claimsData } = await supabase.auth.getClaims();
+  const user = claimsData?.claims ?? null;
 
   /*
    * Development only, and off unless DEV_DISABLE_AUTH is exactly "true".

@@ -31,10 +31,15 @@ export interface Viewer {
  */
 export const getViewer = cache(async (): Promise<Viewer | null> => {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return null;
+  // Verified locally against the project's ES256 public keys; no auth-server
+  // round trip. proxy.ts has already refreshed the session on this request.
+  const { data: claimsData } = await supabase.auth.getClaims();
+  const claims = claimsData?.claims;
+  if (!claims?.sub) return null;
+  const user = {
+    id: claims.sub,
+    email: typeof claims.email === "string" ? claims.email : null,
+  };
 
   const [{ data: profile }, { data: membership }] = await Promise.all([
     supabase.from("profiles").select("full_name").eq("id", user.id).maybeSingle(),
