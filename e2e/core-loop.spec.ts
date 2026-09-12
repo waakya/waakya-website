@@ -33,7 +33,9 @@ async function createTask(page: Page, title: string) {
 
 async function openTask(page: Page, title: string) {
   await page.goto("/aaj");
-  await onScreen(page.getByText(title)).click();
+  // The title also appears inside a notification about the same task, so the
+  // row is addressed as a link with exactly that name.
+  await onScreen(page.getByRole("link", { name: title, exact: true })).click();
   await expect(page).toHaveURL(/\/kaam\/[0-9a-f-]{36}$/);
 }
 
@@ -196,7 +198,11 @@ test("the assignee can decline, and it lands with the owner rather than dying", 
   await expect(page.getByText("gaadi kharab hai")).toBeVisible();
 
   // Not a dead end: the task can still be reassigned or cancelled.
-  await expect(page.getByRole("button", { name: "Kisi aur ko" })).toBeEnabled();
+  // The action appears twice on this screen: as the primary button and in the
+  // action list beneath it. Either being enabled proves the point.
+  await expect(
+    page.getByRole("button", { name: "Kisi aur ko" }).first(),
+  ).toBeEnabled();
 });
 
 test("the reply thread records both sides", async ({ page, browser }) => {
