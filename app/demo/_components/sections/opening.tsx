@@ -40,8 +40,8 @@ export function OpeningSection(props: SectionProps) {
               See Waakya in action
               <ArrowRight aria-hidden="true" />
             </StageButton>
-            <StageButton variant="ghost" onClick={() => props.onGoTo("workspace")}>
-              Jump to the shared workspace
+            <StageButton variant="ghost" onClick={() => props.onGoTo("home")}>
+              Jump into the product
             </StageButton>
           </div>
         </div>

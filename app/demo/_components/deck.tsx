@@ -19,7 +19,6 @@ import { IdeaSection } from "./sections/idea";
 import { HomeSection } from "./sections/home";
 import { ConversationSection } from "./sections/conversation";
 import { ExecutionSection } from "./sections/execution";
-import { WorkspaceSection } from "./sections/workspace";
 import { TasksSection } from "./sections/tasks";
 import { DocumentsSection } from "./sections/documents";
 import { ApprovalsSection } from "./sections/approvals";
@@ -39,7 +38,6 @@ const SECTIONS: Section[] = [
   { id: "home", label: "Home", Component: HomeSection },
   { id: "conversation", label: "Message to task", Component: ConversationSection },
   { id: "execution", label: "Proof", Component: ExecutionSection },
-  { id: "workspace", label: "Shared workspace", Component: WorkspaceSection },
   { id: "tasks", label: "Accountability", Component: TasksSection },
   { id: "documents", label: "Documents", Component: DocumentsSection },
   { id: "approvals", label: "Approvals", Component: ApprovalsSection },

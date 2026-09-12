@@ -309,6 +309,7 @@ export interface Dictionary {
     aaj: string;
     hafta: string;
     staff: string;
+    hazri: string;
     settings: string;
     pehle: string;
     /** The sidebar's label above the business name, on desktop. */
@@ -364,6 +365,53 @@ export interface Dictionary {
     guestEnter: string;
     guestBack: string;
     signOut: string;
+  };
+  /** Attendance, leave and holidays. */
+  hazri: {
+    today: string;
+    notPunched: string;
+    notPunchedYet: string;
+    working: string;
+    completed: string;
+    onLeave: string;
+    onLeaveToday: string;
+    halfDay: string;
+    fullDay: string;
+    holiday: string;
+    holidayToday: string;
+    present: string;
+    absent: string;
+    punchIn: string;
+    punchOut: string;
+    punchedIn: string;
+    punchedOut: string;
+    worked: string;
+    thisMonth: string;
+    noHistory: string;
+    leave: string;
+    balance: string;
+    applyLeave: string;
+    from: string;
+    to: string;
+    reason: string;
+    /** Takes the cost in words, e.g. "half day". */
+    thisCosts: (days: string) => string;
+    sendRequest: string;
+    approved: string;
+    rejected: string;
+    pending: string;
+    teamToday: string;
+    pendingLeave: string;
+    nothingWaiting: string;
+    approve: string;
+    reject: string;
+    balances: string;
+    addHalf: string;
+    addDay: string;
+    holidays: string;
+    holidayDate: string;
+    holidayName: string;
+    addHoliday: string;
   };
   /** Shared UI furniture. */
   common: {
@@ -661,6 +709,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
       aaj: "आज",
       hafta: "हफ़्ता",
       staff: "स्टाफ़",
+      hazri: "हाज़िरी",
       settings: "सेटिंग",
       pehle: "पहले के काम",
       businessLabel: "बिज़नेस",
@@ -708,6 +757,51 @@ export const dictionaries: Record<Locale, Dictionary> = {
       guestEnter: "अंदर जाएँ",
       guestBack: "वापस",
       signOut: "साइन आउट",
+    },
+    hazri: {
+      today: "आज",
+      notPunched: "पंच नहीं किया",
+      notPunchedYet: "आज अभी पंच इन नहीं किया।",
+      working: "काम पर",
+      completed: "पूरा",
+      onLeave: "छुट्टी",
+      onLeaveToday: "आज आपकी छुट्टी है।",
+      halfDay: "आधा दिन",
+      fullDay: "पूरा दिन",
+      holiday: "अवकाश",
+      holidayToday: "आज अवकाश है।",
+      present: "हाज़िर",
+      absent: "गैरहाज़िर",
+      punchIn: "पंच इन",
+      punchOut: "पंच आउट",
+      punchedIn: "पंच इन",
+      punchedOut: "पंच आउट",
+      worked: "काम",
+      thisMonth: "इस महीने",
+      noHistory: "इस महीने का कोई रिकॉर्ड नहीं।",
+      leave: "छुट्टी",
+      balance: "बची छुट्टी",
+      applyLeave: "छुट्टी माँगें",
+      from: "से",
+      to: "तक",
+      reason: "वजह",
+      thisCosts: (days) => `इसमें ${days} लगेगी।`,
+      sendRequest: "भेजें",
+      approved: "मंज़ूर",
+      rejected: "नामंज़ूर",
+      pending: "इंतज़ार",
+      teamToday: "आज की टीम",
+      pendingLeave: "छुट्टी की अर्ज़ी",
+      nothingWaiting: "कुछ बाकी नहीं।",
+      approve: "मंज़ूर करें",
+      reject: "मना करें",
+      balances: "छुट्टी का हिसाब",
+      addHalf: "आधा",
+      addDay: "एक दिन",
+      holidays: "अवकाश",
+      holidayDate: "तारीख",
+      holidayName: "अवकाश का नाम",
+      addHoliday: "जोड़ें",
     },
     common: {
       tagline: "बोलो। हो जाएगा।",
@@ -1003,6 +1097,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
       aaj: "Aaj",
       hafta: "Hafta",
       staff: "Staff",
+      hazri: "Hazri",
       settings: "Setting",
       pehle: "Pehle ke kaam",
       businessLabel: "Business",
@@ -1050,6 +1145,51 @@ export const dictionaries: Record<Locale, Dictionary> = {
       guestEnter: "Andar jaayein",
       guestBack: "Wapas",
       signOut: "Sign out",
+    },
+    hazri: {
+      today: "Aaj",
+      notPunched: "Punch nahi kiya",
+      notPunchedYet: "Aaj abhi punch in nahi kiya.",
+      working: "Kaam par",
+      completed: "Poora",
+      onLeave: "Chhutti",
+      onLeaveToday: "Aaj aapki chhutti hai.",
+      halfDay: "Aadha din",
+      fullDay: "Poora din",
+      holiday: "Avkash",
+      holidayToday: "Aaj avkash hai.",
+      present: "Haazir",
+      absent: "Gairhaazir",
+      punchIn: "Punch in",
+      punchOut: "Punch out",
+      punchedIn: "Punch in",
+      punchedOut: "Punch out",
+      worked: "Kaam",
+      thisMonth: "Is mahine",
+      noHistory: "Is mahine ka koi record nahi.",
+      leave: "Chhutti",
+      balance: "Bachi chhutti",
+      applyLeave: "Chhutti maangein",
+      from: "Se",
+      to: "Tak",
+      reason: "Wajah",
+      thisCosts: (days) => `Ismein ${days} lagegi.`,
+      sendRequest: "Bhejein",
+      approved: "Manzoor",
+      rejected: "Namanzoor",
+      pending: "Intezaar",
+      teamToday: "Aaj ki team",
+      pendingLeave: "Chhutti ki arzi",
+      nothingWaiting: "Kuch baaki nahi.",
+      approve: "Manzoor karein",
+      reject: "Mana karein",
+      balances: "Chhutti ka hisaab",
+      addHalf: "Aadha",
+      addDay: "Ek din",
+      holidays: "Avkash",
+      holidayDate: "Tareekh",
+      holidayName: "Avkash ka naam",
+      addHoliday: "Jodein",
     },
     common: {
       tagline: "Bolo. Ho jayega.",
@@ -1345,6 +1485,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
       aaj: "Today",
       hafta: "Week",
       staff: "Staff",
+      hazri: "Attendance",
       settings: "Settings",
       pehle: "Earlier",
       businessLabel: "Business",
@@ -1392,6 +1533,51 @@ export const dictionaries: Record<Locale, Dictionary> = {
       guestEnter: "Enter",
       guestBack: "Back",
       signOut: "Sign out",
+    },
+    hazri: {
+      today: "Today",
+      notPunched: "Not punched in",
+      notPunchedYet: "You have not punched in today.",
+      working: "Working",
+      completed: "Done",
+      onLeave: "On leave",
+      onLeaveToday: "You are on leave today.",
+      halfDay: "Half day",
+      fullDay: "Full day",
+      holiday: "Holiday",
+      holidayToday: "Today is a holiday.",
+      present: "Present",
+      absent: "Absent",
+      punchIn: "Punch in",
+      punchOut: "Punch out",
+      punchedIn: "Punched in",
+      punchedOut: "Punched out",
+      worked: "Worked",
+      thisMonth: "This month",
+      noHistory: "Nothing recorded this month yet.",
+      leave: "Leave",
+      balance: "Leave balance",
+      applyLeave: "Apply leave",
+      from: "From",
+      to: "To",
+      reason: "Reason",
+      thisCosts: (days) => `This costs ${days}.`,
+      sendRequest: "Send request",
+      approved: "Approved",
+      rejected: "Rejected",
+      pending: "Waiting",
+      teamToday: "Team today",
+      pendingLeave: "Leave requests",
+      nothingWaiting: "Nothing waiting.",
+      approve: "Approve",
+      reject: "Reject",
+      balances: "Leave balances",
+      addHalf: "Half",
+      addDay: "1 day",
+      holidays: "Holidays",
+      holidayDate: "Date",
+      holidayName: "Holiday name",
+      addHoliday: "Add",
     },
     common: {
       tagline: "Bolo. Ho jayega.",

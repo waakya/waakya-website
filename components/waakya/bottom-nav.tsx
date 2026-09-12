@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Calendar, Home, Settings, Users } from "lucide-react";
+import { Calendar, CalendarCheck, Home, Settings, Users } from "lucide-react";
 
 import { getDictionary, type Locale } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
@@ -27,11 +27,13 @@ export function BottomNav({
           { href: "/aaj", label: t.nav.aaj, icon: Home },
           { href: "/hafta", label: t.nav.hafta, icon: Calendar },
           { href: "/staff", label: t.nav.staff, icon: Users },
+          { href: "/hazri", label: t.nav.hazri, icon: CalendarCheck },
           { href: "/settings", label: t.nav.settings, icon: Settings },
         ]
       : [
           { href: "/aaj", label: t.nav.aaj, icon: Home },
           { href: "/pehle", label: t.nav.pehle, icon: Calendar },
+          { href: "/hazri", label: t.nav.hazri, icon: CalendarCheck },
           { href: "/settings", label: t.nav.settings, icon: Settings },
         ];
 
