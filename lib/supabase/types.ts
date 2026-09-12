@@ -162,6 +162,86 @@ export type Database = {
           },
         ]
       }
+      conversation_participants: {
+        Row: {
+          conversation_id: string
+          id: string
+          joined_at: string
+          last_read_at: string | null
+          org_id: string
+          user_id: string
+        }
+        Insert: {
+          conversation_id: string
+          id?: string
+          joined_at?: string
+          last_read_at?: string | null
+          org_id: string
+          user_id: string
+        }
+        Update: {
+          conversation_id?: string
+          id?: string
+          joined_at?: string
+          last_read_at?: string | null
+          org_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversation_participants_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conversation_participants_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "orgs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      conversations: {
+        Row: {
+          created_at: string
+          created_by: string
+          id: string
+          kind: Database["public"]["Enums"]["conversation_kind"]
+          last_message_at: string
+          org_id: string
+          title: string | null
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          id?: string
+          kind?: Database["public"]["Enums"]["conversation_kind"]
+          last_message_at?: string
+          org_id: string
+          title?: string | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          id?: string
+          kind?: Database["public"]["Enums"]["conversation_kind"]
+          last_message_at?: string
+          org_id?: string
+          title?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversations_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "orgs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       escalations: {
         Row: {
           id: string
@@ -411,6 +491,48 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "memberships_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "orgs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      messages: {
+        Row: {
+          author_id: string
+          body: string
+          conversation_id: string
+          created_at: string
+          id: string
+          org_id: string
+        }
+        Insert: {
+          author_id: string
+          body: string
+          conversation_id: string
+          created_at?: string
+          id?: string
+          org_id: string
+        }
+        Update: {
+          author_id?: string
+          body?: string
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          org_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messages_org_id_fkey"
             columns: ["org_id"]
             isOneToOne: false
             referencedRelation: "orgs"
@@ -701,6 +823,7 @@ export type Database = {
           org_id: string
           priority: Database["public"]["Enums"]["task_priority"]
           proof_required: boolean
+          source_message_id: string | null
           started_at: string | null
           state: Database["public"]["Enums"]["task_state"]
           title: string
@@ -725,6 +848,7 @@ export type Database = {
           org_id: string
           priority?: Database["public"]["Enums"]["task_priority"]
           proof_required?: boolean
+          source_message_id?: string | null
           started_at?: string | null
           state?: Database["public"]["Enums"]["task_state"]
           title: string
@@ -749,6 +873,7 @@ export type Database = {
           org_id?: string
           priority?: Database["public"]["Enums"]["task_priority"]
           proof_required?: boolean
+          source_message_id?: string | null
           started_at?: string | null
           state?: Database["public"]["Enums"]["task_state"]
           title?: string
@@ -768,6 +893,13 @@ export type Database = {
             columns: ["org_id"]
             isOneToOne: false
             referencedRelation: "orgs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tasks_source_message_id_fkey"
+            columns: ["source_message_id"]
+            isOneToOne: false
+            referencedRelation: "messages"
             referencedColumns: ["id"]
           },
         ]
@@ -884,6 +1016,10 @@ export type Database = {
           org_name: string
         }[]
       }
+      is_conversation_participant: {
+        Args: { p_conversation: string }
+        Returns: boolean
+      }
       is_org_admin: { Args: { p_org: string }; Returns: boolean }
       is_org_member: { Args: { p_org: string }; Returns: boolean }
       ist_today: { Args: never; Returns: string }
@@ -896,7 +1032,28 @@ export type Database = {
         }
         Returns: number
       }
+      mark_conversation_read: {
+        Args: { p_conversation: string }
+        Returns: undefined
+      }
       org_member_email: { Args: { p_user: string }; Returns: string }
+      post_message: {
+        Args: { p_body: string; p_conversation: string }
+        Returns: {
+          author_id: string
+          body: string
+          conversation_id: string
+          created_at: string
+          id: string
+          org_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "messages"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       punch_in: {
         Args: { p_org: string }
         Returns: {
@@ -950,10 +1107,29 @@ export type Database = {
         Returns: boolean
       }
       shares_org_with: { Args: { p_user: string }; Returns: boolean }
+      start_direct_conversation: {
+        Args: { p_org: string; p_other: string }
+        Returns: {
+          created_at: string
+          created_by: string
+          id: string
+          kind: Database["public"]["Enums"]["conversation_kind"]
+          last_message_at: string
+          org_id: string
+          title: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "conversations"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       storage_org_id: { Args: { p_name: string }; Returns: string }
     }
     Enums: {
       attendance_status: "present" | "absent" | "leave" | "half_day" | "holiday"
+      conversation_kind: "direct" | "group"
       day_half: "first_half" | "second_half"
       leave_kind: "full_day" | "half_day"
       leave_status: "pending" | "approved" | "rejected"
@@ -1098,6 +1274,7 @@ export const Constants = {
   public: {
     Enums: {
       attendance_status: ["present", "absent", "leave", "half_day", "holiday"],
+      conversation_kind: ["direct", "group"],
       day_half: ["first_half", "second_half"],
       leave_kind: ["full_day", "half_day"],
       leave_status: ["pending", "approved", "rejected"],
@@ -1120,10 +1297,7 @@ export const Constants = {
 } as const
 
 // Convenience aliases the application imports. Regenerating the file above
-// does not produce these, so they are restored here after every regeneration.
+// does not produce these, so they are restored after every regeneration.
 export type TaskState = Enums<"task_state">;
 export type TaskPriority = Enums<"task_priority">;
 export type MemberRole = Enums<"member_role">;
-export type AttendanceStatusEnum = Enums<"attendance_status">;
-export type LeaveStatusEnum = Enums<"leave_status">;
-export type LeaveKindEnum = Enums<"leave_kind">;

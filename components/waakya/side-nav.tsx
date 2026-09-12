@@ -6,6 +6,7 @@ import {
   Bell,
   Calendar,
   CalendarCheck,
+  MessageSquare,
   Home,
   ListChecks,
   Settings,
@@ -50,6 +51,7 @@ export function SideNav({
           { href: "/hafta", label: t.nav.hafta, icon: Calendar },
           { href: "/staff", label: t.nav.staff, icon: Users },
           { href: "/hazri", label: t.nav.hazri, icon: CalendarCheck },
+          { href: "/baat", label: t.nav.baat, icon: MessageSquare },
           { href: "/checklists", label: t.nav.checklists, icon: ListChecks },
           { href: "/khabar", label: t.nav.khabar, icon: Bell, badge: unread },
           { href: "/settings", label: t.nav.settings, icon: Settings },
@@ -58,6 +60,7 @@ export function SideNav({
           { href: "/aaj", label: t.nav.aaj, icon: Home },
           { href: "/pehle", label: t.nav.pehle, icon: Calendar },
           { href: "/hazri", label: t.nav.hazri, icon: CalendarCheck },
+          { href: "/baat", label: t.nav.baat, icon: MessageSquare },
           { href: "/khabar", label: t.nav.khabar, icon: Bell, badge: unread },
           { href: "/settings", label: t.nav.settings, icon: Settings },
         ];

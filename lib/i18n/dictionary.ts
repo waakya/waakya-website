@@ -310,6 +310,7 @@ export interface Dictionary {
     hafta: string;
     staff: string;
     hazri: string;
+    baat: string;
     settings: string;
     pehle: string;
     /** The sidebar's label above the business name, on desktop. */
@@ -365,6 +366,20 @@ export interface Dictionary {
     guestEnter: string;
     guestBack: string;
     signOut: string;
+  };
+  /** Internal conversations. */
+  baat: {
+    title: string;
+    empty: string;
+    emptyHelp: string;
+    newChat: string;
+    choosePerson: string;
+    writeMessage: string;
+    send: string;
+    createTask: string;
+    fromThisMessage: string;
+    taskMade: string;
+    back: string;
   };
   /** Attendance, leave and holidays. */
   hazri: {
@@ -710,6 +725,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
       hafta: "हफ़्ता",
       staff: "स्टाफ़",
       hazri: "हाज़िरी",
+      baat: "बातचीत",
       settings: "सेटिंग",
       pehle: "पहले के काम",
       businessLabel: "बिज़नेस",
@@ -757,6 +773,19 @@ export const dictionaries: Record<Locale, Dictionary> = {
       guestEnter: "अंदर जाएँ",
       guestBack: "वापस",
       signOut: "साइन आउट",
+    },
+    baat: {
+      title: "बातचीत",
+      empty: "कोई बातचीत नहीं",
+      emptyHelp: "किसी को चुनकर बात शुरू करें।",
+      newChat: "नई बात",
+      choosePerson: "किससे बात करनी है?",
+      writeMessage: "कुछ लिखें",
+      send: "भेजें",
+      createTask: "काम बनाएँ",
+      fromThisMessage: "इस बात से काम बना",
+      taskMade: "काम बन गया",
+      back: "वापस",
     },
     hazri: {
       today: "आज",
@@ -1098,6 +1127,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
       hafta: "Hafta",
       staff: "Staff",
       hazri: "Hazri",
+      baat: "Baat-cheet",
       settings: "Setting",
       pehle: "Pehle ke kaam",
       businessLabel: "Business",
@@ -1145,6 +1175,19 @@ export const dictionaries: Record<Locale, Dictionary> = {
       guestEnter: "Andar jaayein",
       guestBack: "Wapas",
       signOut: "Sign out",
+    },
+    baat: {
+      title: "Baat-cheet",
+      empty: "Koi baat-cheet nahi",
+      emptyHelp: "Kisi ko chunkar baat shuru karein.",
+      newChat: "Nayi baat",
+      choosePerson: "Kisse baat karni hai?",
+      writeMessage: "Kuch likhein",
+      send: "Bhejein",
+      createTask: "Kaam banayein",
+      fromThisMessage: "Is baat se kaam bana",
+      taskMade: "Kaam ban gaya",
+      back: "Wapas",
     },
     hazri: {
       today: "Aaj",
@@ -1486,6 +1529,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
       hafta: "Week",
       staff: "Staff",
       hazri: "Attendance",
+      baat: "Conversations",
       settings: "Settings",
       pehle: "Earlier",
       businessLabel: "Business",
@@ -1533,6 +1577,19 @@ export const dictionaries: Record<Locale, Dictionary> = {
       guestEnter: "Enter",
       guestBack: "Back",
       signOut: "Sign out",
+    },
+    baat: {
+      title: "Conversations",
+      empty: "No conversations yet",
+      emptyHelp: "Pick somebody and start talking.",
+      newChat: "New conversation",
+      choosePerson: "Who do you want to message?",
+      writeMessage: "Write a message",
+      send: "Send",
+      createTask: "Create task",
+      fromThisMessage: "Task created from this message",
+      taskMade: "Task created",
+      back: "Back",
     },
     hazri: {
       today: "Today",
