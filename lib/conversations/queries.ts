@@ -31,6 +31,8 @@ export interface Message {
   body: string;
   createdAt: string;
   mine: boolean;
+  /** The task this message produced, if somebody turned it into work. */
+  taskId: string | null;
 }
 
 export interface ConversationDetail {
@@ -139,6 +141,21 @@ export const getConversation = cache(
       getOrgMembers(orgId),
     ]);
 
+    // Which of these messages became work. Read from the database rather than
+    // remembered in the browser, so the link is still there after a refresh.
+    const messageIds = (rows ?? []).map((row) => row.id);
+    const { data: born } = messageIds.length
+      ? await supabase
+          .from("tasks")
+          .select("id, source_message_id")
+          .in("source_message_id", messageIds)
+      : { data: [] };
+    const taskOf = new Map(
+      (born ?? [])
+        .filter((task) => task.source_message_id)
+        .map((task) => [task.source_message_id as string, task.id]),
+    );
+
     const nameOf = new Map(members.map((member) => [member.userId, member.name]));
     const participantIds = (participants ?? []).map((row) => row.user_id);
     const other = participantIds.find((id) => id !== userId);
@@ -158,6 +175,7 @@ export const getConversation = cache(
         body: row.body,
         createdAt: row.created_at,
         mine: row.author_id === userId,
+        taskId: taskOf.get(row.id) ?? null,
       })),
     };
   },

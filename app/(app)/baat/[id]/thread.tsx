@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ArrowLeft, ListPlus, Send } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -37,8 +38,8 @@ export function Thread({
   const [body, setBody] = React.useState("");
   const [error, setError] = React.useState<string | null>(null);
   const [openFor, setOpenFor] = React.useState<string | null>(null);
-  const [madeTask, setMadeTask] = React.useState<{ id: string; messageId: string } | null>(null);
   const [pending, startTransition] = React.useTransition();
+  const router = useRouter();
 
   function send(event: React.FormEvent) {
     event.preventDefault();
@@ -97,9 +98,9 @@ export function Thread({
 
             {/* Any message somebody else sent can become work. */}
             {!message.mine ? (
-              <div className={cn("mt-1", madeTask?.messageId === message.id && "mb-2")}>
-                {madeTask?.messageId === message.id ? (
-                  <Link href={`/kaam/${madeTask.id}`} className="inline-flex">
+              <div className={cn("mt-1", message.taskId && "mb-2")}>
+                {message.taskId ? (
+                  <Link href={`/kaam/${message.taskId}`} className="inline-flex">
                     <StateChip tone="hara">{t.baat.taskMade}</StateChip>
                   </Link>
                 ) : openFor === message.id ? (
@@ -108,9 +109,10 @@ export function Thread({
                     conversationId={conversationId}
                     message={message}
                     members={members}
-                    onDone={(taskId) => {
-                      setMadeTask({ id: taskId, messageId: message.id });
+                    onDone={() => {
                       setOpenFor(null);
+                      // The link comes back from the server, so it survives a refresh.
+                      router.refresh();
                     }}
                     onCancel={() => setOpenFor(null)}
                   />
@@ -166,7 +168,7 @@ function TaskFromMessage({
   conversationId: string;
   message: Message;
   members: { userId: string; name: string }[];
-  onDone: (taskId: string) => void;
+  onDone: () => void;
   onCancel: () => void;
 }) {
   const t = getDictionary(locale);
@@ -195,7 +197,7 @@ function TaskFromMessage({
         setError(result.message);
         return;
       }
-      onDone(result.data.taskId);
+      onDone();
     });
   }
 
