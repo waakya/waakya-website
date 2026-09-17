@@ -17,7 +17,12 @@
 - `chrome-devtools` (chrome-devtools-mcp, user scope): console and network inspection work (0 errors, 0 failed requests on /).
 - Figma: claude.ai connector, `whoami` works. No Waakya Figma file has been shared yet.
 
-## Current brief (UX/positioning phase), in order
+## UX/positioning phase — done 17 Sep 2026
+- Audit: `docs/WAAKYA_BUSINESS_UX_AUDIT.md`, `docs/WAAKYA_CUSTOMER_JOURNEY_AUDIT.md` (before/after in `docs/audit/`).
+- Deferred: Hinglish URL slugs, auto-resolving decided notifications (backend), custom select/date components, person drill-down, CSP, privacy legal entity/grievance officer (needs owner input).
+- Audit personas: `e2e-prod/audit-seed.spec.ts` (creates a Sharma Interiors business) + `e2e-prod/audit-capture.spec.ts` (100 captures, LABEL=before|after).
+
+## Original brief (UX/positioning phase), in order
 1. Multi-agent audit on REAL production (owner + team member, desktop + 390px) with agents A–G: owner, product UX, visual design, marketing/copy, mobile, browser quality, discoverability.
 2. Write `docs/WAAKYA_BUSINESS_UX_AUDIT.md` (P0/P1/P2; each issue: PAGE, PERSONA, PROBLEM, WHY IT MATTERS, SCREENSHOT/OBSERVATION, PROPOSED FIX) and `docs/WAAKYA_CUSTOMER_JOURNEY_AUDIT.md` (visitor, new owner, daily owner, employee, mobile).
 3. Then autonomously: prioritize → redesign → implement → test → visual QA → build → deploy → re-audit production with the MCPs.

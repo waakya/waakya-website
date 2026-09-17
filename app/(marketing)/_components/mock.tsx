@@ -159,7 +159,7 @@ export function DocCard({ name, meta, state }: { name: string; meta: string; sta
         <FileText className="size-4 text-neel-700" aria-hidden="true" />
       </span>
       <div className="min-w-0 flex-1">
-        <p className="text-[13px] leading-[17px] font-semibold break-all text-ink-900">{name}</p>
+        <p className="text-[13px] leading-[17px] font-semibold break-words text-ink-900">{name}</p>
         <p className="text-[12px] whitespace-nowrap text-ink-500">{meta}</p>
         {state ? (
           <span className="mt-1.5 inline-flex rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-semibold whitespace-nowrap text-amber-700">

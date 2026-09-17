@@ -84,4 +84,68 @@
 
 ## After (re-audit)
 
-*Filled in after implementation and deployment. The re-audit uses the same personas, the same journeys, the same viewports and the same 100-capture set (`docs/audit/after/`).*
+**Re-audited:** 17 Sep 2026 on production (commit `1dc5052`, then final polish).
+
+**Method (same as the original audit):**
+- The same personas: Priya Sharma (owner), Rahul Verma (team member) and a fresh new owner.
+- The same journeys, at the same viewports (1440px and 390px).
+- The same 100-capture set, now in `docs/audit/after/`.
+- The production smoke suite, Chrome DevTools (Lighthouse, performance trace, console) and a live Playwright MCP check of the first viewport.
+
+### Measured before and after
+
+| Measure | Before | After |
+|---|---|---|
+| Positioning in the first viewport (desktop and 390px) | Absent ("Every conversation. A clear next step.") | "The new era of business communication" plus the heading "All your business work. One workspace." |
+| Phase-1 capabilities named on the website | 5 of 12 | 12 of 12, in one connected map around a project |
+| Conversation → Commitment → Execution → Proof → Record | Not shown | Chain under the hero and a 5-step walkthrough |
+| Mobile screens wider than 390px (real device width) | 2 (project detail: 453px owner, 413px member) | 0 of 50 |
+| Overflow detector | Reported 0 while the pages were 453px | Measures against the real width; fails on the old production page (+64 / +24px) |
+| Lighthouse, phone, landing page (Accessibility / Best Practices / SEO / Agentic) | 96 / 100 / 100 / 50 | **100 / 100 / 100 / 100** |
+| LCP, phone, 4x CPU, Fast 4G | 747 ms | 472 ms |
+| CLS | 0 | 0 |
+| Console errors or failed requests (100 captures) | 0 | 0 |
+| Median / p90 time to network idle (100 captures) | 1,196 / 1,463 ms | 1,119 / 1,464 ms |
+| Security headers | HSTS only; `x-powered-by` exposed | X-Frame-Options, nosniff, Referrer-Policy, Permissions-Policy, HSTS with subdomains; `x-powered-by` removed |
+| 404, robots.txt, sitemap.xml, share image | Default black 404; robots and sitemap 404; no OG tags | Branded 404; robots, sitemap and OG image served; OG title and description set |
+| Production smoke suite | 10/10 | 10/10 (now also checks the closed-task record and the punch-out status on Today) |
+| Local regression | 68 e2e / 231 unit | 69 e2e / 231 unit (with 390px fit checks for both roles on every screen and detail page) |
+
+### Outcome by issue
+
+| ID | Outcome | Evidence (`docs/audit/after/`) |
+|---|---|---|
+| P0-1 Positioning | Fixed | `visitor-desktop-landing.jpg`, `visitor-mobile-landing.jpg`, `.playwright-mcp/after-landing-fold-desktop-1440.jpg` |
+| P0-2 Ecosystem | Fixed: connected map, owner-day, stories, FAQ | `visitor-desktop-landing.jpg` |
+| P0-3 `/demo` | Fixed: ivory brand, projects instead of client workspaces, placeholder removed, CTA links to sign-up, presenter reset behind `?presenter`, product names | `visitor-desktop-demo.jpg`, `visitor-mobile-demo.jpg` |
+| P0-4 Message → Task | Fixed: a "Make task" button (≥40px) on every message including your own; the task shows "From a conversation" with a link back | `owner-mobile-conversation-thread.jpg`, `owner-mobile-task-detail.jpg` |
+| P0-5 Verified countdown | Fixed: record band, no clocks, no reminder, no Change time; Verified node green | `owner-desktop-task-detail.jpg`, `member-desktop-task-detail.jpg` |
+| P0-6 Stacked bars | Fixed: no tab bar on task and conversation screens; closed tasks keep their action in the page | `owner-mobile-task-detail.jpg`, `member-mobile-conversation-thread.jpg` |
+| P0-7 Project overflow | Fixed: 390px for both roles | `owner-mobile-project-detail.jpg` (390px wide) |
+| P0-8 Setup layout | Fixed: two-column onboarding frame, Step 1 of 3 | `newowner-desktop-setup.jpg` |
+| P0-9 New-owner path | Fixed: "Get your workspace ready" guide ticked from real data; empty Conversations leads to Invite | `newowner-desktop-today-empty.jpg`, `newowner-desktop-conversations-empty.jpg` |
+| P0-10 Templates | Fixed: template row on Documents, "Create from a template" on project and task (pre-linked), Templates in More, guide step 5, website | `owner-desktop-documents.jpg`, `owner-mobile-more.jpg`, `owner-desktop-project-detail.jpg` |
+| P0-11 Leave and Holidays | Fixed: "Attendance & leave" nav, section links, pending-leave banner first, "Leave & holidays" in More, labelled balance buttons | `owner-mobile-attendance.jpg`, `owner-mobile-more.jpg` |
+| P0-12 Punch-out status | Fixed: "Punched out at … · worked"; neutral "Punched out" chip | `member-mobile-today.jpg`, `member-desktop-attendance.jpg` |
+| P0-13 Hero document and contrast | Fixed: full name shown; muted ink raised to ≥ 4.5:1; Lighthouse contrast passes | `visitor-desktop-landing.jpg` |
+| P1-1 to P1-6 | Fixed: focus rings, SVG labels, headers, 404, OG/robots/sitemap, font preloads | Lighthouse 100; `curl -I` headers |
+| P1-7 Login | Fixed: "Sign in or get started", no-password line, three next steps, prominent staff line, English wordmark | `visitor-mobile-login.jpg` |
+| P1-8, P1-9 Website nav and tabs | Fixed: mobile menu; numbered stage grid with no clipping | `visitor-mobile-landing.jpg` |
+| P1-10 Team naming | Fixed: "Team" heading, "Invite to team" in the header on desktop, correct plurals | `owner-desktop-team.jpg` |
+| P1-12 Nav landmark | Fixed: "Main" | `.aria.txt` snapshots |
+| P1-13, P1-14, P1-15 | Fixed: "New task" title; template project link first ("Keep it with a project") and the free-text field renamed "Project or site name"; viewport-neutral Today copy | `owner-desktop-new-task.jpg`, `owner-desktop-template-form.jpg` |
+| P1-16 Invalid invite | Fixed: Sign in and Home actions | `visitor-mobile-join-invalid.jpg` |
+| P1-17 Attendance history | Fixed: Date / In / Out / Worked headers | `member-mobile-attendance.jpg` |
+| P1-18 Privacy | Partly fixed: attendance, leave, documents and Google data listed; back link goes home. Voice-note proof is kept because audio proof is a shipped feature. A legal entity and grievance officer need the owner's details | `visitor-desktop-privacy.jpg` |
+| Unread badge drops on some pages | Fixed: Settings, Daily routine, Attendance, Team, Conversations and threads carry the count | owner desktop captures |
+| P1-11 Mobile Late / Not seen | Not changed: the mobile header already shows them as chips when non-zero (verified in code) | — |
+| P1-23 Stale "needs approval" notifications | Deferred: needs a backend change | — |
+| P2 items | Deferred, as listed in the business audit | — |
+
+### Journeys after
+
+- **Visitor:** the first screen states the category and the promise. The chain shows how work moves; the connected map shows all twelve capabilities working together; FAQ and trust lines answer the owner's questions; every CTA leads to "Sign in or get started".
+- **New owner:** a composed three-step setup, then a Today guide that puts inviting the team first and unlocks the conversation and task steps once someone joins.
+- **Daily owner:** the thread turns their own instruction into a task. The task links back to the conversation and closes into a clean record. Templates and leave are reachable from the page where they are needed.
+- **Employee:** Today reports the true punch status. Task and thread screens give the whole phone to the work, and the invite dead end now offers a way forward.
+- **Mobile:** every captured screen fits 390px; there are no stacked fixed bars; More lists Templates and Leave & holidays.

@@ -155,7 +155,7 @@ export default async function LandingPage() {
 
             <div className="relative">
               <Frame title="Waakya · Sharma Interiors" chrome>
-                <div className="grid md:grid-cols-[minmax(0,1fr)_196px] xl:grid-cols-[138px_minmax(0,1fr)_196px]">
+                <div className="grid md:grid-cols-[minmax(0,1fr)_196px] xl:grid-cols-[156px_minmax(0,1fr)_196px]">
                   <aside className="hidden flex-col gap-0.5 border-r border-[#eceef6] p-3 xl:flex" aria-hidden="true">
                     {[
                       [Home, "Today"],
@@ -199,7 +199,7 @@ export default async function LandingPage() {
                   <div className="flex min-w-0 flex-col gap-2.5 border-t border-[#eceef6] p-4 md:border-t-0 md:border-l">
                     <p className="text-[11px] font-semibold tracking-wide text-ink-500 uppercase">Tasks from this chat</p>
                     <TaskCard title="Revised quotation" who="Rahul" due="5 PM" state="Proof submitted" tone="amber" />
-                    <DocCard name="Quotation-v2.pdf" meta="PDF · 1.8 MB" />
+                    <DocCard name="Quotation v2.pdf" meta="PDF · 1.8 MB" />
                     <p className="flex items-center gap-1.5 text-[12px] text-ink-700">
                       <CalendarCheck className="size-3.5 shrink-0 text-neel-700" aria-hidden="true" /> Rahul in at 9:41 AM
                     </p>
