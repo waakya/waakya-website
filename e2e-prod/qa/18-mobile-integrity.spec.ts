@@ -165,8 +165,11 @@ scenario(
     const ask = neha.locator("form").getByRole("button", { name: "Ask for approval" });
     await tappable(ask);
     await ask.tap();
+    // Neha's own list has to carry it before Arjun is sent to decide it.
+    await expect(neha.getByTestId("approval-card").filter({ hasText: title }).first()).toBeVisible({ timeout: 60_000 });
     await go(arjun, "/approvals");
     const c = arjun.getByTestId("approval-card").filter({ hasText: title });
+    await expect(c.first()).toBeVisible({ timeout: 60_000 });
     await tappable(c.getByRole("button", { name: "Approve" }));
     await c.getByRole("button", { name: "Approve" }).tap();
     await expect(c.getByText("Approved")).toBeVisible({ timeout: 30_000 });

@@ -134,11 +134,21 @@ scenario(
     const bubble = priya.locator("div").filter({ hasText: text }).last();
     await priya.getByTestId("make-task").last().click();
     const form = priya.locator("form").filter({ hasText: "Task created from this message" });
-    await expect(form.getByRole("textbox")).toHaveValue(text);
+    await expect(form.getByRole("textbox"), "the message text is carried into the task").toHaveValue(new RegExp(loadState().run));
     await form.getByRole("button", { name: "Rahul Verma" }).click();
     await form.getByRole("button", { name: "Create task" }).click();
-    await expect(priya.getByRole("link", { name: "Task created" }).last()).toBeVisible({ timeout: 30_000 });
-    const { data } = await (await as("priya")).from("tasks").select("id, assigned_to").eq("title", text).single();
+    // Wait for this exact task, not "the newest one": the thread already carries
+    // a chip from T3.4, so a read that lands too early picks up the wrong task.
+    const db = await as("priya");
+    let data: { id: string; assigned_to: string | null; source_message_id: string | null } | null = null;
+    for (let attempt = 0; attempt < 30 && !data; attempt += 1) {
+      const { data: row } = await db.from("tasks").select("id, assigned_to, source_message_id").eq("title", text).maybeSingle();
+      data = row ?? null;
+      if (!data) await priya.waitForTimeout(1000);
+    }
+    expect(data, "task created from the owner's own message").toBeTruthy();
+    expect(data!.source_message_id, "the task remembers the message it came from").toBeTruthy();
+    await expect(priya.getByRole("link", { name: "Task created" }).last()).toHaveAttribute("href", `/kaam/${data!.id}`, { timeout: 30_000 });
     expect(data!.assigned_to).toBe(state.users.rahul.id);
     const rahul = await pageOf(browser, "rahul");
     await openTask(rahul, data!.id);

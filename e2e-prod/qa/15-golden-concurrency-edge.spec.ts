@@ -81,6 +81,8 @@ scenario(
     await expect(reasonBox, "reason field").toBeVisible({ timeout: 5_000 });
     await reasonBox.fill(reason);
     await priya.getByRole("dialog").getByRole("button", { name: "Send back" }).click();
+    // Priya's own screen has to show it before Rahul is asked to look.
+    await expect(timeline(priya), "the reason is on the owner's timeline").toContainText(reason, { timeout: 30_000 });
     await openTask(rahul, taskId);
     await expect(timeline(rahul)).toContainText(reason);
     await proof("Added chimney and hob as options", "kitchen-quote-v2.png");
@@ -275,7 +277,7 @@ scenario(
     await priya.waitForTimeout(3000);
     await priya.context().setOffline(false);
     const alert = priya.getByRole("alert").filter({ hasText: /./ });
-    const kept = await priya.getByRole("textbox", { name: "Write a message" }).inputValue();
+    const kept = await priya.getByRole("textbox", { name: "Write a message" }).inputValue({ timeout: 15_000 }).catch(() => "");
     expect((await alert.count()) > 0 || kept === text, "error shown or text kept").toBe(true);
   },
 );

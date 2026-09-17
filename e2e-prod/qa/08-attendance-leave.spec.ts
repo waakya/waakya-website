@@ -27,17 +27,53 @@ async function applyLeave(page: Page, kind: "Half day" | "Full day", start: stri
   if (await page.locator("#leave-end").count()) await page.locator("#leave-end").fill(end);
   await page.locator("#leave-reason").fill(reason);
   await page.getByRole("button", { name: "Send request" }).click();
-  // Wait for the request to be saved (form closes) or refused (message shown).
-  await expect(page.getByRole("button", { name: "Send request" }).or(page.locator("#leave").getByRole("alert"))).toBeVisible();
+  // Wait for the request to be saved (the form closes) or refused (a message appears).
   await page.waitForLoadState("networkidle").catch(() => {});
   await expect
     .poll(async () => (await page.getByRole("button", { name: "Send request" }).count()) === 0 || (await page.locator("#leave").getByRole("alert").count()) > 0, { timeout: 30_000 })
     .toBe(true);
+  // The sheet closes a moment before the row is committed. An accepted request
+  // is real once the requester's own list shows it — only then is it fair to
+  // ask a manager to act on it.
+  if ((await page.locator("#leave").getByRole("alert").count()) === 0) {
+    await expect
+      .poll(
+        async () => {
+          const seen = await page.locator("#leave").getByRole("listitem").filter({ hasText: shownDate(start) }).count();
+          if (!seen) {
+            await page.reload();
+            await page.waitForLoadState("networkidle").catch(() => {});
+          }
+          return seen;
+        },
+        { timeout: 60_000 },
+      )
+      .toBeGreaterThan(0);
+  }
+}
+
+/** The date as the screen writes it, e.g. "28 Sep". */
+function shownDate(iso: string) {
+  return new Intl.DateTimeFormat("en-IN-u-nu-latn", { timeZone: "UTC", day: "numeric", month: "short" }).format(new Date(`${iso}T00:00:00Z`));
 }
 
 async function decide(page: Page, reason: string, action: "Approve" | "Reject") {
   await go(page, "/hazri");
   const row = page.locator("#leave-requests").getByRole("listitem").filter({ hasText: reason });
+  // A manager who does not see it yet refreshes, exactly as a person would.
+  await expect
+    .poll(
+      async () => {
+        const seen = await row.count();
+        if (!seen) {
+          await page.reload();
+          await page.waitForLoadState("networkidle").catch(() => {});
+        }
+        return seen;
+      },
+      { timeout: 60_000 },
+    )
+    .toBeGreaterThan(0);
   await expect(row).toBeVisible();
   await row.getByRole("button", { name: action }).click();
   await expect(page.locator("#leave-requests").getByRole("listitem").filter({ hasText: reason })).toHaveCount(0, { timeout: 30_000 });
@@ -83,7 +119,8 @@ scenario(
     const rahul = await pageOf(browser, "rahul");
     await go(rahul, "/hazri");
     await rahul.getByRole("button", { name: "Punch out" }).click();
-    await expect(rahul.getByText("Punched out").first()).toBeVisible({ timeout: 30_000 });
+    // The day is closed once the button is gone; only then is the record written.
+    await expect(rahul.getByRole("button", { name: "Punch out" }), "day closed").toHaveCount(0, { timeout: 30_000 });
     await rahul.reload();
     await expect(rahul.getByRole("definition").filter({ hasText: /\dm$|\dh \d+m$/ }).first()).toBeVisible();
     await go(rahul, "/aaj");

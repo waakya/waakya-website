@@ -214,7 +214,14 @@ scenario(
     await go(priya, "/aaj");
     await expect(priya.getByRole("list", { name: "Needs you" }).getByText(verifyTitle), "verify cleared").toHaveCount(0);
 
-    await go(priya, state.ids.dm);
+    // Read every conversation that is waiting, the way the owner would.
+    for (let guard = 0; guard < 6; guard += 1) {
+      await go(priya, "/baat");
+      const unreadRow = priya.getByRole("link").filter({ has: priya.locator("span", { hasText: /^\d+$/ }) }).first();
+      if (!(await unreadRow.count())) break;
+      await unreadRow.click();
+      await priya.waitForURL(/\/baat\/[0-9a-f-]{36}$/, { timeout: 20_000 }).catch(() => {});
+    }
     await go(priya, "/aaj");
     await expect(visible(priya, /unread conversations?/), "unread cleared").toHaveCount(0);
 
@@ -224,7 +231,11 @@ scenario(
     await priya.waitForTimeout(2000);
     await go(priya, "/aaj");
     await priya.reload();
-    await expect(visible(priya, lateTitle), "late cleared").toHaveCount(0);
+    // A cancelled task stops asking for attention; it stays visible under what
+    // is settled, which is where the owner expects to find it afterwards.
+    const section = (name: RegExp) => priya.locator("section").filter({ has: priya.getByRole("heading", { name }) });
+    await expect(section(/^(Needs you|Today's work)/).getByText(lateTitle), "late cleared from attention").toHaveCount(0);
+    await expect(section(/^Done/).getByText(lateTitle).first(), "cancelled task listed as settled").toBeVisible();
   },
 );
 
