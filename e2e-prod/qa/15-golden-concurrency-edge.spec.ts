@@ -1,5 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
-import { admin, as, BASE, closeAll, go, loadState, pageOf, PDF, PNG, saveState, scenario, signedIn, tag } from "./kit";
+import { BASE, PDF, PNG, act, admin, as, closeAll, go, loadState, pageOf, saveState, scenario, signedIn, tag } from "./kit";
 import { createTaskUI, openTask } from "./flows";
 
 /** TEST 15 — Golden path. TEST 16 — Concurrency. TEST 17 — Failure and edge cases. */
@@ -92,7 +92,7 @@ scenario(
     await expect(timeline(rahul)).toContainText(reason);
     await proof("Added chimney and hob as options", "kitchen-quote-v2.png");
     await openTask(priya, taskId);
-    await priya.getByRole("button", { name: "Verify" }).first().click();
+    await act(priya, "Verify");
     await expect(priya.getByText(/^Verified · /).first()).toBeVisible({ timeout: 30_000 });
     // 7. Approval for the discount, decided.
     await go(rahul, "/approvals");
@@ -101,6 +101,8 @@ scenario(
     await rahul.locator("#approval-title").fill(approval);
     await rahul.locator("#approval-project").selectOption({ label: projectName });
     await rahul.locator("form").getByRole("button", { name: "Ask for approval" }).click();
+    // Rahul's own list has to carry the request before Priya is sent to decide it.
+    await expect(rahul.getByTestId("approval-card").filter({ hasText: approval }).first()).toBeVisible({ timeout: 60_000 });
     await go(priya, "/approvals");
     const c = priya.getByTestId("approval-card").filter({ hasText: approval });
     await expect(c).toContainText(projectName);

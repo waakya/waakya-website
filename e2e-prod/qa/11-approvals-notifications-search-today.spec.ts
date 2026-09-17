@@ -1,5 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
-import { admin, as, BASE, closeAll, go, loadState, pageOf, saveState, scenario, tag } from "./kit";
+import { BASE, act, admin, as, closeAll, go, loadState, pageOf, saveState, scenario, tag } from "./kit";
 import { createTaskUI, openTask } from "./flows";
 
 /** TEST 11 — Approvals. TEST 12 — Notifications. TEST 13 — Search. TEST 14 — Today. */
@@ -209,7 +209,7 @@ scenario(
     expect(await leaveCount(), "leave count dropped by one").toBe(leaveBefore - 1);
 
     await openTask(priya, verifyId);
-    await priya.getByRole("button", { name: "Verify" }).first().click();
+    await act(priya, "Verify");
     await expect(priya.getByText(/^Verified · /).first()).toBeVisible({ timeout: 30_000 });
     await go(priya, "/aaj");
     await expect(priya.getByRole("list", { name: "Needs you" }).getByText(verifyTitle), "verify cleared").toHaveCount(0);

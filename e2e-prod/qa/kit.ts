@@ -195,3 +195,25 @@ export const PNG = Buffer.from(
   "base64",
 );
 export const PDF = Buffer.from("%PDF-1.4\n1 0 obj<<>>endobj\ntrailer<<>>\n%%EOF\n");
+
+/**
+ * Press an action, refreshing if the page was rendered a moment too early.
+ *
+ * A task's state and its timeline are two writes, so a page opened in the
+ * split second between them can show the old set of actions. A person would
+ * refresh; so does this.
+ */
+export async function act(page: Page, name: string) {
+  const button = page.getByRole("button", { name, exact: true }).first();
+  for (let attempt = 0; attempt < 6; attempt += 1) {
+    if (await button.count()) {
+      await button.click();
+      return;
+    }
+    await page.waitForTimeout(2000);
+    await page.reload();
+    await page.waitForLoadState("networkidle").catch(() => {});
+  }
+  await expect(button, `${name} is offered`).toBeVisible();
+  await button.click();
+}

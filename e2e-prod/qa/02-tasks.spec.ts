@@ -1,5 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
-import { admin, as, closeAll, go, loadState, pageOf, PNG, saveState, scenario, tag } from "./kit";
+import { PNG, act, admin, as, closeAll, go, loadState, pageOf, saveState, scenario, tag } from "./kit";
 import { createTaskUI, openTask } from "./flows";
 
 /** TEST 2 — The complete task journey, from both sides. */
@@ -130,7 +130,7 @@ scenario(
     const priya = await pageOf(browser, "priya");
     await openTask(priya, id);
     await expect(priya.getByRole("img", { name: /Photo sent by Rahul Verma/ })).toHaveCount(2);
-    await priya.getByRole("button", { name: "Verify" }).first().click();
+    await act(priya, "Verify");
     await expect(priya.getByText(/^Verified · /).first()).toBeVisible({ timeout: 30_000 });
     for (const p of [priya, rahul]) {
       await openTask(p, id);
@@ -195,7 +195,7 @@ scenario(
     await neha.getByRole("dialog").getByRole("button", { name: /Without a proof/ }).click();
     await expect(timeline(neha)).toContainText("Done");
     await openTask(arjun, id2);
-    await arjun.getByRole("button", { name: "Verify" }).first().click();
+    await act(arjun, "Verify");
     await expect(arjun.getByText(/^Verified · /).first()).toBeVisible({ timeout: 30_000 });
     await openTask(neha, id2);
     await expect(neha.getByText(/^Verified · /).first()).toBeVisible();

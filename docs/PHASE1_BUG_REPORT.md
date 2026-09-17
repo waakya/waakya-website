@@ -2,7 +2,7 @@
 
 Found by the full-organization QA run against production (https://waakya.com), acting as four people in one business and an owner of a second business, through the product's own screens and, for security, through the database API directly.
 
-**Fixed in:** commit `27bc49c` (application, deployed to production) with database migration `0021_functional_integrity.sql`; migration `0022_notification_targets.sql` applied to production and committed in `9055319` alongside the QA suite.
+**Fixed in:** commits `27bc49c` and `3742d87` (application, both deployed to production) with database migrations `0021_functional_integrity.sql` and `0022_notification_targets.sql`, both applied to production.
 **Evidence:** `docs/PHASE1_FULL_FUNCTIONAL_MATRIX.md` (first run vs final run), suite in `e2e-prod/qa/`.
 
 Severity: **P0** — data or permission integrity, or a core workflow that cannot complete. **P1** — a workflow that misleads or blocks one side. **P2** — polish and validation.
@@ -110,6 +110,15 @@ Severity: **P0** — data or permission integrity, or a core workflow that canno
 - **Root cause:** The insert policy checked only that the sender belonged to the business, not the recipient.
 - **Fix:** `0022` — the recipient must be a member of the same business.
 - **Regression test:** T20.2.
+
+## BUG-13 · P1 · A message sent on a dropped connection vanished without a word
+
+- **Workflow:** Conversations, and every screen that sends something (T17.3).
+- **Reproduction:** Type a message, take the connection down, press Send. The box clears, no error appears, nothing is stored, and turning the connection back on does not recover the text.
+- **Root cause:** The send clears the box first and restores it if the action answers `ok: false`. A server action on a dead connection does not answer at all — it rejects, inside a transition with nobody listening — so neither branch ran.
+- **Fix:** `lib/actions/attempt.ts` turns a rejection into the same refusal the actions return. Applied to sending a message, making a task from one, creating a task, moving a task, submitting proof, reminding, punching in and out, and applying for leave: each now says "Nothing was sent — check your connection and try again" and gives the words back.
+- **Regression test:** T17.3 (send with the network off, then restored).
+- **Production verification:** commit `3742d87`, deployed; passes on the final run.
 
 ---
 

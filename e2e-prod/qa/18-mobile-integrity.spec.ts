@@ -149,10 +149,15 @@ scenario(
     const sendRequest = neha.getByRole("button", { name: "Send request" });
     await tappable(sendRequest);
     await sendRequest.tap();
-    await expect(neha.getByRole("button", { name: "Send request" })).toHaveCount(0, { timeout: 30_000 });
+    // Neha's own list first: the sheet closes a moment before the row is stored.
+    const shown = new Intl.DateTimeFormat("en-IN-u-nu-latn", { timeZone: "UTC", day: "numeric", month: "short" }).format(
+      new Date(`${date.toISOString().slice(0, 10)}T00:00:00Z`),
+    );
+    await expect(neha.locator("#leave").getByRole("listitem").filter({ hasText: shown }).first()).toBeVisible({ timeout: 60_000 });
     const arjun = await pageOf(browser, "arjun", "mobile");
     await go(arjun, "/hazri");
     const row = arjun.locator("#leave-requests").getByRole("listitem").filter({ hasText: reason });
+    await expect(row.first()).toBeVisible({ timeout: 60_000 });
     const approve = row.getByRole("button", { name: "Approve" });
     await tappable(approve);
     await approve.tap();

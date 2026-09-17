@@ -119,10 +119,22 @@ export async function createTaskFromMessage(
   // Keep the conversation it came from. A task that cannot say where it was
   // agreed is just a task in a list.
   const supabase = await createClient();
-  await supabase
-    .from("tasks")
-    .update({ source_message_id: parsed.data.messageId })
-    .eq("id", created.data.taskId);
+  const link = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("tasks")
+        .update({ source_message_id: parsed.data.messageId })
+        .eq("id", created.data.taskId)
+        .select("id")
+        .maybeSingle();
+      return Boolean(data) && !error;
+    } catch {
+      return false;
+    }
+  };
+  // Try once more if the first write does not land. A task that has lost the
+  // conversation it came from cannot be repaired from any screen afterwards.
+  if (!(await link())) await link();
 
   revalidatePath("/aaj");
   revalidatePath(`/baat/${parsed.data.conversationId}`);

@@ -1,5 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
-import { admin, as, BASE, closeAll, go, loadState, pageOf, PDF, saveState, scenario, tag, type Who } from "./kit";
+import { BASE, PDF, act, admin, as, closeAll, go, loadState, pageOf, saveState, scenario, tag, type Who } from "./kit";
 import { openTask } from "./flows";
 
 /** TEST 3 — Conversation → Task → Conversation. TEST 4 — Group conversation. */
@@ -141,10 +141,12 @@ scenario(
     // a chip from T3.4, so a read that lands too early picks up the wrong task.
     const db = await as("priya");
     let data: { id: string; assigned_to: string | null; source_message_id: string | null } | null = null;
-    for (let attempt = 0; attempt < 30 && !data; attempt += 1) {
+    // The task is written first and its link to the message a moment later.
+    for (let attempt = 0; attempt < 30; attempt += 1) {
       const { data: row } = await db.from("tasks").select("id, assigned_to, source_message_id").eq("title", text).maybeSingle();
       data = row ?? null;
-      if (!data) await priya.waitForTimeout(1000);
+      if (data?.source_message_id) break;
+      await priya.waitForTimeout(1000);
     }
     expect(data, "task created from the owner's own message").toBeTruthy();
     expect(data!.source_message_id, "the task remembers the message it came from").toBeTruthy();
@@ -157,7 +159,7 @@ scenario(
     await rahul.getByRole("dialog").getByRole("button", { name: /Without a proof/ }).click();
     await expect(rahul.getByRole("list", { name: "Timeline" })).toContainText("Done", { timeout: 30_000 });
     await openTask(priya, data!.id);
-    await priya.getByRole("button", { name: "Verify" }).first().click();
+    await act(priya, "Verify");
     await expect(priya.getByText(/^Verified · /).first()).toBeVisible({ timeout: 30_000 });
     await go(priya, state.ids.dm);
     await priya.reload();

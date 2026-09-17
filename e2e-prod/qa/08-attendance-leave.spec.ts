@@ -27,29 +27,26 @@ async function applyLeave(page: Page, kind: "Half day" | "Full day", start: stri
   if (await page.locator("#leave-end").count()) await page.locator("#leave-end").fill(end);
   await page.locator("#leave-reason").fill(reason);
   await page.getByRole("button", { name: "Send request" }).click();
-  // Wait for the request to be saved (the form closes) or refused (a message appears).
-  await page.waitForLoadState("networkidle").catch(() => {});
-  await expect
-    .poll(async () => (await page.getByRole("button", { name: "Send request" }).count()) === 0 || (await page.locator("#leave").getByRole("alert").count()) > 0, { timeout: 30_000 })
-    .toBe(true);
-  // The sheet closes a moment before the row is committed. An accepted request
-  // is real once the requester's own list shows it — only then is it fair to
-  // ask a manager to act on it.
-  if ((await page.locator("#leave").getByRole("alert").count()) === 0) {
-    await expect
-      .poll(
-        async () => {
-          const seen = await page.locator("#leave").getByRole("listitem").filter({ hasText: shownDate(start) }).count();
-          if (!seen) {
-            await page.reload();
-            await page.waitForLoadState("networkidle").catch(() => {});
-          }
-          return seen;
-        },
-        { timeout: 60_000 },
-      )
-      .toBeGreaterThan(0);
+  // Two honest endings: the requester's own list carries the request, or the
+  // screen refuses it. The button is not the signal — it says "Loading" while
+  // the request is in flight. A refusal is client-side, so never reload past it.
+  const alert = page.locator("#leave").getByRole("alert");
+  const mine = page.locator("#leave").getByRole("listitem").filter({ hasText: shownDate(start) });
+  const deadline = Date.now() + 90_000;
+  let settled = false;
+  for (let round = 0; Date.now() < deadline && !settled; round += 1) {
+    if ((await alert.count()) > 0 || (await mine.count()) > 0) {
+      settled = true;
+      break;
+    }
+    await page.waitForTimeout(2000);
+    // A person who sees nothing refreshes; do that only after giving it a moment.
+    if (round >= 4 && round % 4 === 0) {
+      await page.reload();
+      await page.waitForLoadState("networkidle").catch(() => {});
+    }
   }
+  expect(settled, "the leave request was either saved or refused").toBe(true);
 }
 
 /** The date as the screen writes it, e.g. "28 Sep". */
