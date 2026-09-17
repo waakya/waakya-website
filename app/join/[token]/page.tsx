@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { getViewer } from "@/lib/auth/session";
-import { getDictionary, toLocale } from "@/lib/i18n";
+import { getDictionary, toLocale, type Locale } from "@/lib/i18n";
 import { getLocale } from "@/lib/i18n/server";
 import { Mark } from "@/components/waakya/mark";
 import { buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
+import { getUx } from "@/lib/i18n/ux";
 import { JoinForm } from "./join-form";
 
 export const metadata: Metadata = { title: "Join" };
@@ -41,14 +42,14 @@ export default async function JoinPage({ params }: PageProps<"/join/[token]">) {
             <p className="mt-8 rounded-card bg-laal-100 px-4 py-3 text-[17px] leading-[24px] text-laal-700">
               {t.org.joinNotFound}
             </p>
-            <BackToApp viewer={viewer} label={t.time.aaj} />
+            <BackToApp viewer={viewer} label={t.time.aaj} locale={locale} />
           </>
         ) : invite.already_accepted ? (
           <>
             <p className="mt-8 rounded-card bg-amber-100 px-4 py-3 text-[17px] leading-[24px] text-amber-700">
               {t.org.joinUsed}
             </p>
-            <BackToApp viewer={viewer} label={t.time.aaj} />
+            <BackToApp viewer={viewer} label={t.time.aaj} locale={locale} />
           </>
         ) : (
           <>
@@ -74,11 +75,26 @@ export default async function JoinPage({ params }: PageProps<"/join/[token]">) {
 function BackToApp({
   viewer,
   label,
+  locale,
 }: {
   viewer: Awaited<ReturnType<typeof getViewer>>;
   label: string;
+  locale: Locale;
 }) {
-  if (!viewer?.org) return null;
+  if (!viewer?.org) {
+    // A stranded invitee may already have an account, or just needs a way out.
+    const ux = getUx(locale);
+    return (
+      <div className="mt-6 flex flex-col gap-2">
+        <Link href="/login" className={buttonVariants({ size: "staff" })}>
+          {ux.join.signIn}
+        </Link>
+        <Link href="/" className={buttonVariants({ variant: "outline", size: "staff" })}>
+          {ux.join.home}
+        </Link>
+      </div>
+    );
+  }
   // A plain link, styled as a button: it navigates, so it should read as a
   // link to a screen reader rather than as a button.
   return (

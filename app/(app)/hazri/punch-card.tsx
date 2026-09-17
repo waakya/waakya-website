@@ -57,7 +57,7 @@ export function PunchCard({
           ) : status === "half_day" ? (
             <StateChip tone="outline">{t.hazri.halfDay}</StateChip>
           ) : done ? (
-            <StateChip tone="hara">{t.hazri.completed}</StateChip>
+            <StateChip tone="outline">{t.hazri.completed}</StateChip>
           ) : working ? (
             <StateChip tone="neel">{t.hazri.working}</StateChip>
           ) : (

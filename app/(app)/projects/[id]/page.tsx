@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, FilePlus2 } from "lucide-react";
 
 import { requireOrg, canManage } from "@/lib/auth/session";
 import { shellFor } from "@/lib/auth/shell";
 import { getPhase1 } from "@/lib/i18n/phase1";
+import { getUx } from "@/lib/i18n/ux";
 import { getProject, getUnassignedTasks } from "@/lib/projects/queries";
 import { listProjectDocuments } from "@/lib/documents/queries";
 import { getOrgMembers } from "@/lib/org/members";
@@ -29,6 +30,7 @@ export default async function ProjectPage({ params }: PageProps<"/projects/[id]"
 
   const shell = await shellFor(viewer);
   const p = getPhase1(shell.locale);
+  const ux = getUx(shell.locale);
   const manages = canManage(viewer.role);
 
   const [documents, members, unassigned] = await Promise.all([
@@ -74,8 +76,8 @@ export default async function ProjectPage({ params }: PageProps<"/projects/[id]"
           </div>
         ) : null}
 
-        <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
-          <div className="flex flex-col gap-6">
+        <div className="mt-6 grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
+          <div className="flex min-w-0 flex-col gap-6">
             <section>
               <h2 className="mb-2 text-[13px] font-semibold text-ink-700">{p.projects.tasks}</h2>
               {project.tasks.length === 0 ? (
@@ -107,7 +109,16 @@ export default async function ProjectPage({ params }: PageProps<"/projects/[id]"
             <section>
               <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
                 <h2 className="text-[13px] font-semibold text-ink-700">{p.projects.documents}</h2>
-                <DocumentUploader locale={shell.locale} projectId={project.id} compact />
+                <div className="flex min-w-0 flex-wrap items-center gap-2">
+                  <Link
+                    href={`/documents/templates?project=${project.id}`}
+                    className="inline-flex h-9 items-center gap-1.5 rounded-button border border-neel-200 bg-paper-0 px-3 text-[13.5px] font-semibold text-neel-700 hover:bg-neel-50"
+                  >
+                    <FilePlus2 className="size-4" aria-hidden="true" />
+                    {ux.templates.createFromTemplate}
+                  </Link>
+                  <DocumentUploader locale={shell.locale} projectId={project.id} compact />
+                </div>
               </div>
               {documents.length === 0 ? (
                 <p className="rounded-card border border-dashed border-paper-300 px-4 py-5 text-center text-[14px] text-ink-500">
@@ -125,7 +136,7 @@ export default async function ProjectPage({ params }: PageProps<"/projects/[id]"
             </section>
           </div>
 
-          <div className="flex flex-col gap-6">
+          <div className="flex min-w-0 flex-col gap-6">
             <section>
               <h2 className="mb-2 text-[13px] font-semibold text-ink-700">{p.projects.members}</h2>
               <ul className="flex flex-wrap gap-2">

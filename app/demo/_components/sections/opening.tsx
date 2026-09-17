@@ -31,8 +31,8 @@ export function OpeningSection(props: SectionProps) {
           </p>
 
           <Lead className="wk-rise wk-d3 mt-5">
-            Your team already agrees things all day, in messages and on calls. Waakya keeps
-            what was agreed, who owns it, when it is due, and the proof that it was done.
+            Your team agrees things all day. In Waakya, what was agreed becomes work with an
+            owner, a deadline, proof that it was done, and a record your business keeps.
           </Lead>
 
           <div className="wk-rise wk-d4 mt-9 flex flex-wrap items-center gap-3">

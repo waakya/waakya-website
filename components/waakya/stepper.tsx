@@ -31,6 +31,8 @@ export interface StepperProps {
   ackMinutes: number;
   /** "reminder 3:30" — the next reminder, if one is still coming. */
   nextReminderAt?: string | null;
+  /** Done, verified or cancelled: the clocks have stopped and are not shown. */
+  closed?: boolean;
   /** So a reminder that is not today reads "kal 8:00 am". */
   nowIso?: string;
   /** How the completion clock is doing, in words. */
@@ -53,6 +55,7 @@ export function Stepper({
   ackMinutes,
   nextReminderAt,
   nowIso,
+  closed = false,
   className,
 }: StepperProps) {
   const t = getDictionary(locale);
@@ -101,11 +104,13 @@ export function Stepper({
                   "relative z-10 flex size-6 items-center justify-center rounded-full",
                   complete && "bg-hara-600 text-white",
                   isCurrent &&
-                    "bg-neel-600 text-white ring-4 ring-neel-200",
+                    (step === "verified"
+                      ? "bg-hara-600 text-white ring-4 ring-hara-100"
+                      : "bg-neel-600 text-white ring-4 ring-neel-200"),
                   !complete && !isCurrent && "border-2 border-paper-300 bg-paper-0",
                 )}
               >
-                {complete ? (
+                {complete || (isCurrent && step === "verified") ? (
                   <Check className="size-3.5" strokeWidth={3} aria-hidden="true" />
                 ) : null}
               </span>
@@ -114,7 +119,9 @@ export function Stepper({
                 className={cn(
                   "text-center text-[11px] leading-tight font-bold",
                   isCurrent
-                    ? "text-neel-700"
+                    ? step === "verified"
+                      ? "text-hara-700"
+                      : "text-neel-700"
                     : complete
                       ? "text-ink-900"
                       : "text-ink-400",
@@ -137,6 +144,7 @@ export function Stepper({
         })}
       </ol>
 
+      {closed ? null : (
       <div className="mt-4 flex flex-col gap-3">
         <ClockBar
           label={`${t.time.ackClock} (${ackMinutes} min SLA)`}
@@ -166,6 +174,7 @@ export function Stepper({
           }
         />
       </div>
+      )}
     </div>
   );
 }

@@ -1,0 +1,64 @@
+- main:
+  - heading "Updates" [level=1]
+  - paragraph: 8 new
+  - button "Mark all read"
+  - list "Updates":
+    - listitem:
+      - paragraph:
+        - link "Approve extra spend mu5kz8y9 was rejected by Priya Sharma":
+          - /url: /approvals
+      - paragraph: Thu, 17 Sept · 7:14 pm
+    - listitem:
+      - paragraph:
+        - link "Approve vendor mu5kz8y9 was approved by Priya Sharma":
+          - /url: /approvals
+      - paragraph: Thu, 17 Sept · 7:14 pm
+    - listitem:
+      - paragraph:
+        - link "Your leave from 01 Oct was rejected":
+          - /url: /hazri
+      - paragraph: Thu, 17 Sept · 7:14 pm
+    - listitem:
+      - paragraph:
+        - link "Your leave from 24 Sep was approved":
+          - /url: /hazri
+      - paragraph: Thu, 17 Sept · 7:14 pm
+    - listitem:
+      - paragraph:
+        - link "Priya Sharma attached photos-mu5kz8y9.pdf to Revised quotation mu5kz8y9":
+          - /url: /kaam/4dc078e5-25b4-4172-87fe-656253218452
+      - paragraph: Thu, 17 Sept · 7:14 pm
+    - listitem:
+      - paragraph:
+        - link "Priya Sharma verified \"Revised quotation mu5kz8y9\"":
+          - /url: /kaam/4dc078e5-25b4-4172-87fe-656253218452
+      - paragraph: Thu, 17 Sept · 7:14 pm
+    - listitem:
+      - paragraph:
+        - 'link "Priya Sharma: Shared site-plan-mu5kz8y9.pdf"':
+          - /url: /baat/83ac5ba1-22ce-47fb-96e2-2e8c3534fe91
+      - paragraph: Thu, 17 Sept · 7:14 pm
+    - listitem:
+      - paragraph:
+        - 'link "Priya Sharma sent new work: \"Revised quotation mu5kz8y9\" · by 6:00 pm"':
+          - /url: /kaam/4dc078e5-25b4-4172-87fe-656253218452
+      - paragraph: Thu, 17 Sept · 7:14 pm
+- navigation "More":
+  - list:
+    - listitem:
+      - link "Today":
+        - /url: /aaj
+    - listitem:
+      - link "Conversations":
+        - /url: /baat
+    - listitem:
+      - link "Work":
+        - /url: /work
+    - listitem:
+      - link "Attendance":
+        - /url: /hazri
+    - listitem:
+      - link "More":
+        - /url: /more
+- region "Notifications alt+T"
+- alert

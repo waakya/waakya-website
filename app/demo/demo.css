@@ -8,61 +8,50 @@
 --------------------------------------------------------------------------- */
 
 .wk-demo {
-  /* Ground: deep indigo-black, cooled toward Neel rather than pure grey. */
-  --d-ground: #070818;
-  --d-ground-2: #0d0f26;
-  --d-veil: rgba(122, 132, 230, 0.09);
-  --d-line: rgba(168, 176, 240, 0.16);
-  --d-line-soft: rgba(168, 176, 240, 0.09);
+  /* The same ivory, navy and royal blue as the website and the product, so a
+     prospect who opens the demo, the site and the app sees one brand. */
+  --d-ground: #fbfaf6;
+  --d-ground-2: #ffffff;
+  --d-veil: rgba(53, 65, 196, 0.06);
+  --d-line: rgba(27, 32, 96, 0.13);
+  --d-line-soft: rgba(27, 32, 96, 0.07);
 
-  --d-text: #eef0ff;
-  --d-dim: #a7adcf;
-  --d-faint: #6f77a0;
+  --d-text: #1b2060;
+  --d-dim: #3e3a33;
+  --d-faint: #6f6a60;
 
-  --d-accent: #8b93f2;
-  --d-accent-bright: #a9b0f0;
+  --d-accent: #3541c4;
+  --d-accent-bright: #2c35a5;
   --d-accent-deep: #3541c4;
-  --d-accent-wash: rgba(122, 132, 230, 0.14);
+  --d-accent-wash: rgba(53, 65, 196, 0.08);
 
-  --d-good: #4ec98b;
-  --d-good-wash: rgba(78, 201, 139, 0.14);
-  --d-warn: #e8b25f;
-  --d-warn-wash: rgba(232, 178, 95, 0.14);
-  --d-bad: #f07f7f;
-  --d-bad-wash: rgba(240, 127, 127, 0.13);
+  --d-good: #17803f;
+  --d-good-wash: rgba(23, 128, 63, 0.1);
+  --d-warn: #96470a;
+  --d-warn-wash: rgba(224, 138, 30, 0.14);
+  --d-bad: #b42318;
+  --d-bad-wash: rgba(180, 35, 24, 0.09);
 
-  /* Product surfaces: the app itself stays light, floating on the dark ground. */
   --s-bg: #ffffff;
   --s-sub: #f7f7fb;
-  --s-line: #e7e7f0;
-  --s-line-soft: #f0f0f6;
+  --s-line: #e3e6ee;
+  --s-line-soft: #eff0f5;
   --s-text: #15162b;
-  --s-dim: #5d6079;
-  --s-faint: #8e91a8;
+  --s-dim: #4a4d63;
+  --s-faint: #6b6e82;
 
-  --d-shadow: 0 24px 70px rgba(0, 0, 0, 0.55), 0 2px 8px rgba(0, 0, 0, 0.4);
-  --d-shadow-sm: 0 8px 24px rgba(0, 0, 0, 0.35);
+  --d-shadow: 0 24px 60px -30px rgba(27, 32, 96, 0.35), 0 2px 6px rgba(27, 32, 96, 0.06);
+  --d-shadow-sm: 0 10px 30px -18px rgba(27, 32, 96, 0.3);
 
   color: var(--d-text);
   background: var(--d-ground);
   font-feature-settings: "cv05" 1;
 }
 
-/* A quiet field of light behind the content, so the ground is not flat black. */
-.wk-aurora {
-  background:
-    radial-gradient(60% 55% at 18% 8%, rgba(53, 65, 196, 0.3), transparent 70%),
-    radial-gradient(50% 50% at 88% 92%, rgba(122, 132, 230, 0.16), transparent 72%),
-    radial-gradient(45% 40% at 70% 0%, rgba(43, 52, 150, 0.22), transparent 70%);
-}
-
-/* Hairline grid, very low contrast — structure without decoration. */
+/* No glow and no grid: the ivory ground is the brand. */
+.wk-aurora,
 .wk-grid-lines {
-  background-image:
-    linear-gradient(to right, var(--d-line-soft) 1px, transparent 1px),
-    linear-gradient(to bottom, var(--d-line-soft) 1px, transparent 1px);
-  background-size: 64px 64px;
-  mask-image: radial-gradient(70% 60% at 50% 45%, #000 30%, transparent 100%);
+  display: none;
 }
 
 .wk-tabnum {

@@ -202,7 +202,7 @@ const FIELDS_EN = {
   gstin: "GSTIN",
   client_name: "Client name",
   client_address: "Client address",
-  project_name: "Project",
+  project_name: "Project or site name",
   date: "Date",
   reference: "Reference number",
   amount: "Amount (before GST)",

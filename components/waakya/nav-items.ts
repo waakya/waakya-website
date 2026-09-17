@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 
 import { getPhase1 } from "@/lib/i18n/phase1";
+import { getUx } from "@/lib/i18n/ux";
 import type { Locale } from "@/lib/i18n";
 
 export interface NavItem {
@@ -36,13 +37,14 @@ export interface NavItem {
  */
 export function primaryNav(locale: Locale, variant: "owner" | "staff"): NavItem[] {
   const n = getPhase1(locale).nav;
+  const ux = getUx(locale).nav;
   return [
     { href: "/aaj", label: n.today, icon: Home },
     { href: "/baat", label: n.conversations, icon: MessageSquare },
     { href: "/work", label: n.work, icon: SquareCheckBig, also: ["/kaam", "/naya", "/hafta", "/pehle"] },
     { href: "/projects", label: n.projects, icon: FolderKanban },
     { href: "/documents", label: n.documents, icon: FileText },
-    { href: "/hazri", label: n.attendance, icon: CalendarCheck },
+    { href: "/hazri", label: ux.attendance, icon: CalendarCheck },
     { href: "/approvals", label: n.approvals, icon: ShieldCheck },
     ...(variant === "owner" ? [{ href: "/staff", label: n.team, icon: Users }] : []),
   ];

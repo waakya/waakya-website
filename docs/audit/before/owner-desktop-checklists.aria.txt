@@ -1,0 +1,56 @@
+- navigation "Sharma Interiors":
+  - link "Waakya":
+    - /url: /aaj
+    - img
+    - text: Waakya
+  - paragraph: Business
+  - paragraph: Sharma Interiors
+  - list:
+    - listitem:
+      - link "Today":
+        - /url: /aaj
+    - listitem:
+      - link "Conversations":
+        - /url: /baat
+    - listitem:
+      - link "Work":
+        - /url: /work
+    - listitem:
+      - link "Projects":
+        - /url: /projects
+    - listitem:
+      - link "Documents":
+        - /url: /documents
+    - listitem:
+      - link "Attendance":
+        - /url: /hazri
+    - listitem:
+      - link "Approvals":
+        - /url: /approvals
+    - listitem:
+      - link "Team":
+        - /url: /staff
+  - list:
+    - listitem:
+      - link "Search":
+        - /url: /search
+    - listitem:
+      - link "Updates":
+        - /url: /khabar
+    - listitem:
+      - link "Daily routine":
+        - /url: /checklists
+    - listitem:
+      - link "Settings":
+        - /url: /settings
+  - paragraph: Priya Sharma
+  - paragraph: Owner
+- main:
+  - heading "Daily routine" [level=1]
+  - paragraph: Sent automatically, every day.
+  - paragraph: No checklists yet
+  - paragraph: Set the daily work up once, and it sends itself.
+  - list
+  - button "New checklist"
+- region "Notifications alt+T"
+- alert

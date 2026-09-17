@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Mark } from "@/components/waakya/mark";
+import { OnboardingFrame } from "@/components/waakya/onboarding-frame";
 import { LanguageSwitch } from "@/components/waakya/language-switch";
 import { getDictionary, type Locale } from "@/lib/i18n";
 import { createOrg } from "@/lib/actions/org";
@@ -38,13 +38,12 @@ export function SetupForm({ locale }: { locale: Locale }) {
   }
 
   return (
-    <main className="flex min-h-dvh flex-col p-4">
-      <div className="flex flex-1 flex-col pt-[8vh]">
-        <Mark size={40} className="mx-auto" />
-        <h1 className="mt-6 text-[24px] leading-[30px] font-bold text-ink-900">
+    <OnboardingFrame locale={locale} step={1} illustration="team">
+      <div>
+        <h1 className="font-display text-[28px] leading-[1.1] font-extrabold text-ink-900">
           {t.org.setupTitle}
         </h1>
-        <p className="mt-1 text-[15px] leading-[20px] text-ink-500">
+        <p className="mt-2 text-[15px] leading-[21px] text-ink-500">
           {t.org.setupSubtitle}
         </p>
 
@@ -88,6 +87,6 @@ export function SetupForm({ locale }: { locale: Locale }) {
           </Button>
         </form>
       </div>
-    </main>
+    </OnboardingFrame>
   );
 }

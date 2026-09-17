@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -10,6 +9,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { InputOTP } from "@/components/ui/input-otp";
 import { Label } from "@/components/ui/label";
+import { Wordmark } from "@/components/waakya/wordmark";
+import { getUx } from "@/lib/i18n/ux";
 import { LanguageSwitch } from "@/components/waakya/language-switch";
 import {
   brandName,
@@ -62,6 +63,7 @@ export function LoginForm({
   // functions, and functions cannot cross the server/client boundary. Every
   // client component in Waakya takes a `locale` and resolves its own copy.
   const t = getDictionary(locale);
+  const ux = getUx(locale);
   const router = useRouter();
   const [step, setStep] = React.useState<"email" | "code" | "guest">("email");
   const [email, setEmail] = React.useState("");
@@ -158,15 +160,7 @@ export function LoginForm({
   return (
     <div className="flex min-h-dvh flex-col">
       <div className="flex flex-1 flex-col pt-[8vh]">
-        <Image
-          src="/brand/logo/logo-stacked.svg"
-          alt="Waakya — Bolo. Ho jayega."
-          width={300}
-          height={203}
-          priority
-          unoptimized
-          className="mx-auto h-auto w-[150px]"
-        />
+        <Wordmark size={32} className="mx-auto" />
 
         {step === "email" ? (
           <form onSubmit={send} noValidate className="mt-9">
@@ -438,9 +432,29 @@ export function LoginForm({
         )}
       </div>
 
-      <footer className="flex flex-col items-center gap-2 pb-[max(1.25rem,env(safe-area-inset-bottom))]">
+      {step === "email" ? (
+        <div className="mt-8 flex flex-col gap-3">
+          {/* A new owner sees what comes after this screen; staff see where
+              their door is. */}
+          <ol className="flex items-center justify-center gap-2 text-[13px] text-ink-500">
+            {ux.login.nextSteps.map((label, index) => (
+              <li key={label} className="flex items-center gap-2">
+                <span className="num grid size-5 place-items-center rounded-full border border-paper-300 text-[11px] font-bold text-ink-700">
+                  {index + 1}
+                </span>
+                {label}
+                {index < ux.login.nextSteps.length - 1 ? <span aria-hidden="true" className="text-ink-400">→</span> : null}
+              </li>
+            ))}
+          </ol>
+          <p className="rounded-card border border-neel-100 bg-neel-50 px-3.5 py-2.5 text-center text-[14px] leading-[20px] text-neel-800">
+            {t.auth.staffHint}
+          </p>
+        </div>
+      ) : null}
+
+      <footer className="mt-6 flex flex-col items-center gap-2 pb-[max(1.25rem,env(safe-area-inset-bottom))]">
         <LanguageSwitch value={locale} onChange={setLoginLocale} />
-        <p className="text-center text-[13px] text-ink-400">{t.auth.staffHint}</p>
       </footer>
     </div>
   );

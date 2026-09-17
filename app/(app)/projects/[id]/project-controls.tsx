@@ -9,7 +9,7 @@ import { addProjectMember, setTaskProject, updateProject } from "@/lib/actions/p
 import type { ProjectStatus } from "@/lib/projects/queries";
 
 const SELECT =
-  "h-10 min-w-0 rounded-button border border-paper-200 bg-paper-0 px-3 text-[14px] text-ink-900";
+  "h-10 max-w-full min-w-0 rounded-button border border-paper-200 bg-paper-0 px-3 text-[14px] text-ink-900";
 
 /** Status, people and tasks — the three things a manager changes on a project. */
 export function ProjectControls({
@@ -40,7 +40,7 @@ export function ProjectControls({
   }
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex min-w-0 flex-col gap-2">
       <div className="flex flex-wrap items-center gap-2">
         <select
           aria-label={p.projects.status}

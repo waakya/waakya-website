@@ -6,6 +6,7 @@ import { CalendarCheck, Home, LayoutGrid, MessageSquare, SquareCheckBig } from "
 
 import { type Locale } from "@/lib/i18n";
 import { getPhase1 } from "@/lib/i18n/phase1";
+import { getUx } from "@/lib/i18n/ux";
 import { cn } from "@/lib/utils";
 
 /**
@@ -19,7 +20,13 @@ export function BottomNav({
   variant?: "owner" | "staff";
 }) {
   const n = getPhase1(locale).nav;
+  const ux = getUx(locale);
   const pathname = usePathname();
+
+  // A task or a conversation brings its own bottom bar (actions, composer) and
+  // a back arrow. Stacking the tab bar under it covered the proof and the
+  // messages on a phone, so detail screens go without it.
+  if (/^\/(kaam|baat)\/[^/]+/.test(pathname)) return null;
 
   const items = [
     { href: "/aaj", label: n.today, icon: Home, also: [] as string[] },
@@ -36,7 +43,7 @@ export function BottomNav({
 
   return (
     <nav
-      aria-label={n.more}
+      aria-label={ux.nav.main}
       className="sticky bottom-0 z-30 border-t border-paper-200 bg-paper-0 pb-[env(safe-area-inset-bottom)] lg:hidden"
     >
       <ul className="mx-auto flex h-16 max-w-md">

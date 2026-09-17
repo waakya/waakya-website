@@ -455,7 +455,7 @@ export function StageButton({
         "inline-flex h-11 items-center justify-center gap-2 rounded-full px-5 text-[15px] font-semibold",
         "transition-all duration-200 [&_svg]:size-4 [&_svg]:shrink-0",
         variant === "primary" &&
-          "bg-[var(--d-text)] text-[#0b0c1f] hover:bg-white hover:shadow-[0_0_40px_rgba(169,176,240,0.25)]",
+          "bg-[#3541c4] text-white hover:bg-[#2c35a5]",
         variant === "ghost" &&
           "border border-[var(--d-line)] text-[var(--d-dim)] hover:border-[var(--d-accent)] hover:text-[var(--d-text)]",
         className,

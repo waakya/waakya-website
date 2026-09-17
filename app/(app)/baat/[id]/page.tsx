@@ -5,6 +5,7 @@ import { requireOrg, canManage } from "@/lib/auth/session";
 import { getDictionary } from "@/lib/i18n";
 import { getLocale } from "@/lib/i18n/server";
 import { AppShell } from "@/components/waakya/app-shell";
+import { getUnreadCount } from "@/lib/notify/inbox";
 import { getConversation } from "@/lib/conversations/queries";
 import { getOrgMembers } from "@/lib/org/members";
 import { Thread } from "./thread";
@@ -46,7 +47,7 @@ export default async function ConversationPage({
       orgName={viewer.org.name}
       personName={viewer.fullName ?? "—"}
       roleLabel={viewer.role ? t.org.roles[viewer.role] : ""}
-      unread={0}
+      unread={await getUnreadCount()}
     >
       <Thread
         locale={locale}

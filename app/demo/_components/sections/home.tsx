@@ -40,13 +40,13 @@ import {
 import type { SectionProps } from "../../_lib/types";
 
 const NAV = [
-  { id: "home", icon: Home, label: "Home", active: true },
-  { id: "messages", icon: MessageSquare, label: "Messages" },
-  { id: "tasks", icon: CheckCircle2, label: "Tasks" },
+  { id: "home", icon: Home, label: "Today", active: true },
+  { id: "messages", icon: MessageSquare, label: "Conversations" },
+  { id: "tasks", icon: CheckCircle2, label: "Work" },
   { id: "projects", icon: FolderKanban, label: "Projects" },
   { id: "documents", icon: FileText, label: "Documents" },
   { id: "approvals", icon: ShieldCheck, label: "Approvals" },
-  { id: "people", icon: Users, label: "People" },
+  { id: "people", icon: Users, label: "Team" },
 ];
 
 const STATE_CHIP: Record<
@@ -185,7 +185,7 @@ export function HomeSection(props: SectionProps) {
             <div className="mt-6 grid gap-5 lg:grid-cols-2">
               <div>
                 <p className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--s-faint)]">
-                  Client workspaces
+                  Projects
                 </p>
                 <ul className="mt-2.5 flex flex-col gap-1.5">
                   {WORKSPACES.map((workspace) => (

@@ -7,6 +7,7 @@ import { getDictionary, toLocale } from "@/lib/i18n";
 import { getLocale } from "@/lib/i18n/server";
 import { Card } from "@/components/ui/card";
 import { AppShell } from "@/components/waakya/app-shell";
+import { getUnreadCount } from "@/lib/notify/inbox";
 import { SettingsLanguage } from "./settings-language";
 import { SettingsName } from "./settings-name";
 import { BusinessProfileForm } from "@/components/waakya/business-profile-form";
@@ -28,7 +29,7 @@ export default async function SettingsPage() {
       orgName={viewer.org?.name ?? ""}
       personName={viewer.fullName ?? "—"}
       roleLabel={viewer.role ? getDictionary(locale).org.roles[viewer.role] : ""}
-      unread={0}
+      unread={await getUnreadCount()}
     >
       <main className="flex-1 p-4">
         <h1 className="text-[24px] leading-[30px] font-bold text-ink-900">

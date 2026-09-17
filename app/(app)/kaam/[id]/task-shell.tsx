@@ -1,9 +1,10 @@
 import Link from "next/link";
-import { ArrowLeft, Camera, Clock, MessageSquare, X, Zap } from "lucide-react";
+import { ArrowLeft, Camera, CheckCircle2, Clock, MessageSquare, X, Zap } from "lucide-react";
 
 import { StateChip } from "@/components/ui/state-chip";
 import { Stepper } from "@/components/waakya/stepper";
 import { getDictionary, type Locale } from "@/lib/i18n";
+import { getUx } from "@/lib/i18n/ux";
 import type { TimelineEntry, ThreadMessage } from "@/lib/tasks/detail";
 import type { TaskListItem } from "@/lib/tasks/queries";
 import type { Clock as SlaClock } from "@/lib/tasks/sla";
@@ -33,6 +34,8 @@ export interface DetailProps {
   nowIso: string;
   stepper: StepperData;
   viewerId: string;
+  /** The conversation message this task was made from, if any. */
+  source?: { conversationId: string; body: string } | null;
 }
 
 /**
@@ -49,6 +52,7 @@ export function TaskShell({
   nowIso,
   stepper,
   viewerId,
+  source,
   heading,
   lead,
   children,
@@ -59,7 +63,13 @@ export function TaskShell({
   children: React.ReactNode;
 }) {
   const t = getDictionary(locale);
+  const ux = getUx(locale);
   const now = new Date(nowIso);
+  // A closed task is a record, not a countdown: no time left, no reminder,
+  // no clocks — just when it closed.
+  const closed = ["done", "verified", "cancelled"].includes(task.state);
+  const closedAt =
+    stepper.reached[task.state === "verified" ? "verified" : "done"] ?? null;
   const remaining = task.dueAt
     ? formatDuration(Date.parse(task.dueAt) - now.getTime(), t.time)
     : null;
@@ -88,7 +98,7 @@ export function TaskShell({
         thing this screen cannot get wrong. The bar sits above the 4rem bottom
         nav, and the padding here is the room the two together occupy.
       */}
-      <main className="flex-1 px-4 pb-64 lg:pb-8">
+      <main className={task.state === "verified" || task.state === "cancelled" ? "flex-1 px-4 pb-44 lg:pb-8" : "flex-1 px-4 pb-56 lg:pb-8"}>
         {lead}
 
         <h2 className="mt-2 text-[28px] leading-[36px] font-bold text-ink-900">
@@ -113,7 +123,61 @@ export function TaskShell({
           ) : null}
         </div>
 
-        {task.dueAt ? (
+        {source ? (
+          <Link
+            href={`/baat/${source.conversationId}`}
+            className="mt-3 flex items-start gap-2 rounded-card border border-paper-200 bg-paper-0 px-3.5 py-2.5 hover:border-neel-300"
+          >
+            <MessageSquare className="mt-0.5 size-4 shrink-0 text-neel-700" aria-hidden="true" />
+            <span className="min-w-0 flex-1">
+              <span className="block text-[12.5px] font-semibold text-neel-700">
+                {ux.task.fromConversation}
+              </span>
+              <span className="line-clamp-2 block text-[15px] leading-[20px] text-ink-900">
+                “{source.body}”
+              </span>
+            </span>
+            <span className="shrink-0 self-center text-[13px] font-semibold text-neel-700">
+              {ux.task.openConversation}
+            </span>
+          </Link>
+        ) : null}
+
+        {closed ? (
+          <div
+            className={
+              task.state === "cancelled"
+                ? "mt-3 rounded-card bg-paper-100 px-4 py-3"
+                : task.state === "done"
+                  ? "mt-3 rounded-card bg-neel-50 px-4 py-3"
+                  : "mt-3 rounded-card bg-hara-100 px-4 py-3"
+            }
+          >
+            <p
+              className={
+                task.state === "cancelled"
+                  ? "num flex items-center gap-2 text-[17px] font-bold text-ink-700"
+                  : task.state === "done"
+                    ? "num flex items-center gap-2 text-[17px] font-bold text-neel-700"
+                    : "num flex items-center gap-2 text-[17px] font-bold text-hara-700"
+              }
+            >
+              {task.state === "cancelled" ? (
+                <X className="size-5" aria-hidden="true" />
+              ) : (
+                <CheckCircle2 className="size-5" aria-hidden="true" />
+              )}
+              {task.state === "cancelled"
+                ? ux.task.recordCancelled
+                : task.state === "verified"
+                  ? ux.task.recordVerified(closedAt ? formatTime(closedAt) : "")
+                  : ux.task.recordDone(closedAt ? formatTime(closedAt) : "")}
+            </p>
+            {task.state === "done" ? null : (
+              <p className="mt-0.5 text-[15px] text-ink-700">{ux.task.recordLead}</p>
+            )}
+          </div>
+        ) : task.dueAt ? (
           <div
             className={
               late
@@ -166,6 +230,7 @@ export function TaskShell({
           ackMinutes={stepper.ackMinutes}
           nextReminderAt={stepper.nextReminderAt}
           nowIso={nowIso}
+          closed={closed}
           className="mt-4"
         />
 

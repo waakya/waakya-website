@@ -1,0 +1,25 @@
+- main:
+  - heading "Projects" [level=1]
+  - paragraph: Keep related work, people and documents together.
+  - button "New project"
+  - paragraph: No projects yet
+  - paragraph: A project gathers the tasks and documents for one piece of work.
+- navigation "More":
+  - list:
+    - listitem:
+      - link "Today":
+        - /url: /aaj
+    - listitem:
+      - link "Conversations":
+        - /url: /baat
+    - listitem:
+      - link "Work":
+        - /url: /work
+    - listitem:
+      - link "Attendance":
+        - /url: /hazri
+    - listitem:
+      - link "More":
+        - /url: /more
+- region "Notifications alt+T"
+- alert

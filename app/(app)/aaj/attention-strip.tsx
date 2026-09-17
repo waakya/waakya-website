@@ -4,6 +4,7 @@ import { CalendarCheck, FolderKanban, MessageSquare, ShieldCheck } from "lucide-
 import { createClient } from "@/lib/supabase/server";
 import type { Locale } from "@/lib/i18n";
 import { getPhase1 } from "@/lib/i18n/phase1";
+import { getUx } from "@/lib/i18n/ux";
 import { listApprovals, waitingOn } from "@/lib/approvals/queries";
 import { listConversations } from "@/lib/conversations/queries";
 import { getMyToday } from "@/lib/attendance/queries";
@@ -26,6 +27,7 @@ export async function AttentionStrip({
   manages: boolean;
 }) {
   const p = getPhase1(locale);
+  const ux = getUx(locale);
   const supabase = await createClient();
 
   const [approvals, conversations, today, leave, projects] = await Promise.all([
@@ -44,12 +46,17 @@ export async function AttentionStrip({
 
   const items = [
     approvalsWaiting > 0 && { href: "/approvals", icon: ShieldCheck, text: p.today.approvalsWaiting(approvalsWaiting), urgent: true },
-    leaveWaiting > 0 && { href: "/hazri", icon: CalendarCheck, text: p.today.leaveWaiting(leaveWaiting), urgent: true },
+    leaveWaiting > 0 && { href: "/hazri#leave-requests", icon: CalendarCheck, text: p.today.leaveWaiting(leaveWaiting), urgent: true },
     unread > 0 && { href: "/baat", icon: MessageSquare, text: p.today.unreadConversations(unread), urgent: false },
     {
       href: "/hazri",
       icon: CalendarCheck,
-      text: today?.punchInAt ? p.today.punchedIn(formatPunchTime(today.punchInAt)) : p.today.notPunchedIn,
+      // Out wins over in: after punching out, "punched in at…" is no longer true.
+      text: today?.punchOutAt
+        ? ux.attendance.punchedOut(formatPunchTime(today.punchOutAt), today.worked ?? "0m")
+        : today?.punchInAt
+          ? p.today.punchedIn(formatPunchTime(today.punchInAt))
+          : p.today.notPunchedIn,
       urgent: !today?.punchInAt,
     },
   ].filter(Boolean) as { href: string; icon: typeof ShieldCheck; text: string; urgent: boolean }[];

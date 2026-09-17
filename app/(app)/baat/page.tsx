@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { MessageSquare } from "lucide-react";
+import { MessageSquare, UserPlus } from "lucide-react";
 
 import { requireOrg, canManage } from "@/lib/auth/session";
 import { getDictionary } from "@/lib/i18n";
-import { getLocale } from "@/lib/i18n/server";
+import { shellFor } from "@/lib/auth/shell";
+import { getUx } from "@/lib/i18n/ux";
 import { AppShell } from "@/components/waakya/app-shell";
 import { Avatar } from "@/components/ui/avatar";
 import { listConversations } from "@/lib/conversations/queries";
@@ -17,8 +18,10 @@ export const metadata: Metadata = { title: "Baat-cheet" };
 /** Every conversation this person is in, and a way to start another. */
 export default async function BaatPage() {
   const viewer = await requireOrg();
-  const locale = await getLocale();
+  const shell = await shellFor(viewer);
+  const locale = shell.locale;
   const t = getDictionary(locale);
+  const ux = getUx(locale);
 
   const [conversations, members] = await Promise.all([
     listConversations(viewer.org.id, viewer.userId),
@@ -28,14 +31,7 @@ export default async function BaatPage() {
   const others = members.filter((member) => member.userId !== viewer.userId);
 
   return (
-    <AppShell
-      locale={locale}
-      variant={canManage(viewer.role) ? "owner" : "staff"}
-      orgName={viewer.org.name}
-      personName={viewer.fullName ?? "—"}
-      roleLabel={viewer.role ? t.org.roles[viewer.role] : ""}
-      unread={0}
-    >
+    <AppShell {...shell}>
       <main className="flex-1 p-4 pb-8">
         <h1 className="text-[24px] leading-[30px] font-bold text-ink-900">
           {t.baat.title}
@@ -45,7 +41,20 @@ export default async function BaatPage() {
           <StartConversation locale={locale} people={others} />
         </div>
 
-        {conversations.length === 0 ? (
+        {conversations.length === 0 && others.length === 0 ? (
+          // Nobody to talk to yet: say why, and lead to the one step that fixes it.
+          <div className="mt-6 flex flex-col items-center gap-2 rounded-card border border-dashed border-paper-300 p-6 text-center">
+            <UserPlus className="size-7 text-ink-400" aria-hidden="true" />
+            <p className="text-[17px] font-bold text-ink-900">{ux.team.noTeamYet}</p>
+            <p className="max-w-sm text-[15px] leading-[20px] text-ink-500">{ux.team.noTeamHelp}</p>
+            {canManage(viewer.role) ? (
+              <Link href="/staff" className="mt-2 inline-flex min-h-11 items-center gap-2 rounded-button bg-neel-600 px-4 text-[15px] font-semibold text-white hover:bg-neel-700">
+                <UserPlus className="size-4" aria-hidden="true" />
+                {ux.team.invite}
+              </Link>
+            ) : null}
+          </div>
+        ) : conversations.length === 0 ? (
           <div className="mt-6 flex flex-col items-center gap-2 rounded-card border border-dashed border-paper-300 p-6 text-center">
             <MessageSquare className="size-7 text-ink-400" aria-hidden="true" />
             <p className="text-[17px] font-bold text-ink-900">{t.baat.empty}</p>

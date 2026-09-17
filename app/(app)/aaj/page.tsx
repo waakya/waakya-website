@@ -16,6 +16,7 @@ import { OwnerDesktop } from "./owner-desktop";
 import { NeedsYouList } from "./needs-you-list";
 import { StaffToday } from "./staff-today";
 import { AttentionStrip } from "./attention-strip";
+import { SetupGuide } from "./setup-guide";
 
 export const metadata: Metadata = { title: "Aaj" };
 
@@ -71,8 +72,15 @@ export default async function AajPage() {
         };
       });
 
+    // The owner's first-run guide sits above what is waiting; it removes
+    // itself once the business has really been set up.
     const strip = (
-      <AttentionStrip locale={locale} orgId={viewer.org.id} userId={viewer.userId} manages />
+      <>
+        {viewer.role === "owner" || viewer.role === "admin" ? (
+          <SetupGuide locale={locale} orgId={viewer.org.id} />
+        ) : null}
+        <AttentionStrip locale={locale} orgId={viewer.org.id} userId={viewer.userId} manages />
+      </>
     );
 
     const needsYouCards = (

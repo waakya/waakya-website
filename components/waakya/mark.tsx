@@ -24,8 +24,9 @@ export function Mark({
       width={size}
       height={size}
       fill="none"
-      role="img"
-      aria-label={title}
+      // An empty title means the mark sits beside the written name and is
+      // decoration; otherwise it is the brand, and says so.
+      {...(title ? { role: "img", "aria-label": title } : { "aria-hidden": true })}
       className={cn("shrink-0", className)}
     >
       <g strokeLinecap="round" strokeLinejoin="round" strokeWidth={9}>

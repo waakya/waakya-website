@@ -1,0 +1,30 @@
+- main:
+  - link "Back":
+    - /url: /baat
+  - heading "Site team mu5kz8y9" [level=1]
+  - text: Shared site-plan-mu5kz8y9.pdf
+  - button "site-plan-mu5kz8y9.pdf"
+  - paragraph: 7:14 PM
+  - button "Choose File"
+  - button "Attach a file"
+  - textbox "Write a message"
+  - button "Send" [disabled]
+- navigation "More":
+  - list:
+    - listitem:
+      - link "Today":
+        - /url: /aaj
+    - listitem:
+      - link "Conversations":
+        - /url: /baat
+    - listitem:
+      - link "Work":
+        - /url: /work
+    - listitem:
+      - link "Attendance":
+        - /url: /hazri
+    - listitem:
+      - link "More":
+        - /url: /more
+- region "Notifications alt+T"
+- alert

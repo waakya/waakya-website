@@ -1,0 +1,43 @@
+- banner:
+  - heading "Hello, Anil Mehta" [level=1]
+  - paragraph: Mehta Facility Services · Thu, 17 Sept
+  - link "Updates":
+    - /url: /khabar
+  - img "Waakya"
+  - definition: "0"
+  - term: Sent
+  - definition: "0"
+  - term: Seen
+  - definition: "0"
+  - term: Done
+  - definition: "0"
+  - term: Verified
+- main:
+  - region "Also waiting on you":
+    - list:
+      - listitem:
+        - link "You have not punched in today":
+          - /url: /hazri
+  - paragraph: No work yet
+  - paragraph: Press below to send new work.
+- link "New task":
+  - /url: /naya
+- navigation "More":
+  - list:
+    - listitem:
+      - link "Today":
+        - /url: /aaj
+    - listitem:
+      - link "Conversations":
+        - /url: /baat
+    - listitem:
+      - link "Work":
+        - /url: /work
+    - listitem:
+      - link "Attendance":
+        - /url: /hazri
+    - listitem:
+      - link "More":
+        - /url: /more
+- region "Notifications alt+T"
+- alert

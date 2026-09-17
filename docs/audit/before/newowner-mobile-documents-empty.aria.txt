@@ -1,0 +1,42 @@
+- main:
+  - heading "Documents" [level=1]
+  - paragraph: Your business paperwork, kept next to the work it belongs to.
+  - link "Templates":
+    - /url: /documents/templates
+  - text: Category
+  - combobox "Category":
+    - option "Quotation"
+    - option "Proposal"
+    - option "Invoice"
+    - option "Agreement"
+    - option "NDA"
+    - option "Purchase order"
+    - option "Work order"
+    - option "Receipt"
+    - option "Scope of work"
+    - option "Report"
+    - option "Meeting minutes"
+    - option "Other" [selected]
+  - button "Choose File"
+  - button "Upload"
+  - paragraph: No documents yet
+  - paragraph: Upload a quotation, an invoice or a report, or start from a template.
+- navigation "More":
+  - list:
+    - listitem:
+      - link "Today":
+        - /url: /aaj
+    - listitem:
+      - link "Conversations":
+        - /url: /baat
+    - listitem:
+      - link "Work":
+        - /url: /work
+    - listitem:
+      - link "Attendance":
+        - /url: /hazri
+    - listitem:
+      - link "More":
+        - /url: /more
+- region "Notifications alt+T"
+- alert

@@ -65,7 +65,7 @@ export function LeavePanel({
   }
 
   return (
-    <section>
+    <section id="leave" className="scroll-mt-4">
       <h2 className="mb-2 text-[13px] leading-[18px] font-semibold text-ink-700">
         {t.hazri.leave}
       </h2>

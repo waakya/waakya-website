@@ -1,0 +1,110 @@
+- banner:
+  - link "Back":
+    - /url: /aaj
+  - heading "Task" [level=1]
+- main:
+  - paragraph: Rahul Verma
+  - paragraph: Priya Sharma sent this at 7:14 pm
+  - heading "Revised quotation mu5kz8y9" [level=2]
+  - paragraph: by tomorrow 6:00 pm
+  - paragraph: 22 h 42 min left
+  - list:
+    - listitem: Sent 7:14 pm
+    - listitem: Seen 7:14 pm
+    - listitem: Accepted 7:14 pm
+    - listitem: In progress 7:14 pm
+    - listitem: Done 7:14 pm
+    - listitem: Verified 7:14 pm
+  - text: Acknowledge (15 min SLA) Seen in 0 min
+  - progressbar "Acknowledge (15 min SLA)"
+  - text: Complete 0% gone · reminder tomorrow 8:00 am
+  - progressbar "Complete"
+  - heading "Proof" [level=3]
+  - list:
+    - listitem:
+      - img "Photo sent by Rahul Verma"
+      - paragraph: Rahul Verma · 7:14 pm
+  - heading "Timeline" [level=3]
+  - list "Timeline":
+    - listitem:
+      - strong: Priya Sharma
+      - text: Sent 7:14 pm
+    - listitem:
+      - strong: Rahul Verma
+      - text: Seen 7:14 pm
+    - listitem:
+      - strong: Rahul Verma
+      - text: Accepted 7:14 pm
+    - listitem:
+      - strong: Rahul Verma
+      - text: In progress 7:14 pm
+    - listitem:
+      - strong: Rahul Verma
+      - text: Done 7:14 pm
+    - listitem:
+      - strong: Priya Sharma
+      - text: Verified 7:14 pm
+  - heading "Messages" [level=3]
+  - paragraph: Nothing said yet
+  - textbox "Messages":
+    - /placeholder: Write something if you need to
+  - button "Send" [disabled]
+- contentinfo:
+  - list:
+    - listitem:
+      - link "Call":
+        - /url: tel:9876511111
+    - listitem:
+      - button "Remind" [disabled]
+    - listitem:
+      - button "Reassign" [disabled]
+    - listitem:
+      - button "Change time"
+    - listitem:
+      - button "Cancel" [disabled]
+- region "Attached documents":
+  - text: Project
+  - combobox "Project":
+    - option "None"
+    - option "Office fit-out mu5kz8y9" [selected]
+  - heading "Attached documents" [level=2]
+  - combobox "Category":
+    - option "Quotation"
+    - option "Proposal"
+    - option "Invoice"
+    - option "Agreement"
+    - option "NDA"
+    - option "Purchase order"
+    - option "Work order"
+    - option "Receipt"
+    - option "Scope of work"
+    - option "Report"
+    - option "Meeting minutes"
+    - option "Other" [selected]
+  - button "Choose File"
+  - button "Attach a document"
+  - list:
+    - listitem:
+      - button "photos-mu5kz8y9.pdf"
+      - text: Other · 45 B · Priya Sharma · Thu, 17 Sept
+      - button "Download photos-mu5kz8y9.pdf"
+      - button "Delete photos-mu5kz8y9.pdf"
+- navigation "More":
+  - list:
+    - listitem:
+      - link "Today":
+        - /url: /aaj
+    - listitem:
+      - link "Conversations":
+        - /url: /baat
+    - listitem:
+      - link "Work":
+        - /url: /work
+    - listitem:
+      - link "Attendance":
+        - /url: /hazri
+    - listitem:
+      - link "More":
+        - /url: /more
+- region "Notifications alt+T"
+- alert

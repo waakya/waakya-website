@@ -31,8 +31,8 @@ export const PEOPLE: Record<string, Person> = {
   neha: { id: "neha", name: "Neha Verma", role: "Designer", org: "urbannest" },
   vikram: { id: "vikram", name: "Vikram Singh", role: "Site Supervisor", org: "urbannest" },
   priya: { id: "priya", name: "Priya Kapoor", role: "Accounts", org: "urbannest" },
-  rohan: { id: "rohan", name: "Rohan Kapoor", role: "Project Director", org: "greenwood" },
-  ananya: { id: "ananya", name: "Ananya Shah", role: "Procurement", org: "greenwood" },
+  rohan: { id: "rohan", name: "Rohan Kapoor", role: "Site Lead", org: "urbannest" },
+  ananya: { id: "ananya", name: "Ananya Shah", role: "Purchase", org: "urbannest" },
 };
 
 export const PROJECTS = [
@@ -66,7 +66,7 @@ export interface AttentionItem {
 export const ATTENTION: AttentionItem[] = [
   { id: "overdue", label: "Overdue tasks", count: 2, tone: "bad" },
   { id: "approvals", label: "Approvals waiting", count: 2, tone: "warn" },
-  { id: "client", label: "Client response", count: 1, tone: "accent" },
+  { id: "leave", label: "Leave requests", count: 1, tone: "accent" },
 ];
 
 export interface TodayItem {
@@ -109,19 +109,19 @@ export const RECENT_ACTIVITY = [
   { id: "a1", who: "Vikram Singh", what: "submitted proof on", target: "Site measurement — Tower B", when: "12 min ago" },
   { id: "a2", who: "Rohan Kapoor", what: "approved", target: "Greenwood BOQ v4", when: "26 min ago" },
   { id: "a3", who: "Neha Verma", what: "accepted", target: "Revise living room layout", when: "1 hr ago" },
-  { id: "a4", who: "Priya Kapoor", what: "sent", target: "Invoice INV-2291 to Greenwood Builders", when: "2 hrs ago" },
+  { id: "a4", who: "Priya Kapoor", what: "created", target: "Invoice INV-2291 for Tower B", when: "2 hrs ago" },
 ];
 
 export const WORKSPACES = [
-  { id: "greenwood", name: "Greenwood Builders", project: "Tower B", open: 7, unread: 2 },
-  { id: "skyline", name: "Skyline Developers", project: "Sector 76", open: 4, unread: 0 },
-  { id: "nair", name: "Mr. & Mrs. Nair", project: "Oakwood Villa", open: 2, unread: 1 },
+  { id: "greenwood", name: "Greenwood Residence — Tower B", project: "Active", open: 7, unread: 2 },
+  { id: "skyline", name: "Skyline Apartment — Sector 76", project: "Active", open: 4, unread: 0 },
+  { id: "nair", name: "Oakwood Villa", project: "Planned", open: 2, unread: 1 },
 ];
 
 export const CONVERSATIONS = [
   { id: "c1", name: "Rahul Sharma", preview: "Sure. I'll get it done.", when: "11:10 AM", unread: 0 },
   { id: "c2", name: "Site team — Tower B", preview: "Vikram: Measurements uploaded", when: "10:42 AM", unread: 3 },
-  { id: "c3", name: "Greenwood Builders", preview: "Rohan: Please send the revised BOQ", when: "9:58 AM", unread: 2 },
+  { id: "c3", name: "Tower B — project team", preview: "Rohan: Please send the revised BOQ", when: "9:58 AM", unread: 2 },
 ];
 
 /* ---------------------------------------------------------- conversation -- */
@@ -169,7 +169,7 @@ export const TASK_FROM_CHAT = {
   priority: "High",
   project: "Greenwood Residence — Tower B",
   description:
-    "Update the kitchen quotation with the revised laminate pricing and the new installation charges. Send to the client workspace once approved internally.",
+    "Update the kitchen quotation with the revised laminate pricing and the new installation charges. Get it approved internally before it goes to the client.",
   proofFile: "Kitchen_Quotation_v3.pdf",
   proofSize: "412 KB",
   proofNote: "Updated laminate pricing and revised installation charges.",
@@ -250,8 +250,8 @@ export const WORKSPACE_PEOPLE = [
   { id: "aarav", side: "UrbanNest Interiors" },
   { id: "rahul", side: "UrbanNest Interiors" },
   { id: "neha", side: "UrbanNest Interiors" },
-  { id: "rohan", side: "Greenwood Builders" },
-  { id: "ananya", side: "Greenwood Builders" },
+  { id: "rohan", side: "UrbanNest Interiors" },
+  { id: "ananya", side: "UrbanNest Interiors" },
 ] as const;
 
 /* ----------------------------------------------------------------- tasks -- */

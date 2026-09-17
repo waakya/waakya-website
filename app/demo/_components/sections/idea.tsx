@@ -23,8 +23,8 @@ const LOOP = [
 ];
 
 const CONNECTED = [
-  { id: "people", icon: Users, label: "People" },
-  { id: "messages", icon: MessageSquare, label: "Messages" },
+  { id: "people", icon: Users, label: "Team" },
+  { id: "messages", icon: MessageSquare, label: "Conversations" },
   { id: "tasks", icon: CheckCircle2, label: "Tasks" },
   { id: "projects", icon: FolderKanban, label: "Projects" },
   { id: "documents", icon: FileText, label: "Documents" },

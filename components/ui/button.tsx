@@ -14,6 +14,8 @@ const buttonVariants = cva(
     "inline-flex shrink-0 items-center justify-center gap-2",
     "rounded-button font-semibold whitespace-nowrap",
     "transition-colors outline-none select-none",
+    // Keyboard focus must be visible on every button (WCAG 2.4.7).
+    "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neel-600",
     "disabled:pointer-events-none disabled:bg-paper-200 disabled:text-ink-400 disabled:border-transparent",
     "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5",
   ],

@@ -1,0 +1,15 @@
+- main:
+  - img "Waakya"
+  - heading "Create your business" [level=1]
+  - paragraph: Enter the name. You can invite staff afterwards.
+  - text: Business name
+  - textbox "Business name":
+    - /placeholder: "For example: Rakesh Properties"
+  - paragraph: Staff language
+  - radiogroup "Staff language":
+    - radio "हिंदी"
+    - radio "Hinglish"
+    - radio "English" [checked]
+  - button "Create business"
+- region "Notifications alt+T"
+- alert

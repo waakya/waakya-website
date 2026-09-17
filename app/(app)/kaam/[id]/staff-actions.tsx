@@ -75,8 +75,10 @@ export function StaffActions({
   const canStart = state === "accepted" && allowed.includes("in_progress");
 
   if (!primary && !canDecline) {
+    // Nothing left to do: the line sits in the page, not in a fixed bar that
+    // would cover the proof above it.
     return (
-      <footer className="fixed inset-x-0 bottom-[calc(4rem_+_env(safe-area-inset-bottom))] z-30 mx-auto w-full max-w-md border-t border-paper-200 bg-paper-50 p-4 lg:static lg:mt-6 lg:max-w-none lg:rounded-card lg:border lg:border-paper-200 lg:p-5">
+      <footer className="mx-auto mt-2 w-full max-w-md border-t border-paper-200 px-4 py-4 lg:mt-6 lg:max-w-none lg:rounded-card lg:border lg:border-paper-200 lg:p-5">
         <p className="flex items-center justify-center gap-2 text-center text-[13px] text-ink-400">
           <Shield className="size-4" aria-hidden="true" />
           {t.detail.recordLine}
@@ -87,7 +89,7 @@ export function StaffActions({
 
   return (
     <>
-      <footer className="fixed inset-x-0 bottom-[calc(4rem_+_env(safe-area-inset-bottom))] z-30 mx-auto w-full max-w-md border-t border-paper-200 bg-paper-50 p-4 lg:static lg:mt-6 lg:max-w-none lg:rounded-card lg:border lg:border-paper-200 lg:p-5">
+      <footer className="fixed inset-x-0 bottom-0 z-30 mx-auto w-full max-w-md border-t border-paper-200 bg-paper-50 p-4 pb-[calc(1rem_+_env(safe-area-inset-bottom))] lg:static lg:mt-6 lg:max-w-none lg:rounded-card lg:border lg:border-paper-200 lg:p-5">
         {error ? (
           <p
             role="alert"

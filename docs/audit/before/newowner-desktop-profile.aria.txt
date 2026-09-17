@@ -1,0 +1,19 @@
+- main:
+  - img
+  - text: Waakya Step 2 of 3
+  - heading "Tell us about your business" [level=1]
+  - paragraph: These details fill your quotations, invoices and other documents.
+  - text: Business name
+  - textbox "Business name": Mehta Facility Services
+  - text: Business address
+  - textbox "Business address"
+  - text: GSTIN
+  - textbox "GSTIN"
+  - text: Business phone
+  - textbox "Business phone"
+  - text: Business email
+  - textbox "Business email"
+  - button "Continue"
+  - button "Skip for now"
+- region "Notifications alt+T"
+- alert

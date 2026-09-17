@@ -1,0 +1,5 @@
+- main:
+  - img "Waakya"
+  - paragraph: This link no longer works. Ask the owner for a new one.
+- region "Notifications alt+T"
+- alert

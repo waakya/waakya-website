@@ -77,7 +77,7 @@ export function OwnerActions({
 
   return (
     <>
-      <footer className="fixed inset-x-0 bottom-[calc(4rem_+_env(safe-area-inset-bottom))] z-30 mx-auto w-full max-w-md border-t border-paper-200 bg-paper-50 p-4 lg:static lg:mt-6 lg:max-w-none lg:rounded-card lg:border lg:border-paper-200 lg:p-5">
+      <footer className="fixed inset-x-0 bottom-0 z-30 mx-auto w-full max-w-md border-t border-paper-200 bg-paper-50 p-4 pb-[calc(1rem_+_env(safe-area-inset-bottom))] lg:static lg:mt-6 lg:max-w-none lg:rounded-card lg:border lg:border-paper-200 lg:p-5">
         {error ? (
           <p
             role="alert"
@@ -128,47 +128,75 @@ export function OwnerActions({
           </div>
         ) : null}
 
-        <ul className="grid grid-cols-5 gap-2">
-          <ActionTile
-            primary
-            label={t.actions.call}
-            icon={<Phone />}
-            href={assigneePhone ? `tel:${assigneePhone}` : undefined}
-            onClick={
-              assigneePhone ? undefined : () => toast(t.detail.callNoNumber)
-            }
-          />
-          <ActionTile
-            label={t.actions.yaadDilao}
-            icon={<Bell />}
-            disabled={pending || ["done", "verified", "cancelled", "escalated"].includes(state)}
-            onClick={() =>
-              startTransition(async () => {
-                const result = await remindAction(taskId);
-                if (result.ok) toast(t.detail.reminderSent);
-                else setError(result.message);
-              })
-            }
-          />
-          <ActionTile
-            label={t.actions.kisiAurKo}
-            icon={<RefreshCw />}
-            disabled={pending || !allowed.includes("reassigned")}
-            onClick={() => setSheet("reassign")}
-          />
-          <ActionTile
-            label={t.actions.samayBadlo}
-            icon={<Clock />}
-            disabled={pending}
-            onClick={() => setSheet("deadline")}
-          />
-          <ActionTile
-            label={t.actions.cancel}
-            icon={<X />}
-            disabled={pending || !allowed.includes("cancelled")}
-            onClick={() => setSheet("cancel")}
-          />
-        </ul>
+        {/* Only the actions that still apply. A closed task keeps Call and
+            nothing else, so no greyed tiles crowd the thumb zone. */}
+        {(() => {
+          const closedState = ["verified", "cancelled"].includes(state);
+          const canRemind = !["done", "verified", "cancelled", "escalated"].includes(state);
+          const canReassign = allowed.includes("reassigned");
+          const canChangeTime = !["done", "verified", "cancelled"].includes(state);
+          const canCancel = allowed.includes("cancelled");
+          const tiles = [
+            <ActionTile
+              key="call"
+              primary
+              label={t.actions.call}
+              icon={<Phone />}
+              href={assigneePhone ? `tel:${assigneePhone}` : undefined}
+              onClick={assigneePhone ? undefined : () => toast(t.detail.callNoNumber)}
+            />,
+            canRemind ? (
+              <ActionTile
+                key="remind"
+                label={t.actions.yaadDilao}
+                icon={<Bell />}
+                disabled={pending}
+                onClick={() =>
+                  startTransition(async () => {
+                    const result = await remindAction(taskId);
+                    if (result.ok) toast(t.detail.reminderSent);
+                    else setError(result.message);
+                  })
+                }
+              />
+            ) : null,
+            canReassign ? (
+              <ActionTile
+                key="reassign"
+                label={t.actions.kisiAurKo}
+                icon={<RefreshCw />}
+                disabled={pending}
+                onClick={() => setSheet("reassign")}
+              />
+            ) : null,
+            canChangeTime ? (
+              <ActionTile
+                key="time"
+                label={t.actions.samayBadlo}
+                icon={<Clock />}
+                disabled={pending}
+                onClick={() => setSheet("deadline")}
+              />
+            ) : null,
+            canCancel && !closedState ? (
+              <ActionTile
+                key="cancel"
+                label={t.actions.cancel}
+                icon={<X />}
+                disabled={pending}
+                onClick={() => setSheet("cancel")}
+              />
+            ) : null,
+          ].filter(Boolean);
+          return (
+            <ul
+              className="grid gap-2"
+              style={{ gridTemplateColumns: `repeat(${Math.max(tiles.length, 2)}, minmax(0, 1fr))` }}
+            >
+              {tiles}
+            </ul>
+          );
+        })()}
       </footer>
 
       <Sheet

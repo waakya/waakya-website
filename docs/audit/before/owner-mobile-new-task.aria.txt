@@ -1,0 +1,21 @@
+- banner:
+  - button "Close"
+  - heading "Send this?" [level=1]
+- button "Who Rahul Verma"
+- 'button "What For example: photos of the Sector 62 flat"'
+- text: By when
+- group "By when?":
+  - button "Tomorrow 5:00 pm" [pressed]
+  - button "1 hour"
+  - button "Tomorrow morning 9:00 am"
+- text: Priority
+- group "Priority":
+  - button "Urgent"
+  - button "Normal" [pressed]
+- text: Proof Not needed
+- switch "Proof Not needed"
+- 'button "Note For example: the client comes tomorrow"'
+- paragraph: If it is not seen in 15 minutes, you will be told.
+- button "Send" [disabled]
+- region "Notifications alt+T"
+- alert

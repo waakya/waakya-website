@@ -98,8 +98,8 @@ export function DocumentUploader({
   }
 
   return (
-    <div>
-      <div className="flex flex-wrap items-center gap-2">
+    <div className="min-w-0">
+      <div className="flex min-w-0 flex-wrap items-center gap-2">
         {!compact ? (
           <label className="sr-only" htmlFor="doc-category">
             {p.documents.category}
@@ -110,7 +110,7 @@ export function DocumentUploader({
           aria-label={p.documents.category}
           value={category}
           onChange={(event) => setCategory(event.target.value as DocumentCategory)}
-          className="h-10 rounded-button border border-paper-200 bg-paper-0 px-3 text-[14px] text-ink-900"
+          className="h-10 max-w-full min-w-0 rounded-button border border-paper-200 bg-paper-0 px-3 text-[14px] text-ink-900"
         >
           {DOCUMENT_CATEGORIES.map((value) => (
             <option key={value} value={value}>

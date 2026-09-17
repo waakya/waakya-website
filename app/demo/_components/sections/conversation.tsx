@@ -46,7 +46,7 @@ export function ConversationSection(props: SectionProps) {
       <div className="wk-pop wk-d2 mt-6">
         <AppWindow
           title={BUSINESS.name}
-          subtitle="Messages"
+          subtitle="Conversations"
           bodyClassName="flex h-[min(60vh,540px)] overflow-hidden"
         >
           {/* conversation list */}

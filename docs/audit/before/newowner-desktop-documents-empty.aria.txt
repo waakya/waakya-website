@@ -1,0 +1,72 @@
+- navigation "Mehta Facility Services":
+  - link "Waakya":
+    - /url: /aaj
+    - img
+    - text: Waakya
+  - paragraph: Business
+  - paragraph: Mehta Facility Services
+  - list:
+    - listitem:
+      - link "Today":
+        - /url: /aaj
+    - listitem:
+      - link "Conversations":
+        - /url: /baat
+    - listitem:
+      - link "Work":
+        - /url: /work
+    - listitem:
+      - link "Projects":
+        - /url: /projects
+    - listitem:
+      - link "Documents":
+        - /url: /documents
+    - listitem:
+      - link "Attendance":
+        - /url: /hazri
+    - listitem:
+      - link "Approvals":
+        - /url: /approvals
+    - listitem:
+      - link "Team":
+        - /url: /staff
+  - list:
+    - listitem:
+      - link "Search":
+        - /url: /search
+    - listitem:
+      - link "Updates":
+        - /url: /khabar
+    - listitem:
+      - link "Daily routine":
+        - /url: /checklists
+    - listitem:
+      - link "Settings":
+        - /url: /settings
+  - paragraph: Anil Mehta
+  - paragraph: Owner
+- main:
+  - heading "Documents" [level=1]
+  - paragraph: Your business paperwork, kept next to the work it belongs to.
+  - link "Templates":
+    - /url: /documents/templates
+  - text: Category
+  - combobox "Category":
+    - option "Quotation"
+    - option "Proposal"
+    - option "Invoice"
+    - option "Agreement"
+    - option "NDA"
+    - option "Purchase order"
+    - option "Work order"
+    - option "Receipt"
+    - option "Scope of work"
+    - option "Report"
+    - option "Meeting minutes"
+    - option "Other" [selected]
+  - button "Choose File"
+  - button "Upload"
+  - paragraph: No documents yet
+  - paragraph: Upload a quotation, an invoice or a report, or start from a template.
+- region "Notifications alt+T"
+- alert

@@ -1,5 +1,9 @@
+import Link from "next/link";
+import { FilePlus2 } from "lucide-react";
+
 import { createClient } from "@/lib/supabase/server";
 import { getPhase1 } from "@/lib/i18n/phase1";
+import { getUx } from "@/lib/i18n/ux";
 import type { Locale } from "@/lib/i18n";
 import { listTaskDocuments } from "@/lib/documents/queries";
 import { DocumentList } from "@/components/waakya/document-list";
@@ -25,6 +29,7 @@ export async function TaskContext({
   manages: boolean;
 }) {
   const p = getPhase1(locale);
+  const ux = getUx(locale);
   const supabase = await createClient();
   const [documents, { data: task }, { data: projects }] = await Promise.all([
     listTaskDocuments(orgId, taskId),
@@ -41,7 +46,7 @@ export async function TaskContext({
   }
 
   return (
-    <section className="mx-auto w-full max-w-3xl px-4 pb-8" aria-label={p.documents.attached}>
+    <section className="mx-auto w-full max-w-3xl min-w-0 px-4 pb-8" aria-label={p.documents.attached}>
       <div className="flex flex-col gap-4 rounded-card border border-paper-200 bg-paper-0 p-4">
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-[13px] font-semibold text-ink-700">{p.documents.linkedProject}</span>
@@ -55,7 +60,16 @@ export async function TaskContext({
         <div>
           <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
             <h2 className="text-[13px] font-semibold text-ink-700">{p.documents.attached}</h2>
-            <DocumentUploader locale={locale} taskId={taskId} compact />
+            <div className="flex min-w-0 flex-wrap items-center gap-2">
+              <Link
+                href={`/documents/templates?task=${taskId}${task?.project_id ? `&project=${task.project_id}` : ""}`}
+                className="inline-flex h-9 items-center gap-1.5 rounded-button border border-neel-200 bg-paper-0 px-3 text-[13.5px] font-semibold text-neel-700 hover:bg-neel-50"
+              >
+                <FilePlus2 className="size-4" aria-hidden="true" />
+                {ux.templates.createFromTemplate}
+              </Link>
+              <DocumentUploader locale={locale} taskId={taskId} compact />
+            </div>
           </div>
           {documents.length ? (
             <DocumentList locale={locale} documents={documents} viewerId={viewerId} manages={manages} showLinks={false} />

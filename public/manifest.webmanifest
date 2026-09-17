@@ -1,7 +1,7 @@
 {
   "name": "Waakya",
   "short_name": "Waakya",
-  "description": "Bolo. Ho jayega.",
+  "description": "All your business work. One workspace.",
   "id": "/",
   "start_url": "/",
   "scope": "/",
@@ -9,7 +9,7 @@
   "orientation": "portrait",
   "background_color": "#FAF8F3",
   "theme_color": "#3541C4",
-  "lang": "hi-IN",
+  "lang": "en-IN",
   "dir": "ltr",
   "icons": [
     {

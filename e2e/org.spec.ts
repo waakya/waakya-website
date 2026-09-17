@@ -52,7 +52,7 @@ test("an owner creates a business, invites staff, and the staff member joins", a
   }
 
   await clearPendingInvites(page);
-  await expect(page.getByRole("heading", { name: "Staff" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Team" })).toBeVisible();
   await expect(onScreen(page.getByText("Waakya Test Co")).first()).toBeVisible();
 
   // Invite the staff member and capture the link the owner would send.
@@ -104,7 +104,7 @@ test("an owner creates a business, invites staff, and the staff member joins", a
   // The owner now sees the staff member in the team list — not merely as a
   // pending invite, which is a different list on the same screen.
   await page.goto("/staff");
-  const team = page.getByRole("list", { name: "Staff" });
+  const team = page.getByRole("list", { name: "Team" });
   await expect(team.getByText("Raju")).toBeVisible();
   await expect(team.getByText("Rakesh")).toBeVisible();
   await expect(page.getByText(/· [2-9] log$/)).toBeVisible();

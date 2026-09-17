@@ -22,7 +22,7 @@ export default async function PrivacyPage() {
     <main className="mx-auto min-h-dvh w-full max-w-md p-4">
       <header className="flex items-center gap-2">
         <Link
-          href="/login"
+          href="/"
           aria-label={t.actions.back}
           className="flex size-tap items-center justify-center rounded-full text-ink-900"
         >

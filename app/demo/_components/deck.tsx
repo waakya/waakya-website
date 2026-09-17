@@ -129,7 +129,7 @@ export function Deck() {
       {/* progress */}
       <div
         aria-hidden="true"
-        className="absolute inset-x-0 top-0 z-30 h-[2px] bg-[rgba(255,255,255,0.06)]"
+        className="absolute inset-x-0 top-0 z-30 h-[2px] bg-[rgba(27,32,96,0.08)]"
       >
         <div
           className="h-full bg-[var(--d-accent)] transition-[width] duration-500 ease-out"
@@ -146,20 +146,20 @@ export function Deck() {
 
       {/* the section */}
       <main className="wk-scroll relative z-10 flex-1 overflow-y-auto">
-        <div key={current.id} className="flex min-h-full items-center pb-24">
+        <div key={current.id} className="flex min-h-full items-center pb-32">
           <current.Component onNext={next} onGoTo={goTo} />
         </div>
       </main>
 
       {/* controls */}
       <div className="pointer-events-none absolute inset-x-0 bottom-0 z-30 flex justify-center pb-5">
-        <div className="pointer-events-auto flex items-center gap-1.5 rounded-full border border-[var(--d-line)] bg-[rgba(9,10,28,0.82)] px-2 py-1.5 backdrop-blur-md">
+        <div className="pointer-events-auto flex items-center gap-1.5 rounded-full border border-[var(--d-line)] bg-white px-2 py-1.5 shadow-[0_10px_30px_-18px_rgba(27,32,96,0.4)]">
           <button
             type="button"
             onClick={previous}
             disabled={index === 0}
             aria-label="Previous section"
-            className="grid size-8 place-items-center rounded-full text-[var(--d-dim)] transition-colors hover:bg-[var(--d-veil)] hover:text-[var(--d-text)] disabled:opacity-30 disabled:hover:bg-transparent"
+            className="grid size-10 place-items-center rounded-full text-[var(--d-dim)] transition-colors hover:bg-[var(--d-veil)] hover:text-[var(--d-text)] disabled:opacity-30 disabled:hover:bg-transparent"
           >
             <ChevronLeft className="size-4" aria-hidden="true" />
           </button>
@@ -175,10 +175,10 @@ export function Deck() {
                 aria-label={`Go to ${section.label}`}
                 aria-current={sectionIndex === index ? "true" : undefined}
                 className={cn(
-                  "h-1.5 rounded-full transition-all duration-300",
+                  "relative h-1.5 rounded-full transition-all duration-300 before:absolute before:-inset-x-1.5 before:-inset-y-3 before:content-['']",
                   sectionIndex === index
                     ? "w-6 bg-[var(--d-accent-bright)]"
-                    : "w-1.5 bg-[rgba(255,255,255,0.22)] hover:bg-[rgba(255,255,255,0.45)]",
+                    : "w-1.5 bg-[rgba(27,32,96,0.22)] hover:bg-[rgba(27,32,96,0.45)]",
                 )}
               />
             ))}
@@ -189,7 +189,7 @@ export function Deck() {
             onClick={next}
             disabled={index === SECTIONS.length - 1}
             aria-label="Next section"
-            className="grid size-8 place-items-center rounded-full text-[var(--d-dim)] transition-colors hover:bg-[var(--d-veil)] hover:text-[var(--d-text)] disabled:opacity-30 disabled:hover:bg-transparent"
+            className="grid size-10 place-items-center rounded-full text-[var(--d-dim)] transition-colors hover:bg-[var(--d-veil)] hover:text-[var(--d-text)] disabled:opacity-30 disabled:hover:bg-transparent"
           >
             <ChevronRight className="size-4" aria-hidden="true" />
           </button>
@@ -209,7 +209,7 @@ export function Deck() {
             onClick={reset}
             aria-label="Reset demo"
             title="Reset demo"
-            className="grid size-8 place-items-center rounded-full text-[var(--d-dim)] transition-colors hover:bg-[var(--d-veil)] hover:text-[var(--d-text)]"
+            className="grid size-10 place-items-center rounded-full text-[var(--d-dim)] transition-colors hover:bg-[var(--d-veil)] hover:text-[var(--d-text)]"
           >
             <RotateCcw className="size-3.5" aria-hidden="true" />
           </button>
@@ -219,7 +219,7 @@ export function Deck() {
             onClick={toggleFullscreen}
             aria-label={isFullscreen ? "Leave fullscreen" : "Enter fullscreen"}
             title={isFullscreen ? "Leave fullscreen" : "Enter fullscreen"}
-            className="grid size-8 place-items-center rounded-full text-[var(--d-dim)] transition-colors hover:bg-[var(--d-veil)] hover:text-[var(--d-text)]"
+            className="grid size-10 place-items-center rounded-full text-[var(--d-dim)] transition-colors hover:bg-[var(--d-veil)] hover:text-[var(--d-text)]"
           >
             {isFullscreen ? (
               <Minimize2 className="size-3.5" aria-hidden="true" />

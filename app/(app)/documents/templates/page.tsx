@@ -10,7 +10,9 @@ import { TemplateBuilder } from "./template-builder";
 export const metadata: Metadata = { title: "Templates" };
 
 /** Choose a template, fill the business fields, preview, and keep it. */
-export default async function TemplatesPage() {
+export default async function TemplatesPage({ searchParams }: PageProps<"/documents/templates">) {
+  const params = await searchParams;
+  const pick = (value: unknown) => (typeof value === "string" && /^[0-9a-f-]{36}$/.test(value) ? value : null);
   const viewer = await requireOrg();
   const shell = await shellFor(viewer);
   const supabase = await createClient();
@@ -42,6 +44,9 @@ export default async function TemplatesPage() {
           email: org?.email ?? null,
         }}
         projects={projects ?? []}
+        initialProjectId={pick(params.project)}
+        taskId={pick(params.task)}
+        initialTemplateKey={typeof params.template === "string" ? params.template : null}
       />
     </AppShell>
   );

@@ -31,19 +31,23 @@ test("the landing page sells the product to a logged-out visitor", async ({
     page.getByRole("banner").locator('[translate="no"]', { hasText: "Waakya" }),
   ).toBeVisible();
 
-  // Phase 1 is one business and its team: the promise, the four steps, and
-  // no claim about working across businesses.
+  // The positioning, in the first viewport.
+  await expect(page.getByText("The new era of business communication", { exact: true })).toBeInViewport();
   await expect(
-    page.getByRole("heading", { level: 1, name: /Every conversation\.\s*A clear next step\./ }),
-  ).toBeVisible();
-  for (const step of ["Talk", "Assign", "Execute", "Prove"]) {
-    await expect(page.getByText(step, { exact: true }).first()).toBeVisible();
+    page.getByRole("heading", { level: 1, name: /All your business work\.\s*One workspace\./ }),
+  ).toBeInViewport();
+  // The chain, and every Phase-1 capability named on the page.
+  for (const stage of ["Conversation", "Commitment", "Execution", "Proof", "Record"]) {
+    await expect(page.getByRole("list", { name: "How work moves in Waakya" })).toContainText(stage);
   }
+  for (const capability of ["Conversations", "Work & tasks", "Approvals", "Documents", "Business templates", "Search", "Team", "Attendance", "Leave", "Holidays", "Notifications"]) {
+    await expect(page.locator("#inside").getByText(capability, { exact: true }).first()).toBeVisible();
+  }
+  await expect(page.locator("#inside").getByText("Office renovation")).toBeVisible();
   await expect(page.getByText(/two businesses|shared workspace/i)).toHaveCount(0);
-  await expect(page.getByRole("heading", { name: /Less chasing\./ })).toBeVisible();
 
   // The sections a visitor is promised by the nav all exist.
-  for (const id of ["product", "how", "businesses"]) {
+  for (const id of ["how", "inside", "businesses", "faq"]) {
     await expect(page.locator(`#${id}`)).toHaveCount(1);
   }
 
@@ -53,14 +57,15 @@ test("the landing page sells the product to a logged-out visitor", async ({
   ).toHaveAttribute("href", "/login");
 });
 
-test("the walkthrough moves a quotation from message to verified", async ({ page }) => {
+test("the five steps move one quotation from message to record", async ({ page }) => {
   await signOut(page);
   await page.goto("/");
-  const tabs = page.getByRole("tablist", { name: "Walkthrough" });
-  await tabs.getByRole("tab", { name: "Assign a task" }).click();
-  await expect(page.getByRole("tabpanel").getByText("Accepted")).toBeVisible();
-  await tabs.getByRole("tab", { name: "Verify" }).click();
+  const stages = page.getByRole("tablist", { name: "From conversation to record" });
+  await stages.getByRole("tab", { name: /Commitment/ }).click();
+  await expect(page.getByRole("tabpanel").getByText("Task created")).toBeVisible();
+  await stages.getByRole("tab", { name: /Record/ }).click();
   await expect(page.getByRole("tabpanel").getByText("Verified by Priya · 4:52 PM")).toBeVisible();
+  await expect(page.getByRole("tabpanel").getByRole("link", { name: /Get started/ })).toHaveAttribute("href", "/login");
 });
 
 test("a signed-in visitor is taken to their day, not sold to", async ({ page }) => {

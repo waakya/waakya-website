@@ -98,11 +98,11 @@ test("switching language reaches every screen, not just the shell", async ({
   await expect(onScreen(page.getByText("Needs you")).first()).toBeVisible();
 
   await page.goto("/naya");
-  await expect(onScreen(page.getByRole("heading", { name: "Send this?" }))).toBeVisible();
+  await expect(onScreen(page.getByRole("heading", { name: "New task" }))).toBeVisible();
   await expect(onScreen(page.getByRole("button", { name: /^Who/ }))).toBeVisible();
 
   await page.goto("/staff");
-  await expect(onScreen(page.getByRole("heading", { name: "Staff" }))).toBeVisible();
+  await expect(onScreen(page.getByRole("heading", { name: "Team" }))).toBeVisible();
 
   // And back the other way.
   await signInAs(page, "owner", "hi");

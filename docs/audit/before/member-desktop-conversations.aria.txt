@@ -1,0 +1,54 @@
+- navigation "Sharma Interiors":
+  - link "Waakya":
+    - /url: /aaj
+    - img
+    - text: Waakya
+  - paragraph: Business
+  - paragraph: Sharma Interiors
+  - list:
+    - listitem:
+      - link "Today":
+        - /url: /aaj
+    - listitem:
+      - link "Conversations":
+        - /url: /baat
+    - listitem:
+      - link "Work":
+        - /url: /work
+    - listitem:
+      - link "Projects":
+        - /url: /projects
+    - listitem:
+      - link "Documents":
+        - /url: /documents
+    - listitem:
+      - link "Attendance":
+        - /url: /hazri
+    - listitem:
+      - link "Approvals":
+        - /url: /approvals
+  - list:
+    - listitem:
+      - link "Search":
+        - /url: /search
+    - listitem:
+      - link "Updates":
+        - /url: /khabar
+    - listitem:
+      - link "Settings":
+        - /url: /settings
+  - paragraph: Rahul Verma
+  - paragraph: Staff
+- main:
+  - heading "Conversations" [level=1]
+  - button "New conversation"
+  - button "New group"
+  - list:
+    - listitem:
+      - link "Site team mu5kz8y9 Shared site-plan-mu5kz8y9.pdf 7:14 PM 1":
+        - /url: /baat/83ac5ba1-22ce-47fb-96e2-2e8c3534fe91
+    - listitem:
+      - link "Priya Sharma Please send the revised quotation mu5kz8y9 7:14 PM":
+        - /url: /baat/7346ffb9-f14e-457f-8c08-b91dd02a78be
+- region "Notifications alt+T"
+- alert

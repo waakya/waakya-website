@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { StateChip } from "@/components/ui/state-chip";
 import { getDictionary, type Locale } from "@/lib/i18n";
+import { getUx } from "@/lib/i18n/ux";
 import {
   createTaskFromMessage,
   postMessage,
@@ -95,6 +96,7 @@ export function Thread({
   }
 
   const t = getDictionary(locale);
+  const ux = getUx(locale);
   const [body, setBody] = React.useState("");
   const [error, setError] = React.useState<string | null>(null);
   const [openFor, setOpenFor] = React.useState<string | null>(null);
@@ -137,7 +139,7 @@ export function Thread({
                   className={cn(
                     "rounded-card px-3.5 py-2.5 text-[15px] leading-[21px]",
                     message.mine
-                      ? "bg-neel-600 text-white"
+                      ? "border border-neel-200 bg-neel-50 text-ink-900"
                       : "border border-paper-200 bg-paper-0 text-ink-900",
                   )}
                 >
@@ -149,7 +151,7 @@ export function Thread({
                       onClick={() => openAttachment(doc.id)}
                       className={cn(
                         "mt-2 flex w-full items-center gap-2 rounded-[10px] px-2.5 py-2 text-left text-[13.5px] font-semibold",
-                        message.mine ? "bg-white/15 text-white" : "bg-neel-50 text-neel-800",
+                        message.mine ? "bg-paper-0 text-neel-800" : "bg-neel-50 text-neel-800",
                       )}
                     >
                       <FileText className="size-4 shrink-0" aria-hidden="true" />
@@ -169,14 +171,15 @@ export function Thread({
               </div>
             </div>
 
-            {/* Any message somebody else sent can become work. */}
-            {!message.mine ? (
-              <div className={cn("mt-1", message.taskId && "mb-2")}>
-                {message.taskId ? (
-                  <Link href={`/kaam/${message.taskId}`} className="inline-flex">
-                    <StateChip tone="hara">{t.baat.taskMade}</StateChip>
-                  </Link>
-                ) : openFor === message.id ? (
+            {/* Any message can become work — your own instruction included,
+                which is the most common case. */}
+            <div className={cn("mt-1.5 flex", message.mine && "justify-end", message.taskId && "mb-2")}>
+              {message.taskId ? (
+                <Link href={`/kaam/${message.taskId}`} className="inline-flex">
+                  <StateChip tone="hara">{t.baat.taskMade}</StateChip>
+                </Link>
+              ) : openFor === message.id ? (
+                <div className="w-full max-w-[92%]">
                   <TaskFromMessage
                     locale={locale}
                     conversationId={conversationId}
@@ -189,18 +192,19 @@ export function Thread({
                     }}
                     onCancel={() => setOpenFor(null)}
                   />
-                ) : (
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={() => setOpenFor(message.id)}
-                  >
-                    <ListPlus aria-hidden="true" />
-                    {t.baat.createTask}
-                  </Button>
-                )}
-              </div>
-            ) : null}
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setOpenFor(message.id)}
+                  data-testid="make-task"
+                  className="inline-flex min-h-10 items-center gap-1.5 rounded-button border border-neel-200 bg-paper-0 px-3 text-[13.5px] font-semibold text-neel-700 transition-colors hover:border-neel-400 hover:bg-neel-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neel-600"
+                >
+                  <ListPlus className="size-4" aria-hidden="true" />
+                  {ux.thread.makeTask}
+                </button>
+              )}
+            </div>
           </div>
         ))}
       </div>
@@ -211,7 +215,7 @@ export function Thread({
         </p>
       ) : null}
 
-      <form onSubmit={send} className="flex items-center gap-2 border-t border-paper-200 p-3">
+      <form onSubmit={send} className="sticky bottom-0 z-20 flex items-center gap-2 border-t border-paper-200 bg-paper-50 p-3 pb-[calc(0.75rem_+_env(safe-area-inset-bottom))]">
         <input
           ref={fileInput}
           type="file"
@@ -265,7 +269,12 @@ function TaskFromMessage({
 }) {
   const t = getDictionary(locale);
   const [title, setTitle] = React.useState(message.body.slice(0, 140));
-  const [assignee, setAssignee] = React.useState(message.authorId);
+  // Your own message is an instruction to somebody else; start with them.
+  const [assignee, setAssignee] = React.useState(
+    message.mine
+      ? (members.find((member) => member.userId !== message.authorId)?.userId ?? message.authorId)
+      : message.authorId,
+  );
   const [error, setError] = React.useState<string | null>(null);
   const [pending, startTransition] = React.useTransition();
 

@@ -1,0 +1,41 @@
+- main:
+  - heading "Sharma Interiors" [level=1]
+  - list:
+    - listitem:
+      - link "Projects":
+        - /url: /projects
+    - listitem:
+      - link "Documents":
+        - /url: /documents
+    - listitem:
+      - link "Approvals":
+        - /url: /approvals
+  - list:
+    - listitem:
+      - link "Search":
+        - /url: /search
+    - listitem:
+      - link "Updates 8":
+        - /url: /khabar
+    - listitem:
+      - link "Settings":
+        - /url: /settings
+- navigation "More":
+  - list:
+    - listitem:
+      - link "Today":
+        - /url: /aaj
+    - listitem:
+      - link "Conversations":
+        - /url: /baat
+    - listitem:
+      - link "Work":
+        - /url: /work
+    - listitem:
+      - link "Attendance":
+        - /url: /hazri
+    - listitem:
+      - link "More":
+        - /url: /more
+- region "Notifications alt+T"
+- alert

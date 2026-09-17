@@ -11,17 +11,18 @@ import { StateChip } from "@/components/ui/state-chip";
 import { AppShell } from "@/components/waakya/app-shell";
 import { InviteSheet } from "./invite-sheet";
 import { PendingInvites } from "./pending-invites";
-import { getLocale } from "@/lib/i18n/server";
+import { shellFor } from "@/lib/auth/shell";
 import { getTeamToday } from "@/lib/attendance/queries";
 import { getOrgTasks } from "@/lib/tasks/queries";
 import { getPhase1 } from "@/lib/i18n/phase1";
 import { formatPunchTime } from "@/lib/attendance/time";
 
-export const metadata: Metadata = { title: "Staff" };
+export const metadata: Metadata = { title: "Team" };
 
 export default async function StaffPage() {
   const viewer = await requireOrg();
-  const locale = await getLocale();
+  const shell = await shellFor(viewer);
+  const locale = shell.locale;
   const t = getDictionary(locale);
 
   const supabase = await createClient();
@@ -49,21 +50,23 @@ export default async function StaffPage() {
   }
 
   return (
-    <AppShell
-      locale={locale}
-      variant={canManage(viewer.role) ? "owner" : "staff"}
-      orgName={viewer.org.name}
-      personName={viewer.fullName ?? "—"}
-      roleLabel={viewer.role ? getDictionary(locale).org.roles[viewer.role] : ""}
-      unread={0}
-    >
+    <AppShell {...shell}>
       <main className="flex-1 p-4 pb-6">
-        <h1 className="text-[24px] leading-[30px] font-bold text-ink-900">
-          {t.org.teamTitle}
-        </h1>
-        <p className="num mt-0.5 text-[15px] text-ink-500">
-          {viewer.org.name} · {t.org.teamSubtitle(members.length)}
-        </p>
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <h1 className="text-[24px] leading-[30px] font-bold text-ink-900">
+              {t.org.teamTitle}
+            </h1>
+            <p className="num mt-0.5 text-[15px] text-ink-500">
+              {viewer.org.name} · {t.org.teamSubtitle(members.length)}
+            </p>
+          </div>
+          {manages ? (
+            <div className="hidden lg:block">
+              <InviteSheet locale={locale} compact />
+            </div>
+          ) : null}
+        </div>
 
         <ul aria-label={t.org.teamTitle} className="mt-5 flex flex-col gap-2">
           {members.map((member) => (
@@ -120,7 +123,7 @@ export default async function StaffPage() {
       </main>
 
       {manages ? (
-        <div className="sticky bottom-16 z-20 px-4 pb-3">
+        <div className="sticky bottom-16 z-20 px-4 pb-3 lg:hidden">
           <InviteSheet locale={locale} />
         </div>
       ) : null}

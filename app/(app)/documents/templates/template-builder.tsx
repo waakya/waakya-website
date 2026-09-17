@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { type Locale } from "@/lib/i18n";
 import { getPhase1 } from "@/lib/i18n/phase1";
+import { getUx } from "@/lib/i18n/ux";
 import { saveTemplateDocument } from "@/lib/actions/documents";
 import {
   renderTemplateHtml,
@@ -28,17 +29,31 @@ export function TemplateBuilder({
   templates,
   business,
   projects,
+  initialProjectId = null,
+  taskId = null,
+  initialTemplateKey = null,
 }: {
   locale: Locale;
   templates: TemplateDefinition[];
   business: BusinessDetails;
   projects: { id: string; name: string }[];
+  /** Opened from a project or a task: the document belongs there. */
+  initialProjectId?: string | null;
+  taskId?: string | null;
+  initialTemplateKey?: string | null;
 }) {
   const p = getPhase1(locale);
+  const ux = getUx(locale);
   const router = useRouter();
-  const [chosen, setChosen] = React.useState<TemplateDefinition | null>(null);
-  const [data, setData] = React.useState<Record<string, string>>({});
-  const [projectId, setProjectId] = React.useState<string>("");
+  const [chosen, setChosen] = React.useState<TemplateDefinition | null>(
+    () => templates.find((template) => template.key === initialTemplateKey) ?? null,
+  );
+  const [data, setData] = React.useState<Record<string, string>>(() => {
+    const initial: Record<string, string> = {};
+    if (initialTemplateKey) initial.date = workDate();
+    return initial;
+  });
+  const [projectId, setProjectId] = React.useState<string>(initialProjectId ?? "");
   const [error, setError] = React.useState<string | null>(null);
   const [savedId, setSavedId] = React.useState<string | null>(null);
   const [pending, startTransition] = React.useTransition();
@@ -60,6 +75,7 @@ export function TemplateBuilder({
         templateKey: chosen.key,
         data,
         projectId: projectId || null,
+        taskId,
       });
       if (!result.ok) {
         setError(result.message);
@@ -124,7 +140,28 @@ export function TemplateBuilder({
           noValidate
           className="flex flex-col gap-3"
         >
-          <h2 className="text-[13px] font-semibold text-ink-700">{p.templates.fields}</h2>
+          {projects.length > 0 ? (
+            <div>
+              <Label htmlFor="template-project">{ux.templates.linkProject}</Label>
+              <select
+                id="template-project"
+                value={projectId}
+                onChange={(event) => setProjectId(event.target.value)}
+                className="mt-1 h-11 w-full rounded-button border border-paper-200 bg-paper-0 px-3 text-[15px]"
+              >
+                <option value="">{p.common.none}</option>
+                {projects.map((project) => (
+                  <option key={project.id} value={project.id}>
+                    {project.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          ) : null}
+          {taskId ? (
+            <p className="rounded-card bg-neel-50 px-3 py-2 text-[14px] text-neel-800">{ux.templates.linkedTask}</p>
+          ) : null}
+          <h2 className="mt-1 text-[13px] font-semibold text-ink-700">{p.templates.fields}</h2>
           {chosen.fields.map((field) => {
             const id = `field-${field.key}`;
             const label = p.templates.fieldLabels[field.key] ?? field.key;
@@ -156,24 +193,6 @@ export function TemplateBuilder({
             );
           })}
 
-          {projects.length > 0 ? (
-            <div>
-              <Label htmlFor="template-project">{p.documents.linkedProject}</Label>
-              <select
-                id="template-project"
-                value={projectId}
-                onChange={(event) => setProjectId(event.target.value)}
-                className="mt-1 h-11 w-full rounded-button border border-paper-200 bg-paper-0 px-3 text-[15px]"
-              >
-                <option value="">{p.common.none}</option>
-                {projects.map((project) => (
-                  <option key={project.id} value={project.id}>
-                    {project.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-          ) : null}
 
           {error ? (
             <p role="alert" data-testid="template-error" className="rounded-card bg-laal-100 px-3 py-2 text-[14px] text-laal-700">
@@ -196,13 +215,13 @@ export function TemplateBuilder({
           </Button>
         </form>
 
-        <section aria-label={p.templates.preview}>
+        <section aria-label={p.templates.preview} className="xl:sticky xl:top-4 xl:self-start">
           <h2 className="mb-2 text-[13px] font-semibold text-ink-700">{p.templates.preview}</h2>
           <iframe
             title={p.templates.preview}
             srcDoc={html}
             sandbox=""
-            className="h-[640px] w-full rounded-card border border-paper-200 bg-white"
+            className="h-[480px] w-full rounded-card border border-paper-200 bg-white xl:h-[720px]"
           />
         </section>
       </div>

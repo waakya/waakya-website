@@ -1,0 +1,38 @@
+- main:
+  - heading "Settings" [level=1]
+  - heading "Language" [level=2]
+  - radiogroup "Language":
+    - radio "हिंदी"
+    - radio "Hinglish"
+    - radio "English" [checked]
+  - heading "Your name" [level=2]
+  - text: Your name
+  - textbox "Your name":
+    - /placeholder: For example, Rakesh Sharma
+    - text: Rahul Verma
+  - button "Save name" [disabled]
+  - heading "Business" [level=2]
+  - paragraph: Sharma Interiors
+  - paragraph: Staff
+  - heading "Account" [level=2]
+  - paragraph: audit-member-mu5kz8y9@waakya.test
+  - button "Sign out"
+- navigation "More":
+  - list:
+    - listitem:
+      - link "Today":
+        - /url: /aaj
+    - listitem:
+      - link "Conversations":
+        - /url: /baat
+    - listitem:
+      - link "Work":
+        - /url: /work
+    - listitem:
+      - link "Attendance":
+        - /url: /hazri
+    - listitem:
+      - link "More":
+        - /url: /more
+- region "Notifications alt+T"
+- alert

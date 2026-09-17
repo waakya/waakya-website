@@ -1,3 +1,4 @@
+import { horizontalOverflow } from "./support/overflow";
 import { expect, test, type Page } from "@playwright/test";
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/supabase/types";
@@ -159,16 +160,25 @@ test("a member cannot manage projects; an outsider sees nothing", async ({ page 
   await expect(page.getByRole("button", { name: "New project" })).toHaveCount(0);
 });
 
-test("new Phase 1 screens load on a phone", async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
-  await signInAs(page, "staff", "en");
-  for (const path of ["/aaj", "/baat", "/work", "/projects", "/documents", "/documents/templates", "/hazri", "/approvals", "/search", "/more", "/khabar"]) {
-    const response = await page.goto(path);
-    expect(response?.status(), path).toBeLessThan(400);
-    const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
-    expect(overflow, `${path} scrolls sideways`).toBeLessThanOrEqual(1);
-  }
-});
+for (const who of ["owner", "staff"] as const) {
+  test(`every Phase 1 screen fits a 390px phone (${who})`, async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await signInAs(page, who, "en");
+    const paths = ["/aaj", "/baat", "/work", "/projects", "/documents", "/documents/templates", "/hazri", "/approvals", "/staff", "/search?q=a", "/settings", "/more", "/khabar"];
+    // Detail pages carry the longest names and the most controls.
+    for (const [list, prefix] of [["/projects", "/projects/"], ["/work?tab=done", "/kaam/"], ["/baat", "/baat/"], ["/documents", "/documents/"]] as const) {
+      await page.goto(list);
+      const href = await page.locator(`main a[href^="${prefix}"]:not([href$="/templates"])`).first().getAttribute("href").catch(() => null);
+      if (href) paths.push(href);
+    }
+    for (const path of paths) {
+      const response = await page.goto(path);
+      expect(response?.status(), path).toBeLessThan(400);
+      const overflow = await horizontalOverflow(page);
+      expect(overflow, `${path} scrolls sideways`).toBeLessThanOrEqual(1);
+    }
+  });
+}
 
 test("group conversation: create, attach a file, only members can see it", async ({ page, browser }) => {
   await signInAs(page, "owner", "en");
@@ -186,6 +196,8 @@ test("group conversation: create, attach a file, only members can see it", async
   await expect(page.getByRole("button", { name: file })).toBeVisible({ timeout: 30_000 });
   await page.reload();
   await expect(page.getByRole("button", { name: file })).toBeVisible();
+  // Your own message can become a task too — the most common case.
+  await expect(page.getByTestId("make-task").first()).toBeVisible();
   const threadUrl = page.url();
 
   const staffContext = await browser.newContext();

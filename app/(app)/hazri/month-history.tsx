@@ -1,6 +1,7 @@
 "use client";
 
 import { getDictionary, type Locale } from "@/lib/i18n";
+import { getUx } from "@/lib/i18n/ux";
 import { formatPunchTime, formatWorkDate } from "@/lib/attendance/time";
 import type { AttendanceDay } from "@/lib/attendance/queries";
 
@@ -23,6 +24,7 @@ export function MonthHistory({
   days: AttendanceDay[];
 }) {
   const t = getDictionary(locale);
+  const ux = getUx(locale);
 
   return (
     <section>
@@ -36,6 +38,12 @@ export function MonthHistory({
         </p>
       ) : (
         <ul className="overflow-hidden rounded-card border border-paper-200 bg-paper-0">
+          <li aria-hidden="true" className="flex items-center gap-3 border-b border-paper-100 bg-paper-50 px-3.5 py-1.5 text-[12px] font-semibold text-ink-500">
+            <span className="w-[58px] shrink-0">{ux.attendance.colDate}</span>
+            <span className="w-[70px] shrink-0">{ux.attendance.colIn}</span>
+            <span className="w-[70px] shrink-0">{ux.attendance.colOut}</span>
+            <span className="flex-1">{ux.attendance.colWorked}</span>
+          </li>
           {days.map((day) => (
             <li
               key={day.id}

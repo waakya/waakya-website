@@ -19,7 +19,7 @@ test("login shows an honest email field and the three languages", async ({
     "type",
     "email",
   );
-  await expect(page.getByText("Staff need the link their owner sent")).toBeVisible();
+  await expect(page.getByText("Joining your team? Open the invite link your owner shared with you.")).toBeVisible();
 
   await page.getByRole("radio", { name: "हिंदी" }).click();
   await expect(

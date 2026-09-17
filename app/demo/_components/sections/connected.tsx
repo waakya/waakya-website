@@ -2,7 +2,6 @@
 
 import {
   Activity,
-  Building2,
   FileText,
   FolderKanban,
   Handshake,
@@ -10,6 +9,7 @@ import {
   ShieldCheck,
   SquareCheckBig,
   Users,
+  CalendarCheck,
 } from "lucide-react";
 
 import { Eyebrow, Stage, Title } from "../chrome";
@@ -17,7 +17,7 @@ import type { SectionProps } from "../../_lib/types";
 
 const LEFT = [
   { id: "team", icon: Users, label: "Team" },
-  { id: "clients", icon: Building2, label: "Clients" },
+  { id: "attendance", icon: CalendarCheck, label: "Attendance & leave" },
   { id: "communication", icon: MessageSquare, label: "Communication" },
   { id: "tasks", icon: SquareCheckBig, label: "Tasks" },
 ];

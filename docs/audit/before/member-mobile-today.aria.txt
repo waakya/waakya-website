@@ -1,0 +1,39 @@
+- main:
+  - heading "My tasks" [level=1]
+  - paragraph: Sharma Interiors · Thu, 17 Sept
+  - link "Updates · 8 new":
+    - /url: /khabar
+  - img "Waakya"
+  - region "Also waiting on you":
+    - list:
+      - listitem:
+        - link "1 unread conversation":
+          - /url: /baat
+      - listitem:
+        - link "Punched in at 7:14 PM":
+          - /url: /hazri
+    - paragraph:
+      - text: Projects in progress
+      - link "Office fit-out mu5kz8y9":
+        - /url: /projects/5bca54ab-d165-45d5-b76f-ba91150ca133
+  - paragraph: Everything for today is done
+  - group: Done 1
+- navigation "More":
+  - list:
+    - listitem:
+      - link "Today":
+        - /url: /aaj
+    - listitem:
+      - link "Conversations":
+        - /url: /baat
+    - listitem:
+      - link "Work":
+        - /url: /work
+    - listitem:
+      - link "Attendance":
+        - /url: /hazri
+    - listitem:
+      - link "More":
+        - /url: /more
+- region "Notifications alt+T"
+- alert

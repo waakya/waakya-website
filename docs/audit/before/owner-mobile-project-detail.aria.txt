@@ -1,0 +1,79 @@
+- main:
+  - link "Projects":
+    - /url: /projects
+  - heading "Office fit-out mu5kz8y9" [level=1]
+  - text: Active
+  - paragraph: 0 open tasks
+  - combobox "Status":
+    - option "Planned"
+    - option "Active" [selected]
+    - option "On hold"
+    - option "Done"
+  - combobox "Add person":
+    - option "Add person" [selected]
+    - option "Rahul Verma"
+  - heading "Tasks" [level=2]
+  - list:
+    - listitem:
+      - link "Revised quotation mu5kz8y9 Rahul Verma · Fri, 18 Sept 6:00 pm Verified":
+        - /url: /kaam/4dc078e5-25b4-4172-87fe-656253218452
+  - heading "Documents" [level=2]
+  - combobox "Category":
+    - option "Quotation"
+    - option "Proposal"
+    - option "Invoice"
+    - option "Agreement"
+    - option "NDA"
+    - option "Purchase order"
+    - option "Work order"
+    - option "Receipt"
+    - option "Scope of work"
+    - option "Report"
+    - option "Meeting minutes"
+    - option "Other" [selected]
+  - button "Choose File"
+  - button "Attach a document"
+  - list:
+    - listitem:
+      - button "Quotation - Client mu5kz8y9.html"
+      - text: Quotation · 3 KB · Priya Sharma · Thu, 17 Sept
+      - button "Download Quotation - Client mu5kz8y9.html"
+      - button "Delete Quotation - Client mu5kz8y9.html"
+    - listitem:
+      - button "boq-mu5kz8y9.pdf"
+      - text: Other · 45 B · Priya Sharma · Thu, 17 Sept
+      - button "Download boq-mu5kz8y9.pdf"
+      - button "Delete boq-mu5kz8y9.pdf"
+  - heading "People" [level=2]
+  - list:
+    - listitem: Priya Sharma
+  - heading "Activity" [level=2]
+  - list:
+    - listitem: Priya Sharma added Quotation - Client mu5kz8y9.html Thu, 17 Sept · 7:14 pm
+    - listitem: Priya Sharma added boq-mu5kz8y9.pdf Thu, 17 Sept · 7:14 pm
+    - listitem: Priya Sharma moved "Revised quotation mu5kz8y9" to verified Thu, 17 Sept · 7:14 pm
+    - listitem: Rahul Verma moved "Revised quotation mu5kz8y9" to done Thu, 17 Sept · 7:14 pm
+    - listitem: Rahul Verma moved "Revised quotation mu5kz8y9" to in progress Thu, 17 Sept · 7:14 pm
+    - listitem: Rahul Verma moved "Revised quotation mu5kz8y9" to accepted Thu, 17 Sept · 7:14 pm
+    - listitem: Rahul Verma moved "Revised quotation mu5kz8y9" to acknowledged Thu, 17 Sept · 7:14 pm
+    - listitem: Priya Sharma moved "Revised quotation mu5kz8y9" to created Thu, 17 Sept · 7:14 pm
+    - listitem: Priya Sharma moved "Revised quotation mu5kz8y9" to delivered Thu, 17 Sept · 7:14 pm
+- navigation "More":
+  - list:
+    - listitem:
+      - link "Today":
+        - /url: /aaj
+    - listitem:
+      - link "Conversations":
+        - /url: /baat
+    - listitem:
+      - link "Work":
+        - /url: /work
+    - listitem:
+      - link "Attendance":
+        - /url: /hazri
+    - listitem:
+      - link "More":
+        - /url: /more
+- region "Notifications alt+T"
+- alert

@@ -1,3 +1,4 @@
+import { horizontalOverflow } from "../e2e/support/overflow";
 import { randomBytes } from "node:crypto";
 import { expect, test, type Browser, type BrowserContext, type Page } from "@playwright/test";
 import { createClient } from "@supabase/supabase-js";
@@ -385,7 +386,7 @@ test("10 phone width and console health", async ({ browser }) => {
   for (const path of ["/", "/aaj", "/baat", "/work", "/projects", "/documents", "/documents/templates", "/hazri", "/approvals", "/search", "/khabar", "/more", "/settings", shared.taskUrl!]) {
     const r = await p.goto(BASE + path);
     expect(r?.status(), path).toBe(200);
-    const overflow = await p.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+    const overflow = await horizontalOverflow(p);
     expect(overflow, `${path} scrolls sideways`).toBeLessThanOrEqual(1);
   }
   await phone.close();

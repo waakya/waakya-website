@@ -17,6 +17,7 @@ import { getTaskProofs } from "@/lib/tasks/proofs";
 import { AppShell } from "@/components/waakya/app-shell";
 import { getUnreadCount } from "@/lib/notify/inbox";
 import { getDictionary } from "@/lib/i18n";
+import { createClient } from "@/lib/supabase/server";
 import { OwnerTaskDetail } from "./owner-detail";
 import { TaskContext } from "./task-context";
 import { StaffTaskDetail } from "./staff-detail";
@@ -36,11 +37,13 @@ export default async function TaskPage({ params }: PageProps<"/kaam/[id]">) {
 
   const locale = await getLocale();
   const now = new Date();
-  const [timeline, thread, proofs] = await Promise.all([
+  const [timeline, thread, proofs, source] = await Promise.all([
     getTaskTimeline(task.id, viewer.org.id),
     getTaskThread(task.id, viewer.org.id),
     getTaskProofs(task.id, viewer.org.id),
+    taskSource(task.id, viewer.org.id),
   ]);
+  const closed = ["done", "verified", "cancelled"].includes(task.state);
 
   const shared = {
     task,
@@ -54,9 +57,11 @@ export default async function TaskPage({ params }: PageProps<"/kaam/[id]">) {
       current: currentStep(task.state, timeline),
       ...taskClocks(task, now),
       ackMinutes: task.ackMinutes,
-      nextReminderAt: nextReminder(task.deliveredAt, task.dueAt, now, viewer.org),
+      // A closed task has no reminder coming, whatever the clock says.
+      nextReminderAt: closed ? null : nextReminder(task.deliveredAt, task.dueAt, now, viewer.org),
     },
     viewerId: viewer.userId,
+    source,
   };
 
   const unread = await getUnreadCount();
@@ -96,4 +101,28 @@ export default async function TaskPage({ params }: PageProps<"/kaam/[id]">) {
       <TaskContext locale={locale} orgId={viewer.org.id} taskId={task.id} viewerId={viewer.userId} manages={false} />
     </AppShell>
   );
+}
+
+/**
+ * The message a task was made from. Read as the viewer, so row level security
+ * decides: someone outside that conversation simply sees no source.
+ */
+async function taskSource(
+  taskId: string,
+  orgId: string,
+): Promise<{ conversationId: string; body: string } | null> {
+  const supabase = await createClient();
+  const { data: task } = await supabase
+    .from("tasks")
+    .select("source_message_id")
+    .eq("id", taskId)
+    .eq("org_id", orgId)
+    .maybeSingle();
+  if (!task?.source_message_id) return null;
+  const { data: message } = await supabase
+    .from("messages")
+    .select("conversation_id, body")
+    .eq("id", task.source_message_id)
+    .maybeSingle();
+  return message ? { conversationId: message.conversation_id, body: message.body } : null;
 }

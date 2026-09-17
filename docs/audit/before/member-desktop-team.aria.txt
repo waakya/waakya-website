@@ -1,0 +1,54 @@
+- navigation "Sharma Interiors":
+  - link "Waakya":
+    - /url: /aaj
+    - img
+    - text: Waakya
+  - paragraph: Business
+  - paragraph: Sharma Interiors
+  - list:
+    - listitem:
+      - link "Today":
+        - /url: /aaj
+    - listitem:
+      - link "Conversations":
+        - /url: /baat
+    - listitem:
+      - link "Work":
+        - /url: /work
+    - listitem:
+      - link "Projects":
+        - /url: /projects
+    - listitem:
+      - link "Documents":
+        - /url: /documents
+    - listitem:
+      - link "Attendance":
+        - /url: /hazri
+    - listitem:
+      - link "Approvals":
+        - /url: /approvals
+  - list:
+    - listitem:
+      - link "Search":
+        - /url: /search
+    - listitem:
+      - link "Updates":
+        - /url: /khabar
+    - listitem:
+      - link "Settings":
+        - /url: /settings
+  - paragraph: Rahul Verma
+  - paragraph: Staff
+- main:
+  - heading "Staff" [level=1]
+  - paragraph: Sharma Interiors · 2 people
+  - list "Staff":
+    - listitem:
+      - paragraph: Priya Sharma
+      - text: Owner
+    - listitem:
+      - paragraph: Rahul Verma · You
+      - paragraph: "9876511111"
+      - text: Staff
+- region "Notifications alt+T"
+- alert

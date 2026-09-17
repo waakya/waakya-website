@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { StateChip } from "@/components/ui/state-chip";
 import { Avatar } from "@/components/ui/avatar";
 import { getDictionary, type Locale } from "@/lib/i18n";
+import { getUx } from "@/lib/i18n/ux";
 import { addHoliday, creditLeave, decideLeave } from "@/lib/actions/attendance";
 import { formatDays } from "@/lib/attendance/leave";
 import { formatPunchTime, formatWorkDate, workDate } from "@/lib/attendance/time";
@@ -41,6 +42,7 @@ export function TeamPanel({
   names: Record<string, string>;
 }) {
   const t = getDictionary(locale);
+  const ux = getUx(locale);
   const [error, setError] = React.useState<string | null>(null);
   const [busy, startTransition] = React.useTransition();
 
@@ -67,50 +69,8 @@ export function TeamPanel({
         </p>
       ) : null}
 
-      {/* who is in */}
-      <section>
-        <h2 className="mb-2 text-[13px] leading-[18px] font-semibold text-ink-700">
-          {t.hazri.teamToday}
-        </h2>
-        <ul className="overflow-hidden rounded-card border border-paper-200 bg-paper-0">
-          {team.map((member) => (
-            <li
-              key={member.userId}
-              className="flex items-center gap-3 border-b border-paper-100 px-3.5 py-2.5 last:border-b-0"
-            >
-              <Avatar name={member.name} size={30} />
-              <span className="min-w-0 flex-1">
-                <span className="block truncate text-[14px] font-semibold text-ink-900">
-                  {member.name}
-                </span>
-                <span className="num block truncate text-[12px] text-ink-400">
-                  {member.punchInAt
-                    ? `${formatPunchTime(member.punchInAt)}${
-                        member.punchOutAt ? ` – ${formatPunchTime(member.punchOutAt)}` : ""
-                      }${member.worked ? ` · ${member.worked}` : ""}`
-                    : t.hazri.notPunched}
-                </span>
-              </span>
-              {member.status === "leave" ? (
-                <StateChip tone="neel">{t.hazri.onLeave}</StateChip>
-              ) : member.status === "half_day" ? (
-                <StateChip tone="outline">{t.hazri.halfDay}</StateChip>
-              ) : member.status === "holiday" ? (
-                <StateChip tone="outline">{t.hazri.holiday}</StateChip>
-              ) : member.punchOutAt ? (
-                <StateChip tone="hara">{t.hazri.completed}</StateChip>
-              ) : member.punchInAt ? (
-                <StateChip tone="neel">{t.hazri.working}</StateChip>
-              ) : (
-                <StateChip tone="outline">{t.hazri.notPunched}</StateChip>
-              )}
-            </li>
-          ))}
-        </ul>
-      </section>
-
       {/* waiting on a decision */}
-      <section>
+      <section id="leave-requests" className="scroll-mt-4">
         <h2 className="mb-2 text-[13px] leading-[18px] font-semibold text-ink-700">
           {t.hazri.pendingLeave}
         </h2>
@@ -166,6 +126,48 @@ export function TeamPanel({
         )}
       </section>
 
+      {/* who is in */}
+      <section>
+        <h2 className="mb-2 text-[13px] leading-[18px] font-semibold text-ink-700">
+          {t.hazri.teamToday}
+        </h2>
+        <ul className="overflow-hidden rounded-card border border-paper-200 bg-paper-0">
+          {team.map((member) => (
+            <li
+              key={member.userId}
+              className="flex items-center gap-3 border-b border-paper-100 px-3.5 py-2.5 last:border-b-0"
+            >
+              <Avatar name={member.name} size={30} />
+              <span className="min-w-0 flex-1">
+                <span className="block truncate text-[14px] font-semibold text-ink-900">
+                  {member.name}
+                </span>
+                <span className="num block truncate text-[12px] text-ink-400">
+                  {member.punchInAt
+                    ? `${formatPunchTime(member.punchInAt)}${
+                        member.punchOutAt ? ` – ${formatPunchTime(member.punchOutAt)}` : ""
+                      }${member.worked ? ` · ${member.worked}` : ""}`
+                    : t.hazri.notPunched}
+                </span>
+              </span>
+              {member.status === "leave" ? (
+                <StateChip tone="neel">{t.hazri.onLeave}</StateChip>
+              ) : member.status === "half_day" ? (
+                <StateChip tone="outline">{t.hazri.halfDay}</StateChip>
+              ) : member.status === "holiday" ? (
+                <StateChip tone="outline">{t.hazri.holiday}</StateChip>
+              ) : member.punchOutAt ? (
+                <StateChip tone="outline">{t.hazri.completed}</StateChip>
+              ) : member.punchInAt ? (
+                <StateChip tone="neel">{t.hazri.working}</StateChip>
+              ) : (
+                <StateChip tone="outline">{t.hazri.notPunched}</StateChip>
+              )}
+            </li>
+          ))}
+        </ul>
+      </section>
+
       {/* balances */}
       <section>
         <h2 className="mb-2 text-[13px] leading-[18px] font-semibold text-ink-700">
@@ -190,7 +192,7 @@ export function TeamPanel({
                 onClick={() => run(() => creditLeave({ userId: person.userId, days: 0.5 }))}
               >
                 <Plus aria-hidden="true" />
-                {t.hazri.addHalf}
+                {ux.attendance.addHalf}
               </Button>
               <Button
                 size="sm"
@@ -199,7 +201,7 @@ export function TeamPanel({
                 onClick={() => run(() => creditLeave({ userId: person.userId, days: 1 }))}
               >
                 <Plus aria-hidden="true" />
-                {t.hazri.addDay}
+                {ux.attendance.addDay}
               </Button>
             </li>
           ))}
@@ -207,7 +209,7 @@ export function TeamPanel({
       </section>
 
       {/* holidays */}
-      <section>
+      <section id="holidays" className="scroll-mt-4">
         <h2 className="mb-2 text-[13px] leading-[18px] font-semibold text-ink-700">
           {t.hazri.holidays}
         </h2>

@@ -10,11 +10,25 @@ import "./globals.css";
 // theme_color is Neel 600 so the Android status bar matches the owner header.
 export const metadata: Metadata = {
   title: {
-    default: "Waakya — Bolo. Ho jayega.",
+    default: "Waakya · All your business work. One workspace.",
     template: "%s · Waakya",
   },
   description:
-    "Kaam bhejo, dekha jaaye, ho jaaye. Har kaam ka deadline, acknowledgement aur record.",
+    "The new era of business communication. Conversations, tasks, proof, projects, documents, attendance, leave and approvals in one workspace for your team.",
+  openGraph: {
+    type: "website",
+    siteName: "Waakya",
+    locale: "en_IN",
+    title: "Waakya · All your business work. One workspace.",
+    description:
+      "The new era of business communication. Every conversation becomes a commitment, every commitment is done, proved and kept on record.",
+    url: "https://waakya.com",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Waakya · All your business work. One workspace.",
+    description: "The new era of business communication.",
+  },
   applicationName: "Waakya",
   manifest: "/manifest.webmanifest",
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://waakya.com"),

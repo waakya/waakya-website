@@ -145,8 +145,15 @@ test("a verified task is finished — no button moves it again", async ({ page }
 
   // Terminal: verify is gone, and so are cancel and reassign.
   await expect(page.getByRole("button", { name: "Verify karein" })).toHaveCount(0);
-  await expect(page.getByRole("button", { name: "Cancel" })).toBeDisabled();
-  await expect(page.getByRole("button", { name: "Kisi aur ko" })).toBeDisabled();
+  // A closed task is a record, not a countdown: no clocks, no reminder, no
+  // time left, and no way to change the time.
+  await expect(page.getByText(/^Verified · /).first()).toBeVisible();
+  await expect(page.getByRole("progressbar")).toHaveCount(0);
+  await expect(page.getByText(/reminder/i)).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Samay badlo" })).toHaveCount(0);
+  // A closed record offers only what still applies: no cancel, no reassign.
+  await expect(page.getByRole("button", { name: "Cancel" })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Kisi aur ko" })).toHaveCount(0);
 });
 
 test("the assignee can decline, and it lands with the owner rather than dying", async ({

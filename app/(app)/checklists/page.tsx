@@ -7,6 +7,7 @@ import { getChecklists } from "@/lib/checklists/queries";
 import { getOrgMembers } from "@/lib/org/members";
 import { getDictionary } from "@/lib/i18n";
 import { AppShell } from "@/components/waakya/app-shell";
+import { getUnreadCount } from "@/lib/notify/inbox";
 import { ChecklistEditor } from "./checklist-editor";
 import { getLocale } from "@/lib/i18n/server";
 
@@ -35,7 +36,7 @@ export default async function ChecklistsPage() {
       orgName={viewer.org.name}
       personName={viewer.fullName ?? "—"}
       roleLabel={viewer.role ? getDictionary(locale).org.roles[viewer.role] : ""}
-      unread={0}
+      unread={await getUnreadCount()}
     >
       <main className="flex-1 p-4 pb-6">
         <h1 className="text-[24px] leading-[30px] font-bold text-ink-900">

@@ -1,0 +1,67 @@
+- navigation "Sharma Interiors":
+  - link "Waakya":
+    - /url: /aaj
+    - img
+    - text: Waakya
+  - paragraph: Business
+  - paragraph: Sharma Interiors
+  - list:
+    - listitem:
+      - link "Today":
+        - /url: /aaj
+    - listitem:
+      - link "Conversations":
+        - /url: /baat
+    - listitem:
+      - link "Work":
+        - /url: /work
+    - listitem:
+      - link "Projects":
+        - /url: /projects
+    - listitem:
+      - link "Documents":
+        - /url: /documents
+    - listitem:
+      - link "Attendance":
+        - /url: /hazri
+    - listitem:
+      - link "Approvals":
+        - /url: /approvals
+  - list:
+    - listitem:
+      - link "Search":
+        - /url: /search
+    - listitem:
+      - link "Updates":
+        - /url: /khabar
+    - listitem:
+      - link "Settings":
+        - /url: /settings
+  - paragraph: Rahul Verma
+  - paragraph: Staff
+- main:
+  - heading "Attendance" [level=1]
+  - paragraph: Thu, 17 Sept
+  - text: Today Done
+  - term: Punched in
+  - definition: 7:14 PM
+  - term: Punched out
+  - definition: 7:14 PM
+  - term: Worked
+  - definition: 0m
+  - heading "Leave" [level=2]
+  - paragraph: Leave balance
+  - paragraph: 1.5 days
+  - button "Apply leave"
+  - list:
+    - listitem: 1 Oct 1 day Rejected
+    - listitem: 24 Sept half day Approved
+  - paragraph: Holidays
+  - list:
+    - listitem: 8 Oct Founders Day mu5kz8y9
+  - heading "This month" [level=2]
+  - list:
+    - listitem: 24 Sept — — — Half day
+    - listitem: 17 Sept 7:14 PM 7:14 PM 0m Present
+- region "Notifications alt+T"
+- alert

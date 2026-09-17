@@ -204,7 +204,7 @@ export function Annotation({
 }) {
   return (
     <span className={cn("inline-flex flex-col items-start", className)} aria-hidden="true">
-      <span className="font-hand text-[18px] leading-tight text-neel-700 [font-family:'Segoe_Print','Bradley_Hand','Comic_Neue',cursive] -rotate-3">
+      <span className="text-[22px] leading-tight text-neel-700 [font-family:var(--font-hand),'Segoe_Print','Bradley_Hand',cursive] -rotate-3">
         {text}
       </span>
       <svg viewBox="0 0 60 40" className={cn("mt-1 h-8 w-12", arrow === "down-right" && "-scale-x-100")}>

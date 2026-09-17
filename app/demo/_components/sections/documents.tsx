@@ -73,7 +73,7 @@ export function DocumentsSection(props: SectionProps) {
           right={
             step === "sent" ? (
               <Chip tone="good" icon={<Check aria-hidden="true" />}>
-                Sent to client
+                Saved to the project
               </Chip>
             ) : null
           }

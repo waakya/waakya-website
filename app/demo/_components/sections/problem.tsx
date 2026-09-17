@@ -56,7 +56,7 @@ export function ProblemSection(props: SectionProps) {
                 style={{ rotate: channel.tilt, animationDelay: channel.delay }}
                 className={`wk-rise wk-drift wk-d${Math.min(index + 1, 6)} flex min-w-[150px] flex-1 items-center gap-3 rounded-[13px] border border-[var(--d-line)] bg-[var(--d-veil)] px-3.5 py-3`}
               >
-                <span className="grid size-9 shrink-0 place-items-center rounded-[9px] border border-[var(--d-line)] bg-[rgba(255,255,255,0.04)]">
+                <span className="grid size-9 shrink-0 place-items-center rounded-[9px] border border-[var(--d-line)] bg-white">
                   <Icon className="size-4 text-[var(--d-accent-bright)]" aria-hidden="true" />
                 </span>
                 <span className="min-w-0">

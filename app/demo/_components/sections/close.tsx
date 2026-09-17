@@ -1,5 +1,7 @@
 "use client";
 
+import * as React from "react";
+import Link from "next/link";
 import { ArrowRight, RotateCcw } from "lucide-react";
 
 import { Stage, StageButton, Title } from "../chrome";
@@ -23,7 +25,8 @@ const PRESENTER = {
 const PROOF_POINTS = [
   "Know who owns every task",
   "Know what was promised, and by when",
-  "Keep client work in one place",
+  "Keep every project, file and approval in one place",
+  "Know who is in today, and who is on leave",
   "Get approvals without chasing",
   "See proof, not claims",
   "Keep a permanent business record",
@@ -32,6 +35,13 @@ const PROOF_POINTS = [
 /** The close. A decision to make, not a thank-you slide. */
 export function CloseSection(props: SectionProps) {
   const { reset } = useDemo();
+  // The reset control is for the person presenting, not for a prospect who
+  // opens the link later.
+  const [presenter, setPresenter] = React.useState(false);
+  React.useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- reads the URL once on mount
+    setPresenter(new URLSearchParams(window.location.search).has("presenter"));
+  }, []);
   const hasContact = Boolean(PRESENTER.name || PRESENTER.phone || PRESENTER.email);
 
   return (
@@ -46,14 +56,24 @@ export function CloseSection(props: SectionProps) {
           </p>
 
           <div className="wk-rise wk-d3 mt-9 flex flex-wrap items-center gap-3">
-            <StageButton onClick={() => props.onGoTo("opening")}>
-              Start your pilot
-              <ArrowRight aria-hidden="true" />
-            </StageButton>
-            <StageButton variant="ghost" onClick={reset}>
-              <RotateCcw aria-hidden="true" />
-              Reset for the next meeting
-            </StageButton>
+            <Link
+              href="/login"
+              className="inline-flex min-h-12 items-center gap-2 rounded-[12px] bg-[var(--d-accent-deep)] px-5 text-[16px] font-semibold text-white hover:brightness-110"
+            >
+              Set up your business
+              <ArrowRight className="size-5" aria-hidden="true" />
+            </Link>
+            {presenter ? (
+              <StageButton variant="ghost" onClick={reset}>
+                <RotateCcw aria-hidden="true" />
+                Reset for the next meeting
+              </StageButton>
+            ) : (
+              <StageButton variant="ghost" onClick={() => props.onGoTo("opening")}>
+                <RotateCcw aria-hidden="true" />
+                Watch again
+              </StageButton>
+            )}
           </div>
 
           <p className="wk-rise wk-d4 mt-5 text-[15px] text-[var(--d-dim)]">
@@ -110,10 +130,9 @@ export function CloseSection(props: SectionProps) {
                   ) : null}
                 </div>
               ) : (
-                <p className="rounded-[10px] border border-dashed border-[var(--d-line)] px-3.5 py-3 text-[12.5px] leading-[1.5] text-[var(--d-faint)]">
-                  Add your name and contact details in the file this card comes from, before
-                  the visit.
-                </p>
+                <Link href="/" className="text-[14px] font-semibold text-[var(--d-accent-deep)] hover:underline">
+                  waakya.com
+                </Link>
               )}
             </div>
           </div>

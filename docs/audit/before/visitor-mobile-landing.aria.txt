@@ -1,0 +1,138 @@
+- banner:
+  - link "Waakya":
+    - /url: /
+    - img
+    - text: Waakya
+  - link "Sign in":
+    - /url: /login
+  - link "Get started":
+    - /url: /login
+- main:
+  - heading "Every conversation. A clear next step." [level=1]
+  - paragraph: Bring your team's conversations and everyday work together. From the first message to the final review.
+  - link "Get started":
+    - /url: /login
+  - link "See how it works":
+    - /url: "#how"
+  - paragraph: Conversations People Work Progress
+  - text: Waakya · UrbanNest Interiors
+  - paragraph: Office renovation · Project team
+  - paragraph: Priya, Rahul and 3 others
+  - paragraph: Priya 11:24 AM
+  - paragraph: Rahul, send the revised quotation by 5 PM.
+  - paragraph: Rahul 11:26 AM
+  - paragraph: Got it. I'll share the revised quotation by 5 PM.
+  - text: Write a message
+  - paragraph: Linked work
+  - paragraph: Revised quotation
+  - paragraph: Rahul · Today · 5 PM
+  - paragraph: Quotation v2
+  - paragraph: PDF · 1.8 MB
+  - text: Awaiting approval
+  - list:
+    - listitem: Talk Bring your team together
+    - listitem: Assign Turn messages into work
+    - listitem: Execute Get work done
+    - listitem: Prove Keep a clear record
+  - heading "See the work move forward." [level=2]
+  - paragraph: One quotation. Four clear steps.
+  - tablist "Walkthrough":
+    - tab "Conversation" [selected]
+    - tab "Assign a task"
+    - tab "Submit proof"
+    - tab "Verify"
+  - text: UrbanNest Interiors · Kitchen quotation
+  - tabpanel "Conversation":
+    - paragraph: Priya Singh 11:24 AM
+    - paragraph: Rahul, send the revised quotation by 5 PM.
+    - paragraph: Rahul Sharma 11:26 AM
+    - paragraph: Got it. I'll share the revised quotation by 5 PM.
+    - paragraph: Priya Singh 11:31 AM
+    - paragraph: Please use the latest BOQ and include both flooring options.
+    - text: Write a message
+    - paragraph: Linked work
+    - paragraph: Nothing yet. Any message can become a task.
+    - paragraph: Only your team
+    - paragraph: Notes for the quotation
+    - list:
+      - listitem: Workstations, two variants
+      - listitem: Conference room
+      - listitem: Flooring, wooden and vinyl
+      - listitem: Electrical and data points
+  - button "Next step"
+  - text: 01 / 04
+  - button "Previous step"
+  - button "Next step"
+  - paragraph: One workspace
+  - heading "Your team. One place to move work forward." [level=2]
+  - paragraph: Conversations, tasks, documents, attendance and approvals stay together, so nobody has to ask where anything is.
+  - link "See it in action":
+    - /url: "#how"
+  - text: Conversations
+  - paragraph: Vikram 9:12 AM
+  - paragraph: Site photos from Sector 76 are up.
+  - paragraph: Neha 9:15 AM
+  - paragraph: Thanks. Adding them to the project.
+  - text: Work
+  - paragraph: Upload site photos
+  - paragraph: Vikram · Done
+  - text: Verified
+  - paragraph: Confirm electrical layout
+  - paragraph: Neha · Tomorrow
+  - text: Accepted Attendance
+  - list:
+    - listitem: Rahul Sharma In · 9:41 AM
+    - listitem: Neha Verma On leave
+    - listitem: Priya Kapoor 9:32 – 6:07 PM
+  - text: Approvals
+  - paragraph: Vendor comparison
+  - paragraph: Requested by Priya
+  - text: Pending Leave approved · Neha
+  - paragraph: Clear closure
+  - heading "Good work deserves a clear finish." [level=2]
+  - paragraph: Submit proof. Review it. Keep a record everyone can follow.
+  - text: Revised quotation
+  - paragraph: Revised quotation
+  - paragraph: Rahul · Today · 5 PM
+  - text: In progress
+  - paragraph: Attached document
+  - paragraph: Quotation-v2.pdf
+  - paragraph: 1.8 MB
+  - paragraph: To verify
+  - paragraph: Review the submitted quotation and confirm once everything looks good.
+  - text: Verify completion Request changes
+  - heading "Made for the way your business works." [level=2]
+  - list:
+    - listitem:
+      - paragraph: Service teams
+      - paragraph: Coordinate everyday field and office work.
+      - paragraph: e.g. Interiors, construction, facilities
+    - listitem:
+      - paragraph: Agencies
+      - paragraph: Manage conversations, deliverables and approvals.
+      - paragraph: e.g. Design, marketing, events
+    - listitem:
+      - paragraph: Small businesses
+      - paragraph: Keep teams, documents and work organised.
+      - paragraph: e.g. Professional services, distribution, retail
+  - heading "Less chasing. More moving forward." [level=2]
+  - paragraph: Conversations into progress for growing businesses.
+  - link "Get started":
+    - /url: /login
+- contentinfo:
+  - img
+  - text: Waakya
+  - paragraph: Conversations to progress.
+  - navigation:
+    - link "Product":
+      - /url: "#product"
+    - link "How it works":
+      - /url: "#how"
+    - link "For businesses":
+      - /url: "#businesses"
+    - link "Privacy":
+      - /url: /privacy
+    - link "Sign in":
+      - /url: /login
+- region "Notifications alt+T"
+- alert

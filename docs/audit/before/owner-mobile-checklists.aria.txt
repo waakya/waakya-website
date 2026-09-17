@@ -1,0 +1,26 @@
+- main:
+  - heading "Daily routine" [level=1]
+  - paragraph: Sent automatically, every day.
+  - paragraph: No checklists yet
+  - paragraph: Set the daily work up once, and it sends itself.
+  - list
+  - button "New checklist"
+- navigation "More":
+  - list:
+    - listitem:
+      - link "Today":
+        - /url: /aaj
+    - listitem:
+      - link "Conversations":
+        - /url: /baat
+    - listitem:
+      - link "Work":
+        - /url: /work
+    - listitem:
+      - link "Attendance":
+        - /url: /hazri
+    - listitem:
+      - link "More":
+        - /url: /more
+- region "Notifications alt+T"
+- alert

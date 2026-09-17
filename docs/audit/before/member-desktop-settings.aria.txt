@@ -1,0 +1,62 @@
+- navigation "Sharma Interiors":
+  - link "Waakya":
+    - /url: /aaj
+    - img
+    - text: Waakya
+  - paragraph: Business
+  - paragraph: Sharma Interiors
+  - list:
+    - listitem:
+      - link "Today":
+        - /url: /aaj
+    - listitem:
+      - link "Conversations":
+        - /url: /baat
+    - listitem:
+      - link "Work":
+        - /url: /work
+    - listitem:
+      - link "Projects":
+        - /url: /projects
+    - listitem:
+      - link "Documents":
+        - /url: /documents
+    - listitem:
+      - link "Attendance":
+        - /url: /hazri
+    - listitem:
+      - link "Approvals":
+        - /url: /approvals
+  - list:
+    - listitem:
+      - link "Search":
+        - /url: /search
+    - listitem:
+      - link "Updates":
+        - /url: /khabar
+    - listitem:
+      - link "Settings":
+        - /url: /settings
+  - paragraph: Rahul Verma
+  - paragraph: Staff
+- main:
+  - heading "Settings" [level=1]
+  - heading "Language" [level=2]
+  - radiogroup "Language":
+    - radio "हिंदी"
+    - radio "Hinglish"
+    - radio "English" [checked]
+  - heading "Your name" [level=2]
+  - text: Your name
+  - textbox "Your name":
+    - /placeholder: For example, Rakesh Sharma
+    - text: Rahul Verma
+  - button "Save name" [disabled]
+  - heading "Business" [level=2]
+  - paragraph: Sharma Interiors
+  - paragraph: Staff
+  - heading "Account" [level=2]
+  - paragraph: audit-member-mu5kz8y9@waakya.test
+  - button "Sign out"
+- region "Notifications alt+T"
+- alert

@@ -25,7 +25,7 @@ type Role = "admin" | "manager" | "member";
  * from the owner's own number, not from an app — which is why staff join
  * (Character document §3.1).
  */
-export function InviteSheet({ locale }: { locale: Locale }) {
+export function InviteSheet({ locale, compact = false }: { locale: Locale; compact?: boolean }) {
   const t = getDictionary(locale);
   const router = useRouter();
   const [open, setOpen] = React.useState(false);
@@ -85,7 +85,7 @@ export function InviteSheet({ locale }: { locale: Locale }) {
     >
       <SheetTrigger
         render={
-          <Button size="block">
+          <Button size={compact ? "owner" : "block"}>
             <UserPlus />
             {t.org.invite}
           </Button>

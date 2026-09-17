@@ -7,8 +7,7 @@ import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Illustration } from "@/components/waakya/illustrations";
-import { Wordmark } from "@/components/waakya/wordmark";
+import { OnboardingFrame } from "@/components/waakya/onboarding-frame";
 import { type Locale } from "@/lib/i18n";
 import { getPhase1 } from "@/lib/i18n/phase1";
 import { updateBusinessProfile } from "@/lib/actions/business";
@@ -115,17 +114,12 @@ export function BusinessProfileForm({
   if (!onboarding) return body;
 
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col px-4 py-8">
-      <Wordmark size={26} />
-      <div className="mt-6 flex items-center justify-between">
-        <span className="num text-[13px] font-semibold text-neel-700">{p.onboarding.step(2, 3)}</span>
-      </div>
-      <Illustration name="handoff" className="mx-auto mt-4 h-28 w-auto" />
-      <h1 className="mt-4 font-display text-[28px] leading-[1.1] font-extrabold text-ink-900">
+    <OnboardingFrame locale={locale} step={2} illustration="handoff">
+      <h1 className="font-display text-[28px] leading-[1.1] font-extrabold text-ink-900">
         {p.onboarding.profileTitle}
       </h1>
       <p className="mt-2 text-[15px] leading-[21px] text-ink-500">{p.onboarding.profileLead}</p>
       <div className="mt-5">{body}</div>
-    </main>
+    </OnboardingFrame>
   );
 }
