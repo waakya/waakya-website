@@ -103,5 +103,5 @@ test("the staff screen has one big button's worth of chrome, not four tabs", asy
   await page.goto("/aaj");
   await expect(page.getByRole("link", { name: "Staff", exact: true })).toHaveCount(0);
   await expect(page.getByRole("link", { name: "Naya kaam" })).toHaveCount(0);
-  await expect(page.getByRole("link", { name: "Aaj" })).toBeVisible();
+  await expect(onScreen(page.getByRole("link", { name: "Aaj", exact: true }))).toBeVisible();
 });

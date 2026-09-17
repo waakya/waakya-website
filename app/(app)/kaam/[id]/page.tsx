@@ -18,6 +18,7 @@ import { AppShell } from "@/components/waakya/app-shell";
 import { getUnreadCount } from "@/lib/notify/inbox";
 import { getDictionary } from "@/lib/i18n";
 import { OwnerTaskDetail } from "./owner-detail";
+import { TaskContext } from "./task-context";
 import { StaffTaskDetail } from "./staff-detail";
 
 export const metadata: Metadata = { title: "Kaam" };
@@ -84,6 +85,7 @@ export default async function TaskPage({ params }: PageProps<"/kaam/[id]">) {
           .filter((m) => m.userId !== task.assigneeId)
           .map((m) => ({ id: m.userId, name: m.name }))}
       />
+      <TaskContext locale={locale} orgId={viewer.org.id} taskId={task.id} viewerId={viewer.userId} manages />
       </AppShell>
     );
   }
@@ -91,6 +93,7 @@ export default async function TaskPage({ params }: PageProps<"/kaam/[id]">) {
   return (
     <AppShell {...shell} variant="staff">
       <StaffTaskDetail {...shared} role={viewer.role} />
+      <TaskContext locale={locale} orgId={viewer.org.id} taskId={task.id} viewerId={viewer.userId} manages={false} />
     </AppShell>
   );
 }

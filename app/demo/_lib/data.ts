@@ -372,7 +372,7 @@ export const DOC_TEMPLATES: DocTemplate[] = [
   { id: "quotation", name: "Quotation", blurb: "Priced scope for a client" },
   { id: "proposal", name: "Proposal", blurb: "Scope and approach" },
   { id: "invoice", name: "Invoice", blurb: "Billing against work done" },
-  { id: "agreement", name: "Agreement", blurb: "Terms between two businesses" },
+  { id: "agreement", name: "Agreement", blurb: "Terms of engagement" },
   { id: "nda", name: "Non-disclosure", blurb: "Confidentiality terms" },
   { id: "po", name: "Purchase order", blurb: "Order placed on a vendor" },
   { id: "work-order", name: "Work order", blurb: "Authority to begin work" },

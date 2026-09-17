@@ -20,7 +20,7 @@ test("the header counters read as a funnel, and say what each one is", async ({
 
   const header = page.locator("header").first();
   await expect(header).toContainText("Namaste, Rakesh ji");
-  await expect(header).toContainText("Rakesh Properties");
+  await expect(header).toContainText("Waakya Test Co");
 
   // Four counters, each with a word under the number.
   for (const label of ["Bheje", "Dekhe", "Ho gaye", "Verified"]) {

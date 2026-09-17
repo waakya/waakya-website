@@ -12,6 +12,10 @@ import { AppShell } from "@/components/waakya/app-shell";
 import { InviteSheet } from "./invite-sheet";
 import { PendingInvites } from "./pending-invites";
 import { getLocale } from "@/lib/i18n/server";
+import { getTeamToday } from "@/lib/attendance/queries";
+import { getOrgTasks } from "@/lib/tasks/queries";
+import { getPhase1 } from "@/lib/i18n/phase1";
+import { formatPunchTime } from "@/lib/attendance/time";
 
 export const metadata: Metadata = { title: "Staff" };
 
@@ -33,6 +37,16 @@ export default async function StaffPage() {
   ]);
 
   const manages = canManage(viewer.role);
+  const p1 = getPhase1(locale);
+  const [team, tasks] = manages
+    ? await Promise.all([getTeamToday(viewer.org.id), getOrgTasks(viewer.org.id, viewer.org.ackMinutes)])
+    : [[], []];
+  const today = new Map(team.map((row) => [row.userId, row]));
+  const openWork = new Map<string, number>();
+  for (const task of tasks) {
+    if (!task.assigneeId || ["verified", "cancelled"].includes(task.state)) continue;
+    openWork.set(task.assigneeId, (openWork.get(task.assigneeId) ?? 0) + 1);
+  }
 
   return (
     <AppShell
@@ -65,6 +79,21 @@ export default async function StaffPage() {
                 </p>
                 {member.phone ? (
                   <p className="num text-[13px] text-ink-500">{member.phone}</p>
+                ) : null}
+                {manages ? (
+                  <p className="num text-[13px] text-ink-500" data-testid="team-status">
+                    {(() => {
+                      const row = today.get(member.userId);
+                      if (!row) return p1.team.notIn;
+                      if (row.status === "leave") return p1.team.onLeave;
+                      if (row.punchInAt && row.punchOutAt)
+                        return `${formatPunchTime(row.punchInAt)} – ${formatPunchTime(row.punchOutAt)}`;
+                      if (row.punchInAt) return `${p1.team.inToday} · ${formatPunchTime(row.punchInAt)}`;
+                      return p1.team.notIn;
+                    })()}
+                    {" · "}
+                    {p1.team.openWork(openWork.get(member.userId) ?? 0)}
+                  </p>
                 ) : null}
               </div>
                 <StateChip tone={member.role === "owner" ? "neel" : "muted"}>

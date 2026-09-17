@@ -1,3 +1,4 @@
+import type * as React from "react";
 import { ChevronDown, ListChecks } from "lucide-react";
 
 import { Mark } from "@/components/waakya/mark";
@@ -23,6 +24,7 @@ export function StaffToday({
   nowIso,
   unread,
   checklists,
+  extra,
 }: {
   tasks: TaskListItem[];
   locale: Locale;
@@ -31,6 +33,7 @@ export function StaffToday({
   nowIso: string;
   unread: number;
   checklists: ChecklistSummary[];
+  extra?: React.ReactNode;
 }) {
   const t = getDictionary(locale);
   const now = new Date(nowIso);
@@ -70,6 +73,8 @@ export function StaffToday({
           <Mark size={26} />
           <Avatar name={staffName ?? "?"} size={40} />
         </header>
+
+        <div className="mt-4">{extra}</div>
 
         {open.length === 0 && groups.done.length === 0 && checklists.length === 0 ? (
           <EmptyState title={t.lists.noTasks} help={t.lists.nothingToday} />

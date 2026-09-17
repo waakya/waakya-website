@@ -76,7 +76,7 @@ test("finishing a task that needs a photo asks for one first", async ({
     staff.getByRole("button", { name: "Bina proof ke" }),
   ).toHaveCount(0);
 
-  await staff.setInputFiles('input[type="file"]', {
+  await staff.getByTestId("proof-file-input").setInputFiles({
     name: "kaam.png",
     mimeType: "image/png",
     buffer: PNG,

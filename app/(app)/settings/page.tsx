@@ -9,6 +9,8 @@ import { Card } from "@/components/ui/card";
 import { AppShell } from "@/components/waakya/app-shell";
 import { SettingsLanguage } from "./settings-language";
 import { SettingsName } from "./settings-name";
+import { BusinessProfileForm } from "@/components/waakya/business-profile-form";
+import { createClient } from "@/lib/supabase/server";
 import { SignOutButton } from "./sign-out-button";
 
 export const metadata: Metadata = { title: "Settings" };
@@ -47,7 +49,18 @@ export default async function SettingsPage() {
           <SettingsName locale={locale} initialName={viewer.fullName ?? ""} />
         </section>
 
-        {viewer.org ? (
+        {viewer.org && (viewer.role === "owner" || viewer.role === "admin") ? (
+          <section className="mt-6">
+            <h2 className="mb-2 text-[13px] leading-[18px] font-semibold text-ink-700">
+              {t.settings.business}
+            </h2>
+            <Card className="p-4">
+              <BusinessProfileForm locale={locale} initial={await businessProfile(viewer.org.id, viewer.org.name)} />
+            </Card>
+          </section>
+        ) : null}
+
+        {viewer.org && !(viewer.role === "owner" || viewer.role === "admin") ? (
           <section className="mt-6">
             <h2 className="mb-2 text-[13px] leading-[18px] font-semibold text-ink-700">
               {t.settings.business}
@@ -95,4 +108,20 @@ export default async function SettingsPage() {
 
     </AppShell>
   );
+}
+
+async function businessProfile(orgId: string, fallbackName: string) {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("orgs")
+    .select("name, address, gstin, phone, email")
+    .eq("id", orgId)
+    .single();
+  return {
+    name: data?.name ?? fallbackName,
+    address: data?.address ?? "",
+    gstin: data?.gstin ?? "",
+    phone: data?.phone ?? "",
+    email: data?.email ?? "",
+  };
 }

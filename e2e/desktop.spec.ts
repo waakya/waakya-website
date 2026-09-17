@@ -31,13 +31,19 @@ test("the landing page sells the product to a logged-out visitor", async ({
     page.getByRole("banner").locator('[translate="no"]', { hasText: "Waakya" }),
   ).toBeVisible();
 
-  // The ladder is the product's own glyph, not a picture of one.
-  for (const word of ["Sent", "Seen", "Accepted", "Done", "Verified"]) {
-    await expect(page.getByRole("img", { name: word }).first()).toBeVisible();
+  // Phase 1 is one business and its team: the promise, the four steps, and
+  // no claim about working across businesses.
+  await expect(
+    page.getByRole("heading", { level: 1, name: /Every conversation\.\s*A clear next step\./ }),
+  ).toBeVisible();
+  for (const step of ["Talk", "Assign", "Execute", "Prove"]) {
+    await expect(page.getByText(step, { exact: true }).first()).toBeVisible();
   }
+  await expect(page.getByText(/two businesses|shared workspace/i)).toHaveCount(0);
+  await expect(page.getByRole("heading", { name: /Less chasing\./ })).toBeVisible();
 
   // The sections a visitor is promised by the nav all exist.
-  for (const id of ["how", "who", "price", "faq"]) {
+  for (const id of ["product", "how", "businesses"]) {
     await expect(page.locator(`#${id}`)).toHaveCount(1);
   }
 
@@ -45,36 +51,16 @@ test("the landing page sells the product to a logged-out visitor", async ({
   await expect(
     page.getByRole("link", { name: "Get started" }).first(),
   ).toHaveAttribute("href", "/login");
-
-  // Nothing here claims a feature that does not ship: the two WhatsApp
-  // pieces that are not built are labelled.
-  await expect(page.getByText("Coming").first()).toBeVisible();
 });
 
-test("the landing page follows the language switch", async ({ page }) => {
+test("the walkthrough moves a quotation from message to verified", async ({ page }) => {
   await signOut(page);
   await page.goto("/");
-
-  await page.getByRole("radio", { name: "हिंदी" }).click();
-  await expect(
-    page.getByRole("heading", { name: "बोलो। हो जाएगा।" }),
-  ).toBeVisible();
-  await expect(page.locator("html")).toHaveAttribute("lang", "hi");
-  await expect(page.getByText("WhatsApp के साथ। WhatsApp के खिलाफ़ नहीं।")).toBeVisible();
-  // The brand does not change script with the copy on this page.
-  await expect(page.getByRole("banner")).toContainText("Waakya");
-
-  await page.getByRole("radio", { name: "Hinglish" }).click();
-  await expect(
-    page.getByRole("heading", { name: "Bolo. Ho jayega." }),
-  ).toBeVisible();
-  await expect(page.locator("html")).toHaveAttribute("lang", "hi-Latn");
-
-  await page.getByRole("radio", { name: "English" }).click();
-  await expect(
-    page.getByRole("heading", { name: "Say it. It gets done." }),
-  ).toBeVisible();
-  await expect(page.getByText("With WhatsApp. Not against it.")).toBeVisible();
+  const tabs = page.getByRole("tablist", { name: "Walkthrough" });
+  await tabs.getByRole("tab", { name: "Assign a task" }).click();
+  await expect(page.getByRole("tabpanel").getByText("Accepted")).toBeVisible();
+  await tabs.getByRole("tab", { name: "Verify" }).click();
+  await expect(page.getByRole("tabpanel").getByText("Verified by Priya · 4:52 PM")).toBeVisible();
 });
 
 test("a signed-in visitor is taken to their day, not sold to", async ({ page }) => {
@@ -92,8 +78,8 @@ test("the owner dashboard uses the width: sidebar, counters, table, rail", async
   // The sidebar replaces the bottom nav.
   const sidebar = page.getByRole("navigation").first();
   await expect(sidebar).toBeVisible();
-  await expect(sidebar.getByRole("link", { name: "Staff" })).toBeVisible();
-  await expect(onScreen(page.getByRole("link", { name: "Today" }))).toBeVisible();
+  await expect(sidebar.getByRole("link", { name: "Team" })).toBeVisible();
+  await expect(onScreen(page.getByRole("link", { name: "Today", exact: true }))).toBeVisible();
 
   // Six counters as their own cards, not crammed into a Neel bar. Scoped to
   // the counter list: the same words appear in the table's status column.
@@ -122,7 +108,7 @@ test("the same page on a phone is the phone layout", async ({ page }) => {
   // No sidebar, no table — the Neel header and the cards, as designed.
   await expect(page.getByRole("table")).toHaveCount(0);
   await expect(
-    onScreen(page.getByRole("link", { name: "Today" })),
+    onScreen(page.getByRole("link", { name: "Today", exact: true })),
   ).toBeVisible();
   await expect(page.locator("header.bg-neel-700")).toBeVisible();
 });

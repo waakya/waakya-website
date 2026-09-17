@@ -15,6 +15,7 @@ import { OwnerToday } from "./owner-today";
 import { OwnerDesktop } from "./owner-desktop";
 import { NeedsYouList } from "./needs-you-list";
 import { StaffToday } from "./staff-today";
+import { AttentionStrip } from "./attention-strip";
 
 export const metadata: Metadata = { title: "Aaj" };
 
@@ -70,7 +71,13 @@ export default async function AajPage() {
         };
       });
 
+    const strip = (
+      <AttentionStrip locale={locale} orgId={viewer.org.id} userId={viewer.userId} manages />
+    );
+
     const needsYouCards = (
+      <>
+      {strip}
       <NeedsYouList
         locale={locale}
         attention={attention}
@@ -78,6 +85,7 @@ export default async function AajPage() {
         nowIso={now.toISOString()}
         columns
       />
+      </>
     );
 
     return (
@@ -98,6 +106,7 @@ export default async function AajPage() {
           nowIso={now.toISOString()}
           unread={unread}
           phones={phones}
+          extra={strip}
         />
         <OwnerDesktop
           locale={locale}
@@ -137,6 +146,7 @@ export default async function AajPage() {
         locale={locale}
         orgName={viewer.org.name}
         staffName={viewer.fullName}
+        extra={<AttentionStrip locale={locale} orgId={viewer.org.id} userId={viewer.userId} manages={false} />}
         nowIso={now.toISOString()}
         unread={unread}
         checklists={await getTodayChecklists(viewer.org.id, tasks, now)}

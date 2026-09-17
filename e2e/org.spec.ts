@@ -46,14 +46,14 @@ test("an owner creates a business, invites staff, and the staff member joins", a
   await page.goto("/setup");
   if (page.url().endsWith("/setup")) {
     await page.getByRole("radio", { name: "Hinglish" }).first().click();
-    await page.getByLabel("Business ka naam").fill("Rakesh Properties");
+    await page.getByLabel("Business ka naam").fill("Waakya Test Co");
     await page.getByRole("button", { name: "Business banao" }).click();
     await expect(page).toHaveURL(/\/staff$/);
   }
 
   await clearPendingInvites(page);
   await expect(page.getByRole("heading", { name: "Staff" })).toBeVisible();
-  await expect(onScreen(page.getByText("Rakesh Properties")).first()).toBeVisible();
+  await expect(onScreen(page.getByText("Waakya Test Co")).first()).toBeVisible();
 
   // Invite the staff member and capture the link the owner would send.
   await page.getByRole("button", { name: "Staff bulao" }).click();
@@ -72,7 +72,7 @@ test("an owner creates a business, invites staff, and the staff member joins", a
   // The join screen speaks the business's language (Hinglish), not the app
   // default, because that is the language the invitee will inherit.
   await expect(
-    inviteePage.getByText("Rakesh Properties mein aapko bulaya gaya hai"),
+    inviteePage.getByText("Waakya Test Co mein aapko bulaya gaya hai"),
   ).toBeVisible();
   await expect(inviteePage.getByText("Judne ke liye pehle sign in")).toBeVisible();
   await expect(inviteePage.getByRole("link", { name: "Login karein" })).toBeVisible();
@@ -94,7 +94,7 @@ test("an owner creates a business, invites staff, and the staff member joins", a
 
   // The staff member is now in the org, and sees a three-item nav, not four.
   await inviteePage.goto("/settings");
-  await expect(onScreen(inviteePage.getByText("Rakesh Properties")).first()).toBeVisible();
+  await expect(onScreen(inviteePage.getByText("Waakya Test Co")).first()).toBeVisible();
   await expect(
     inviteePage.getByRole("link", { name: "Staff", exact: true }),
   ).toHaveCount(0);
@@ -107,7 +107,7 @@ test("an owner creates a business, invites staff, and the staff member joins", a
   const team = page.getByRole("list", { name: "Staff" });
   await expect(team.getByText("Raju")).toBeVisible();
   await expect(team.getByText("Rakesh")).toBeVisible();
-  await expect(page.getByText("2 log")).toBeVisible();
+  await expect(page.getByText(/· [2-9] log$/)).toBeVisible();
 });
 
 test("a used invite link cannot be replayed", async ({ page }) => {

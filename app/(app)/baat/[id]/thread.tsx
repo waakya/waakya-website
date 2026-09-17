@@ -3,14 +3,21 @@
 import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, ListPlus, Send } from "lucide-react";
+import { ArrowLeft, FileText, ListPlus, Paperclip, Send } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { StateChip } from "@/components/ui/state-chip";
 import { getDictionary, type Locale } from "@/lib/i18n";
-import { createTaskFromMessage, postMessage } from "@/lib/actions/conversations";
+import {
+  createTaskFromMessage,
+  postMessage,
+  shareFileInConversation,
+} from "@/lib/actions/conversations";
+import { openDocument, requestDocumentUpload } from "@/lib/actions/documents";
+import { MAX_DOCUMENT_BYTES, isAllowedType } from "@/lib/documents/rules";
+import { getPhase1 } from "@/lib/i18n/phase1";
 import { formatPunchTime } from "@/lib/attendance/time";
 import type { Message } from "@/lib/conversations/queries";
 
@@ -27,19 +34,71 @@ export function Thread({
   title,
   messages,
   members,
+  attachments = {},
+  isGroup = false,
 }: {
   locale: Locale;
   conversationId: string;
   title: string;
   messages: Message[];
   members: { userId: string; name: string }[];
+  attachments?: Record<string, { id: string; name: string }[]>;
+  isGroup?: boolean;
 }) {
+  const router = useRouter();
+  const p1 = getPhase1(locale);
+  const fileInput = React.useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = React.useState(false);
+
+  async function shareFile(files: FileList | null) {
+    const file = files?.[0];
+    if (!file) return;
+    setError(null);
+    if (file.size > MAX_DOCUMENT_BYTES) return setError(p1.documents.tooBig);
+    const type = file.type || "application/octet-stream";
+    if (!isAllowedType(type)) return setError(p1.documents.badType);
+    setUploading(true);
+    try {
+      const signed = await requestDocumentUpload({ name: file.name, contentType: type, size: file.size });
+      if (!signed.ok) return setError(signed.message);
+      const put = await fetch(signed.data.url, { method: "PUT", headers: signed.data.headers, body: file });
+      if (!put.ok) return setError(p1.common.failed);
+      const shared = await shareFileInConversation({
+        conversationId,
+        key: signed.data.key,
+        name: file.name,
+        contentType: type,
+        size: file.size,
+      });
+      if (!shared.ok) return setError(shared.message);
+      router.refresh();
+    } finally {
+      setUploading(false);
+      if (fileInput.current) fileInput.current.value = "";
+    }
+  }
+
+  async function openAttachment(id: string) {
+    const tab = window.open("about:blank", "_blank");
+    if (tab) tab.opener = null;
+    const result = await openDocument({ id });
+    if (!result.ok) {
+      tab?.close();
+      return setError(result.message);
+    }
+    const url = result.data.url;
+    if (url.startsWith("/")) {
+      tab?.close();
+      router.push(url);
+    } else if (tab) tab.location.replace(url);
+    else window.location.assign(url);
+  }
+
   const t = getDictionary(locale);
   const [body, setBody] = React.useState("");
   const [error, setError] = React.useState<string | null>(null);
   const [openFor, setOpenFor] = React.useState<string | null>(null);
   const [pending, startTransition] = React.useTransition();
-  const router = useRouter();
 
   function send(event: React.FormEvent) {
     event.preventDefault();
@@ -83,6 +142,20 @@ export function Thread({
                   )}
                 >
                   {message.body}
+                  {attachments[message.id]?.map((doc) => (
+                    <button
+                      key={doc.id}
+                      type="button"
+                      onClick={() => openAttachment(doc.id)}
+                      className={cn(
+                        "mt-2 flex w-full items-center gap-2 rounded-[10px] px-2.5 py-2 text-left text-[13.5px] font-semibold",
+                        message.mine ? "bg-white/15 text-white" : "bg-neel-50 text-neel-800",
+                      )}
+                    >
+                      <FileText className="size-4 shrink-0" aria-hidden="true" />
+                      <span className="truncate">{doc.name}</span>
+                    </button>
+                  ))}
                 </div>
                 <p
                   className={cn(
@@ -90,7 +163,7 @@ export function Thread({
                     message.mine && "text-right",
                   )}
                 >
-                  {message.mine ? "" : `${message.authorName} · `}
+                  {message.mine || !isGroup ? (message.mine ? "" : `${message.authorName} · `) : `${message.authorName} · `}
                   {formatPunchTime(message.createdAt)}
                 </p>
               </div>
@@ -139,6 +212,25 @@ export function Thread({
       ) : null}
 
       <form onSubmit={send} className="flex items-center gap-2 border-t border-paper-200 p-3">
+        <input
+          ref={fileInput}
+          type="file"
+          className="sr-only"
+          data-testid="thread-file-input"
+          accept=".pdf,.jpg,.jpeg,.png,.webp,.heic,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv"
+          onChange={(event) => shareFile(event.target.files)}
+        />
+        <Button
+          type="button"
+          size="icon"
+          variant="ghost"
+          aria-label={p1.conversations.attach}
+          title={p1.conversations.attach}
+          disabled={uploading}
+          onClick={() => fileInput.current?.click()}
+        >
+          <Paperclip aria-hidden="true" />
+        </Button>
         <Input
           value={body}
           onChange={(event) => setBody(event.target.value)}

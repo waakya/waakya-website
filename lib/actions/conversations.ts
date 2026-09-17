@@ -128,3 +128,80 @@ export async function createTaskFromMessage(
   revalidatePath(`/baat/${parsed.data.conversationId}`);
   return created;
 }
+
+/* -------------------------------------------------------------------------
+ * Group conversations and shared files.
+ * ---------------------------------------------------------------------- */
+
+const groupSchema = z.object({
+  title: z.string().trim().min(2).max(80),
+  memberIds: z.array(uuidSchema).min(1).max(100),
+});
+
+export async function createGroupConversation(
+  input: unknown,
+): Promise<ActionResult<{ conversationId: string }>> {
+  const parsed = groupSchema.safeParse(input);
+  if (!parsed.success) return fail("Name the group and add at least one person.");
+
+  const viewer = await requireOrg();
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("create_group_conversation", {
+    p_org: viewer.org.id,
+    p_title: parsed.data.title,
+    p_members: parsed.data.memberIds,
+  });
+  if (error || !data) return fail(explain(error?.message));
+
+  revalidatePath("/baat");
+  const row = Array.isArray(data) ? data[0] : data;
+  return ok({ conversationId: (row as { id: string }).id });
+}
+
+const shareSchema = z.object({
+  conversationId: uuidSchema,
+  key: z.string().max(400),
+  name: z.string().trim().min(1).max(200),
+  contentType: z.string().max(120),
+  size: z.number().int().positive().max(25 * 1024 * 1024),
+});
+
+/**
+ * A file shared in a conversation: a message saying so, and a document that
+ * belongs to that message. Row level security keeps the document visible only
+ * to the people in the conversation.
+ */
+export async function shareFileInConversation(input: unknown): Promise<ActionResult> {
+  const parsed = shareSchema.safeParse(input);
+  if (!parsed.success) return fail("That file could not be shared.");
+
+  const viewer = await requireOrg();
+  const { orgIdFromDocumentKey, isAllowedType } = await import("@/lib/documents/rules");
+  if (orgIdFromDocumentKey(parsed.data.key) !== viewer.org.id) return fail("That file could not be shared.");
+  if (!isAllowedType(parsed.data.contentType)) return fail("That kind of file cannot be shared here.");
+
+  const supabase = await createClient();
+  const { data: message, error } = await supabase.rpc("post_message", {
+    p_conversation: parsed.data.conversationId,
+    p_body: `Shared ${parsed.data.name}`,
+  });
+  if (error || !message) return fail(explain(error?.message));
+  const messageRow = (Array.isArray(message) ? message[0] : message) as { id: string };
+
+  const { error: docError } = await supabase.from("documents").insert({
+    org_id: viewer.org.id,
+    name: parsed.data.name,
+    category: "other",
+    mime_type: parsed.data.contentType,
+    size_bytes: parsed.data.size,
+    storage_key: parsed.data.key,
+    uploaded_by: viewer.userId,
+    message_id: messageRow.id,
+    source: "upload",
+  });
+  if (docError) return fail("That file could not be shared.");
+
+  revalidatePath(`/baat/${parsed.data.conversationId}`);
+  revalidatePath("/baat");
+  return ok();
+}

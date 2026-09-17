@@ -104,7 +104,7 @@ test("text scales to 130% without the primary action being lost", async ({
   await page.addStyleTag({ content: "html { font-size: 130% }" });
   await page.goto("/aaj");
 
-  const nav = onScreen(page.getByRole("link", { name: "Aaj" }));
+  const nav = onScreen(page.getByRole("link", { name: "Aaj", exact: true }));
   await expect(nav).toBeVisible();
   const box = await nav.boundingBox();
   expect(box).not.toBeNull();

@@ -1,3 +1,4 @@
+import type * as React from "react";
 import Link from "next/link";
 import { Plus } from "lucide-react";
 
@@ -26,6 +27,7 @@ export function OwnerToday({
   nowIso,
   unread,
   phones,
+  extra,
 }: {
   tasks: TaskListItem[];
   locale: Locale;
@@ -35,6 +37,8 @@ export function OwnerToday({
   unread: number;
   /** Assignee phone numbers, so Call on a card really dials. */
   phones: Record<string, string | null>;
+  /** Non-task attention: approvals, leave, conversations, attendance. */
+  extra?: React.ReactNode;
 }) {
   const t = getDictionary(locale);
   const now = new Date(nowIso);
@@ -55,6 +59,7 @@ export function OwnerToday({
       />
 
       <main className="flex-1 p-4 pb-6">
+        {extra}
         {attention.length > 0 ? (
           <section>
             <h2 className="mb-2 text-[15px] leading-[20px] font-bold text-ink-700">

@@ -73,9 +73,9 @@ export default async function InboxPage() {
                   }
                 >
                   <p className="text-[15px] leading-[20px] text-ink-900">
-                    {item.taskId ? (
+                    {item.taskId || item.href ? (
                       <Link
-                        href={`/kaam/${item.taskId}`}
+                        href={item.taskId ? `/kaam/${item.taskId}` : (item.href ?? "/aaj")}
                         className="after:absolute after:inset-0"
                       >
                         {item.body}

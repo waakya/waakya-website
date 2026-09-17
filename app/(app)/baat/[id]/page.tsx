@@ -8,6 +8,7 @@ import { AppShell } from "@/components/waakya/app-shell";
 import { getConversation } from "@/lib/conversations/queries";
 import { getOrgMembers } from "@/lib/org/members";
 import { Thread } from "./thread";
+import { listMessageDocuments } from "@/lib/documents/queries";
 
 export const metadata: Metadata = { title: "Baat-cheet" };
 
@@ -27,6 +28,17 @@ export default async function ConversationPage({
 
   if (!conversation) notFound();
 
+  const attachmentMap = await listMessageDocuments(
+    viewer.org.id,
+    conversation.messages.map((message) => message.id),
+  );
+  const attachments = Object.fromEntries(
+    [...attachmentMap.entries()].map(([messageId, docs]) => [
+      messageId,
+      docs.map((doc) => ({ id: doc.id, name: doc.name })),
+    ]),
+  );
+
   return (
     <AppShell
       locale={locale}
@@ -41,6 +53,8 @@ export default async function ConversationPage({
         conversationId={conversation.id}
         title={conversation.title}
         messages={conversation.messages}
+        attachments={attachments}
+        isGroup={conversation.kind === "group"}
         members={members.map((member) => ({
           userId: member.userId,
           name: member.name,

@@ -16,6 +16,89 @@ export type Database = {
   }
   public: {
     Tables: {
+      approvals: {
+        Row: {
+          approver_id: string | null
+          created_at: string
+          decided_at: string | null
+          decided_by: string | null
+          decision_note: string | null
+          details: string | null
+          document_id: string | null
+          id: string
+          org_id: string
+          project_id: string | null
+          requested_by: string
+          status: Database["public"]["Enums"]["approval_status"]
+          task_id: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          approver_id?: string | null
+          created_at?: string
+          decided_at?: string | null
+          decided_by?: string | null
+          decision_note?: string | null
+          details?: string | null
+          document_id?: string | null
+          id?: string
+          org_id: string
+          project_id?: string | null
+          requested_by: string
+          status?: Database["public"]["Enums"]["approval_status"]
+          task_id?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          approver_id?: string | null
+          created_at?: string
+          decided_at?: string | null
+          decided_by?: string | null
+          decision_note?: string | null
+          details?: string | null
+          document_id?: string | null
+          id?: string
+          org_id?: string
+          project_id?: string | null
+          requested_by?: string
+          status?: Database["public"]["Enums"]["approval_status"]
+          task_id?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "approvals_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "documents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "approvals_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "orgs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "approvals_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "approvals_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       attendance_records: {
         Row: {
           created_at: string
@@ -238,6 +321,89 @@ export type Database = {
             columns: ["org_id"]
             isOneToOne: false
             referencedRelation: "orgs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      documents: {
+        Row: {
+          category: Database["public"]["Enums"]["document_category"]
+          created_at: string
+          id: string
+          message_id: string | null
+          mime_type: string | null
+          name: string
+          org_id: string
+          project_id: string | null
+          size_bytes: number | null
+          source: string
+          storage_key: string
+          task_id: string | null
+          template_data: Json | null
+          template_key: string | null
+          uploaded_by: string
+        }
+        Insert: {
+          category?: Database["public"]["Enums"]["document_category"]
+          created_at?: string
+          id?: string
+          message_id?: string | null
+          mime_type?: string | null
+          name: string
+          org_id: string
+          project_id?: string | null
+          size_bytes?: number | null
+          source?: string
+          storage_key: string
+          task_id?: string | null
+          template_data?: Json | null
+          template_key?: string | null
+          uploaded_by: string
+        }
+        Update: {
+          category?: Database["public"]["Enums"]["document_category"]
+          created_at?: string
+          id?: string
+          message_id?: string | null
+          mime_type?: string | null
+          name?: string
+          org_id?: string
+          project_id?: string | null
+          size_bytes?: number | null
+          source?: string
+          storage_key?: string
+          task_id?: string | null
+          template_data?: Json | null
+          template_key?: string | null
+          uploaded_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "documents_message_id_fkey"
+            columns: ["message_id"]
+            isOneToOne: false
+            referencedRelation: "messages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "documents_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "orgs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "documents_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "documents_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
             referencedColumns: ["id"]
           },
         ]
@@ -546,6 +712,7 @@ export type Database = {
           created_at: string
           dedupe_key: string | null
           event: string
+          href: string | null
           id: string
           org_id: string
           read_at: string | null
@@ -557,6 +724,7 @@ export type Database = {
           created_at?: string
           dedupe_key?: string | null
           event: string
+          href?: string | null
           id?: string
           org_id: string
           read_at?: string | null
@@ -568,6 +736,7 @@ export type Database = {
           created_at?: string
           dedupe_key?: string | null
           event?: string
+          href?: string | null
           id?: string
           org_id?: string
           read_at?: string | null
@@ -594,31 +763,43 @@ export type Database = {
       orgs: {
         Row: {
           ack_minutes: number
+          address: string | null
           created_at: string
           created_by: string
+          email: string | null
+          gstin: string | null
           id: string
           language: string
           name: string
+          phone: string | null
           quiet_end: string
           quiet_start: string
         }
         Insert: {
           ack_minutes?: number
+          address?: string | null
           created_at?: string
           created_by: string
+          email?: string | null
+          gstin?: string | null
           id?: string
           language?: string
           name: string
+          phone?: string | null
           quiet_end?: string
           quiet_start?: string
         }
         Update: {
           ack_minutes?: number
+          address?: string | null
           created_at?: string
           created_by?: string
+          email?: string | null
+          gstin?: string | null
           id?: string
           language?: string
           name?: string
+          phone?: string | null
           quiet_end?: string
           quiet_start?: string
         }
@@ -665,6 +846,92 @@ export type Database = {
           phone?: string | null
         }
         Relationships: []
+      }
+      project_members: {
+        Row: {
+          created_at: string
+          id: string
+          org_id: string
+          project_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          org_id: string
+          project_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          org_id?: string
+          project_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_members_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "orgs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_members_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      projects: {
+        Row: {
+          created_at: string
+          created_by: string
+          description: string | null
+          end_date: string | null
+          id: string
+          name: string
+          org_id: string
+          start_date: string | null
+          status: Database["public"]["Enums"]["project_status"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          name: string
+          org_id: string
+          start_date?: string | null
+          status?: Database["public"]["Enums"]["project_status"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          name?: string
+          org_id?: string
+          start_date?: string | null
+          status?: Database["public"]["Enums"]["project_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "projects_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "orgs"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       proofs: {
         Row: {
@@ -822,6 +1089,7 @@ export type Database = {
           id: string
           org_id: string
           priority: Database["public"]["Enums"]["task_priority"]
+          project_id: string | null
           proof_required: boolean
           source_message_id: string | null
           started_at: string | null
@@ -847,6 +1115,7 @@ export type Database = {
           id?: string
           org_id: string
           priority?: Database["public"]["Enums"]["task_priority"]
+          project_id?: string | null
           proof_required?: boolean
           source_message_id?: string | null
           started_at?: string | null
@@ -872,6 +1141,7 @@ export type Database = {
           id?: string
           org_id?: string
           priority?: Database["public"]["Enums"]["task_priority"]
+          project_id?: string | null
           proof_required?: boolean
           source_message_id?: string | null
           started_at?: string | null
@@ -893,6 +1163,13 @@ export type Database = {
             columns: ["org_id"]
             isOneToOne: false
             referencedRelation: "orgs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tasks_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
             referencedColumns: ["id"]
           },
           {
@@ -960,6 +1237,24 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      create_group_conversation: {
+        Args: { p_members: string[]; p_org: string; p_title: string }
+        Returns: {
+          created_at: string
+          created_by: string
+          id: string
+          kind: Database["public"]["Enums"]["conversation_kind"]
+          last_message_at: string
+          org_id: string
+          title: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "conversations"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       create_org: {
         Args: { p_language?: string; p_name: string }
         Returns: string
@@ -977,6 +1272,32 @@ export type Database = {
         SetofOptions: {
           from: "*"
           to: "leave_balances"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      decide_approval: {
+        Args: { p_approval: string; p_approve: boolean; p_note?: string }
+        Returns: {
+          approver_id: string | null
+          created_at: string
+          decided_at: string | null
+          decided_by: string | null
+          decision_note: string | null
+          details: string | null
+          document_id: string | null
+          id: string
+          org_id: string
+          project_id: string | null
+          requested_by: string
+          status: Database["public"]["Enums"]["approval_status"]
+          task_id: string | null
+          title: string
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "approvals"
           isOneToOne: true
           isSetofReturn: false
         }
@@ -1007,6 +1328,7 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      display_name: { Args: { p_user: string }; Returns: string }
       invite_preview: {
         Args: { p_token: string }
         Returns: {
@@ -1022,6 +1344,7 @@ export type Database = {
       }
       is_org_admin: { Args: { p_org: string }; Returns: boolean }
       is_org_member: { Args: { p_org: string }; Returns: boolean }
+      is_org_owner_admin: { Args: { p_org: string }; Returns: boolean }
       ist_today: { Args: never; Returns: string }
       leave_days_between: {
         Args: {
@@ -1098,6 +1421,17 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      push_notification: {
+        Args: {
+          p_body: string
+          p_dedupe?: string
+          p_event: string
+          p_href: string
+          p_org: string
+          p_user: string
+        }
+        Returns: undefined
+      }
       record_otp_request: {
         Args: {
           p_identifier_hash: string
@@ -1105,6 +1439,40 @@ export type Database = {
           p_window_minutes?: number
         }
         Returns: boolean
+      }
+      request_approval: {
+        Args: {
+          p_approver?: string
+          p_details?: string
+          p_document?: string
+          p_org: string
+          p_project?: string
+          p_task?: string
+          p_title: string
+        }
+        Returns: {
+          approver_id: string | null
+          created_at: string
+          decided_at: string | null
+          decided_by: string | null
+          decision_note: string | null
+          details: string | null
+          document_id: string | null
+          id: string
+          org_id: string
+          project_id: string | null
+          requested_by: string
+          status: Database["public"]["Enums"]["approval_status"]
+          task_id: string | null
+          title: string
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "approvals"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
       shares_org_with: { Args: { p_user: string }; Returns: boolean }
       start_direct_conversation: {
@@ -1126,14 +1494,59 @@ export type Database = {
         }
       }
       storage_org_id: { Args: { p_name: string }; Returns: string }
+      update_business_profile: {
+        Args: {
+          p_address?: string
+          p_email?: string
+          p_gstin?: string
+          p_name: string
+          p_org: string
+          p_phone?: string
+        }
+        Returns: {
+          ack_minutes: number
+          address: string | null
+          created_at: string
+          created_by: string
+          email: string | null
+          gstin: string | null
+          id: string
+          language: string
+          name: string
+          phone: string | null
+          quiet_end: string
+          quiet_start: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "orgs"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
     }
     Enums: {
+      approval_status: "pending" | "approved" | "rejected"
       attendance_status: "present" | "absent" | "leave" | "half_day" | "holiday"
       conversation_kind: "direct" | "group"
       day_half: "first_half" | "second_half"
+      document_category:
+        | "quotation"
+        | "proposal"
+        | "invoice"
+        | "agreement"
+        | "nda"
+        | "purchase_order"
+        | "work_order"
+        | "receipt"
+        | "sow"
+        | "report"
+        | "meeting_minutes"
+        | "other"
       leave_kind: "full_day" | "half_day"
       leave_status: "pending" | "approved" | "rejected"
       member_role: "owner" | "admin" | "manager" | "member"
+      project_status: "planned" | "active" | "on_hold" | "completed"
       task_priority: "low" | "normal" | "high" | "urgent"
       task_state:
         | "created"
@@ -1273,12 +1686,28 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      approval_status: ["pending", "approved", "rejected"],
       attendance_status: ["present", "absent", "leave", "half_day", "holiday"],
       conversation_kind: ["direct", "group"],
       day_half: ["first_half", "second_half"],
+      document_category: [
+        "quotation",
+        "proposal",
+        "invoice",
+        "agreement",
+        "nda",
+        "purchase_order",
+        "work_order",
+        "receipt",
+        "sow",
+        "report",
+        "meeting_minutes",
+        "other",
+      ],
       leave_kind: ["full_day", "half_day"],
       leave_status: ["pending", "approved", "rejected"],
       member_role: ["owner", "admin", "manager", "member"],
+      project_status: ["planned", "active", "on_hold", "completed"],
       task_priority: ["low", "normal", "high", "urgent"],
       task_state: [
         "created",

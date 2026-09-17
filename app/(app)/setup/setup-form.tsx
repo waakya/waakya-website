@@ -33,7 +33,7 @@ export function SetupForm({ locale }: { locale: Locale }) {
     startTransition(async () => {
       const result = await createOrg({ name, language: locale });
       if (!result.ok) setError(result.message);
-      else router.replace("/staff");
+      else router.replace("/setup/profile");
     });
   }
 

@@ -261,7 +261,7 @@ export function DocumentsSection(props: SectionProps) {
                         {CLIENT.name}
                       </span>
                       <span className="block truncate text-[11.5px] text-[var(--s-faint)]">
-                        Shared workspace · Tower B
+                        Project · Tower B
                       </span>
                     </span>
                   </span>
@@ -271,13 +271,13 @@ export function DocumentsSection(props: SectionProps) {
                   <div className="wk-pop rounded-[12px] border border-[#cfeddf] bg-[#f2faf6] p-4">
                     <p className="flex items-center gap-2 text-[13px] font-semibold text-[#14623a]">
                       <Check className="size-4" aria-hidden="true" />
-                      Sent to {CLIENT.name}
+                      Saved and sent for approval
                     </p>
                     <p className="wk-tabnum mt-1.5 text-[12px] text-[#14623a]">
-                      Delivered 5:04 PM · waiting for approval
+                      Saved 5:04 PM · waiting for approval
                     </p>
                     <p className="mt-2 text-[12px] leading-[1.5] text-[var(--s-dim)]">
-                      It is now in the shared workspace, attached to the project, with its own
+                      It is now in Documents, attached to the project, with its own
                       approval.
                     </p>
                   </div>

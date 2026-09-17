@@ -152,6 +152,7 @@ export function ProofSheet({
             <span className="text-[13px] font-semibold">{t.proof.takePhoto}</span>
             <input
               type="file"
+              data-testid="proof-file-input"
               accept="image/*,audio/*"
               capture="environment"
               multiple

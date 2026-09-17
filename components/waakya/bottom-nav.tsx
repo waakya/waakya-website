@@ -2,74 +2,58 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  Calendar,
-  CalendarCheck,
-  Home,
-  MessageSquare,
-  Settings,
-  Users,
-} from "lucide-react";
+import { CalendarCheck, Home, LayoutGrid, MessageSquare, SquareCheckBig } from "lucide-react";
 
-import { getDictionary, type Locale } from "@/lib/i18n";
+import { type Locale } from "@/lib/i18n";
+import { getPhase1 } from "@/lib/i18n/phase1";
 import { cn } from "@/lib/utils";
 
 /**
- * Four items for owners, three for staff (§5.2). Staff screens stay quieter:
- * fewer places to go, one thing to do.
+ * The phone bar: the four things people open all day, and More for the rest.
+ * A fixed 4rem tall, so a screen with its own bottom bar can sit above it.
  */
 export function BottomNav({
   locale,
-  variant,
 }: {
   locale: Locale;
-  variant: "owner" | "staff";
+  variant?: "owner" | "staff";
 }) {
-  const t = getDictionary(locale);
+  const n = getPhase1(locale).nav;
   const pathname = usePathname();
 
-  const items =
-    variant === "owner"
-      ? [
-          { href: "/aaj", label: t.nav.aaj, icon: Home },
-          { href: "/hafta", label: t.nav.hafta, icon: Calendar },
-          { href: "/staff", label: t.nav.staff, icon: Users },
-          { href: "/hazri", label: t.nav.hazri, icon: CalendarCheck },
-          { href: "/baat", label: t.nav.baat, icon: MessageSquare },
-          { href: "/settings", label: t.nav.settings, icon: Settings },
-        ]
-      : [
-          { href: "/aaj", label: t.nav.aaj, icon: Home },
-          { href: "/pehle", label: t.nav.pehle, icon: Calendar },
-          { href: "/hazri", label: t.nav.hazri, icon: CalendarCheck },
-          { href: "/baat", label: t.nav.baat, icon: MessageSquare },
-          { href: "/settings", label: t.nav.settings, icon: Settings },
-        ];
+  const items = [
+    { href: "/aaj", label: n.today, icon: Home, also: [] as string[] },
+    { href: "/baat", label: n.conversations, icon: MessageSquare, also: [] as string[] },
+    { href: "/work", label: n.work, icon: SquareCheckBig, also: ["/kaam", "/naya", "/hafta", "/pehle"] },
+    { href: "/hazri", label: n.attendance, icon: CalendarCheck, also: [] as string[] },
+    {
+      href: "/more",
+      label: n.more,
+      icon: LayoutGrid,
+      also: ["/projects", "/documents", "/approvals", "/staff", "/search", "/khabar", "/settings", "/checklists"],
+    },
+  ];
 
   return (
     <nav
-      aria-label={t.nav.aaj}
+      aria-label={n.more}
       className="sticky bottom-0 z-30 border-t border-paper-200 bg-paper-0 pb-[env(safe-area-inset-bottom)] lg:hidden"
     >
-      {/* A fixed 4rem tall, so a screen with its own bottom bar (task actions)
-          can pin that bar exactly above this one. */}
       <ul className="mx-auto flex h-16 max-w-md">
-        {items.map(({ href, label, icon: Icon }) => {
-          const active = pathname === href || pathname.startsWith(`${href}/`);
+        {items.map(({ href, label, icon: Icon, also }) => {
+          const active = [href, ...also].some((path) => pathname === path || pathname.startsWith(`${path}/`));
           return (
             <li key={href} className="flex-1">
               <Link
                 href={href}
                 aria-current={active ? "page" : undefined}
                 className={cn(
-                  "flex min-h-tap flex-col items-center justify-center gap-1 py-2",
+                  "flex h-full min-h-tap flex-col items-center justify-center gap-1 py-2",
                   active ? "text-neel-700" : "text-ink-500",
                 )}
               >
-                <Icon className="size-6" aria-hidden="true" />
-                <span className="text-[12px] leading-none font-semibold">
-                  {label}
-                </span>
+                <Icon className="size-[22px]" aria-hidden="true" />
+                <span className="max-w-full truncate px-1 text-[11px] leading-none font-semibold">{label}</span>
               </Link>
             </li>
           );
