@@ -1,0 +1,117 @@
+- navigation "Sharma Interiors":
+  - link "Waakya":
+    - /url: /aaj
+  - paragraph: Business
+  - paragraph: Sharma Interiors
+  - list:
+    - listitem:
+      - link "Today":
+        - /url: /aaj
+    - listitem:
+      - link "Conversations":
+        - /url: /baat
+    - listitem:
+      - link "Work":
+        - /url: /work
+    - listitem:
+      - link "Projects":
+        - /url: /projects
+    - listitem:
+      - link "Documents":
+        - /url: /documents
+    - listitem:
+      - link "Attendance & leave":
+        - /url: /hazri
+    - listitem:
+      - link "Approvals":
+        - /url: /approvals
+  - list:
+    - listitem:
+      - link "Search":
+        - /url: /search
+    - listitem:
+      - link "Updates 8":
+        - /url: /khabar
+    - listitem:
+      - link "Settings":
+        - /url: /settings
+  - paragraph: Rahul Verma
+  - paragraph: Staff
+- banner:
+  - link "Back":
+    - /url: /aaj
+  - heading "Task" [level=1]
+- main:
+  - paragraph: Priya Sharma
+  - paragraph: sent 7:14 pm
+  - heading "Revised quotation mu5kz8y9" [level=2]
+  - link "From a conversation “Please send the revised quotation mu5kz8y9” Open conversation":
+    - /url: /baat/7346ffb9-f14e-457f-8c08-b91dd02a78be
+  - paragraph: Verified · 7:14 pm
+  - paragraph: This task is closed. Its full record stays below.
+  - list:
+    - listitem: Sent 7:14 pm
+    - listitem: Seen 7:14 pm
+    - listitem: Accepted 7:14 pm
+    - listitem: In progress 7:14 pm
+    - listitem: Done 7:14 pm
+    - listitem: Verified 7:14 pm
+  - heading "Proof" [level=3]
+  - list:
+    - listitem:
+      - img "Photo sent by Rahul Verma"
+      - paragraph: Rahul Verma · 7:14 pm
+  - heading "Timeline" [level=3]
+  - list "Timeline":
+    - listitem:
+      - strong: Priya Sharma
+      - text: Sent 7:14 pm
+    - listitem:
+      - strong: Rahul Verma
+      - text: Seen 7:14 pm
+    - listitem:
+      - strong: Rahul Verma
+      - text: Accepted 7:14 pm
+    - listitem:
+      - strong: Rahul Verma
+      - text: In progress 7:14 pm
+    - listitem:
+      - strong: Rahul Verma
+      - text: Done 7:14 pm
+    - listitem:
+      - strong: Priya Sharma
+      - text: Verified 7:14 pm
+  - heading "Messages" [level=3]
+  - paragraph: Nothing said yet
+  - textbox "Messages":
+    - /placeholder: Write something if you need to
+  - button "Send" [disabled]
+- contentinfo:
+  - paragraph: Every step you take is recorded with its time
+- region "Attached documents":
+  - text: Project Office fit-out mu5kz8y9
+  - heading "Attached documents" [level=2]
+  - link "Create from a template":
+    - /url: /documents/templates?task=4dc078e5-25b4-4172-87fe-656253218452&project=5bca54ab-d165-45d5-b76f-ba91150ca133
+  - combobox "Category":
+    - option "Quotation"
+    - option "Proposal"
+    - option "Invoice"
+    - option "Agreement"
+    - option "NDA"
+    - option "Purchase order"
+    - option "Work order"
+    - option "Receipt"
+    - option "Scope of work"
+    - option "Report"
+    - option "Meeting minutes"
+    - option "Other" [selected]
+  - button "Choose File"
+  - button "Attach a document"
+  - list:
+    - listitem:
+      - button "photos-mu5kz8y9.pdf"
+      - text: Other · 45 B · Priya Sharma · Thu, 17 Sept
+      - button "Download photos-mu5kz8y9.pdf"
+- region "Notifications alt+T"
+- alert

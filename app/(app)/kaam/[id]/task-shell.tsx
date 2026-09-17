@@ -98,7 +98,7 @@ export function TaskShell({
         thing this screen cannot get wrong. The bar sits above the 4rem bottom
         nav, and the padding here is the room the two together occupy.
       */}
-      <main className={task.state === "verified" || task.state === "cancelled" ? "flex-1 px-4 pb-44 lg:pb-8" : "flex-1 px-4 pb-56 lg:pb-8"}>
+      <main className={task.state === "verified" || task.state === "cancelled" ? "flex-1 px-4 pb-4 lg:pb-8" : "flex-1 px-4 pb-56 lg:pb-8"}>
         {lead}
 
         <h2 className="mt-2 text-[28px] leading-[36px] font-bold text-ink-900">

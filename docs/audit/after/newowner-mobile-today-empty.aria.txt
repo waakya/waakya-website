@@ -1,0 +1,62 @@
+- banner:
+  - heading "Hello, Anil Mehta" [level=1]
+  - paragraph: Mehta Facility Services · Thu, 17 Sept
+  - link "Updates":
+    - /url: /khabar
+  - img "Waakya"
+  - definition: "0"
+  - term: Sent
+  - definition: "0"
+  - term: Seen
+  - definition: "0"
+  - term: Done
+  - definition: "0"
+  - term: Verified
+- main:
+  - region "Get your workspace ready":
+    - heading "Get your workspace ready" [level=2]
+    - paragraph: Five steps, and your business runs from one place.
+    - paragraph: 0 of 5 done
+    - list:
+      - listitem:
+        - text: Invite your team Everyone joins with a link. Nothing else works until someone is here.
+        - link "Invite":
+          - /url: /staff
+      - listitem: Start a conversation Invite someone first
+      - listitem: Turn a message into a task Invite someone first
+      - listitem:
+        - text: Punch in, and set up leave Attendance, leave balances and your holiday list in one place.
+        - link "Open attendance":
+          - /url: /hazri
+      - listitem:
+        - text: Make a quotation from a template Ten business templates, filled with your business details.
+        - link "See templates":
+          - /url: /documents/templates
+  - region "Also waiting on you":
+    - list:
+      - listitem:
+        - link "You have not punched in today":
+          - /url: /hazri
+  - paragraph: No work yet
+  - paragraph: Use New task to send work.
+- link "New task":
+  - /url: /naya
+- navigation "Main":
+  - list:
+    - listitem:
+      - link "Today":
+        - /url: /aaj
+    - listitem:
+      - link "Conversations":
+        - /url: /baat
+    - listitem:
+      - link "Work":
+        - /url: /work
+    - listitem:
+      - link "Attendance":
+        - /url: /hazri
+    - listitem:
+      - link "More":
+        - /url: /more
+- region "Notifications alt+T"
+- alert

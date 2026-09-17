@@ -1,0 +1,36 @@
+- main:
+  - heading "Work" [level=1]
+  - paragraph: Every commitment, with an owner and a deadline.
+  - link "New task":
+    - /url: /naya
+  - navigation "Work":
+    - link "Team":
+      - /url: /work?tab=team
+    - link "Mine":
+      - /url: /work?tab=mine
+    - link "Open":
+      - /url: /work?tab=open
+    - link "Late":
+      - /url: /work?tab=late
+    - link "Done":
+      - /url: /work?tab=done
+  - paragraph: Nothing here right now.
+- navigation "Main":
+  - list:
+    - listitem:
+      - link "Today":
+        - /url: /aaj
+    - listitem:
+      - link "Conversations":
+        - /url: /baat
+    - listitem:
+      - link "Work":
+        - /url: /work
+    - listitem:
+      - link "Attendance":
+        - /url: /hazri
+    - listitem:
+      - link "More":
+        - /url: /more
+- region "Notifications alt+T"
+- alert

@@ -1,0 +1,9 @@
+- main:
+  - img "Waakya"
+  - paragraph: This link no longer works. Ask the owner for a new one.
+  - link "I already have an account":
+    - /url: /login
+  - link "Go to the home page":
+    - /url: /
+- region "Notifications alt+T"
+- alert

@@ -1,0 +1,53 @@
+- navigation "Mehta Facility Services":
+  - link "Waakya":
+    - /url: /aaj
+  - paragraph: Business
+  - paragraph: Mehta Facility Services
+  - list:
+    - listitem:
+      - link "Today":
+        - /url: /aaj
+    - listitem:
+      - link "Conversations":
+        - /url: /baat
+    - listitem:
+      - link "Work":
+        - /url: /work
+    - listitem:
+      - link "Projects":
+        - /url: /projects
+    - listitem:
+      - link "Documents":
+        - /url: /documents
+    - listitem:
+      - link "Attendance & leave":
+        - /url: /hazri
+    - listitem:
+      - link "Approvals":
+        - /url: /approvals
+    - listitem:
+      - link "Team":
+        - /url: /staff
+  - list:
+    - listitem:
+      - link "Search":
+        - /url: /search
+    - listitem:
+      - link "Updates":
+        - /url: /khabar
+    - listitem:
+      - link "Daily routine":
+        - /url: /checklists
+    - listitem:
+      - link "Settings":
+        - /url: /settings
+  - paragraph: Anil Mehta
+  - paragraph: Owner
+- main:
+  - heading "Projects" [level=1]
+  - paragraph: Keep related work, people and documents together.
+  - button "New project"
+  - paragraph: No projects yet
+  - paragraph: A project gathers the tasks and documents for one piece of work.
+- region "Notifications alt+T"
+- alert

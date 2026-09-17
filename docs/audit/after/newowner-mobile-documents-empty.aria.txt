@@ -1,0 +1,58 @@
+- main:
+  - heading "Documents" [level=1]
+  - paragraph: Your business paperwork, kept next to the work it belongs to.
+  - region "Create from a template":
+    - heading "Create from a template" [level=2]
+    - link "All templates":
+      - /url: /documents/templates
+    - paragraph: Quotation, invoice, work order and more, filled with your business details.
+    - list:
+      - listitem:
+        - link "Quotation":
+          - /url: /documents/templates?template=quotation
+      - listitem:
+        - link "Invoice":
+          - /url: /documents/templates?template=invoice
+      - listitem:
+        - link "Work order":
+          - /url: /documents/templates?template=work_order
+      - listitem:
+        - link "Proposal":
+          - /url: /documents/templates?template=proposal
+  - text: Category
+  - combobox "Category":
+    - option "Quotation"
+    - option "Proposal"
+    - option "Invoice"
+    - option "Agreement"
+    - option "NDA"
+    - option "Purchase order"
+    - option "Work order"
+    - option "Receipt"
+    - option "Scope of work"
+    - option "Report"
+    - option "Meeting minutes"
+    - option "Other" [selected]
+  - button "Choose File"
+  - button "Upload"
+  - paragraph: No documents yet
+  - paragraph: Upload a quotation, an invoice or a report, or start from a template.
+- navigation "Main":
+  - list:
+    - listitem:
+      - link "Today":
+        - /url: /aaj
+    - listitem:
+      - link "Conversations":
+        - /url: /baat
+    - listitem:
+      - link "Work":
+        - /url: /work
+    - listitem:
+      - link "Attendance":
+        - /url: /hazri
+    - listitem:
+      - link "More":
+        - /url: /more
+- region "Notifications alt+T"
+- alert

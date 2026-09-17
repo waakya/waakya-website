@@ -1,0 +1,35 @@
+- main:
+  - link "Back":
+    - /url: /
+  - img "Waakya"
+  - heading "Privacy Policy" [level=1]
+  - paragraph: "Last updated: 4 September 2026"
+  - paragraph: Waakya keeps only the information needed to run your work. Nothing more.
+  - heading "What we keep" [level=2]
+  - list:
+    - listitem: Your name, email and phone number, so you can sign in and your owner can recognise you.
+    - listitem: Your business name and who is in it.
+    - listitem: "Work: what was sent, to whom, by when, and when each step happened."
+    - listitem: "Proof: the photos, voice notes or text you send."
+    - listitem: Conversations and the files shared in them, and the documents you upload or make from templates.
+    - listitem: "Attendance: punch-in and punch-out times, leave requests, leave balances, holidays and approvals."
+    - listitem: "If you sign in with Google: your name, email address and profile picture from Google."
+  - heading "Why we keep it" [level=2]
+  - list:
+    - listitem: To send work, see it and finish it.
+    - listitem: To remind on time, and to tell the owner what is still outstanding.
+    - listitem: To keep a record of who did what, and when.
+  - heading "How long" [level=2]
+  - paragraph: For as long as your business uses Waakya. When a business closes, everything is deleted at the owner's request.
+  - heading "Who we share it with" [level=2]
+  - paragraph: It is never sold. Only people in your business can see your data. We use trusted services to send email and store data, and they receive only what is necessary.
+  - heading "Your rights (DPDP Act, 2023)" [level=2]
+  - list:
+    - listitem: The right to see your data.
+    - listitem: The right to have wrong information corrected.
+    - listitem: The right to have data erased, where the law allows.
+    - listitem: The right to complain.
+  - heading "Contact" [level=2]
+  - paragraph: For any question, ask your business owner or write to privacy@waakya.com.
+- region "Notifications alt+T"
+- alert

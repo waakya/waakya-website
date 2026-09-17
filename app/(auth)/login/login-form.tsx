@@ -436,9 +436,9 @@ export function LoginForm({
         <div className="mt-8 flex flex-col gap-3">
           {/* A new owner sees what comes after this screen; staff see where
               their door is. */}
-          <ol className="flex items-center justify-center gap-2 text-[13px] text-ink-500">
+          <ol className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-[13px] text-ink-500">
             {ux.login.nextSteps.map((label, index) => (
-              <li key={label} className="flex items-center gap-2">
+              <li key={label} className="flex items-center gap-2 whitespace-nowrap">
                 <span className="num grid size-5 place-items-center rounded-full border border-paper-300 text-[11px] font-bold text-ink-700">
                   {index + 1}
                 </span>

@@ -1,0 +1,30 @@
+- main:
+  - heading "Team" [level=1]
+  - paragraph: Mehta Facility Services · 1 person
+  - list "Team":
+    - listitem:
+      - paragraph: Anil Mehta · You
+      - paragraph: Not punched in · 0 open tasks
+      - text: Owner
+  - paragraph: Nobody has joined yet
+  - paragraph: Invite your team first. Conversations, tasks and attendance start working once someone joins.
+- button "Invite to team"
+- navigation "Main":
+  - list:
+    - listitem:
+      - link "Today":
+        - /url: /aaj
+    - listitem:
+      - link "Conversations":
+        - /url: /baat
+    - listitem:
+      - link "Work":
+        - /url: /work
+    - listitem:
+      - link "Attendance":
+        - /url: /hazri
+    - listitem:
+      - link "More":
+        - /url: /more
+- region "Notifications alt+T"
+- alert

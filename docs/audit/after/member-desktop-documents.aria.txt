@@ -1,0 +1,102 @@
+- navigation "Sharma Interiors":
+  - link "Waakya":
+    - /url: /aaj
+  - paragraph: Business
+  - paragraph: Sharma Interiors
+  - list:
+    - listitem:
+      - link "Today":
+        - /url: /aaj
+    - listitem:
+      - link "Conversations":
+        - /url: /baat
+    - listitem:
+      - link "Work":
+        - /url: /work
+    - listitem:
+      - link "Projects":
+        - /url: /projects
+    - listitem:
+      - link "Documents":
+        - /url: /documents
+    - listitem:
+      - link "Attendance & leave":
+        - /url: /hazri
+    - listitem:
+      - link "Approvals":
+        - /url: /approvals
+  - list:
+    - listitem:
+      - link "Search":
+        - /url: /search
+    - listitem:
+      - link "Updates 8":
+        - /url: /khabar
+    - listitem:
+      - link "Settings":
+        - /url: /settings
+  - paragraph: Rahul Verma
+  - paragraph: Staff
+- main:
+  - heading "Documents" [level=1]
+  - paragraph: Your business paperwork, kept next to the work it belongs to.
+  - region "Create from a template":
+    - heading "Create from a template" [level=2]
+    - link "All templates":
+      - /url: /documents/templates
+    - paragraph: Quotation, invoice, work order and more, filled with your business details.
+    - list:
+      - listitem:
+        - link "Quotation":
+          - /url: /documents/templates?template=quotation
+      - listitem:
+        - link "Invoice":
+          - /url: /documents/templates?template=invoice
+      - listitem:
+        - link "Work order":
+          - /url: /documents/templates?template=work_order
+      - listitem:
+        - link "Proposal":
+          - /url: /documents/templates?template=proposal
+  - text: Category
+  - combobox "Category":
+    - option "Quotation"
+    - option "Proposal"
+    - option "Invoice"
+    - option "Agreement"
+    - option "NDA"
+    - option "Purchase order"
+    - option "Work order"
+    - option "Receipt"
+    - option "Scope of work"
+    - option "Report"
+    - option "Meeting minutes"
+    - option "Other" [selected]
+  - button "Choose File"
+  - button "Upload"
+  - textbox "Search documents"
+  - group "Category":
+    - button "All" [pressed]
+    - button "Quotation"
+    - button "Other"
+  - list:
+    - listitem:
+      - button "Quotation - Client mu5kz8y9.html"
+      - text: Quotation · 3 KB · Priya Sharma · Thu, 17 Sept
+      - 'link "Project: Office fit-out mu5kz8y9"':
+        - /url: /projects/5bca54ab-d165-45d5-b76f-ba91150ca133
+      - button "Download Quotation - Client mu5kz8y9.html"
+    - listitem:
+      - button "photos-mu5kz8y9.pdf"
+      - text: Other · 45 B · Priya Sharma · Thu, 17 Sept
+      - 'link "Task: Revised quotation mu5kz8y9"':
+        - /url: /kaam/4dc078e5-25b4-4172-87fe-656253218452
+      - button "Download photos-mu5kz8y9.pdf"
+    - listitem:
+      - button "boq-mu5kz8y9.pdf"
+      - text: Other · 45 B · Priya Sharma · Thu, 17 Sept
+      - 'link "Project: Office fit-out mu5kz8y9"':
+        - /url: /projects/5bca54ab-d165-45d5-b76f-ba91150ca133
+      - button "Download boq-mu5kz8y9.pdf"
+- region "Notifications alt+T"
+- alert

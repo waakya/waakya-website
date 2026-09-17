@@ -1,0 +1,25 @@
+- main:
+  - heading "Approvals" [level=1]
+  - paragraph: Decisions that hold work up, kept next to the work.
+  - button "Ask for approval"
+  - paragraph: Nothing waiting
+  - paragraph: Requests for approval appear here.
+- navigation "Main":
+  - list:
+    - listitem:
+      - link "Today":
+        - /url: /aaj
+    - listitem:
+      - link "Conversations":
+        - /url: /baat
+    - listitem:
+      - link "Work":
+        - /url: /work
+    - listitem:
+      - link "Attendance":
+        - /url: /hazri
+    - listitem:
+      - link "More":
+        - /url: /more
+- region "Notifications alt+T"
+- alert

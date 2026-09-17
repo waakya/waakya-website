@@ -1,0 +1,199 @@
+- banner:
+  - link "Waakya":
+    - /url: /
+  - navigation "Website":
+    - link "How it works":
+      - /url: "#how"
+    - link "Everything inside":
+      - /url: "#inside"
+    - link "For businesses":
+      - /url: "#businesses"
+    - link "Questions":
+      - /url: "#faq"
+  - link "Sign in":
+    - /url: /login
+  - link "Get started":
+    - /url: /login
+- main:
+  - paragraph: The new era of business communication
+  - heading "All your business work. One workspace." [level=1]
+  - paragraph: Your team talks all day. Waakya turns what gets agreed into work with an owner and a deadline, proof that it was done, and a record your business keeps, next to your projects, documents, attendance and approvals.
+  - link "Get started":
+    - /url: /login
+  - link "See how it works":
+    - /url: "#how"
+  - paragraph: Works in any browser · English, Hinglish, हिंदी
+  - text: Waakya · Sharma Interiors
+  - paragraph: Office renovation · Site team
+  - paragraph: Priya, Rahul and 2 others
+  - paragraph: Priya 11:24 AM
+  - paragraph: Rahul, please send the revised quotation by 5 PM.
+  - text: Task created
+  - paragraph: Rahul 11:26 AM
+  - paragraph: On it. Sharing it with the latest BOQ.
+  - paragraph: Tasks from this chat
+  - paragraph: Revised quotation
+  - paragraph: Rahul · 5 PM
+  - text: Proof submitted
+  - paragraph: Quotation-v2.pdf
+  - paragraph: PDF · 1.8 MB
+  - paragraph: Rahul in at 9:41 AM
+  - list "How work moves in Waakya":
+    - listitem: 1 Conversation
+    - listitem: 2 Commitment
+    - listitem: 3 Execution
+    - listitem: 4 Proof
+    - listitem: 5 Record
+  - heading "Your business talks everywhere. The work gets lost in between." [level=2]
+  - paragraph: Instructions sit in chats, trackers in spreadsheets, files on someone's phone, and leave in a register. So every day starts with the same questions.
+  - list:
+    - listitem:
+      - paragraph: Who is doing this?
+      - paragraph: An instruction in a group chat, and no one replied.
+    - listitem:
+      - paragraph: Is it done?
+      - paragraph: A tick in a spreadsheet, and no proof.
+    - listitem:
+      - paragraph: Where is the file?
+      - paragraph: Quotation_final_v2 (1).pdf, on someone's phone.
+    - listitem:
+      - paragraph: Who is in today?
+      - paragraph: A leave register nobody updated.
+  - paragraph: Talk · Assign · Execute · Prove
+  - heading "From a message to a record, in five steps." [level=2]
+  - paragraph: Follow one quotation at Sharma Interiors, from the moment it is asked for to the moment it is verified.
+  - tablist "From conversation to record":
+    - tab "1 Conversation Talk" [selected]
+    - tab "2 Commitment Assign"
+    - tab "3 Execution Execute"
+    - tab "4 Proof Prove"
+    - tab "5 Record Keep"
+  - tabpanel "1 Conversation Talk":
+    - paragraph: Step 1 · Talk
+    - heading "Conversation" [level=3]
+    - paragraph: Your team agrees things in a conversation, one to one or as a group.
+    - paragraph: Inside Waakya
+    - paragraph: Conversations · Files in chat
+    - 'button "Next: Commitment"'
+    - text: Sharma Interiors · Office renovation
+    - paragraph: Site team · 4 people
+    - paragraph: Priya Sharma 11:24 AM
+    - paragraph: Rahul, please send the revised quotation by 5 PM.
+    - text: Make task
+    - paragraph: Rahul Verma 11:26 AM
+    - paragraph: Got it. Using the latest BOQ, both flooring options.
+    - paragraph: Nothing assigned yet. Any message can become a task.
+  - paragraph: Everything inside
+  - heading "One business. Everything connected." [level=2]
+  - paragraph: Every part of Waakya knows about the others. A task knows the conversation it came from, the project it belongs to, the documents that prove it and who is in today to do it.
+  - paragraph: The work
+  - list:
+    - listitem: Conversations Agree it in a chat or a group, with files.
+    - listitem: Work & tasks A message becomes a task with an owner and a deadline.
+    - listitem: Approvals Decisions that hold work up, decided once.
+  - paragraph: Project
+  - paragraph: Office renovation
+  - paragraph: Sharma Interiors · Sector 62
+  - definition: "4"
+  - term: open tasks
+  - definition: "6"
+  - term: documents
+  - definition: "3"
+  - term: in today
+  - list:
+    - listitem: Revised quotation · verified
+    - listitem: Vendor comparison · waiting for approval
+    - listitem: Neha · half day on Friday
+  - paragraph: The paperwork
+  - list:
+    - listitem: Documents Files kept with the task and project they belong to.
+    - listitem: Business templates Quotation, invoice, work order and seven more.
+    - listitem: Search Find any task, file, message or person.
+  - paragraph: The people
+  - list:
+    - listitem: Team Invite with a link; owners, managers and staff.
+    - listitem: Attendance Punch in and out, and who is in today.
+    - listitem: Leave Full or half day, with balances.
+    - listitem: Holidays One calendar for the whole business.
+    - listitem: Notifications Tell the right person what needs them.
+  - paragraph: Your day
+  - heading "Open Waakya. See what needs you." [level=2]
+  - paragraph: "Late work, decisions waiting, leave to approve and who is in, on one screen. Your team sees their own day: what they owe, and a button to punch in."
+  - text: Today · Sharma Interiors
+  - paragraph: Hello, Priya
+  - list:
+    - listitem: 2 approvals waiting Vendor comparison · Site visit expenses Decide
+    - listitem: "Neha asked for a half day on Friday Leave balance: 4.5 days Review"
+    - listitem: Revised quotation · proof submitted Rahul · Office renovation Verify
+    - listitem: 12 of 14 in today 2 October is a holiday Team
+  - paragraph: "18"
+  - paragraph: Sent today
+  - paragraph: "2"
+  - paragraph: Late
+  - paragraph: "11"
+  - paragraph: Verified
+  - paragraph: Search anything 5 updates
+  - heading "Made for teams that get real work done." [level=2]
+  - list:
+    - listitem:
+      - paragraph: Service teams
+      - paragraph: Interiors, construction, facilities
+      - list:
+        - listitem: 1.Supervisor punches in at site
+        - listitem: 2.Gets “Measure Tower B” from the site chat
+        - listitem: 3.Uploads the photos as proof
+        - listitem: 4.You verify from the office
+    - listitem:
+      - paragraph: Agencies
+      - paragraph: Design, marketing, events
+      - list:
+        - listitem: 1.Client feedback agreed in the team chat
+        - listitem: 2.Designer gets the revision as a task
+        - listitem: 3.Final file is attached to the project
+        - listitem: 4.Account lead approves it
+    - listitem:
+      - paragraph: Small businesses
+      - paragraph: Professional services, distribution, retail
+      - list:
+        - listitem: 1.Order confirmed in a conversation
+        - listitem: 2.Work order made from a template
+        - listitem: 3.Signed copy attached as proof
+        - listitem: 4.Kept on record, findable later
+  - heading "Questions owners ask." [level=2]
+  - list:
+    - listitem: Visible only to the people you invite
+    - listitem: Works on any phone or laptop browser
+    - listitem: English, Hinglish and हिंदी
+    - listitem:
+      - link "Privacy under India's DPDP Act":
+        - /url: /privacy
+  - group: Does my team need to install an app?
+  - group: How do people join our business?
+  - group: Can I keep attendance, leave and holidays here?
+  - group: What paperwork can I make?
+  - group: Who can see our information?
+  - group: Which languages does it speak?
+  - heading "Bring your business into one workspace." [level=2]
+  - paragraph: Sign in with Google or email, name your business, and invite your team with a link.
+  - link "Get started":
+    - /url: /login
+  - link "Sign in":
+    - /url: /login
+- contentinfo:
+  - text: Waakya
+  - paragraph: The new era of business communication.
+  - navigation "Footer":
+    - link "How it works":
+      - /url: "#how"
+    - link "Everything inside":
+      - /url: "#inside"
+    - link "For businesses":
+      - /url: "#businesses"
+    - link "Questions":
+      - /url: "#faq"
+    - link "Privacy":
+      - /url: /privacy
+    - link "Sign in":
+      - /url: /login
+- region "Notifications alt+T"
+- alert

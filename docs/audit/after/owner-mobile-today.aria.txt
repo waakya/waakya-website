@@ -1,0 +1,56 @@
+- banner:
+  - heading "Hello, Priya Sharma" [level=1]
+  - paragraph: Sharma Interiors · Thu, 17 Sept
+  - link "Updates · 7 new":
+    - /url: /khabar
+  - img "Waakya"
+  - definition: "1"
+  - term: Sent
+  - definition: "1"
+  - term: Seen
+  - definition: "1"
+  - term: Done
+  - definition: "1"
+  - term: Verified
+  - paragraph: "Verified work: 100%"
+- main:
+  - region "Also waiting on you":
+    - list:
+      - listitem:
+        - link "1 unread conversation":
+          - /url: /baat
+      - listitem:
+        - link "You have not punched in today":
+          - /url: /hazri
+    - paragraph:
+      - text: Projects in progress
+      - link "Office fit-out mu5kz8y9":
+        - /url: /projects/5bca54ab-d165-45d5-b76f-ba91150ca133
+  - heading "Done 1" [level=2]
+  - list "Done":
+    - listitem:
+      - link "Revised quotation mu5kz8y9":
+        - /url: /kaam/4dc078e5-25b4-4172-87fe-656253218452
+      - paragraph: Rahul Verma · Verified
+      - img "Verified"
+- link "New task":
+  - /url: /naya
+- navigation "Main":
+  - list:
+    - listitem:
+      - link "Today":
+        - /url: /aaj
+    - listitem:
+      - link "Conversations":
+        - /url: /baat
+    - listitem:
+      - link "Work":
+        - /url: /work
+    - listitem:
+      - link "Attendance":
+        - /url: /hazri
+    - listitem:
+      - link "More":
+        - /url: /more
+- region "Notifications alt+T"
+- alert

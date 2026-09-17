@@ -1,0 +1,30 @@
+- main:
+  - heading "Team" [level=1]
+  - paragraph: Sharma Interiors · 2 people
+  - list "Team":
+    - listitem:
+      - paragraph: Priya Sharma
+      - text: Owner
+    - listitem:
+      - paragraph: Rahul Verma · You
+      - paragraph: "9876511111"
+      - text: Staff
+- navigation "Main":
+  - list:
+    - listitem:
+      - link "Today":
+        - /url: /aaj
+    - listitem:
+      - link "Conversations":
+        - /url: /baat
+    - listitem:
+      - link "Work":
+        - /url: /work
+    - listitem:
+      - link "Attendance":
+        - /url: /hazri
+    - listitem:
+      - link "More":
+        - /url: /more
+- region "Notifications alt+T"
+- alert

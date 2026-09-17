@@ -1,0 +1,59 @@
+- navigation "Sharma Interiors":
+  - link "Waakya":
+    - /url: /aaj
+  - paragraph: Business
+  - paragraph: Sharma Interiors
+  - list:
+    - listitem:
+      - link "Today":
+        - /url: /aaj
+    - listitem:
+      - link "Conversations":
+        - /url: /baat
+    - listitem:
+      - link "Work":
+        - /url: /work
+    - listitem:
+      - link "Projects":
+        - /url: /projects
+    - listitem:
+      - link "Documents":
+        - /url: /documents
+    - listitem:
+      - link "Attendance & leave":
+        - /url: /hazri
+    - listitem:
+      - link "Approvals":
+        - /url: /approvals
+    - listitem:
+      - link "Team":
+        - /url: /staff
+  - list:
+    - listitem:
+      - link "Search":
+        - /url: /search
+    - listitem:
+      - link "Updates 7":
+        - /url: /khabar
+    - listitem:
+      - link "Daily routine":
+        - /url: /checklists
+    - listitem:
+      - link "Settings":
+        - /url: /settings
+  - paragraph: Priya Sharma
+  - paragraph: Owner
+- main:
+  - link "Back":
+    - /url: /baat
+  - heading "Site team mu5kz8y9" [level=1]
+  - text: Shared site-plan-mu5kz8y9.pdf
+  - button "site-plan-mu5kz8y9.pdf"
+  - paragraph: 7:14 PM
+  - button "Make task"
+  - button "Choose File"
+  - button "Attach a file"
+  - textbox "Write a message"
+  - button "Send" [disabled]
+- region "Notifications alt+T"
+- alert

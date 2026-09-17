@@ -1,0 +1,48 @@
+- main:
+  - heading "Attendance & leave" [level=1]
+  - paragraph: Thu, 17 Sept
+  - navigation "Attendance & leave":
+    - link "Leave":
+      - /url: "#leave"
+    - link "Holidays":
+      - /url: "#leave"
+  - text: Today Punched out
+  - term: Punched in
+  - definition: 7:14 PM
+  - term: Punched out
+  - definition: 7:14 PM
+  - term: Worked
+  - definition: 0m
+  - heading "Leave" [level=2]
+  - paragraph: Leave balance
+  - paragraph: 1.5 days
+  - button "Apply leave"
+  - list:
+    - listitem: 1 Oct 1 day Rejected
+    - listitem: 24 Sept half day Approved
+  - paragraph: Holidays
+  - list:
+    - listitem: 8 Oct Founders Day mu5kz8y9
+  - heading "This month" [level=2]
+  - list:
+    - listitem: 24 Sept — — — Half day
+    - listitem: 17 Sept 7:14 PM 7:14 PM 0m Present
+- navigation "Main":
+  - list:
+    - listitem:
+      - link "Today":
+        - /url: /aaj
+    - listitem:
+      - link "Conversations":
+        - /url: /baat
+    - listitem:
+      - link "Work":
+        - /url: /work
+    - listitem:
+      - link "Attendance":
+        - /url: /hazri
+    - listitem:
+      - link "More":
+        - /url: /more
+- region "Notifications alt+T"
+- alert

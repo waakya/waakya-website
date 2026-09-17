@@ -1,0 +1,45 @@
+- main:
+  - link "Documents":
+    - /url: /documents
+  - heading "Templates" [level=1]
+  - paragraph: Fill in the details, check the preview, and save it as a document.
+  - list:
+    - listitem:
+      - button "Quotation Priced scope for a client"
+    - listitem:
+      - button "Proposal Scope and approach"
+    - listitem:
+      - button "Invoice Billing for work done"
+    - listitem:
+      - button "Agreement Terms between two parties"
+    - listitem:
+      - button "Non-disclosure agreement Confidentiality terms"
+    - listitem:
+      - button "Purchase order An order placed with a vendor"
+    - listitem:
+      - button "Work order Authority to begin work"
+    - listitem:
+      - button "Receipt Payment received"
+    - listitem:
+      - button "Scope of work Deliverables and timeline"
+    - listitem:
+      - button "Meeting minutes Decisions and owners"
+- navigation "Main":
+  - list:
+    - listitem:
+      - link "Today":
+        - /url: /aaj
+    - listitem:
+      - link "Conversations":
+        - /url: /baat
+    - listitem:
+      - link "Work":
+        - /url: /work
+    - listitem:
+      - link "Attendance":
+        - /url: /hazri
+    - listitem:
+      - link "More":
+        - /url: /more
+- region "Notifications alt+T"
+- alert

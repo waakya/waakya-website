@@ -1,0 +1,88 @@
+- navigation "Sharma Interiors":
+  - link "Waakya":
+    - /url: /aaj
+  - paragraph: Business
+  - paragraph: Sharma Interiors
+  - list:
+    - listitem:
+      - link "Today":
+        - /url: /aaj
+    - listitem:
+      - link "Conversations":
+        - /url: /baat
+    - listitem:
+      - link "Work":
+        - /url: /work
+    - listitem:
+      - link "Projects":
+        - /url: /projects
+    - listitem:
+      - link "Documents":
+        - /url: /documents
+    - listitem:
+      - link "Attendance & leave":
+        - /url: /hazri
+    - listitem:
+      - link "Approvals":
+        - /url: /approvals
+    - listitem:
+      - link "Team":
+        - /url: /staff
+  - list:
+    - listitem:
+      - link "Search":
+        - /url: /search
+    - listitem:
+      - link "Updates 7":
+        - /url: /khabar
+    - listitem:
+      - link "Daily routine":
+        - /url: /checklists
+    - listitem:
+      - link "Settings":
+        - /url: /settings
+  - paragraph: Priya Sharma
+  - paragraph: Owner
+- main:
+  - heading "Updates" [level=1]
+  - paragraph: 7 new
+  - button "Check now"
+  - button "Mark all read"
+  - list "Updates":
+    - listitem:
+      - paragraph:
+        - 'link "Rahul Verma needs approval: Approve extra spend mu5kz8y9"':
+          - /url: /approvals
+      - paragraph: Thu, 17 Sept · 7:14 pm
+    - listitem:
+      - paragraph:
+        - 'link "Rahul Verma needs approval: Approve vendor mu5kz8y9"':
+          - /url: /approvals
+      - paragraph: Thu, 17 Sept · 7:14 pm
+    - listitem:
+      - paragraph:
+        - link "Rahul Verma asked for leave from 01 Oct":
+          - /url: /hazri
+      - paragraph: Thu, 17 Sept · 7:14 pm
+    - listitem:
+      - paragraph:
+        - link "Rahul Verma asked for leave from 24 Sep":
+          - /url: /hazri
+      - paragraph: Thu, 17 Sept · 7:14 pm
+    - listitem:
+      - paragraph:
+        - link "Rahul Verma finished \"Revised quotation mu5kz8y9\"":
+          - /url: /kaam/4dc078e5-25b4-4172-87fe-656253218452
+      - paragraph: Thu, 17 Sept · 7:14 pm
+    - listitem:
+      - paragraph:
+        - link "Rahul Verma has seen \"Revised quotation mu5kz8y9\"":
+          - /url: /kaam/4dc078e5-25b4-4172-87fe-656253218452
+      - paragraph: Thu, 17 Sept · 7:14 pm
+    - listitem:
+      - paragraph:
+        - 'link "Rahul Verma: Please send the revised quotation mu5kz8y9"':
+          - /url: /baat/7346ffb9-f14e-457f-8c08-b91dd02a78be
+      - paragraph: Thu, 17 Sept · 7:14 pm
+- region "Notifications alt+T"
+- alert

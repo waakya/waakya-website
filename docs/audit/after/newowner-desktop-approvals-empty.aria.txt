@@ -1,0 +1,53 @@
+- navigation "Mehta Facility Services":
+  - link "Waakya":
+    - /url: /aaj
+  - paragraph: Business
+  - paragraph: Mehta Facility Services
+  - list:
+    - listitem:
+      - link "Today":
+        - /url: /aaj
+    - listitem:
+      - link "Conversations":
+        - /url: /baat
+    - listitem:
+      - link "Work":
+        - /url: /work
+    - listitem:
+      - link "Projects":
+        - /url: /projects
+    - listitem:
+      - link "Documents":
+        - /url: /documents
+    - listitem:
+      - link "Attendance & leave":
+        - /url: /hazri
+    - listitem:
+      - link "Approvals":
+        - /url: /approvals
+    - listitem:
+      - link "Team":
+        - /url: /staff
+  - list:
+    - listitem:
+      - link "Search":
+        - /url: /search
+    - listitem:
+      - link "Updates":
+        - /url: /khabar
+    - listitem:
+      - link "Daily routine":
+        - /url: /checklists
+    - listitem:
+      - link "Settings":
+        - /url: /settings
+  - paragraph: Anil Mehta
+  - paragraph: Owner
+- main:
+  - heading "Approvals" [level=1]
+  - paragraph: Decisions that hold work up, kept next to the work.
+  - button "Ask for approval"
+  - paragraph: Nothing waiting
+  - paragraph: Requests for approval appear here.
+- region "Notifications alt+T"
+- alert

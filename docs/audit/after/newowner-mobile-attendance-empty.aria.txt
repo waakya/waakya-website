@@ -1,0 +1,53 @@
+- main:
+  - heading "Attendance & leave" [level=1]
+  - paragraph: Thu, 17 Sept
+  - navigation "Attendance & leave":
+    - link "Leave":
+      - /url: "#leave"
+    - link "Holidays":
+      - /url: "#holidays"
+    - link "Team":
+      - /url: "#team"
+  - text: Today Not punched in
+  - paragraph: You have not punched in today.
+  - button "Punch in"
+  - heading "Leave" [level=2]
+  - paragraph: Leave balance
+  - paragraph: 0 days
+  - button "Apply leave"
+  - heading "This month" [level=2]
+  - paragraph: Nothing recorded this month yet.
+  - heading "Leave requests" [level=2]
+  - paragraph: Nothing waiting.
+  - heading "Team today" [level=2]
+  - list:
+    - listitem: Anil Mehta Not punched in Not punched in
+  - heading "Leave balances" [level=2]
+  - list:
+    - listitem:
+      - text: Anil Mehta 0 days
+      - button "Add ½ day"
+      - button "Add 1 day"
+  - heading "Holidays" [level=2]
+  - textbox "Date": 2026-09-17
+  - textbox "Holiday name"
+  - button "Add" [disabled]
+- navigation "Main":
+  - list:
+    - listitem:
+      - link "Today":
+        - /url: /aaj
+    - listitem:
+      - link "Conversations":
+        - /url: /baat
+    - listitem:
+      - link "Work":
+        - /url: /work
+    - listitem:
+      - link "Attendance":
+        - /url: /hazri
+    - listitem:
+      - link "More":
+        - /url: /more
+- region "Notifications alt+T"
+- alert

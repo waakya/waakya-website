@@ -1,0 +1,119 @@
+- navigation "Sharma Interiors":
+  - link "Waakya":
+    - /url: /aaj
+  - paragraph: Business
+  - paragraph: Sharma Interiors
+  - list:
+    - listitem:
+      - link "Today":
+        - /url: /aaj
+    - listitem:
+      - link "Conversations":
+        - /url: /baat
+    - listitem:
+      - link "Work":
+        - /url: /work
+    - listitem:
+      - link "Projects":
+        - /url: /projects
+    - listitem:
+      - link "Documents":
+        - /url: /documents
+    - listitem:
+      - link "Attendance & leave":
+        - /url: /hazri
+    - listitem:
+      - link "Approvals":
+        - /url: /approvals
+    - listitem:
+      - link "Team":
+        - /url: /staff
+  - list:
+    - listitem:
+      - link "Search":
+        - /url: /search
+    - listitem:
+      - link "Updates 7":
+        - /url: /khabar
+    - listitem:
+      - link "Daily routine":
+        - /url: /checklists
+    - listitem:
+      - link "Settings":
+        - /url: /settings
+  - paragraph: Priya Sharma
+  - paragraph: Owner
+- main:
+  - heading "Hello, Priya Sharma" [level=1]
+  - paragraph: Thu, 17 Sept · Sharma Interiors · 1 staff active
+  - link "New task":
+    - /url: /naya
+  - link "Updates · 7 new":
+    - /url: /khabar
+  - list "Today":
+    - listitem:
+      - paragraph: "1"
+      - paragraph: Sent
+    - listitem:
+      - paragraph: "1"
+      - paragraph: Seen
+    - listitem:
+      - paragraph: "1"
+      - paragraph: Done
+    - listitem:
+      - paragraph: "1"
+      - paragraph: Verified
+    - listitem:
+      - paragraph: "0"
+      - paragraph: Late
+    - listitem:
+      - paragraph: "0"
+      - paragraph: Not seen
+  - region "Also waiting on you":
+    - list:
+      - listitem:
+        - link "1 unread conversation":
+          - /url: /baat
+      - listitem:
+        - link "You have not punched in today":
+          - /url: /hazri
+    - paragraph:
+      - text: Projects in progress
+      - link "Office fit-out mu5kz8y9":
+        - /url: /projects/5bca54ab-d165-45d5-b76f-ba91150ca133
+  - heading "Today's work 0" [level=2]
+  - paragraph: No work yet
+  - paragraph: Use New task to send work.
+  - heading "Done 1" [level=2]
+  - table:
+    - rowgroup:
+      - row "Task Who By when Status Action":
+        - columnheader "Task"
+        - columnheader "Who"
+        - columnheader "By when"
+        - columnheader "Status"
+        - columnheader "Action"
+    - rowgroup:
+      - row "Revised quotation mu5kz8y9 Rahul Verma 6:00 pm Verified Verified Call Rahul Verma View Revised quotation mu5kz8y9":
+        - cell "Revised quotation mu5kz8y9":
+          - link "Revised quotation mu5kz8y9":
+            - /url: /kaam/4dc078e5-25b4-4172-87fe-656253218452
+        - cell "Rahul Verma"
+        - cell "6:00 pm"
+        - cell "Verified Verified":
+          - img "Verified"
+          - text: Verified
+        - cell "Call Rahul Verma View Revised quotation mu5kz8y9":
+          - link "Call Rahul Verma":
+            - /url: tel:9876511111
+          - link "View Revised quotation mu5kz8y9":
+            - /url: /kaam/4dc078e5-25b4-4172-87fe-656253218452
+- complementary:
+  - heading "This week" [level=2]
+  - paragraph: 100% on time
+  - paragraph: Verified work
+  - heading "Staff today" [level=2]
+  - list:
+    - listitem: Rahul Verma 1 task 1/1
+- region "Notifications alt+T"
+- alert

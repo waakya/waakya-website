@@ -177,32 +177,34 @@ export function TeamPanel({
           {balances.map((person) => (
             <li
               key={person.userId}
-              className="flex items-center gap-3 border-b border-paper-100 px-3.5 py-2.5 last:border-b-0"
+              className="flex flex-wrap items-center gap-x-3 gap-y-2 border-b border-paper-100 px-3.5 py-2.5 last:border-b-0"
             >
-              <span className="min-w-0 flex-1 truncate text-[14px] text-ink-900">
-                {person.name}
+              {/* Name and balance on one line; the buttons wrap below on a
+                  phone so a name is never squeezed out. */}
+              <span className="flex min-w-[10rem] flex-1 items-baseline gap-3">
+                <span className="min-w-0 flex-1 truncate text-[14px] text-ink-900">{person.name}</span>
+                <span className="num shrink-0 text-[14px] font-semibold text-ink-900">{formatDays(person.days)}</span>
               </span>
-              <span className="num text-[14px] font-semibold text-ink-900">
-                {formatDays(person.days)}
+              <span className="flex shrink-0 gap-2">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  disabled={busy}
+                  onClick={() => run(() => creditLeave({ userId: person.userId, days: 0.5 }))}
+                >
+                  <Plus aria-hidden="true" />
+                  {ux.attendance.addHalf}
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  disabled={busy}
+                  onClick={() => run(() => creditLeave({ userId: person.userId, days: 1 }))}
+                >
+                  <Plus aria-hidden="true" />
+                  {ux.attendance.addDay}
+                </Button>
               </span>
-              <Button
-                size="sm"
-                variant="outline"
-                disabled={busy}
-                onClick={() => run(() => creditLeave({ userId: person.userId, days: 0.5 }))}
-              >
-                <Plus aria-hidden="true" />
-                {ux.attendance.addHalf}
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                disabled={busy}
-                onClick={() => run(() => creditLeave({ userId: person.userId, days: 1 }))}
-              >
-                <Plus aria-hidden="true" />
-                {ux.attendance.addDay}
-              </Button>
             </li>
           ))}
         </ul>

@@ -1,0 +1,27 @@
+- main:
+  - heading "Conversations" [level=1]
+  - button "New conversation"
+  - button "New group"
+  - paragraph: Nobody has joined yet
+  - paragraph: Invite your team first. Conversations, tasks and attendance start working once someone joins.
+  - link "Invite to team":
+    - /url: /staff
+- navigation "Main":
+  - list:
+    - listitem:
+      - link "Today":
+        - /url: /aaj
+    - listitem:
+      - link "Conversations":
+        - /url: /baat
+    - listitem:
+      - link "Work":
+        - /url: /work
+    - listitem:
+      - link "Attendance":
+        - /url: /hazri
+    - listitem:
+      - link "More":
+        - /url: /more
+- region "Notifications alt+T"
+- alert

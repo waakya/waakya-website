@@ -1,0 +1,25 @@
+- text: Waakya
+- heading "Sign in or get started" [level=1]
+- paragraph: New or returning, use Google or a six-digit code by email. No password.
+- checkbox "I agree to Waakya's Privacy Policy."
+- text: I agree to Waakya's
+- link "Privacy Policy":
+  - /url: /privacy
+- text: .
+- button "Continue with Google"
+- text: or with email Email
+- textbox "Email":
+  - /placeholder: name@example.com
+- button "Send code"
+- list:
+  - listitem: 1 Sign in
+  - listitem: 2 Name your business
+  - listitem: 3 Invite your team with a link
+- paragraph: Joining your team? Open the invite link your owner shared with you.
+- contentinfo:
+  - radiogroup "Language":
+    - radio "हिंदी"
+    - radio "Hinglish"
+    - radio "English" [checked]
+- region "Notifications alt+T"
+- alert

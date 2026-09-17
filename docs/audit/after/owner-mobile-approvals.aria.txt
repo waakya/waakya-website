@@ -1,0 +1,35 @@
+- main:
+  - heading "Approvals" [level=1]
+  - paragraph: Decisions that hold work up, kept next to the work.
+  - button "Ask for approval"
+  - heading "Decided 2" [level=2]
+  - list "Decided":
+    - listitem:
+      - paragraph: Approve extra spend mu5kz8y9
+      - paragraph: Requested by Rahul Verma · Thu, 17 Sept 7:14 pm
+      - text: Rejected
+      - paragraph: Decided by Priya Sharma · Thu, 17 Sept 7:14 pm
+    - listitem:
+      - paragraph: Approve vendor mu5kz8y9
+      - paragraph: Requested by Rahul Verma · Thu, 17 Sept 7:14 pm
+      - text: Approved
+      - paragraph: Decided by Priya Sharma · Thu, 17 Sept 7:14 pm
+- navigation "Main":
+  - list:
+    - listitem:
+      - link "Today":
+        - /url: /aaj
+    - listitem:
+      - link "Conversations":
+        - /url: /baat
+    - listitem:
+      - link "Work":
+        - /url: /work
+    - listitem:
+      - link "Attendance":
+        - /url: /hazri
+    - listitem:
+      - link "More":
+        - /url: /more
+- region "Notifications alt+T"
+- alert

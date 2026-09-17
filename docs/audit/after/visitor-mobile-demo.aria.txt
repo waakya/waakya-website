@@ -1,0 +1,30 @@
+- text: Demo
+- main:
+  - paragraph: WAAKYA
+  - heading "The new era of business communication." [level=2]
+  - paragraph: All your business work. One workspace.
+  - paragraph: Your team agrees things all day. In Waakya, what was agreed becomes work with an owner, a deadline, proof that it was done, and a record your business keeps.
+  - button "See Waakya in action"
+  - button "Jump into the product"
+  - paragraph: A message
+  - text: Please revise the kitchen quotation with the new laminate pricing and send it by 4 PM. becomes work
+  - paragraph: Revise kitchen quotation
+  - paragraph: Rahul Sharma · Due today, 4:00 PM · Accepted 11:10 AM
+  - text: Kitchen_Quotation_v3.pdf Verified 3:44 PM
+- button "Previous section" [disabled]
+- button "Go to Waakya"
+- button "Go to The problem"
+- button "Go to The idea"
+- button "Go to Home"
+- button "Go to Message to task"
+- button "Go to Proof"
+- button "Go to Accountability"
+- button "Go to Documents"
+- button "Go to Approvals"
+- button "Go to Connected"
+- button "Go to Close"
+- button "Next section"
+- button "Reset demo"
+- button "Enter fullscreen"
+- region "Notifications alt+T"
+- alert

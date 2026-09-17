@@ -1,0 +1,14 @@
+- main:
+  - link "Back":
+    - /url: /baat
+  - heading "Site team mu5kz8y9" [level=1]
+  - text: Shared site-plan-mu5kz8y9.pdf
+  - button "site-plan-mu5kz8y9.pdf"
+  - paragraph: Priya Sharma · 7:14 PM
+  - button "Make task"
+  - button "Choose File"
+  - button "Attach a file"
+  - textbox "Write a message"
+  - button "Send" [disabled]
+- region "Notifications alt+T"
+- alert

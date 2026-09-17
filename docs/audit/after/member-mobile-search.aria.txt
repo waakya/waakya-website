@@ -1,0 +1,37 @@
+- main:
+  - heading "Search" [level=1]
+  - textbox "Search tasks, projects, documents, people": quot
+  - heading "Tasks" [level=2]
+  - list:
+    - listitem:
+      - link "Revised quotation mu5kz8y9 Verified":
+        - /url: /kaam/4dc078e5-25b4-4172-87fe-656253218452
+  - heading "Documents" [level=2]
+  - list:
+    - listitem:
+      - link "Quotation - Client mu5kz8y9.html":
+        - /url: /documents/a0596f8d-6793-460d-b60a-9b070a2542a4
+  - heading "Messages" [level=2]
+  - list:
+    - listitem:
+      - link "Please send the revised quotation mu5kz8y9":
+        - /url: /baat/7346ffb9-f14e-457f-8c08-b91dd02a78be
+- navigation "Main":
+  - list:
+    - listitem:
+      - link "Today":
+        - /url: /aaj
+    - listitem:
+      - link "Conversations":
+        - /url: /baat
+    - listitem:
+      - link "Work":
+        - /url: /work
+    - listitem:
+      - link "Attendance":
+        - /url: /hazri
+    - listitem:
+      - link "More":
+        - /url: /more
+- region "Notifications alt+T"
+- alert

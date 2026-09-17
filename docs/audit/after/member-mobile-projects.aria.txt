@@ -1,0 +1,26 @@
+- main:
+  - heading "Projects" [level=1]
+  - paragraph: Keep related work, people and documents together.
+  - list:
+    - listitem:
+      - link "Office fit-out mu5kz8y9 Active 0 open tasks 2 documents":
+        - /url: /projects/5bca54ab-d165-45d5-b76f-ba91150ca133
+- navigation "Main":
+  - list:
+    - listitem:
+      - link "Today":
+        - /url: /aaj
+    - listitem:
+      - link "Conversations":
+        - /url: /baat
+    - listitem:
+      - link "Work":
+        - /url: /work
+    - listitem:
+      - link "Attendance":
+        - /url: /hazri
+    - listitem:
+      - link "More":
+        - /url: /more
+- region "Notifications alt+T"
+- alert

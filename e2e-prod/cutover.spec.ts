@@ -68,7 +68,7 @@ test.beforeAll(async () => {
 test("01 public site, login page and Google hand-off", async ({ page }) => {
   watch(page, "anon");
   await page.goto(BASE + "/");
-  await expect(page.getByRole("heading", { level: 1, name: /Every conversation/ })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1, name: /All your business work/ })).toBeInViewport();
   await page.goto(BASE + "/login");
   await page.getByRole("checkbox").first().check();
   const google = page.waitForRequest((r) => r.url().startsWith("https://accounts.google.com/"), { timeout: 30_000 });
@@ -93,7 +93,7 @@ test("02 owner creates a business, profile, invites staff; staff joins", async (
   await o.getByRole("button", { name: "Continue" }).click();
   await expect(o).toHaveURL(/\/staff$/, { timeout: 30_000 });
 
-  await o.getByRole("button", { name: "Invite staff" }).first().click();
+  await o.getByRole("button", { name: "Invite to team" }).first().click();
   await o.getByLabel("Name").fill("QA Staff");
   await o.getByLabel("Phone number").fill("9876511111");
   await o.getByRole("button", { name: "Make the link" }).click();
@@ -124,7 +124,7 @@ test("03 Today and team permissions", async () => {
     if (process.env.STRIP_CHECK !== "0") await expect(p.getByTestId("attention-strip").filter({ visible: true }).first()).toBeVisible();
   }
   await s.goto(BASE + "/staff");
-  await expect(s.getByRole("button", { name: "Invite staff" })).toHaveCount(0);
+  await expect(s.getByRole("button", { name: "Invite to team" })).toHaveCount(0);
   await s.goto(BASE + "/projects");
   await expect(s.getByRole("button", { name: "New project" })).toHaveCount(0);
   const sc = await db(staff);
@@ -147,7 +147,7 @@ test("04 conversations: direct, message to task, group, attachment", async () =>
   await o.goto(BASE + "/baat");
   await expect(o.getByText(ask).first()).toBeVisible({ timeout: 30_000 });
   await o.goto(BASE + dm);
-  await o.getByRole("button", { name: "Create task" }).first().click();
+  await o.getByTestId("make-task").first().click();
   shared.taskTitle = `Revised quotation ${RUN}`;
   await o.getByLabel("What").fill(shared.taskTitle);
   await o.getByRole("button", { name: "QA Staff" }).click();
@@ -201,6 +201,9 @@ test("05 task lifecycle with photo proof and verify", async () => {
   await o.reload();
   await expect(o.getByRole("list", { name: "Timeline" })).toContainText("Verified");
   await expect(o.getByRole("img", { name: /Photo sent by/ }).first()).toBeVisible();
+  await expect(o.getByText(/^Verified · /).first()).toBeVisible();
+  await expect(o.getByRole("progressbar")).toHaveCount(0);
+  await expect(o.getByText(/left$/)).toHaveCount(0);
 });
 
 test("06 projects, documents, task links, templates", async () => {
@@ -273,14 +276,17 @@ test("07 attendance, leave with half day, holiday", async () => {
   await s.getByRole("button", { name: "Punch out" }).click();
   await expect(s.getByRole("button", { name: /Punch (in|out)/ })).toHaveCount(0, { timeout: 30_000 });
   await s.reload();
-  await expect(s.getByText("Punched out")).toBeVisible();
+  await expect(s.getByText("Punched out").first()).toBeVisible();
+  await s.goto(BASE + "/aaj");
+  await expect(s.getByText(/^Punched out at /).filter({ visible: true }).first()).toBeVisible();
+  await s.goto(BASE + "/hazri");
 
   // Credit two days, then a half day is approved and a full day rejected.
   await o.goto(BASE + "/hazri");
-  const balanceRow = o.locator("li").filter({ hasText: "QA Staff" }).filter({ has: o.getByRole("button", { name: "1 day" }) });
-  await balanceRow.getByRole("button", { name: "1 day" }).click();
+  const balanceRow = o.locator("li").filter({ hasText: "QA Staff" }).filter({ has: o.getByRole("button", { name: "Add 1 day" }) });
+  await balanceRow.getByRole("button", { name: "Add 1 day" }).click();
   await expect(balanceRow).toContainText("1 day", { timeout: 30_000 });
-  await balanceRow.getByRole("button", { name: "1 day" }).click();
+  await balanceRow.getByRole("button", { name: "Add 1 day" }).click();
   await expect(balanceRow).toContainText("2 days", { timeout: 30_000 });
 
   const day = (n: number) => { const d = new Date(Date.now() + n * 86400000); while ([0, 6].includes(d.getDay())) d.setDate(d.getDate() + 1); return d.toISOString().slice(0, 10); };

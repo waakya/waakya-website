@@ -77,7 +77,15 @@ export function OwnerActions({
 
   return (
     <>
-      <footer className="fixed inset-x-0 bottom-0 z-30 mx-auto w-full max-w-md border-t border-paper-200 bg-paper-50 p-4 pb-[calc(1rem_+_env(safe-area-inset-bottom))] lg:static lg:mt-6 lg:max-w-none lg:rounded-card lg:border lg:border-paper-200 lg:p-5">
+      <footer
+        className={
+          // A closed task has nothing urgent to do: its one action sits in the
+          // page instead of a fixed bar over the proof.
+          ["verified", "cancelled"].includes(state)
+            ? "mx-auto mt-2 w-full max-w-md border-t border-paper-200 p-4 lg:mt-6 lg:max-w-none lg:rounded-card lg:border lg:border-paper-200 lg:p-5"
+            : "fixed inset-x-0 bottom-0 z-30 mx-auto w-full max-w-md border-t border-paper-200 bg-paper-50 p-4 pb-[calc(1rem_+_env(safe-area-inset-bottom))] lg:static lg:mt-6 lg:max-w-none lg:rounded-card lg:border lg:border-paper-200 lg:p-5"
+        }
+      >
         {error ? (
           <p
             role="alert"

@@ -1,0 +1,57 @@
+- navigation "Sharma Interiors":
+  - link "Waakya":
+    - /url: /aaj
+  - paragraph: Business
+  - paragraph: Sharma Interiors
+  - list:
+    - listitem:
+      - link "Today":
+        - /url: /aaj
+    - listitem:
+      - link "Conversations":
+        - /url: /baat
+    - listitem:
+      - link "Work":
+        - /url: /work
+    - listitem:
+      - link "Projects":
+        - /url: /projects
+    - listitem:
+      - link "Documents":
+        - /url: /documents
+    - listitem:
+      - link "Attendance & leave":
+        - /url: /hazri
+    - listitem:
+      - link "Approvals":
+        - /url: /approvals
+  - list:
+    - listitem:
+      - link "Search":
+        - /url: /search
+    - listitem:
+      - link "Updates 8":
+        - /url: /khabar
+    - listitem:
+      - link "Settings":
+        - /url: /settings
+  - paragraph: Rahul Verma
+  - paragraph: Staff
+- main:
+  - heading "Approvals" [level=1]
+  - paragraph: Decisions that hold work up, kept next to the work.
+  - button "Ask for approval"
+  - heading "My requests 2" [level=2]
+  - list "My requests":
+    - listitem:
+      - paragraph: Approve extra spend mu5kz8y9
+      - paragraph: Requested by Rahul Verma · Thu, 17 Sept 7:14 pm
+      - text: Rejected
+      - paragraph: Decided by Priya Sharma · Thu, 17 Sept 7:14 pm
+    - listitem:
+      - paragraph: Approve vendor mu5kz8y9
+      - paragraph: Requested by Rahul Verma · Thu, 17 Sept 7:14 pm
+      - text: Approved
+      - paragraph: Decided by Priya Sharma · Thu, 17 Sept 7:14 pm
+- region "Notifications alt+T"
+- alert

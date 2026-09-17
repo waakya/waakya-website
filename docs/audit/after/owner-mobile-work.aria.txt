@@ -1,0 +1,39 @@
+- main:
+  - heading "Work" [level=1]
+  - paragraph: Every commitment, with an owner and a deadline.
+  - link "New task":
+    - /url: /naya
+  - navigation "Work":
+    - link "Team":
+      - /url: /work?tab=team
+    - link "Mine":
+      - /url: /work?tab=mine
+    - link "Open":
+      - /url: /work?tab=open
+    - link "Late":
+      - /url: /work?tab=late
+    - link "Done":
+      - /url: /work?tab=done
+  - list "Team":
+    - listitem:
+      - link "Revised quotation mu5kz8y9 Rahul Verma · Due Fri, 18 Sept 6:00 pm Verified":
+        - /url: /kaam/4dc078e5-25b4-4172-87fe-656253218452
+- navigation "Main":
+  - list:
+    - listitem:
+      - link "Today":
+        - /url: /aaj
+    - listitem:
+      - link "Conversations":
+        - /url: /baat
+    - listitem:
+      - link "Work":
+        - /url: /work
+    - listitem:
+      - link "Attendance":
+        - /url: /hazri
+    - listitem:
+      - link "More":
+        - /url: /more
+- region "Notifications alt+T"
+- alert

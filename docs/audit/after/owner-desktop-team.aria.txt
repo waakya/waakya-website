@@ -1,0 +1,61 @@
+- navigation "Sharma Interiors":
+  - link "Waakya":
+    - /url: /aaj
+  - paragraph: Business
+  - paragraph: Sharma Interiors
+  - list:
+    - listitem:
+      - link "Today":
+        - /url: /aaj
+    - listitem:
+      - link "Conversations":
+        - /url: /baat
+    - listitem:
+      - link "Work":
+        - /url: /work
+    - listitem:
+      - link "Projects":
+        - /url: /projects
+    - listitem:
+      - link "Documents":
+        - /url: /documents
+    - listitem:
+      - link "Attendance & leave":
+        - /url: /hazri
+    - listitem:
+      - link "Approvals":
+        - /url: /approvals
+    - listitem:
+      - link "Team":
+        - /url: /staff
+  - list:
+    - listitem:
+      - link "Search":
+        - /url: /search
+    - listitem:
+      - link "Updates 7":
+        - /url: /khabar
+    - listitem:
+      - link "Daily routine":
+        - /url: /checklists
+    - listitem:
+      - link "Settings":
+        - /url: /settings
+  - paragraph: Priya Sharma
+  - paragraph: Owner
+- main:
+  - heading "Team" [level=1]
+  - paragraph: Sharma Interiors · 2 people
+  - button "Invite to team"
+  - list "Team":
+    - listitem:
+      - paragraph: Priya Sharma · You
+      - paragraph: Not punched in · 0 open tasks
+      - text: Owner
+    - listitem:
+      - paragraph: Rahul Verma
+      - paragraph: "9876511111"
+      - paragraph: 7:14 PM – 7:14 PM · 0 open tasks
+      - text: Staff
+- region "Notifications alt+T"
+- alert

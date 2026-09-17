@@ -1,0 +1,22 @@
+- main:
+  - text: Waakya
+  - paragraph: Step 1 of 3
+  - heading "Create your business" [level=1]
+  - paragraph: Enter the name. You can invite staff afterwards.
+  - text: Business name
+  - textbox "Business name":
+    - /placeholder: "For example: Rakesh Properties"
+  - paragraph: Staff language
+  - radiogroup "Staff language":
+    - radio "हिंदी"
+    - radio "Hinglish"
+    - radio "English" [checked]
+  - button "Create business"
+- complementary "What happens next":
+  - paragraph: What happens next
+  - list:
+    - listitem: 1 Name your business
+    - listitem: 2 Add the details your documents need
+    - listitem: 3 Invite your team with a link
+- region "Notifications alt+T"
+- alert

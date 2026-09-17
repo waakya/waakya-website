@@ -1,0 +1,106 @@
+- navigation "Mehta Facility Services":
+  - link "Waakya":
+    - /url: /aaj
+  - paragraph: Business
+  - paragraph: Mehta Facility Services
+  - list:
+    - listitem:
+      - link "Today":
+        - /url: /aaj
+    - listitem:
+      - link "Conversations":
+        - /url: /baat
+    - listitem:
+      - link "Work":
+        - /url: /work
+    - listitem:
+      - link "Projects":
+        - /url: /projects
+    - listitem:
+      - link "Documents":
+        - /url: /documents
+    - listitem:
+      - link "Attendance & leave":
+        - /url: /hazri
+    - listitem:
+      - link "Approvals":
+        - /url: /approvals
+    - listitem:
+      - link "Team":
+        - /url: /staff
+  - list:
+    - listitem:
+      - link "Search":
+        - /url: /search
+    - listitem:
+      - link "Updates":
+        - /url: /khabar
+    - listitem:
+      - link "Daily routine":
+        - /url: /checklists
+    - listitem:
+      - link "Settings":
+        - /url: /settings
+  - paragraph: Anil Mehta
+  - paragraph: Owner
+- main:
+  - heading "Hello, Anil Mehta" [level=1]
+  - paragraph: Thu, 17 Sept · Mehta Facility Services · 0 staff active
+  - link "New task":
+    - /url: /naya
+  - link "Updates":
+    - /url: /khabar
+  - list "Today":
+    - listitem:
+      - paragraph: "0"
+      - paragraph: Sent
+    - listitem:
+      - paragraph: "0"
+      - paragraph: Seen
+    - listitem:
+      - paragraph: "0"
+      - paragraph: Done
+    - listitem:
+      - paragraph: "0"
+      - paragraph: Verified
+    - listitem:
+      - paragraph: "0"
+      - paragraph: Late
+    - listitem:
+      - paragraph: "0"
+      - paragraph: Not seen
+  - region "Get your workspace ready":
+    - heading "Get your workspace ready" [level=2]
+    - paragraph: Five steps, and your business runs from one place.
+    - paragraph: 0 of 5 done
+    - list:
+      - listitem:
+        - text: Invite your team Everyone joins with a link. Nothing else works until someone is here.
+        - link "Invite":
+          - /url: /staff
+      - listitem: Start a conversation Invite someone first
+      - listitem: Turn a message into a task Invite someone first
+      - listitem:
+        - text: Punch in, and set up leave Attendance, leave balances and your holiday list in one place.
+        - link "Open attendance":
+          - /url: /hazri
+      - listitem:
+        - text: Make a quotation from a template Ten business templates, filled with your business details.
+        - link "See templates":
+          - /url: /documents/templates
+  - region "Also waiting on you":
+    - list:
+      - listitem:
+        - link "You have not punched in today":
+          - /url: /hazri
+  - heading "Today's work 0" [level=2]
+  - paragraph: No work yet
+  - paragraph: Use New task to send work.
+- complementary:
+  - heading "This week" [level=2]
+  - paragraph: — on time
+  - paragraph: Verified work
+  - heading "Staff today" [level=2]
+  - paragraph: Nobody
+- region "Notifications alt+T"
+- alert
