@@ -141,9 +141,15 @@ scenario(
       await expect(p.getByText(/ left$/)).toHaveCount(0);
       await expect(p.getByRole("button", { name: "Change time" })).toHaveCount(0);
     }
-    const { data } = await admin().from("task_events").select("to_state, actor_id").eq("task_id", id).order("created_at");
+    const { data } = await admin().from("task_events").select("to_state, actor_id, created_at").eq("task_id", id).order("created_at");
     const state = loadState();
-    const seq = (data ?? []).map((e) => e.to_state).join(">");
+    // Creating and delivering are one statement, so they share a timestamp;
+    // order those two by the lifecycle rather than by the clock.
+    const rank = ["created", "delivered", "acknowledged", "accepted", "in_progress", "done", "verified"];
+    const rows = [...(data ?? [])].sort((a, b) =>
+      a.created_at === b.created_at ? rank.indexOf(a.to_state) - rank.indexOf(b.to_state) : a.created_at < b.created_at ? -1 : 1,
+    );
+    const seq = rows.map((e) => e.to_state).join(">");
     expect(seq).toBe("created>delivered>acknowledged>accepted>in_progress>done>in_progress>done>verified");
     const verified = data!.find((e) => e.to_state === "verified");
     expect(verified!.actor_id).toBe(state.users.priya.id);
