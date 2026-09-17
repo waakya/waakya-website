@@ -359,6 +359,7 @@ function TextSheet({
               onChange={(event) => onDraftChange(event.target.value)}
               placeholder={placeholder}
               aria-label={title}
+              maxLength={1000}
               className="w-full rounded-button border-2 border-paper-200 bg-paper-0 p-3 text-[17px] text-ink-900 outline-none placeholder:text-ink-400 focus:border-neel-600"
             />
           ) : (
@@ -368,6 +369,8 @@ function TextSheet({
               onChange={(event) => onDraftChange(event.target.value)}
               placeholder={placeholder}
               aria-label={title}
+              // The same limit the server enforces, so nothing typed is silently lost.
+              maxLength={140}
               className="h-tap-staff"
             />
           )}

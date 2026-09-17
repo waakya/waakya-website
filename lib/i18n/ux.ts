@@ -24,6 +24,10 @@ export interface UxCopy {
     recordLead: string;
     fromConversation: string;
     openConversation: string;
+    sendBackTitle: string;
+    sendBackHelp: string;
+    sendBackReason: string;
+    reasonRequired: string;
   };
   thread: {
     makeTask: string;
@@ -116,6 +120,10 @@ const en: UxCopy = {
     recordLead: "This task is closed. Its full record stays below.",
     fromConversation: "From a conversation",
     openConversation: "Open conversation",
+    sendBackTitle: "Send it back?",
+    sendBackHelp: "Say what needs to change. It goes on the record and to the person doing the work.",
+    sendBackReason: "What needs to change",
+    reasonRequired: "Say what needs to change before sending it back.",
   },
   thread: {
     makeTask: "Make task",
@@ -232,6 +240,10 @@ const hiLatn: UxCopy = {
     recordLead: "Yeh kaam band ho gaya. Poora record neeche hai.",
     fromConversation: "Baat-cheet se bana",
     openConversation: "Baat-cheet kholein",
+    sendBackTitle: "Wapas bhejein?",
+    sendBackHelp: "Batayein kya badalna hai. Yeh record mein aur kaam karne wale tak jayega.",
+    sendBackReason: "Kya badalna hai",
+    reasonRequired: "Wapas bhejne se pehle batayein kya badalna hai.",
   },
   thread: {
     makeTask: "Kaam banao",

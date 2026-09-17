@@ -52,9 +52,9 @@ export default async function ProjectsPage() {
             </p>
           </div>
         ) : (
-          <ul className="mt-5 grid gap-2.5 md:grid-cols-2">
+          <ul className="mt-5 grid grid-cols-[minmax(0,1fr)] gap-2.5 md:grid-cols-[repeat(2,minmax(0,1fr))]">
             {projects.map((project) => (
-              <li key={project.id}>
+              <li key={project.id} className="min-w-0">
                 <Link
                   href={`/projects/${project.id}`}
                   className="flex h-full flex-col rounded-card border border-paper-200 bg-paper-0 p-4 transition-colors hover:border-neel-300"

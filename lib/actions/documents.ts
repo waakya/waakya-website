@@ -247,6 +247,21 @@ export async function saveTemplateDocument(
   const missing = template.fields.find((field) => field.required && !data[field.key]);
   if (missing) return fail("Fill in the required details first.");
 
+  // Money and percentages are calculated into the document, so they must be numbers.
+  for (const field of template.fields) {
+    const value = data[field.key];
+    if (!value) continue;
+    if (field.kind === "money") {
+      const amount = Number(value.replace(/[, ₹]/g, ""));
+      if (!Number.isFinite(amount) || amount <= 0) return fail("Enter the amount as a number, for example 25000.");
+    }
+    if (field.kind === "percent") {
+      const rate = Number(value.replace(/%/g, ""));
+      if (!Number.isFinite(rate) || rate < 0 || rate > 100) return fail("GST must be a number between 0 and 100.");
+    }
+    if (field.kind === "date" && !/^\d{4}-\d{2}-\d{2}$/.test(value)) return fail("Choose a valid date.");
+  }
+
   const viewer = await requireOrg();
   const supabase = await createClient();
 

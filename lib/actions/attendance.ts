@@ -62,6 +62,9 @@ function explain(message: string | undefined): string {
   if (text.includes("half day covers one date")) return "A half day covers one date.";
   if (text.includes("all holidays")) return "Those dates are already holidays.";
   if (text.includes("half days")) return "Leave moves in half days.";
+  if (text.includes("already requested")) return "You have already asked for leave on those dates.";
+  if (text.includes("at most 60 days")) return "A leave request can cover at most 60 days.";
+  if (text.includes("choose the dates")) return "Choose the dates first.";
   if (text.includes("not in this business")) return "That person is not in this business.";
   return "That did not go through. Please try again.";
 }

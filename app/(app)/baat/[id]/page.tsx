@@ -10,6 +10,7 @@ import { getConversation } from "@/lib/conversations/queries";
 import { getOrgMembers } from "@/lib/org/members";
 import { Thread } from "./thread";
 import { listMessageDocuments } from "@/lib/documents/queries";
+import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = { title: "Baat-cheet" };
 
@@ -28,6 +29,20 @@ export default async function ConversationPage({
   ]);
 
   if (!conversation) notFound();
+
+  // Opening the conversation is reading it: clear its unread count, so the
+  // list, the tab badge and Today stop saying it is waiting.
+  const supabase = await createClient();
+  await Promise.all([
+    supabase.rpc("mark_conversation_read", { p_conversation: id }),
+    // The "new message" update for this conversation has been seen too.
+    supabase
+      .from("notifications")
+      .update({ read_at: new Date().toISOString() })
+      .eq("user_id", viewer.userId)
+      .eq("dedupe_key", `msg:${id}:${viewer.userId}`)
+      .is("read_at", null),
+  ]);
 
   const attachmentMap = await listMessageDocuments(
     viewer.org.id,

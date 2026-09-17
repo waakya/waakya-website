@@ -135,7 +135,14 @@ test("an overdue task reads Late, in words and in red", async ({ page }) => {
     .eq("title", title)
     .single();
 
-  await supabase
+  // Staging the past is the scheduler's kind of write, not a person's: the
+  // database refuses an owner jumping a task straight to "accepted".
+  const service = createClient<Database>(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    { auth: { persistSession: false, autoRefreshToken: false } },
+  );
+  await service
     .from("tasks")
     .update({
       delivered_at: new Date(Date.now() - 120 * 60_000).toISOString(),
@@ -178,7 +185,14 @@ test("the clock bars say what they are doing, not just what colour they are", as
     .single();
 
   // Two thirds through the completion window: past 50%, not yet 90%.
-  await supabase
+  // Staging the past is the scheduler's kind of write, not a person's: the
+  // database refuses an owner jumping a task straight to "accepted".
+  const service = createClient<Database>(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    { auth: { persistSession: false, autoRefreshToken: false } },
+  );
+  await service
     .from("tasks")
     .update({
       delivered_at: new Date(Date.now() - 120 * 60_000).toISOString(),

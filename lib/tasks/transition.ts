@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { requireOrg } from "@/lib/auth/session";
 import { notifyWith, writeMessage, writeSubject, type NotifyEvent } from "@/lib/notify";
 import { getDictionary, type Locale } from "@/lib/i18n";
+import { getUx } from "@/lib/i18n/ux";
 import { fail, ok, type ActionResult } from "@/lib/validation";
 import { transition } from "./state-machine";
 import { canActorTransition, manages } from "./authz";
@@ -86,6 +87,11 @@ export async function moveTask(
 
   const result = transition(task.state, input.to);
   if (!result.ok) return fail(errors(locale).notAllowed);
+
+  // Sending finished work back without saying why leaves the person guessing.
+  if (task.state === "done" && input.to === "in_progress" && (input.note?.trim().length ?? 0) < 3) {
+    return fail(getUx(locale).task.reasonRequired);
+  }
 
   const patch: TaskUpdate = { state: result.state };
   const column = TIMESTAMP_COLUMN[input.to];
@@ -278,6 +284,7 @@ export async function changeDeadline(
     .eq("id", taskId)
     .maybeSingle();
   if (!task) return fail(errors(locale).notFound);
+  if (["done", "verified", "cancelled"].includes(task.state)) return fail(errors(locale).notAllowed);
 
   const { error } = await supabase
     .from("tasks")

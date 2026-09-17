@@ -25,7 +25,7 @@ type Role = "admin" | "manager" | "member";
  * from the owner's own number, not from an app — which is why staff join
  * (Character document §3.1).
  */
-export function InviteSheet({ locale, compact = false }: { locale: Locale; compact?: boolean }) {
+export function InviteSheet({ locale, compact = false, staffOnly = false }: { locale: Locale; compact?: boolean; staffOnly?: boolean }) {
   const t = getDictionary(locale);
   const router = useRouter();
   const [open, setOpen] = React.useState(false);
@@ -151,8 +151,9 @@ export function InviteSheet({ locale, compact = false }: { locale: Locale; compa
               aria-label={t.org.roleLabel}
             >
               <ToggleGroupItem value="member">{t.org.roles.member}</ToggleGroupItem>
-              <ToggleGroupItem value="manager">{t.org.roles.manager}</ToggleGroupItem>
-              <ToggleGroupItem value="admin">{t.org.roles.admin}</ToggleGroupItem>
+              {/* A manager invites staff; higher roles are the owner's to give. */}
+              {staffOnly ? null : <ToggleGroupItem value="manager">{t.org.roles.manager}</ToggleGroupItem>}
+              {staffOnly ? null : <ToggleGroupItem value="admin">{t.org.roles.admin}</ToggleGroupItem>}
             </ToggleGroup>
 
             {error ? (

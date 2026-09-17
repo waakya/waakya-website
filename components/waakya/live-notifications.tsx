@@ -23,8 +23,17 @@ export function LiveNotifications({ userId }: { userId: string }) {
 
   React.useEffect(() => {
     const supabase = createClient();
+    let channel: ReturnType<typeof supabase.channel> | null = null;
+    let cancelled = false;
 
-    const channel = supabase
+    // Row level security applies to realtime: the socket has to carry this
+    // person's token, not just the public key, or the database filters out
+    // every row and nothing ever arrives. Load the session first.
+    void (async () => {
+      const { data } = await supabase.auth.getSession();
+      if (cancelled) return;
+      if (data.session) await supabase.realtime.setAuth(data.session.access_token);
+      channel = supabase
       .channel(`notifications:${userId}`)
       .on(
         "postgres_changes",
@@ -43,9 +52,17 @@ export function LiveNotifications({ userId }: { userId: string }) {
         },
       )
       .subscribe();
+    })();
+
+    // Keep the socket's token fresh when the session refreshes.
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session) void supabase.realtime.setAuth(session.access_token);
+    });
 
     return () => {
-      void supabase.removeChannel(channel);
+      cancelled = true;
+      listener.subscription.unsubscribe();
+      if (channel) void supabase.removeChannel(channel);
     };
   }, [router, userId]);
 

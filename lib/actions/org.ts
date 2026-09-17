@@ -72,6 +72,11 @@ export async function createInvite(
     return fail(errors(locale).badName, "fullName");
   }
 
+  // Managers bring in staff; only an owner or admin hands out a role above that.
+  if (viewer.role === "manager" && parsed.data.role !== "member") {
+    return fail(errors(locale).notAllowed);
+  }
+
   // 32 hex characters: guessable only by brute force, and the invite is
   // single-use and expires in 30 days.
   const token = randomBytes(16).toString("hex");

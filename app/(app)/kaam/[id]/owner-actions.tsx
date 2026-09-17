@@ -22,6 +22,7 @@ import {
 import { Avatar } from "@/components/ui/avatar";
 import { toast } from "@/components/ui/sonner";
 import { getDictionary, type Locale } from "@/lib/i18n";
+import { getUx } from "@/lib/i18n/ux";
 import {
   moveTaskAction,
   reassignTaskAction,
@@ -32,7 +33,7 @@ import { resolvePreset } from "@/lib/tasks/deadlines";
 import type { TaskState } from "@/lib/supabase/types";
 import { cn } from "@/lib/utils";
 
-type SheetKind = "reassign" | "deadline" | "cancel" | null;
+type SheetKind = "reassign" | "deadline" | "cancel" | "sendBack" | null;
 
 /**
  * Five equal actions along the bottom, Call primary (screens/TaskOwner.png),
@@ -55,8 +56,10 @@ export function OwnerActions({
   assigneePhone: string | null;
 }) {
   const t = getDictionary(locale);
+  const ux = getUx(locale);
   const router = useRouter();
   const [sheet, setSheet] = React.useState<SheetKind>(null);
+  const [reason, setReason] = React.useState("");
   const [error, setError] = React.useState<string | null>(null);
   const [pending, startTransition] = React.useTransition();
 
@@ -125,9 +128,7 @@ export function OwnerActions({
                 variant="outline"
                 size="staff"
                 disabled={pending}
-                onClick={() =>
-                  run(() => moveTaskAction({ taskId, to: "in_progress" }))
-                }
+                onClick={() => setSheet("sendBack")}
               >
                 <Undo2 />
                 {t.detail.sendBack}
@@ -273,6 +274,45 @@ export function OwnerActions({
               </li>
             ))}
           </ul>
+        </SheetContent>
+      </Sheet>
+
+      <Sheet
+        open={sheet === "sendBack"}
+        onOpenChange={(open) => setSheet(open ? "sendBack" : null)}
+      >
+        <SheetContent>
+          <SheetTitle>{ux.task.sendBackTitle}</SheetTitle>
+          <SheetDescription>{ux.task.sendBackHelp}</SheetDescription>
+          <label htmlFor="send-back-reason" className="mt-4 block text-[13px] font-semibold text-ink-700">
+            {ux.task.sendBackReason}
+          </label>
+          <textarea
+            id="send-back-reason"
+            rows={3}
+            maxLength={500}
+            value={reason}
+            onChange={(event) => setReason(event.target.value)}
+            className="mt-1 w-full rounded-button border border-paper-200 bg-paper-0 px-3 py-2 text-[16px] text-ink-900 outline-none focus:border-neel-600"
+          />
+          {error ? (
+            <p role="alert" className="mt-2 text-[14px] text-laal-700">{error}</p>
+          ) : null}
+          <Button
+            size="staff"
+            className="mt-3 w-full"
+            disabled={pending || reason.trim().length < 3}
+            onClick={() =>
+              run(async () => {
+                const result = await moveTaskAction({ taskId, to: "in_progress", note: reason.trim() });
+                if (result.ok) setReason("");
+                return result;
+              })
+            }
+          >
+            <Undo2 />
+            {t.detail.sendBack}
+          </Button>
         </SheetContent>
       </Sheet>
 

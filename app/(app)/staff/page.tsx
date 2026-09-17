@@ -63,7 +63,7 @@ export default async function StaffPage() {
           </div>
           {manages ? (
             <div className="hidden lg:block">
-              <InviteSheet locale={locale} compact />
+              <InviteSheet locale={locale} compact staffOnly={viewer.role === "manager"} />
             </div>
           ) : null}
         </div>
@@ -124,7 +124,7 @@ export default async function StaffPage() {
 
       {manages ? (
         <div className="sticky bottom-16 z-20 px-4 pb-3 lg:hidden">
-          <InviteSheet locale={locale} />
+          <InviteSheet locale={locale} staffOnly={viewer.role === "manager"} />
         </div>
       ) : null}
 
