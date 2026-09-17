@@ -77,7 +77,6 @@ export default async function AajPage() {
 
     const needsYouCards = (
       <>
-      {strip}
       <NeedsYouList
         locale={locale}
         attention={attention}
@@ -120,6 +119,7 @@ export default async function AajPage() {
           unread={unread}
           nowIso={now.toISOString()}
           phones={phones}
+          extra={strip}
         >
           {needsYouCards}
         </OwnerDesktop>

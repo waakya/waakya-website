@@ -34,6 +34,7 @@ export function OwnerDesktop({
   unread,
   nowIso,
   phones,
+  extra,
   children,
 }: {
   locale: Locale;
@@ -47,6 +48,8 @@ export function OwnerDesktop({
   unread: number;
   nowIso: string;
   phones: Record<string, string | null>;
+  /** Approvals, leave and messages waiting, shown whether or not any task is. */
+  extra?: React.ReactNode;
   /** The "Aapke liye" cards, which are client components. */
   children: React.ReactNode;
 }) {
@@ -98,6 +101,8 @@ export function OwnerDesktop({
             tone={counters.dekhaNahi > 0 ? "amber" : undefined}
           />
         </ul>
+
+        {extra ? <div className="mt-8">{extra}</div> : null}
 
         {attention.length > 0 ? (
           <section className="mt-8">
