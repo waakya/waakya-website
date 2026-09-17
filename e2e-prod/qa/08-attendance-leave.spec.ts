@@ -116,10 +116,25 @@ scenario(
     const rahul = await pageOf(browser, "rahul");
     await go(rahul, "/hazri");
     await rahul.getByRole("button", { name: "Punch out" }).click();
-    // The day is closed once the button is gone; only then is the record written.
-    await expect(rahul.getByRole("button", { name: "Punch out" }), "day closed").toHaveCount(0, { timeout: 30_000 });
+    // The day is closed when the card carries a worked time. The button is not
+    // the signal — it also disappears for an instant while the page refreshes.
+    const worked = rahul.getByRole("definition").filter({ hasText: /\dm$|\dh \d+m$/ });
+    await expect
+      .poll(
+        async () => {
+          const seen = await worked.count();
+          if (!seen) {
+            await rahul.waitForTimeout(1500);
+            await rahul.reload();
+            await rahul.waitForLoadState("networkidle").catch(() => {});
+          }
+          return seen;
+        },
+        { timeout: 60_000 },
+      )
+      .toBeGreaterThan(0);
     await rahul.reload();
-    await expect(rahul.getByRole("definition").filter({ hasText: /\dm$|\dh \d+m$/ }).first()).toBeVisible();
+    await expect(worked.first(), "the worked time survives a refresh").toBeVisible();
     await go(rahul, "/aaj");
     await expect(rahul.getByText(/^Punched out at /).filter({ visible: true }).first()).toBeVisible();
     for (const who of ["arjun", "priya"] as const) {
