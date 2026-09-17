@@ -13,6 +13,7 @@ import { applyLeave } from "@/lib/actions/attendance";
 import { formatDays, leaveDaysFor, type LeaveKind } from "@/lib/attendance/leave";
 import { formatWorkDate, workDate } from "@/lib/attendance/time";
 import type { HolidayRow, LeaveRequestRow } from "@/lib/attendance/queries";
+import { attempt } from "@/lib/actions/attempt";
 
 /**
  * Leave, from the employee's side.
@@ -48,13 +49,17 @@ export function LeavePanel({
     event.preventDefault();
     setError(null);
     startTransition(async () => {
-      const result = await applyLeave({
-        startDate: start,
-        endDate: kind === "half_day" ? start : end,
-        kind,
-        period: kind === "half_day" ? "first_half" : null,
-        reason: reason || undefined,
-      });
+      const result = await attempt(
+        () =>
+          applyLeave({
+            startDate: start,
+            endDate: kind === "half_day" ? start : end,
+            kind,
+            period: kind === "half_day" ? "first_half" : null,
+            reason: reason || undefined,
+          }),
+        t.common.noConnection,
+      );
       if (!result.ok) {
         setError(result.message);
         return;

@@ -76,11 +76,12 @@ export async function as(who: Who): Promise<SupabaseClient> {
 /** Network hiccups are not product bugs: retry a sign-in a few times before failing. */
 async function retry<T extends { error: unknown }>(fn: () => Promise<T>): Promise<T> {
   let last!: T;
-  for (let attempt = 0; attempt < 4; attempt += 1) {
+  for (let attempt = 0; attempt < 8; attempt += 1) {
     last = await fn().catch((error) => ({ error }) as T);
-    const message = String((last.error as { message?: string } | null)?.message ?? "");
-    if (!last.error || !/fetch failed|network|ECONN|timeout/i.test(message)) return last;
-    await new Promise((resolve) => setTimeout(resolve, 3000 * (attempt + 1)));
+    const fault = last.error as { message?: string; name?: string } | null;
+    const text = `${fault?.name ?? ""} ${fault?.message ?? ""}`;
+    if (!last.error || !/fetch failed|network|ECONN|timeout|retryable/i.test(text)) return last;
+    await new Promise((resolve) => setTimeout(resolve, Math.min(5000 * (attempt + 1), 20_000)));
   }
   return last;
 }

@@ -21,6 +21,7 @@ import { MAX_DOCUMENT_BYTES, isAllowedType } from "@/lib/documents/rules";
 import { getPhase1 } from "@/lib/i18n/phase1";
 import { formatPunchTime } from "@/lib/attendance/time";
 import type { Message } from "@/lib/conversations/queries";
+import { attempt } from "@/lib/actions/attempt";
 
 /**
  * A conversation, and the thing that makes it Waakya: any message can become
@@ -109,7 +110,7 @@ export function Thread({
     const text = body;
     setBody("");
     startTransition(async () => {
-      const result = await postMessage({ conversationId, body: text });
+      const result = await attempt(() => postMessage({ conversationId, body: text }), t.common.noConnection);
       if (!result.ok) {
         setError(result.message);
         setBody(text);
@@ -287,13 +288,17 @@ function TaskFromMessage({
     if (due.getTime() < Date.now()) due.setDate(due.getDate() + 1);
 
     startTransition(async () => {
-      const result = await createTaskFromMessage({
-        conversationId,
-        messageId: message.id,
-        assigneeId: assignee,
-        title: title.trim(),
-        dueAt: due.toISOString(),
-      });
+      const result = await attempt(
+        () =>
+          createTaskFromMessage({
+            conversationId,
+            messageId: message.id,
+            assigneeId: assignee,
+            title: title.trim(),
+            dueAt: due.toISOString(),
+          }),
+        t.common.noConnection,
+      );
       if (!result.ok) {
         setError(result.message);
         return;

@@ -32,6 +32,7 @@ import {
 import { resolvePreset } from "@/lib/tasks/deadlines";
 import type { TaskState } from "@/lib/supabase/types";
 import { cn } from "@/lib/utils";
+import { attempt } from "@/lib/actions/attempt";
 
 type SheetKind = "reassign" | "deadline" | "cancel" | "sendBack" | null;
 
@@ -66,7 +67,7 @@ export function OwnerActions({
   function run(work: () => Promise<{ ok: boolean; message?: string }>) {
     setError(null);
     startTransition(async () => {
-      const result = await work();
+      const result = await attempt(work, t.common.noConnection);
       if (!result.ok) setError(result.message ?? t.common.somethingWentWrong);
       else {
         setSheet(null);
@@ -162,7 +163,7 @@ export function OwnerActions({
                 disabled={pending}
                 onClick={() =>
                   startTransition(async () => {
-                    const result = await remindAction(taskId);
+                    const result = await attempt(() => remindAction(taskId), t.common.noConnection);
                     if (result.ok) toast(t.detail.reminderSent);
                     else setError(result.message);
                   })

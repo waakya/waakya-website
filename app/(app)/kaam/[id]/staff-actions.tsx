@@ -20,6 +20,7 @@ import {
 } from "@/lib/actions/task-actions";
 import type { TaskState } from "@/lib/supabase/types";
 import { ProofSheet } from "./proof-sheet";
+import { attempt } from "@/lib/actions/attempt";
 
 /**
  * One big button, and two quieter ones beneath it (screens/TaskStaff.png).
@@ -54,10 +55,10 @@ export function StaffActions({
   function move(to: TaskState, note?: string) {
     setError(null);
     startTransition(async () => {
-      const result =
-        to === "acknowledged"
-          ? await acknowledgeAndAcceptAction(taskId)
-          : await moveTaskAction({ taskId, to, note });
+      const result = await attempt(
+        () => (to === "acknowledged" ? acknowledgeAndAcceptAction(taskId) : moveTaskAction({ taskId, to, note })),
+        t.common.noConnection,
+      );
       if (!result.ok) {
         setError(result.message);
         return;

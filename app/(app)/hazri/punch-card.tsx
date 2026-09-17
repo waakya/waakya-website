@@ -10,6 +10,7 @@ import { getDictionary, type Locale } from "@/lib/i18n";
 import { punchIn, punchOut } from "@/lib/actions/attendance";
 import { formatPunchTime } from "@/lib/attendance/time";
 import type { AttendanceDay } from "@/lib/attendance/queries";
+import { attempt } from "@/lib/actions/attempt";
 
 /**
  * The one button that matters in the morning.
@@ -38,7 +39,7 @@ export function PunchCard({
   function run(action: () => Promise<{ ok: boolean; message?: string }>) {
     setError(null);
     startTransition(async () => {
-      const result = await action();
+      const result = await attempt(action, t.common.noConnection);
       if (!result.ok) setError(result.message ?? t.common.somethingWentWrong);
     });
   }

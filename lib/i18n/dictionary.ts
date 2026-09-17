@@ -434,6 +434,7 @@ export interface Dictionary {
     loading: string;
     nothingHere: string;
     somethingWentWrong: string;
+    noConnection: string;
     tryAgain: string;
     language: string;
   };
@@ -840,6 +841,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
       loading: "खुल रहा है",
       nothingHere: "यहाँ कुछ नहीं है",
       somethingWentWrong: "नहीं हो पाया",
+      noConnection: "कुछ नहीं भेजा गया — कनेक्शन देखकर फिर कोशिश करें",
       tryAgain: "फिर से कोशिश करें",
       language: "भाषा",
     },
@@ -1245,6 +1247,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
       loading: "Khul raha hai",
       nothingHere: "Yahaan kuch nahi hai",
       somethingWentWrong: "Nahi ho paya",
+      noConnection: "Kuch nahi bheja gaya — connection dekh kar phir koshish karein",
       tryAgain: "Phir se koshish karein",
       language: "Bhasha",
     },
@@ -1650,6 +1653,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
       loading: "Loading",
       nothingHere: "Nothing here",
       somethingWentWrong: "That did not go through",
+      noConnection: "Nothing was sent — check your connection and try again",
       tryAgain: "Try again",
       language: "Language",
     },

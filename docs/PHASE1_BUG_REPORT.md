@@ -2,7 +2,7 @@
 
 Found by the full-organization QA run against production (https://waakya.com), acting as four people in one business and an owner of a second business, through the product's own screens and, for security, through the database API directly.
 
-**Fixed in:** commit `27bc49c`, database migrations `0021_functional_integrity.sql` and `0022_notification_targets.sql`.
+**Fixed in:** commit `27bc49c` (application, deployed to production) with database migration `0021_functional_integrity.sql`; migration `0022_notification_targets.sql` applied to production and committed in `9055319` alongside the QA suite.
 **Evidence:** `docs/PHASE1_FULL_FUNCTIONAL_MATRIX.md` (first run vs final run), suite in `e2e-prod/qa/`.
 
 Severity: **P0** — data or permission integrity, or a core workflow that cannot complete. **P1** — a workflow that misleads or blocks one side. **P2** — polish and validation.
@@ -122,7 +122,12 @@ Severity: **P0** — data or permission integrity, or a core workflow that canno
 
 ## Test-harness defects found and corrected
 
-These failed the first run but were faults in the tests, not the product: clicking or typing before the page finished hydrating; selectors matching hidden duplicates of text; "Approved" matching both a status chip and a comment; navigating as a second person before the first person's write had completed; ordering two audit events written in the same statement; and 180-second timeouts on the longest journeys.
+These failed a run but were faults in the tests, not the product. Each was checked against the database and, where the check was ambiguous, reproduced by hand in a browser before being dismissed.
+
+- **Switching to the receiving user too early.** A form sheet closes a moment before its row is committed, so the next person's page was rendered a fraction of a second too soon (leave requests, an approval on a phone, a send-back reason, a task made from a message). The tests now wait for the *sender's own screen* to show the write before anyone else is asked to look at it — which is also the more honest test.
+- **Asserting on a label instead of a state.** "Punched out" is the name of a field, visible from the moment someone punches in. The test now waits for the Punch-out button to disappear. Checked by hand afterwards: punching out, reloading, and reading the card gives `Punched in 12:08 AM · Punched out 12:08 AM · Worked 0m` with no button — correct.
+- **Asserting a cancelled task vanishes from Today.** It leaves what needs attention and appears under what is settled, which is right; the test now checks both.
+- **Clicking or typing before hydration**, selectors matching hidden duplicates, "Approved" matching both a chip and a comment, two audit events written in one statement ordered by timestamp, and test timeouts on the longest journeys.
 
 ## Known and accepted
 

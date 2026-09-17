@@ -65,12 +65,17 @@ scenario(
     await rahul.getByRole("button", { name: "Started" }).first().click();
     await expect(timeline(rahul)).toContainText("In progress", { timeout: 30_000 });
     const proof = async (text: string, file: string) => {
+      const before = await timeline(rahul).getByRole("listitem").count();
       await rahul.getByRole("button", { name: "Done", exact: true }).first().click();
       await rahul.getByTestId("proof-file-input").setInputFiles({ name: file, mimeType: "image/png", buffer: PNG });
       await rahul.getByRole("dialog").getByRole("button", { name: "Write" }).click();
       await rahul.getByRole("dialog").getByRole("textbox", { name: "Write" }).fill(text);
       await rahul.getByRole("dialog").getByRole("button", { name: "Send · done" }).click();
       await expect(rahul.getByRole("button", { name: "Send · done" })).toHaveCount(0, { timeout: 30_000 });
+      // It is done once Rahul's own timeline says so; only then does Priya look.
+      await expect
+        .poll(async () => timeline(rahul).getByRole("listitem").count(), { timeout: 60_000 })
+        .toBeGreaterThan(before);
     };
     await proof("Quotation shared with client", "kitchen-quote-v1.png");
     // 6. Priya requests changes with a reason; Rahul resubmits; Priya verifies.

@@ -21,6 +21,7 @@ import { getDictionary, type Locale } from "@/lib/i18n";
 import type { DeadlinePreset } from "@/lib/tasks/deadlines";
 import { createTask } from "@/lib/actions/tasks";
 import { cn } from "@/lib/utils";
+import { attempt } from "@/lib/actions/attempt";
 
 type Member = { id: string; name: string };
 type Priority = "normal" | "urgent";
@@ -79,14 +80,18 @@ export function ConfirmCard({
   function send() {
     setError(null);
     startTransition(async () => {
-      const result = await createTask({
-        assigneeId: assignee!.id,
-        title: title.trim(),
-        details: note.trim(),
-        priority: priority[0] === "urgent" ? "urgent" : "normal",
-        proofRequired: proof,
-        deadline: { kind: "preset", preset: preset[0] ?? "today_evening" },
-      });
+      const result = await attempt(
+        () =>
+          createTask({
+            assigneeId: assignee!.id,
+            title: title.trim(),
+            details: note.trim(),
+            priority: priority[0] === "urgent" ? "urgent" : "normal",
+            proofRequired: proof,
+            deadline: { kind: "preset", preset: preset[0] ?? "today_evening" },
+          }),
+        t.common.noConnection,
+      );
 
       if (!result.ok) {
         setError(result.message);
