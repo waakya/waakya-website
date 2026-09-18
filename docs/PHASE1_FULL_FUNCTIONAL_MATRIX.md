@@ -1,6 +1,6 @@
 # Phase 1 — Full Functional Matrix
 
-Production: https://waakya.com · commit `8c03926` · executed with Playwright against the live site, one browser session per person.
+Production: https://waakya.com · commit `ec7662a` · executed with Playwright against the live site, one browser session per person.
 
 Organization **Sharma Interiors QA** (Priya Sharma · Owner, Arjun Mehta · Manager, Rahul Verma · Team member, Neha Singh · Team member) and a second organization **Rao Builders QA** (Vikram Rao · Owner) for isolation. Every run uses fresh accounts and a fresh organization.
 
@@ -19,7 +19,7 @@ A scenario passes only when the actor's action, the receiver's view, the reloads
 
 | ID | Scenario | Initiator | Receiver | Expected | Actual | Desktop | Mobile | Persistence | Permission | Result | First run |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| T1.1 | **Organization** — Owner creates business and profile | Priya (Owner) | Priya | Business created; Team lists Priya · Owner; survives reload | org 5fed2ba8-ee18-4d0e-b6c8-e856aebe81bc | Tested | See T18 | Reload | Owner | PASS | PASS |
+| T1.1 | **Organization** — Owner creates business and profile | Priya (Owner) | Priya | Business created; Team lists Priya · Owner; survives reload | org 83fd0e22-e309-4fda-9dc1-9fb1ba5f6c7e | Tested | See T18 | Reload | Owner | PASS | PASS |
 | T1.2 | **Organization** — Owner invites Manager; Manager joins | Priya (Owner) | Arjun (Manager) | Arjun sees the business and 'Manager'; Priya sees Arjun · Manager | As expected | Tested | See T18 | Reload both | Owner invites | PASS | PASS |
 | T1.3 | **Organization** — Owner invites Rahul (team member); Rahul joins | Priya (Owner) | Rahul (Member) | Rahul in business as Staff; visible to Priya | As expected | Tested | See T18 | Reload both | Owner invites | PASS | PASS |
 | T1.4 | **Organization** — Manager invites Neha (team member); Neha joins | Arjun (Manager) | Neha (Member), Priya | Manager can invite staff; Neha joins; owner and manager both see her | As expected | Tested | See T18 | Reload | Manager invites staff | PASS | PASS |
@@ -31,7 +31,7 @@ A scenario passes only when the actor's action, the receiver's view, the reloads
 | T1.10 | **Roles** — Manager invite UI offers only allowed roles | Arjun (Manager) | — | Manager's invite sheet does not offer Admin | As expected | Tested | — | — | Manager | PASS | FAIL |
 | T1.11 | **Session** — Sign out, guarded URLs, sign back in | Neha (Member) | Neha | Sign out returns to login; /aaj and a task URL redirect to login; signing in again restores the same business | As expected | Tested | — | New session | Auth guard | PASS | PASS |
 | T1.12 | **Session** — Sign-in through the login screen (Google / email code) | Any user | — | Real Google or emailed OTP sign-in | Needs a real Google account or an email inbox; sessions in this run use Supabase password sign-in with the same cookies the app sets. Google hand-off to the correct callback is covered by the production smoke suite. | — | — | — | — | BLOCKED | BLOCKED |
-| T2.1 | **Tasks** — Owner assigns a task; assignee sees every detail | Priya (Owner) | Rahul (Member) | Rahul sees title, sender, deadline, Urgent, note; Priya sees Sent | task 8b110cc4-39bf-4c37-977e-49d05dffe9e7 | Tested | See T18 | Reload both | Owner creates | PASS | PASS |
+| T2.1 | **Tasks** — Owner assigns a task; assignee sees every detail | Priya (Owner) | Rahul (Member) | Rahul sees title, sender, deadline, Urgent, note; Priya sees Sent | task 447574c0-b298-4b6a-b19c-d15de84f1844 | Tested | See T18 | Reload both | Owner creates | PASS | PASS |
 | T2.2 | **Tasks** — Assignee accepts; owner sees Accepted | Rahul | Priya | Priya's timeline shows Seen and Accepted by Rahul; single event each even on double click | As expected | Tested | See T18 | Reload | Assignee | PASS | PASS |
 | T2.3 | **Tasks** — Assignee starts work; owner sees In progress | Rahul | Priya | In progress on both sides after reload | As expected | Tested | See T18 | Reload both | Assignee | PASS | PASS |
 | T2.4 | **Tasks** — Assignee submits note + photo proof; owner opens proof | Rahul | Priya | Priya sees Done, the photo and the note, and Verify / Send back | As expected | Tested | See T18 | Reload | Assignee | PASS | PASS |
@@ -85,7 +85,7 @@ A scenario passes only when the actor's action, the receiver's view, the reloads
 | T13.2 | **Search** — Org B cannot discover Org A content through search | Vikram (Org B) | — | Searching Org A's unique run tag returns nothing | As expected | Tested | — | — | Cross-org | PASS | PASS |
 | T14.1 | **Today** — Owner Today shows each attention item and clears it once resolved | Rahul, Neha create conditions; Priya resolves | Priya | Pending approval, pending leave, done task to verify, unread conversation and a late task each appear; each disappears after resolving + reload | As expected | Tested | See T18 | Reload after each | Owner | PASS | FAIL |
 | T14.2 | **Today** — Manager and member Today reflect their own reality | Priya assigns | Arjun, Neha | Neha sees her open task and her unread group message; Arjun sees team attention items; after Neha finishes it leaves her open list | As expected | Tested | See T18 | Reload | Role views | PASS | FAIL |
-| T15.1 | **Golden path** — Customer requirement → task → project → quotation → proof → changes → verify → approval → search → notifications → consistent history | Priya, Rahul | Rahul, Priya | Every step visible to the other person; final task, project and conversation agree after reload | task 058c8ad2-3ae3-417c-aee8-f283f4038b17 | Tested | See T18 | Reload both | Owner + member | PASS | FAIL |
+| T15.1 | **Golden path** — Customer requirement → task → project → quotation → proof → changes → verify → approval → search → notifications → consistent history | Priya, Rahul | Rahul, Priya | Every step visible to the other person; final task, project and conversation agree after reload | task 5d77aea2-4da5-4722-b496-435c8b969b30 | Tested | See T18 | Reload both | Owner + member | PASS | FAIL |
 | T16.1 | **Concurrency** — Receiver's open screen updates without reload when work arrives | Priya | Neha (screen open) | Neha's open Today shows the new task within 30 s via the live update, no manual reload | As expected | Tested | — | — | — | PASS | FAIL |
 | T16.2 | **Concurrency** — Owner and manager verify the same task at the same moment | Priya + Arjun (simultaneous) | — | One verification recorded; the other sees it was already moved; no duplicate events | As expected | Tested | — | Checked after | — | PASS | PASS |
 | T16.3 | **Concurrency** — Simultaneous messages and simultaneous approval decisions | Priya + Rahul; Priya + Arjun | — | Both messages stored once each; approval decided once with one decision notification | As expected | Tested | — | Checked after | — | PASS | PASS |
