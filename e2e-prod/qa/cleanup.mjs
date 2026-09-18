@@ -18,8 +18,10 @@ const db = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.SUPABA
 
 const QA_ORG = /^(QA Cutover|.+ QA) [a-z0-9]{6,}$/;
 const QA_EMAIL = /@waakya\.test$/;
-// The local suite signs in with these two; they are fixtures, not QA leftovers.
-const FIXTURES = new Set(["owner@waakya.test", "staff@waakya.test"]);
+// The local suite signs in with these; they are fixtures from
+// supabase/seed-e2e.sql, not QA leftovers. Deleting one turns the whole local
+// suite red, which is exactly what happened the first time this ran.
+const FIXTURES = new Set(["owner@waakya.test", "staff@waakya.test", "noorg@waakya.test"]);
 const dryRun = !process.argv.includes("--yes");
 
 async function main() {
