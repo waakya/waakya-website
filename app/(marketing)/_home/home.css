@@ -1,0 +1,894 @@
+/*
+ * The homepage, as designed in V3.5 and released: the V3.3 editorial base
+ * (the w32- rules) and the V3.5 story (the w35- rules), scoped under .w35 so
+ * nothing here leaks into the product.
+ *
+ * Written mobile first. Every layout starts as one readable column and only
+ * becomes columns when there is room. Everything interactive is at least
+ * 44 px on a coarse pointer. Motion is transform and opacity only, and stops
+ * entirely under prefers-reduced-motion.
+ */
+.w35 {
+  --ink: #1c1a17;
+  --ink-muted: #3e3a33;
+  --ink-subtle: #6b665c;
+  --rule: #eae6dd;
+  --rule-strong: #ddd8cc;
+  --neel: #3541c4;
+  --neel-deep: #1b2060;
+  --neel-soft: #eef0fd;
+  --laal: #a01f1f;
+  --amber: #96470a;
+  --hara: #17803f;
+  --paper: #fffdf8;
+  --wk-fast: 120ms;
+  --wk-base: 200ms;
+  --wk-enter: cubic-bezier(0.16, 0.84, 0.32, 1);
+  color: var(--ink);
+  background: var(--paper);
+}
+.w35 .num { font-variant-numeric: tabular-nums; }
+@media (prefers-reduced-motion: reduce) {
+  .w35 *,
+  .w35 *::before,
+  .w35 *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ------------------------------------------------- the editorial base -- */
+/* ------------------------------------------------------------ editorial -- */
+.w32-eyebrow {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--neel);
+}
+.w32-display {
+  font-family: var(--font-display), ui-sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.022em;
+  line-height: 1.02;
+}
+.w32-sentence {
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--ink-muted);
+}
+.w32-row-meta {
+  font-size: 12.5px;
+  color: var(--ink-subtle);
+}
+/* actions belong to the sentence: a word with a rule under it */
+.w32-act {
+  border-bottom: 1.5px solid var(--neel);
+  padding-bottom: 1px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--neel);
+  transition: color var(--wk-fast, 120ms) ease-out, border-color var(--wk-fast, 120ms) ease-out;
+}
+.w32-act:hover { color: var(--neel-deep); border-color: var(--neel-deep); }
+.w32-act:focus-visible { outline: 2px solid var(--neel); outline-offset: 3px; }
+/* exactly one filled action per screen */
+.w32-primary {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 8px;
+  border-radius: 999px;
+  background: var(--neel-deep);
+  padding: 0 18px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+  transition: transform var(--wk-fast, 120ms) ease-out, background-color var(--wk-fast, 120ms) ease-out;
+}
+.w32-primary:hover { background: #151a4f; }
+.w32-primary:active { transform: scale(0.97); }
+.w32-nav {
+  display: block;
+  padding: 7px 0 7px 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink-subtle);
+  transition: color var(--wk-fast, 120ms) ease-out, box-shadow var(--wk-base, 200ms) ease-out;
+}
+.w32-nav[data-active="true"] {
+  box-shadow: inset 2px 0 0 var(--neel);
+  color: var(--neel-deep);
+}
+/* ====================================================== V3.2.1 additions ==
+ * Editorial stays the foundation; these add the scene, the travelling work,
+ * and a component language that is recognisably Waakya rather than default
+ * HTML. Everything animates transform/opacity only.
+ */
+
+/* --- the business scene ------------------------------------------------- */
+.w32-scene {
+  position: relative;
+  overflow: hidden;
+  border-radius: 20px;
+  border: 1px solid var(--rule-strong);
+  background:
+    radial-gradient(70% 60% at 12% 18%, #eef0fd 0%, rgba(238, 240, 253, 0) 60%),
+    radial-gradient(60% 55% at 88% 74%, #fdf1dd 0%, rgba(253, 241, 221, 0) 58%),
+    linear-gradient(180deg, #fffdf8 0%, #f7f4ed 100%);
+}
+/* --- component language ------------------------------------------------- */
+/* a state is a word with a mark, never a pill-wall */
+.w32-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  font-weight: 700;
+}
+.w32-status::before {
+  content: "";
+  height: 8px;
+  width: 8px;
+  border-radius: 2px;
+  background: currentColor;
+  transform: rotate(45deg);
+}
+.w32-status[data-tone="done"] { color: var(--hara); }
+.w32-status[data-tone="late"] { color: var(--laal); }
+.w32-status[data-tone="wait"] { color: var(--amber); }
+.w32-status[data-tone="go"] { color: var(--neel); }
+/* progress that reads as progress, not a generic bar */
+.w32-progress {
+  position: relative;
+  height: 10px;
+  border-radius: 999px;
+  background: #ece7dc;
+  overflow: hidden;
+}
+.w32-progress > span {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #2c35a5, #17803f);
+  transition: width 700ms var(--wk-enter, cubic-bezier(0.16, 0.84, 0.32, 1));
+}
+.w32-arrive { animation: w32-arrive 320ms var(--wk-enter, cubic-bezier(0.16, 0.84, 0.32, 1)) both; }
+@keyframes w32-arrive {
+  from { opacity: 0; transform: translate3d(0, -10px, 0) scale(0.96); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes w32-leave {
+  to { opacity: 0; transform: translate3d(0, 8px, 0) scale(0.97); }
+}
+/* the customer's phone, used at full size in the portal moment */
+.w32-phone {
+  position: relative;
+  width: 280px;
+  border-radius: 34px;
+  border: 7px solid #1c1a17;
+  background: #fffdf8;
+  overflow: hidden;
+  box-shadow: 0 40px 70px -40px rgba(27, 32, 96, 0.6);
+}
+/* --- demo imagery ------------------------------------------------------- */
+.w32-photoframe {
+  position: relative;
+  overflow: hidden;
+  border-radius: 14px;
+  background: #e9e3d6;
+  box-shadow: inset 0 0 0 1px rgba(28, 26, 23, 0.08), 0 18px 36px -28px rgba(27, 32, 96, 0.55);
+}
+.w32-photoframe svg { display: block; height: 100%; width: 100%; }
+.w32-photoframe-tag {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  border-radius: 999px;
+  background: rgba(28, 26, 23, 0.55);
+  padding: 2px 7px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #fff;
+}
+.w32-photoframe-cap {
+  position: absolute;
+  inset: auto 10px 10px 10px;
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.92);
+  padding: 6px 10px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #1c1a17;
+  box-shadow: 0 8px 20px -14px rgba(27, 32, 96, 0.8);
+}
+/* --- homepage rhythm ----------------------------------------------------- */
+/* the hero is an environment, not a pale rectangle */
+.w32-heroband {
+  position: relative;
+  background:
+    radial-gradient(1000px 520px at 78% 8%, #e4e8fb 0%, rgba(228, 232, 251, 0) 62%),
+    radial-gradient(760px 420px at 4% 92%, #fdeed6 0%, rgba(253, 238, 214, 0) 58%),
+    linear-gradient(180deg, #fffdf8 0%, #f5f1e8 100%);
+}
+.w32-herocopy { position: relative; z-index: 2; }
+/* An action that reads as a word still has to be hittable: 24 px minimum
+   everywhere (WCAG 2.5.8), 44 px wherever the pointer is a finger. */
+.w32-act {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+}
+
+/* ------------------------------------------------------ the V3.5 story -- */
+.w35-kicker {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-subtle);
+}
+
+.w35-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  border-radius: 999px;
+  border: 1px solid var(--rule-strong);
+  background: #fff;
+  padding: 0 16px;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--ink-muted);
+  transition: border-color 120ms ease-out, color 120ms ease-out;
+}
+.w35-control:hover { border-color: var(--neel); color: var(--neel-deep); }
+
+/* a small mark, a real target: the 8 px beat dot of V3.4 could not be hit */
+.w35-dots { display: flex; flex-wrap: wrap; gap: 2px; margin-top: 10px; }
+.w35-dot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  width: 30px;
+  background: none;
+}
+@media (pointer: coarse) {
+  .w35-dot { width: 44px; }
+}
+.w35-dot > span {
+  height: 8px;
+  width: 8px;
+  border-radius: 999px;
+  background: #d6d0c4;
+  transition: background-color 200ms ease-out, width 200ms var(--wk-enter, ease-out);
+}
+.w35-dot[data-seen="true"] > span { background: var(--neel); opacity: 0.45; }
+.w35-dot[data-on="true"] > span { width: 20px; background: var(--neel); opacity: 1; }
+
+.w35-pill {
+  display: inline-block;
+  border-radius: 999px;
+  border: 1px solid var(--rule-strong);
+  background: #fff;
+  padding: 3px 9px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--ink-muted);
+}
+
+.w35-rows { display: flex; flex-direction: column; }
+.w35-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid var(--rule);
+  padding: 11px 0;
+  font-size: 14px;
+}
+.w35-row b { display: block; font-weight: 700; }
+.w35-row-meta { display: block; font-size: 12.5px; color: var(--ink-subtle); }
+.w35-row[data-changed="true"] { animation: w32-arrive 320ms var(--wk-enter, ease-out) both; }
+
+/* ------------------------------------------------------------ 1 · hero --- */
+.w35-chain {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 18px;
+}
+.w35-chain-item { position: relative; display: flex; }
+.w35-chain-card {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 44px;
+  border-radius: 14px;
+  border: 1px solid var(--rule);
+  background: rgba(255, 255, 255, 0.72);
+  padding: 12px 14px;
+  text-align: left;
+  /* the whole loop is readable the moment you arrive — the story brings each
+     step forward rather than conjuring it out of blank space, which on a
+     phone left six card-shaped holes under the hero */
+  color: var(--ink-subtle);
+  transform: translate3d(0, 6px, 0);
+  transition:
+    color 320ms ease-out,
+    transform 320ms var(--wk-enter, cubic-bezier(0.16, 0.84, 0.32, 1)),
+    border-color 200ms ease-out,
+    background-color 200ms ease-out,
+    box-shadow 200ms ease-out;
+}
+.w35-chain-item[data-on="true"] .w35-chain-card { color: var(--ink); transform: none; }
+.w35-chain-item[data-now="true"] .w35-chain-card {
+  border-color: var(--neel);
+  background: #fff;
+  box-shadow: 0 20px 34px -30px rgba(27, 32, 96, 0.9);
+}
+.w35-chain-head { display: block; margin-top: 4px; font-size: 16px; font-weight: 700; line-height: 1.25; }
+.w35-chain-meta { display: block; margin-top: 2px; font-size: 12.5px; line-height: 1.45; color: var(--ink-subtle); }
+.w35-chain-item[data-on="true"] .w35-chain-meta { color: var(--ink-muted); }
+.w35-chain-fig { display: block; margin-top: 6px; }
+.w35-chain-link {
+  position: absolute;
+  left: 22px;
+  bottom: -14px;
+  height: 10px;
+  width: 2px;
+  background: var(--rule-strong);
+  transition: background-color 260ms ease-out;
+}
+.w35-chain-link[data-on="true"] { background: var(--neel); }
+.w35-loop {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--ink-subtle);
+  opacity: 0;
+  transition: opacity 320ms ease-out;
+}
+.w35-loop[data-on="true"] { opacity: 1; color: var(--neel-deep); }
+
+/* -------------------------------------------------------- 2 · scattered -- */
+/* On a phone this is a readable stack that collapses into one record. The
+   literal scatter geometry only appears where there is room for it. */
+.w35-scatter { padding: 16px; }
+.w35-frags {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: opacity 320ms ease-out;
+}
+.w35-frag {
+  border: 1px solid var(--rule-strong);
+  border-radius: 10px;
+  background: #fff;
+  padding: 8px 11px;
+  transform: rotate(var(--rot, 0deg));
+  transition:
+    opacity 360ms ease-out,
+    transform 420ms var(--wk-enter, cubic-bezier(0.16, 0.84, 0.32, 1)),
+    margin 360ms var(--wk-enter, ease-out),
+    max-height 360ms var(--wk-enter, ease-out);
+  max-height: 90px;
+  overflow: hidden;
+}
+.w35-frag-said { display: block; margin-top: 2px; font-size: 13.5px; font-weight: 600; }
+.w35-frag[data-gone="true"] {
+  opacity: 0;
+  max-height: 0;
+  margin-top: -8px;
+  padding-top: 0;
+  padding-bottom: 0;
+  border-width: 0;
+  transform: translate3d(0, -6px, 0) scale(0.96);
+}
+
+.w35-record {
+  border-left: 3px solid var(--neel);
+  border-radius: 4px;
+  background: #fff;
+  padding: 14px 16px;
+  box-shadow: 0 24px 40px -34px rgba(27, 32, 96, 0.9);
+  opacity: 0;
+  transform: translate3d(0, 12px, 0);
+  transition:
+    opacity 420ms ease-out 240ms,
+    transform 420ms var(--wk-enter, cubic-bezier(0.16, 0.84, 0.32, 1)) 240ms;
+}
+.w35-record[data-on="true"] { opacity: 1; transform: none; }
+.w35-record-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  margin-top: 14px;
+  border-top: 1px solid var(--rule);
+  padding-top: 12px;
+}
+.w35-record-val {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2px;
+  font-size: 14.5px;
+  font-weight: 700;
+}
+.w35-record-related {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  border-top: 1px solid var(--rule);
+  padding-top: 12px;
+}
+.w35-record-related .w35-kicker { width: 100%; }
+
+/* ------------------------------------------------------------- 3 · day --- */
+.w35-day { display: grid; grid-template-columns: 1fr; gap: 26px; }
+.w35-day-list { display: flex; flex-direction: column; gap: 10px; }
+
+.w35-moment { position: relative; }
+.w35-moment-card {
+  display: block;
+  width: 100%;
+  border-radius: 14px;
+  border: 1px solid var(--rule);
+  border-left: 4px solid var(--rule-strong);
+  background: rgba(255, 255, 255, 0.6);
+  padding: 12px 14px;
+  text-align: left;
+  transition:
+    border-color 260ms ease-out,
+    background-color 260ms ease-out,
+    box-shadow 260ms ease-out,
+    transform 260ms var(--wk-enter, cubic-bezier(0.16, 0.84, 0.32, 1));
+  transform: translate3d(-6px, 0, 0);
+}
+.w35-moment[data-on="true"] .w35-moment-card { transform: none; background: #fff; }
+.w35-moment[data-now="true"] .w35-moment-card {
+  box-shadow: 0 22px 40px -32px rgba(27, 32, 96, 0.95);
+}
+/* each customer or supplier keeps its own colour of spine, and its name is
+   always written out, so the thread is never carried by colour alone */
+.w35-moment[data-on="true"][data-thread="meera"] .w35-moment-card { border-left-color: #96470a; }
+.w35-moment[data-on="true"][data-thread="sterling"] .w35-moment-card { border-left-color: var(--neel); }
+.w35-moment[data-on="true"][data-thread="pashan"] .w35-moment-card { border-left-color: #6b3fa0; }
+.w35-moment[data-on="true"][data-thread="house"] .w35-moment-card { border-left-color: var(--hara); }
+
+.w35-moment-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 10px; }
+.w35-time { font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--ink); }
+.w35-tag {
+  border-radius: 999px;
+  background: var(--neel-soft);
+  padding: 2px 9px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--neel-deep);
+}
+.w35-thread { font-size: 12.5px; font-weight: 600; color: var(--ink-subtle); }
+
+.w35-moment-body { display: flex; align-items: flex-start; gap: 10px; margin-top: 8px; }
+.w35-moment-fig { flex: 0 0 44px; width: 44px; opacity: 0.5; transition: opacity 260ms ease-out; }
+.w35-moment[data-on="true"] .w35-moment-fig { opacity: 1; }
+.w35-moment-what { display: block; font-size: 16px; font-weight: 700; line-height: 1.3; }
+
+.w35-effects { display: block; margin-top: 6px; }
+.w35-effect {
+  display: block;
+  position: relative;
+  padding-left: 18px;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--ink-muted);
+  opacity: 0;
+  transform: translate3d(-4px, 0, 0);
+  transition: opacity 280ms ease-out, transform 280ms var(--wk-enter, ease-out);
+}
+.w35-moment[data-on="true"] .w35-effect { opacity: 1; transform: none; }
+.w35-moment[data-on="true"] .w35-effect:nth-child(2) { transition-delay: 90ms; }
+.w35-moment[data-on="true"] .w35-effect:nth-child(3) { transition-delay: 180ms; }
+.w35-effect::before {
+  content: "→";
+  position: absolute;
+  left: 0;
+  color: var(--neel);
+}
+.w35-where { display: block; margin-top: 7px; font-size: 12px; color: var(--ink-subtle); }
+.w35-where b { color: var(--neel-deep); }
+.w35-moment-photo { display: block; margin-top: 10px; height: 72px; width: 100%; }
+
+.w35-today { border-top: 2px solid var(--rule-strong); padding-top: 18px; }
+/* the number leads, the phrase sits under it: at a narrow measure a
+   baseline row wrapped "1 approval" onto two lines */
+.w35-today-row { padding: 9px 0; }
+.w35-today-row dd { margin-top: 1px; }
+.w35-today-zero {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-top: 10px;
+  border-top: 1px solid var(--rule);
+  padding-top: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--hara);
+}
+.w35-today-end {
+  margin-top: 14px;
+  opacity: 0;
+  transform: translate3d(0, 8px, 0);
+  transition: opacity 380ms ease-out, transform 380ms var(--wk-enter, ease-out);
+}
+.w35-today-end[data-on="true"] { opacity: 1; transform: none; }
+
+/* ---------------------------------------------------- 4 · conversation --- */
+.w35-talk { display: grid; grid-template-columns: 1fr; gap: 14px; }
+.w35-talk-step { position: relative; }
+.w35-talk-card {
+  display: block;
+  width: 100%;
+  min-height: 44px;
+  border-radius: 14px;
+  border: 1px solid var(--rule);
+  background: rgba(255, 255, 255, 0.7);
+  padding: 12px 14px;
+  text-align: left;
+  /* "not yet" is colour and position, never a faded card: holding these at
+     45 % opacity put every word in them under the contrast floor (axe: 12) */
+  color: var(--ink-subtle);
+  transition: color 280ms ease-out, border-color 200ms ease-out, background-color 200ms ease-out, transform 280ms var(--wk-enter, ease-out);
+  transform: translate3d(0, 6px, 0);
+}
+.w35-talk-step[data-on="true"] .w35-talk-card { color: var(--ink); transform: none; background: #fff; }
+.w35-talk-step[data-now="true"] .w35-talk-card { border-color: var(--neel); }
+.w35-talk-step[data-kind="commit"][data-on="true"] .w35-talk-card { background: var(--neel-soft); border-color: transparent; }
+.w35-talk-step[data-kind="record"][data-on="true"] .w35-talk-card { border-left: 3px solid var(--hara); }
+.w35-talk-head { display: block; margin-top: 4px; font-size: 15px; font-weight: 700; line-height: 1.35; color: inherit; }
+.w35-talk-meta { display: block; margin-top: 3px; font-size: 12.5px; color: var(--ink-subtle); }
+
+/* ------------------------------------------------------------ 5 · owner -- */
+.w35-owner { display: grid; grid-template-columns: 1fr; gap: 20px; padding: 18px; }
+.w35-owner-nav ul { display: flex; flex-wrap: wrap; gap: 2px; }
+.w35-owner-nav .w32-nav { padding: 8px 12px; }
+.w35-owner-main { min-width: 0; }
+.w35-needs { display: flex; flex-direction: column; margin-top: 16px; }
+.w35-need {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid var(--rule);
+  padding: 12px 0;
+}
+.w35-need-what { display: block; margin-top: 2px; font-size: 15px; font-weight: 700; line-height: 1.3; }
+.w35-need-meta { display: block; margin-top: 2px; font-size: 12.5px; color: var(--ink-subtle); }
+.w35-need-act {
+  flex: 0 0 auto;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--neel-deep);
+}
+.w35-moving {
+  margin-top: 18px;
+  border-radius: 14px;
+  background: rgba(238, 240, 253, 0.6);
+  padding: 14px 16px;
+}
+.w35-moving-rows { display: grid; grid-template-columns: 1fr; gap: 8px; margin-top: 10px; }
+.w35-moving-n { font-size: 15px; font-weight: 700; color: var(--neel-deep); }
+.w35-moving-what { font-size: 13.5px; color: var(--ink-muted); }
+.w35-moving-more { display: block; margin-top: 10px; font-size: 12.5px; color: var(--ink-subtle); }
+.w35-owner-people { display: flex; align-items: flex-end; gap: 6px; }
+
+/* --------------------------------------------------------- 6 · customer -- */
+.w35-cx { display: grid; grid-template-columns: 1fr; gap: 20px; }
+.w35-cx-biz { min-width: 0; }
+.w35-cx-phone { position: relative; display: flex; justify-content: center; }
+.w35-cx-people { display: flex; align-items: flex-end; gap: 6px; margin-top: 12px; }
+.w35-cx-effects { min-width: 0; }
+
+.w35-wa {
+  border-radius: 14px;
+  border: 1px solid #cfe7d6;
+  background: #f1f8f2;
+  padding: 11px 13px;
+}
+.w35-needsyou {
+  margin-top: 14px;
+  border-top: 1px solid var(--rule);
+  padding-top: 12px;
+  animation: w32-arrive 320ms var(--wk-enter, ease-out) both;
+}
+.w35-swatch {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 44px;
+  border-radius: 999px;
+  border: 1px solid var(--rule-strong);
+  background: #fff;
+  padding: 0 12px 0 6px;
+  font-size: 12.5px;
+  font-weight: 700;
+  transition: border-color 160ms ease-out, transform 160ms var(--wk-enter, ease-out);
+}
+.w35-swatch i { height: 24px; width: 24px; border-radius: 999px; box-shadow: inset 0 0 0 1px rgba(28, 26, 23, 0.14); }
+.w35-swatch[data-on="true"] { border-color: var(--hara); }
+.w35-swatch:hover { transform: translateY(-1px); }
+
+.w35-cross {
+  position: absolute;
+  left: 50%;
+  bottom: -10px;
+  transform: translateX(-50%) translateY(6px);
+  border-radius: 999px;
+  background: #ddf3e4;
+  padding: 5px 12px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #14623a;
+  opacity: 0;
+  transition: opacity 300ms ease-out, transform 420ms var(--wk-enter, cubic-bezier(0.16, 0.84, 0.32, 1));
+}
+.w35-cross[data-on="true"] { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+.w35-effect-row {
+  position: relative;
+  padding: 9px 0 9px 26px;
+  border-bottom: 1px solid var(--rule);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink-subtle);
+  transition: color 280ms ease-out;
+}
+.w35-effect-row[data-on="true"] { color: var(--ink); }
+.w35-effect-mark {
+  position: absolute;
+  left: 2px;
+  top: 13px;
+  height: 10px;
+  width: 10px;
+  border-radius: 999px;
+  border: 2px solid var(--rule-strong);
+  transition: background-color 280ms ease-out, border-color 280ms ease-out;
+}
+.w35-effect-row[data-on="true"] .w35-effect-mark { background: var(--hara); border-color: var(--hara); }
+/* the line is always there and always legible; arriving means it comes
+   forward in colour, not up from nothing — which left a hole on a phone */
+.w35-cx-punch {
+  margin-top: 14px;
+  font-family: var(--font-display), ui-sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--ink-subtle);
+  transform: translate3d(0, 4px, 0);
+  transition: color 380ms ease-out, transform 380ms var(--wk-enter, ease-out);
+}
+.w35-cx-punch[data-on="true"] { color: var(--ink); transform: none; }
+.w35-cx-say { margin-top: 4px; font-size: 13.5px; font-weight: 700; color: var(--neel-deep); }
+
+/* ------------------------------------------------------- 7 · adaptation -- */
+.w35-switch { display: grid; grid-template-columns: 1fr; gap: 10px; }
+.w35-switch-btn {
+  min-height: 56px;
+  border-radius: 14px;
+  border: 1px solid var(--rule-strong);
+  background: #fff;
+  padding: 10px 16px;
+  text-align: left;
+  transition: border-color 160ms ease-out, background-color 160ms ease-out, color 160ms ease-out;
+}
+.w35-switch-btn[data-on="true"] { border-color: transparent; background: var(--neel-deep); color: #fff; }
+.w35-switch-btn[data-on="true"] .w35-kicker { color: #b8bdf0; }
+.w35-switch-name { display: block; margin-top: 2px; font-family: var(--font-display), ui-sans-serif; font-size: 19px; font-weight: 700; }
+
+.w35-biz { display: grid; grid-template-columns: 1fr; gap: 18px; margin-top: 16px; padding: 18px; }
+.w35-biz-nav ul { display: flex; flex-wrap: wrap; gap: 2px; }
+.w35-biz-nav .w32-nav { padding: 8px 12px; }
+.w35-biz-main { min-width: 0; }
+.w35-biz-place { min-width: 0; }
+
+.w35-modules { margin-top: 16px; }
+.w35-module {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  border-radius: 999px;
+  border: 1px solid var(--rule-strong);
+  background: #fff;
+  padding: 0 14px;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--ink-muted);
+  transition: background-color 160ms ease-out, color 160ms ease-out, border-color 160ms ease-out;
+}
+.w35-module[data-on="true"] { border-color: transparent; background: var(--neel-deep); color: #fff; }
+.w35-module-mark {
+  height: 14px;
+  width: 14px;
+  border-radius: 4px;
+  border: 2px solid currentColor;
+  opacity: 0.5;
+  transition: opacity 160ms ease-out, background-color 160ms ease-out;
+}
+.w35-module[data-on="true"] .w35-module-mark { opacity: 1; background: currentColor; }
+.w35-module-state { font-size: 11px; font-weight: 600; opacity: 0.75; }
+
+.w35-levels { display: grid; grid-template-columns: 1fr; gap: 8px; }
+.w35-level {
+  display: block;
+  width: 100%;
+  min-height: 44px;
+  border-radius: 12px;
+  border: 1px solid var(--rule);
+  background: rgba(255, 255, 255, 0.6);
+  padding: 12px 14px;
+  text-align: left;
+  transition: border-color 160ms ease-out, background-color 160ms ease-out;
+}
+.w35-level[data-on="true"] { border-color: var(--neel); background: #fff; }
+.w35-level-n { font-size: 11.5px; font-weight: 700; color: var(--ink-subtle); }
+.w35-level-word {
+  display: block;
+  font-family: var(--font-display), ui-sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.w35-level[data-on="true"] .w35-level-word { color: var(--neel-deep); }
+.w35-level-say { display: block; margin-top: 2px; font-size: 13px; line-height: 1.45; color: var(--ink-muted); }
+
+.w35-custom {
+  margin-top: 18px;
+  border-left: 3px solid var(--neel);
+  padding: 4px 0 4px 16px;
+}
+.w35-flow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 12px; }
+.w35-flow-node {
+  position: relative;
+  border-radius: 999px;
+  border: 1px solid var(--rule-strong);
+  background: #fff;
+  padding: 6px 11px;
+  font-size: 12.5px;
+  font-weight: 600;
+  animation: w32-arrive 320ms var(--wk-enter, ease-out) both;
+}
+.w35-flow-node + .w35-flow-node::before { content: "→"; margin-right: 9px; color: var(--ink-subtle); }
+.w35-flow-node + .w35-flow-node { border-left-color: var(--rule-strong); }
+
+/* ---------------------------------------------------------- 8 · website -- */
+.w35-web { display: grid; grid-template-columns: 1fr; gap: 12px; }
+.w35-web-step {
+  position: relative;
+  border-radius: 14px;
+  border: 1px solid var(--rule-strong);
+  background: #fff;
+  padding: 14px 16px;
+}
+.w35-web-step[data-mid="true"] { border-left: 3px solid var(--neel); }
+.w35-web-head {
+  display: block;
+  margin-top: 4px;
+  font-family: var(--font-display), ui-sans-serif;
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.w35-web-meta { display: block; margin-top: 3px; font-size: 13px; color: var(--ink-subtle); }
+.w35-web-step + .w35-web-step::before {
+  content: "↓";
+  position: absolute;
+  left: 20px;
+  top: -13px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--neel);
+}
+
+/* ====================================================== wider than a phone */
+@media (min-width: 560px) {
+  .w35-chain { grid-template-columns: 1fr 1fr; }
+  .w35-record-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .w35-moving-rows { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+@media (min-width: 640px) {
+  /* the proof photo sits beside its beat once there is room for both */
+  .w35-moment-card { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 16px; }
+  .w35-moment-head { grid-column: 1 / -1; }
+  .w35-moment-photo { margin-top: 0; height: 90px; width: 150px; align-self: center; }
+}
+
+@media (min-width: 760px) {
+  .w35-web { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .w35-web-step + .w35-web-step::before { left: -21px; top: 50%; transform: translateY(-50%); content: "→"; }
+  .w35-levels { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .w35-switch { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (min-width: 768px) {
+  /* the literal scattered Monday, where there is room to read it */
+  .w35-scatter { container-type: size; aspect-ratio: 16 / 9; padding: 0; }
+  .w35-frags { display: block; }
+  .w35-frag {
+    position: absolute;
+    left: calc(var(--x0) * 1%);
+    top: calc(var(--y0) * 1%);
+    width: 38%;
+    max-width: 280px;
+    max-height: none;
+    box-shadow: 0 18px 30px -24px rgba(28, 26, 23, 0.85);
+  }
+  .w35-frag[data-gone="true"] {
+    margin-top: 0;
+    padding: 8px 11px;
+    border-width: 1px;
+    transform: translate3d(0, 0, 0) scale(0.9);
+  }
+  .w35-record {
+    position: absolute;
+    right: 6%;
+    top: 50%;
+    width: 46%;
+    transform: translate3d(0, calc(-50% + 12px), 0);
+  }
+  .w35-record[data-on="true"] { transform: translate3d(0, -50%, 0); }
+}
+
+@media (min-width: 900px) {
+  .w35-chain { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .w35-talk { grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr; gap: 10px; }
+  .w35-talk-card { height: 100%; }
+  .w35-biz { grid-template-columns: 170px minmax(0, 1fr) 220px; }
+  .w35-biz-nav ul { display: block; }
+  .w35-owner { grid-template-columns: 190px minmax(0, 1fr); }
+  .w35-owner-nav ul { display: block; }
+  .w35-owner-people { grid-column: 1 / -1; }
+  .w35-levels { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
+@media (min-width: 1024px) {
+  .w35-day { grid-template-columns: minmax(0, 1.45fr) minmax(0, 0.55fr); gap: 34px; }
+  .w35-today { position: sticky; top: 24px; border-top: 0; border-left: 2px solid var(--rule-strong); padding: 0 0 0 22px; }
+  /* the phone is the tallest thing here, so the consequences sit beside it
+     rather than under a column of empty space */
+  .w35-cx {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: "biz phone" "effects phone";
+    align-content: start;
+    gap: 26px 34px;
+  }
+  .w35-cx-biz { grid-area: biz; }
+  .w35-cx-phone { grid-area: phone; align-items: flex-start; }
+  .w35-cx-effects { grid-area: effects; border-top: 1px solid var(--rule); padding-top: 20px; }
+}
+
+@media (min-width: 1180px) {
+  .w35-chain { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 14px; }
+  .w35-chain-link { left: auto; right: -9px; bottom: auto; top: 40px; height: 2px; width: 10px; }
+}
+
+/* An interactive thing is 44 px wherever a finger is doing the pointing. */
+@media (pointer: coarse) {
+  .w35 button,
+  .w35 a,
+  .w35 [role="button"] { min-height: 44px; }
+  .w35-chain-card,
+  .w35-moment-card,
+  .w35-talk-card,
+  .w35-level,
+  .w35-switch-btn { min-height: 56px; }
+}

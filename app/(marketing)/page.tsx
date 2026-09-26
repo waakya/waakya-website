@@ -1,459 +1,291 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import {
-  ArrowRight,
-  Bell,
-  CalendarCheck,
-  ChevronDown,
-  FileText,
-  FolderKanban,
-  Home,
-  Menu,
-  MessageSquare,
-  Search,
-  ShieldCheck,
-  SquareCheckBig,
-  Users,
-} from "lucide-react";
 
 import { getViewer } from "@/lib/auth/session";
 import { BRAND_NAME } from "@/lib/i18n";
-import { buttonVariants } from "@/components/ui/button";
 import { Wordmark } from "@/components/waakya/wordmark";
-import { Annotation, Illustration } from "@/components/waakya/illustrations";
-import { Bubble, Composer, DocCard, Frame, TaskCard } from "./_components/mock";
-import { Walkthrough } from "./_components/walkthrough";
-import { Ecosystem } from "./_components/ecosystem";
+import { AdaptLevels, CustomerLoop, OwnerAttention, TwoBusinesses35, WebsiteStrip } from "./_home/v35-more";
+import { BusinessDay, ConversationToWork, HeroChain, ScatterToWork } from "./_home/v35-story";
+import "./_home/home.css";
 
 export const metadata: Metadata = {
-  title: { absolute: `${BRAND_NAME} · All your business work. One workspace.` },
+  title: { absolute: `${BRAND_NAME} · Your entire business. One workspace.` },
   description:
-    "The new era of business communication. Conversations become tasks with owners and deadlines, proof and a record, alongside projects, documents, templates, attendance, leave and approvals.",
+    "Customers, team, operations and the follow-ups nobody has time for, together in one workspace shaped around how your business already works. Work gets an owner, a time and proof; your customer gets a page of their own.",
 };
 
-const NAV = [
-  { href: "#how", label: "How it works" },
-  { href: "#inside", label: "Everything inside" },
-  { href: "#businesses", label: "For businesses" },
-  { href: "#faq", label: "Questions" },
-];
-
-const CHAIN = ["Conversation", "Commitment", "Execution", "Proof", "Record"];
-
-const FAQ = [
-  {
-    q: "Does my team need to install an app?",
-    a: "No. Waakya works in the browser on any phone or laptop, and can be added to the home screen like an app.",
-  },
-  {
-    q: "How do people join our business?",
-    a: "You invite each person with a link. They open it, sign in with Google or a code sent to their email, and they are in your business.",
-  },
-  {
-    q: "Can I keep attendance, leave and holidays here?",
-    a: "Yes. Your team punches in and out, asks for full or half-day leave, and sees the holiday list. You approve leave and keep balances in the same place.",
-  },
-  {
-    q: "What paperwork can I make?",
-    a: "Ten business templates: quotation, proposal, invoice, agreement, NDA, purchase order, work order, receipt, scope of work and meeting minutes. They are filled with your business details and kept with the project.",
-  },
-  {
-    q: "Who can see our information?",
-    a: "Only the people you invite into your business. A conversation is visible only to the people in it.",
-  },
-  {
-    q: "Which languages does it speak?",
-    a: "English, Hinglish and हिंदी. Each person picks their own.",
-  },
-];
-
 /**
- * The website. One story, told the way the product is built: a conversation
- * becomes a commitment, the commitment is carried out, proved and kept as a
- * record — inside one workspace that also holds the projects, the paperwork
- * and the people. Expressive headings in Baloo 2; the product itself in Inter.
+ * The homepage: the V3.5 story, released.
+ *
+ * One business runs through the whole page (ABC Interiors, Pune) and one
+ * calendar runs through every chapter, so nothing here contradicts anything
+ * else. The only other business on the page, Omega Builders, appears once,
+ * to show the same workspace holding a different trade.
+ *
+ * Every call to action is real: Sign in and Start go to /login (a new
+ * business signs up there), See Waakya opens the product demonstration, and
+ * the in-page links go to the chapter they name.
  */
-export default async function LandingPage() {
+const NAV = [
+  { href: "#one-day", label: "What it does" },
+  { href: "#adapts", label: "Your business" },
+  { href: "#customers", label: "For your customers" },
+];
+
+function Chapter({
+  eyebrow,
+  title,
+  say,
+  children,
+  tint,
+  dark,
+  id,
+}: {
+  eyebrow?: string;
+  title: React.ReactNode;
+  say?: string;
+  children?: React.ReactNode;
+  tint?: boolean;
+  dark?: boolean;
+  id?: string;
+}) {
+  return (
+    <section
+      id={id}
+      className={`scroll-mt-16 py-14 sm:py-20 ${
+        dark ? "bg-[#151a4f] text-white" : tint ? "border-y border-[color:var(--rule)] bg-[#faf7f0]" : ""
+      }`}
+    >
+      <div className="mx-auto max-w-[1180px] px-4 sm:px-8">
+        {eyebrow ? (
+          <p className="w32-eyebrow" style={dark ? { color: "#b8bdf0" } : undefined}>
+            {eyebrow}
+          </p>
+        ) : null}
+        <h2 className="w32-display mt-2 max-w-[22ch] text-[30px] leading-[1.06] sm:text-[42px]">{title}</h2>
+        {say ? (
+          <p className={`mt-3 max-w-[58ch] text-body sm:text-body-lg ${dark ? "text-white/75" : "text-[color:var(--ink-muted)]"}`}>
+            {say}
+          </p>
+        ) : null}
+        {children ? <div className="mt-8 sm:mt-10">{children}</div> : null}
+      </div>
+    </section>
+  );
+}
+
+export default async function HomePage() {
   const viewer = await getViewer();
   if (viewer) redirect(viewer.org ? "/aaj" : "/setup");
 
-  const heading = "font-display font-extrabold tracking-[-0.01em] text-neel-900";
-
   return (
-    <div className="flex min-h-dvh flex-col bg-[#fbfaf6] text-ink-900">
-      {/* --------------------------------------------------------------- nav */}
-      <header className="sticky top-0 z-40 border-b border-[#ecebe4] bg-[#fbfaf6]/95 backdrop-blur-sm">
-        <div className="mx-auto flex w-full max-w-6xl items-center gap-4 px-4 py-3 lg:px-8">
-          <Link href="/" aria-label={BRAND_NAME} className="shrink-0">
-            <Wordmark size={24} />
+    <div className="w35">
+      <a
+        href="#main"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:rounded-md focus:bg-white focus:px-3 focus:py-2 focus:text-neel-700 focus:shadow"
+      >
+        Skip to content
+      </a>
+
+      {/* ---------------------------------------------------------- nav -- */}
+      <header className="mx-auto flex max-w-[1180px] items-center gap-6 px-4 py-3 sm:px-8 sm:py-4">
+        <Link href="/" className="inline-flex min-h-11 items-center" aria-label={`${BRAND_NAME} home`}>
+          <Wordmark size={22} />
+        </Link>
+        <nav aria-label="Sections" className="hidden gap-1 text-body-sm font-semibold text-[color:var(--ink-subtle)] md:flex">
+          {NAV.map((n) => (
+            <a key={n.href} href={n.href} className="inline-flex min-h-11 items-center px-2 hover:text-neel-700">
+              {n.label}
+            </a>
+          ))}
+        </nav>
+        <span className="ml-auto flex items-center gap-2 text-body-sm font-semibold sm:gap-4">
+          <Link href="/login" className="inline-flex min-h-11 items-center px-2 text-[color:var(--ink-subtle)] hover:text-neel-700">
+            Sign in
           </Link>
-          <nav aria-label="Website" className="hidden flex-1 items-center justify-center gap-7 text-[14.5px] font-medium text-ink-700 lg:flex">
-            {NAV.map((item) => (
-              <a key={item.href} href={item.href} className="rounded-sm hover:text-neel-700 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-neel-600">
-                {item.label}
-              </a>
-            ))}
-          </nav>
-          <div className="ml-auto flex items-center gap-1.5 lg:ml-0">
-            <Link href="/login" className={buttonVariants({ variant: "ghost", size: "sm", className: "hidden sm:inline-flex" })}>
-              Sign in
-            </Link>
-            <Link href="/login" className={buttonVariants({ size: "sm" })}>
-              Get started
-            </Link>
-            {/* The phone menu needs no script: a disclosure that holds the same links. */}
-            <details className="group relative lg:hidden">
-              <summary className="grid size-10 cursor-pointer list-none place-items-center rounded-button text-neel-900 hover:bg-neel-50 [&::-webkit-details-marker]:hidden">
-                <Menu className="size-5" aria-hidden="true" />
-                <span className="sr-only">Menu</span>
-              </summary>
-              <nav aria-label="Website" className="absolute top-12 right-0 w-60 rounded-[14px] border border-[#e3e6ee] bg-white p-2 shadow-[0_18px_40px_-20px_rgba(27,32,96,0.4)]">
-                {NAV.map((item) => (
-                  <a key={item.href} href={item.href} className="block rounded-[10px] px-3 py-3 text-[15px] font-semibold text-neel-900 hover:bg-neel-50">
-                    {item.label}
-                  </a>
-                ))}
-                <Link href="/login" className="block rounded-[10px] px-3 py-3 text-[15px] font-semibold text-neel-700 hover:bg-neel-50">
-                  Sign in
-                </Link>
-              </nav>
-            </details>
-          </div>
-        </div>
+          <Link href="/demo" className="w32-primary" style={{ minHeight: 44 }}>
+            See Waakya
+          </Link>
+        </span>
       </header>
 
-      <main className="flex-1">
-        {/* ------------------------------------------------------------ hero */}
-        <section className="mx-auto w-full max-w-6xl px-4 pt-10 pb-12 lg:px-8 lg:pt-16">
-          <div className="grid items-center gap-10 lg:grid-cols-[0.8fr_1.2fr]">
-            <div>
-              <p className="inline-flex items-center gap-2 text-[12.5px] font-bold tracking-[0.16em] text-neel-700 uppercase">
-                <span aria-hidden="true" className="h-[3px] w-6 rounded-full bg-neel-600" />
-                The new era of business communication
-              </p>
-              <h1 className={`${heading} mt-4 text-[44px] leading-[1.02] sm:text-[56px] lg:text-[58px]`}>
-                All your business work.
+      <main id="main">
+        {/* ------------------------------------------------ 1 · the promise */}
+        <section className="w32-heroband">
+          <div className="mx-auto max-w-[1180px] px-4 pt-6 pb-10 sm:px-8 sm:pt-12 sm:pb-16">
+            <div className="w32-herocopy">
+              <p className="w32-eyebrow">Bolo. Ho jayega.</p>
+              <h1 className="w32-display mt-3 text-[34px] leading-[1.0] sm:text-[56px] lg:text-[64px]">
+                Your entire business.
                 <br />
                 One workspace.
               </h1>
-              <p className="mt-5 max-w-lg text-[17.5px] leading-[28px] text-ink-700">
-                Your team talks all day. Waakya turns what gets agreed into work with an owner and a deadline, proof that
-                it was done, and a record your business keeps, next to your projects, documents, attendance and approvals.
+              <p className="mt-4 max-w-[54ch] text-[16px] leading-[1.5] text-[color:var(--ink-muted)] sm:text-[19px]">
+                Customers, team, operations and the follow-ups nobody has time for, together in one workspace,
+                shaped around how your business already works.
               </p>
-              <div className="mt-7 flex flex-wrap gap-3">
-                <Link href="/login" className={buttonVariants({ size: "owner" })}>
-                  Get started
-                  <ArrowRight aria-hidden="true" />
+              <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3">
+                <Link href="/login" className="w32-primary" style={{ minHeight: 48 }}>
+                  Start with my business
                 </Link>
-                <a href="#how" className={buttonVariants({ variant: "outline", size: "owner" })}>
-                  See how it works
+                <a href="#one-day" className="w32-act font-bold text-neel-700" style={{ minHeight: 44 }}>
+                  Watch a business run →
                 </a>
               </div>
-              <p className="mt-4 text-[14px] text-ink-500">Works in any browser · English, Hinglish, हिंदी</p>
             </div>
 
-            <div className="relative">
-              <Frame title="Waakya · Sharma Interiors" chrome>
-                <div className="grid md:grid-cols-[minmax(0,1fr)_196px] xl:grid-cols-[156px_minmax(0,1fr)_196px]">
-                  <aside className="hidden flex-col gap-0.5 border-r border-[#eceef6] p-3 xl:flex" aria-hidden="true">
-                    {[
-                      [Home, "Today"],
-                      [MessageSquare, "Conversations"],
-                      [SquareCheckBig, "Work"],
-                      [FolderKanban, "Projects"],
-                      [FileText, "Documents"],
-                      [CalendarCheck, "Attendance"],
-                      [ShieldCheck, "Approvals"],
-                      [Users, "Team"],
-                    ].map(([Icon, label], i) => {
-                      const I = Icon as typeof Home;
-                      return (
-                        <span
-                          key={label as string}
-                          className={
-                            i === 1
-                              ? "flex items-center gap-2 rounded-[8px] bg-neel-50 px-2 py-1.5 text-[12px] font-semibold text-neel-700"
-                              : "flex items-center gap-2 px-2 py-1.5 text-[12px] text-ink-700"
-                          }
-                        >
-                          <I className="size-3.5 shrink-0" />
-                          <span className="truncate">{label as string}</span>
-                        </span>
-                      );
-                    })}
-                  </aside>
-                  <div className="flex min-w-0 flex-col gap-3 p-4">
-                    <div>
-                      <p className="text-[13px] font-semibold text-ink-900">Office renovation · Site team</p>
-                      <p className="text-[12px] text-ink-500">Priya, Rahul and 2 others</p>
-                    </div>
-                    <Bubble initials="PS" name="Priya" time="11:24 AM" text="Rahul, please send the revised quotation by 5 PM." highlight>
-                      <span className="mt-1.5 inline-flex items-center rounded-full bg-neel-50 px-2 py-0.5 text-[11px] font-semibold text-neel-700">
-                        Task created
-                      </span>
-                    </Bubble>
-                    <Bubble initials="RV" name="Rahul" time="11:26 AM" text="On it. Sharing it with the latest BOQ." />
-                    <Composer />
-                  </div>
-                  <div className="flex min-w-0 flex-col gap-2.5 border-t border-[#eceef6] p-4 md:border-t-0 md:border-l">
-                    <p className="text-[11px] font-semibold tracking-wide text-ink-500 uppercase">Tasks from this chat</p>
-                    <TaskCard title="Revised quotation" who="Rahul" due="5 PM" state="Proof submitted" tone="neel" />
-                    <DocCard name="Quotation v2.pdf" meta="PDF · 1.8 MB" />
-                    <p className="flex items-center gap-1.5 text-[12px] text-ink-700">
-                      <CalendarCheck className="size-3.5 shrink-0 text-neel-700" aria-hidden="true" /> Rahul in at 9:41 AM
-                    </p>
-                  </div>
-                </div>
-              </Frame>
-            </div>
-          </div>
-
-          {/* The story, in one line, straight under the first screen. */}
-          <ol aria-label="How work moves in Waakya" className="mt-14 flex flex-wrap items-center justify-center gap-x-2 gap-y-3 lg:mt-16">
-            {CHAIN.map((stage, index) => (
-              <li key={stage} className="flex items-center gap-2">
-                <span className="inline-flex items-center gap-2 rounded-full border border-[#dfe2ef] bg-white py-1.5 pr-3.5 pl-1.5 text-[14.5px] font-bold text-neel-900">
-                  <span className="num grid size-6 place-items-center rounded-full bg-neel-600 text-[12px] text-white">{index + 1}</span>
-                  {stage}
-                </span>
-                {index < CHAIN.length - 1 ? <ArrowRight className="size-4 text-neel-400" aria-hidden="true" /> : null}
-              </li>
-            ))}
-          </ol>
-        </section>
-
-        {/* --------------------------------------------------------- problem */}
-        <section className="border-y border-[#ecebe4] bg-white">
-          <div className="mx-auto grid w-full max-w-6xl items-center gap-10 px-4 py-14 lg:grid-cols-[1fr_1fr] lg:px-8 lg:py-16">
-            <div>
-              <h2 className={`${heading} text-[32px] leading-[1.08] sm:text-[38px]`}>
-                Your business talks everywhere.
-                <br />
-                The work gets lost in between.
-              </h2>
-              <p className="mt-4 max-w-md text-[16.5px] leading-[26px] text-ink-700">
-                Instructions sit in chats, trackers in spreadsheets, files on someone&apos;s phone, and leave in a register.
-                So every day starts with the same questions.
-              </p>
-            </div>
-            <ul className="grid gap-3 sm:grid-cols-2">
-              {[
-                ["Who is doing this?", "An instruction in a group chat, and no one replied."],
-                ["Is it done?", "A tick in a spreadsheet, and no proof."],
-                ["Where is the file?", "Quotation_final_v2 (1).pdf, on someone's phone."],
-                ["Who is in today?", "A leave register nobody updated."],
-              ].map(([question, answer]) => (
-                <li key={question} className="rounded-[14px] border border-[#e3e6ee] bg-[#fbfaf6] p-4">
-                  <p className="text-[24px] leading-tight text-neel-700 [font-family:var(--font-hand),cursive]">{question}</p>
-                  <p className="mt-1 text-[14.5px] leading-[21px] text-ink-700">{answer}</p>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </section>
-
-        {/* ----------------------------------------------------------- chain */}
-        <section id="how" className="mx-auto w-full max-w-6xl scroll-mt-20 px-4 py-16 lg:px-8 lg:py-20">
-          <div className="max-w-2xl">
-            <h2 className={`${heading} text-[34px] leading-[1.06] sm:text-[44px]`}>Every conversation. A clear next step.</h2>
-            <p className="mt-3 text-[16.5px] leading-[26px] text-ink-700">
-              Talk, assign, execute, prove. Follow one quotation at Sharma Interiors, from the moment it is asked for to
-              the moment it is verified.
-            </p>
-          </div>
-          <div className="mt-8">
-            <Walkthrough />
-          </div>
-        </section>
-
-        {/* ------------------------------------------------------- ecosystem */}
-        <section id="inside" className="scroll-mt-20 border-y border-[#ecebe4] bg-white">
-          <div className="mx-auto w-full max-w-6xl px-4 py-16 lg:px-8 lg:py-20">
-            <div className="max-w-2xl">
-              <h2 className={`${heading} text-[34px] leading-[1.06] sm:text-[44px]`}>One business. Everything connected.</h2>
-              <p className="mt-3 text-[16.5px] leading-[26px] text-ink-700">
-                Every part of Waakya knows about the others. A task knows the conversation it came from, the project it
-                belongs to, the documents that prove it and who is in today to do it.
-              </p>
-            </div>
-            <div className="mt-10">
-              <Ecosystem />
+            <p className="w35-kicker mt-8 sm:mt-9">One customer, from her first message to her own page</p>
+            <div className="mt-3">
+              <HeroChain />
             </div>
           </div>
         </section>
 
-        {/* ------------------------------------------------------- owner day */}
-        <section className="mx-auto grid w-full max-w-6xl items-center gap-10 px-4 py-16 lg:grid-cols-[0.85fr_1.15fr] lg:px-8 lg:py-20">
-          <div>
-            <h2 className={`${heading} text-[34px] leading-[1.06] sm:text-[42px]`}>
-              Open Waakya.
+        {/* ------------------------------------------- 2 · why it is painful */}
+        <Chapter
+          tint
+          eyebrow="Monday, 4:40 pm"
+          title={<>Nothing is lost. It is just everywhere.</>}
+          say="The enquiry is in your website mail, the promise is in a chat, the requirement is on somebody’s phone. By Friday only you know how it joins up, and only if nobody calls."
+        >
+          <ScatterToWork />
+          <p className="w32-sentence mt-6 max-w-[56ch]">
+            Waakya does not just collect all of it in one place. It turns it into work that has an owner, a next
+            action and a time, which is the part a folder has never done for anyone.
+          </p>
+        </Chapter>
+
+        {/* -------------------------------------------- 3 · what changes -- */}
+        <Chapter
+          id="one-day"
+          eyebrow="One business · one day"
+          title={<>A whole day of work, moving without you in it.</>}
+          say="ABC Interiors on Tuesday, 23 September: a new enquiry, a live site, a quotation going out, a customer approving, a vendor confirming. Every beat says which part of the workspace it touched."
+        >
+          <BusinessDay />
+        </Chapter>
+
+        {/* --------------------------------------------- 4 · how work starts */}
+        <Chapter
+          tint
+          eyebrow="How the work starts"
+          title={<>Work starts in a conversation. It should not end there.</>}
+          say="One sentence anybody would say in a group chat, turned into a commitment with a name and a time on it."
+        >
+          <ConversationToWork />
+        </Chapter>
+
+        {/* ------------------------------------------------ 5 · the owner -- */}
+        <Chapter
+          eyebrow="Your morning"
+          title={<>Know what needs you. The rest keeps moving.</>}
+          say="Waakya’s job is to reduce how much of the business has to pass through your head, not to hand you a longer list."
+        >
+          <OwnerAttention />
+          <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
+            <p className="w32-display text-[24px] leading-tight sm:text-[28px]">
+              Four decisions.
               <br />
-              See what needs you.
-            </h2>
-            <p className="mt-4 max-w-md text-[16.5px] leading-[26px] text-ink-700">
-              Late work, decisions waiting, leave to approve and who is in, on one screen. Your team sees their own day:
-              what they owe, and a button to punch in.
+              Not forty messages.
             </p>
-            <Illustration name="review" className="mt-6 hidden h-32 w-auto lg:block" />
+            <p className="w32-sentence">
+              Work that is running does not ask for your attention. Work that is stuck, late, or waiting on your word
+              comes to the top and says so, in words, not in colours you have to decode.
+            </p>
           </div>
-          <Frame title="Today · Sharma Interiors">
-            <div className="p-4 sm:p-5">
-              <p className="font-display text-[22px] font-extrabold text-neel-900">Hello, Priya</p>
-              <ul className="mt-4 flex flex-col divide-y divide-[#eceef3] rounded-[12px] border border-[#e6e8f1]">
-                {[
-                  [ShieldCheck, "2 approvals waiting", "Vendor comparison · Site visit expenses", "Decide"],
-                  [CalendarCheck, "Neha asked for a half day on Friday", "Leave balance: 4.5 days", "Review"],
-                  [SquareCheckBig, "Revised quotation · proof submitted", "Rahul · Office renovation", "Verify"],
-                  [Users, "12 of 14 in today", "2 October is a holiday", "Team"],
-                ].map(([Icon, title, sub, action]) => {
-                  const I = Icon as typeof Home;
-                  return (
-                    <li key={title as string} className="flex items-center gap-3 px-3.5 py-3">
-                      <I className="size-4 shrink-0 text-neel-700" aria-hidden="true" />
-                      <span className="min-w-0 flex-1">
-                        <span className="block text-[14px] font-semibold text-ink-900">{title as string}</span>
-                        <span className="block text-[12.5px] text-ink-500">{sub as string}</span>
-                      </span>
-                      <span className="shrink-0 rounded-[8px] border border-neel-200 px-2.5 py-1 text-[12.5px] font-semibold text-neel-700">
-                        {action as string}
-                      </span>
-                    </li>
-                  );
-                })}
-              </ul>
-              <div className="mt-4 grid grid-cols-3 gap-2 text-center">
-                {[
-                  ["18", "Sent today"],
-                  ["2", "Late"],
-                  ["11", "Verified"],
-                ].map(([value, label]) => (
-                  <div key={label} className="rounded-[10px] bg-[#f5f6fa] py-2.5">
-                    <p className={`num font-display text-[24px] leading-none font-extrabold ${label === "Late" ? "text-laal-600" : "text-neel-800"}`}>{value}</p>
-                    <p className="mt-1 text-[12px] text-ink-700">{label}</p>
-                  </div>
-                ))}
-              </div>
-              <p className="mt-4 flex items-center gap-4 text-[12.5px] text-ink-500">
-                <span className="inline-flex items-center gap-1.5"><Search className="size-3.5" aria-hidden="true" /> Search anything</span>
-                <span className="inline-flex items-center gap-1.5"><Bell className="size-3.5" aria-hidden="true" /> 5 updates</span>
-              </p>
-            </div>
-          </Frame>
-        </section>
+        </Chapter>
 
-        {/* ------------------------------------------------------ businesses */}
-        <section id="businesses" className="scroll-mt-20 border-t border-[#ecebe4] bg-white">
-          <div className="mx-auto w-full max-w-6xl px-4 py-16 lg:px-8">
-            <h2 className={`${heading} max-w-2xl text-[32px] leading-[1.1] sm:text-[40px]`}>Made for teams that get real work done.</h2>
-            <ul className="mt-10 grid gap-10 md:grid-cols-3 md:gap-8">
-              {[
-                {
-                  art: "team" as const,
-                  title: "Service teams",
-                  eg: "Interiors, construction, facilities",
-                  story: ["Supervisor punches in at site", "Gets “Measure Tower B” from the site chat", "Uploads the photos as proof", "You verify from the office"],
-                },
-                {
-                  art: "laptop" as const,
-                  title: "Agencies",
-                  eg: "Design, marketing, events",
-                  story: ["Client feedback agreed in the team chat", "Designer gets the revision as a task", "Final file is attached to the project", "Account lead approves it"],
-                },
-                {
-                  art: "handoff" as const,
-                  title: "Small businesses",
-                  eg: "Professional services, distribution, retail",
-                  story: ["Order confirmed in a conversation", "Work order made from a template", "Signed copy attached as proof", "Kept on record, findable later"],
-                },
-              ].map((item) => (
-                <li key={item.title}>
-                  <Illustration name={item.art} className="h-24 w-auto" />
-                  <p className="mt-4 text-[18px] font-bold text-neel-900">{item.title}</p>
-                  <p className="text-[13.5px] text-ink-500">{item.eg}</p>
-                  <ol className="mt-3 flex flex-col gap-2 border-l-2 border-neel-100 pl-4">
-                    {item.story.map((line, index) => (
-                      <li key={line} className="text-[14.5px] leading-[20px] text-ink-700">
-                        <span className="num mr-1.5 font-semibold text-neel-700">{index + 1}.</span>
-                        {line}
-                      </li>
-                    ))}
-                  </ol>
-                </li>
-              ))}
-            </ul>
+        {/* --------------------------------------------- 6 · the customer -- */}
+        <Chapter
+          dark
+          id="customers"
+          eyebrow="For your customers"
+          title={<>Your customer stops asking “kya hua?”</>}
+          say="One sequence, from the message they get to the work their answer unblocks. Their experience and your operation are the same system, seen from two sides."
+        >
+          <div className="rounded-[22px] bg-white p-4 text-[color:var(--ink)] sm:p-7">
+            <CustomerLoop />
           </div>
-        </section>
-
-        {/* ------------------------------------------------------------ faq */}
-        <section id="faq" className="mx-auto w-full max-w-6xl scroll-mt-20 px-4 py-16 lg:px-8">
-          <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr]">
-            <div>
-              <h2 className={`${heading} text-[32px] leading-[1.1] sm:text-[40px]`}>Questions owners ask.</h2>
-              <ul className="mt-6 flex flex-col gap-2.5 text-[15px] text-ink-700">
-                <li className="flex items-center gap-2"><ShieldCheck className="size-4 text-neel-700" aria-hidden="true" /> Visible only to the people you invite</li>
-                <li className="flex items-center gap-2"><Home className="size-4 text-neel-700" aria-hidden="true" /> Works on any phone or laptop browser</li>
-                <li className="flex items-center gap-2"><MessageSquare className="size-4 text-neel-700" aria-hidden="true" /> English, Hinglish and हिंदी</li>
-                <li className="flex items-center gap-2">
-                  <FileText className="size-4 text-neel-700" aria-hidden="true" />
-                  <Link href="/privacy" className="underline decoration-neel-300 underline-offset-4 hover:text-neel-700">Privacy under India&apos;s DPDP Act</Link>
-                </li>
-              </ul>
-            </div>
-            <div className="divide-y divide-[#e6e4dc] border-y border-[#e6e4dc]">
-              {FAQ.map((item) => (
-                <details key={item.q} className="group py-1">
-                  <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 py-3 text-[16.5px] font-semibold text-neel-900 [&::-webkit-details-marker]:hidden">
-                    {item.q}
-                    <ChevronDown className="size-5 shrink-0 text-neel-600 transition-transform group-open:rotate-180" aria-hidden="true" />
-                  </summary>
-                  <p className="pb-4 text-[15.5px] leading-[24px] text-ink-700">{item.a}</p>
-                </details>
-              ))}
-            </div>
+          <div className="mt-9 max-w-[56ch]">
+            <h3 className="w32-display text-[24px] leading-tight sm:text-[28px]">
+              A customer who can see the work does not need to chase it.
+            </h3>
+            <p className="mt-3 text-body text-white/75 sm:text-body-lg">
+              Fewer calls for your team. Faster approvals for you. And at handover, a customer who watched you do it
+              properly, which is how the next job arrives.
+            </p>
           </div>
-        </section>
+        </Chapter>
 
-        {/* ------------------------------------------------------------ CTA */}
-        <section className="bg-neel-50">
-          <div className="mx-auto grid w-full max-w-6xl items-center gap-8 px-4 py-14 lg:grid-cols-[1.2fr_auto_0.8fr] lg:px-8">
-            <div>
-              <h2 className={`${heading} text-[34px] leading-[1.05] sm:text-[42px]`}>Bring your business into one workspace.</h2>
-              <p className="mt-3 max-w-lg text-[16px] leading-[25px] text-ink-700">
-                Sign in with Google or email, name your business, and invite your team with a link.
-              </p>
+        {/* ------------------------------------------- 7 · it fits my trade */}
+        <Chapter
+          tint
+          id="adapts"
+          eyebrow="Built around the way you work"
+          title={<>One builds offices. One sells flats. Both run on Waakya.</>}
+        >
+          <TwoBusinesses35 />
+
+          <div className="mt-14 border-t border-[color:var(--rule-strong)] pt-10">
+            <h3 className="w32-display text-[24px] sm:text-[30px]">And it keeps going as far as your business does.</h3>
+            <div className="mt-7">
+              <AdaptLevels />
             </div>
-            <div className="flex flex-wrap gap-3">
-              <Link href="/login" className={buttonVariants({ size: "staff" })}>
-                Get started
-                <ArrowRight aria-hidden="true" />
+            <p className="w32-display mt-9 max-w-[24ch] text-[22px] leading-tight sm:text-[28px]">
+              Your business has its own way of working. Waakya can go with it.
+            </p>
+          </div>
+        </Chapter>
+
+        {/* ----------------------------------------------- 8 · your website */}
+        <Chapter
+          eyebrow="Your website"
+          title={<>Keep your website. Connect the business behind it.</>}
+          say="Your site stays your site. What changes is where its enquiries land, and that your customers have somewhere to look afterwards."
+        >
+          <WebsiteStrip />
+        </Chapter>
+
+        {/* ------------------------------------------------------ 9 · close */}
+        <section className="bg-[#151a4f] px-4 py-16 text-white sm:px-8 sm:py-24">
+          <div className="mx-auto max-w-[1180px]">
+            <h2 className="w32-display max-w-[18ch] text-[34px] leading-[1.04] sm:text-[56px]">
+              You built the business. You should not have to hold it together.
+            </h2>
+            <p className="w32-display mt-7 text-[24px] leading-tight sm:text-[32px]" style={{ color: "#b8bdf0" }}>
+              Your entire business. One workspace.
+            </p>
+            <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
+              <Link href="/login" className="w32-primary" style={{ background: "#fff", color: "#151a4f", minHeight: 52 }}>
+                Start with my business
               </Link>
-              <Link href="/login" className={buttonVariants({ variant: "outline", size: "staff" })}>
-                Sign in
+              <Link href="/demo" className="inline-flex min-h-11 items-center font-bold text-white underline underline-offset-4">
+                See the product demonstration
               </Link>
-            </div>
-            <div className="relative hidden justify-end lg:flex">
-              <Annotation text="one place for all of it" className="absolute -top-8 left-0" />
-              <Illustration name="conversation" className="h-40 w-auto" />
             </div>
           </div>
         </section>
       </main>
 
-      <footer className="border-t border-[#ecebe4] bg-[#fbfaf6]">
-        <div className="mx-auto grid w-full max-w-6xl gap-6 px-4 py-8 sm:grid-cols-[1fr_auto] sm:items-center lg:px-8">
+      <footer className="border-t border-[color:var(--rule)] bg-[#fbfaf6]">
+        <div className="mx-auto grid w-full max-w-[1180px] gap-6 px-4 py-8 sm:grid-cols-[1fr_auto] sm:items-center sm:px-8">
           <div>
             <Wordmark size={20} />
-            <p className="mt-2 text-[14px] text-ink-500">The new era of business communication.</p>
+            <p className="mt-2 text-[14px] text-[color:var(--ink-subtle)]">Bolo. Ho jayega.</p>
           </div>
-          <nav aria-label="Footer" className="grid grid-cols-2 gap-x-8 gap-y-1 text-[14px] text-ink-700 sm:flex sm:flex-wrap sm:gap-x-6">
+          <nav aria-label="Footer" className="grid grid-cols-2 gap-x-8 text-[14px] text-[color:var(--ink-muted)] sm:flex sm:flex-wrap sm:gap-x-6">
             {NAV.map((item) => (
-              <a key={item.href} href={item.href} className="py-2 hover:text-neel-700">
+              <a key={item.href} href={item.href} className="inline-flex min-h-11 items-center hover:text-neel-700">
                 {item.label}
               </a>
             ))}
-            <Link href="/privacy" className="py-2 hover:text-neel-700">Privacy</Link>
-            <Link href="/login" className="py-2 hover:text-neel-700">Sign in</Link>
+            <Link href="/privacy" className="inline-flex min-h-11 items-center hover:text-neel-700">
+              Privacy
+            </Link>
+            <Link href="/login" className="inline-flex min-h-11 items-center hover:text-neel-700">
+              Sign in
+            </Link>
           </nav>
         </div>
       </footer>
