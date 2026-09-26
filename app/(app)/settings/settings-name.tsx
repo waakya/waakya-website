@@ -76,7 +76,7 @@ export function SettingsName({
           {t.settings.nameSaved}
         </p>
       ) : null}
-      <Button type="submit" disabled={pending || unchanged || !name.trim()}>
+      <Button type="submit" className="self-start" disabled={pending || unchanged || !name.trim()}>
         {pending ? t.common.loading : t.settings.saveName}
       </Button>
     </form>

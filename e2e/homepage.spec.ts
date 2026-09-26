@@ -44,7 +44,7 @@ test("the stories respond to the reader", async ({ page }) => {
   // Monday: the record is on the page before anything moves, and it fills.
   const monday = page.locator(".w4-monday");
   await monday.scrollIntoViewIfNeeded();
-  await expect(monday.getByText("Meera Joshi")).toBeVisible();
+  await expect(monday.locator(".w4-record-name")).toHaveText("Meera Joshi");
   await expect(monday.getByText("nobody yet")).toBeVisible();
   await page.getByRole("button", { name: /Bring it together/ }).click();
   await expect(monday.getByText("Neha Singh")).toBeVisible();
@@ -94,6 +94,8 @@ for (const width of WIDTHS) {
         for (const el of Array.from(document.querySelectorAll<HTMLElement>("a, button"))) {
           const r = el.getBoundingClientRect();
           if (r.width === 0 || r.height === 0) continue;
+          // The skip link is 1×1 until it is focused; it is a keyboard target, not a finger one.
+          if (el.classList.contains("sr-only")) continue;
           if (r.height < 44) out.push(`${el.tagName} "${(el.textContent ?? "").trim().slice(0, 30)}" ${Math.round(r.width)}x${Math.round(r.height)}`);
         }
         return out;
