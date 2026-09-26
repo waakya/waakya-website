@@ -25,7 +25,7 @@ export default async function PipelinePage() {
         <PageHeader back={{ href: "/crm", label: t.title }} title={t.pipeline.title} description={t.pipeline.subtitle} />
         <div className="mt-5 flex flex-col gap-4 lg:grid lg:auto-cols-[minmax(15rem,1fr)] lg:grid-flow-col lg:overflow-x-auto">
           {board.columns.map((col) => (
-            <section key={col.id} aria-labelledby={`stage-${col.id}`} className={cn("rounded-card border border-line bg-surface-muted p-3", col.kind !== "open" && "opacity-90")}>
+            <section key={col.id} aria-labelledby={`stage-${col.id}`} className={cn("rounded-card border border-line bg-surface-muted p-3", col.kind !== "open" && "border-dashed")}>
               <h2 id={`stage-${col.id}`} className="flex items-baseline justify-between gap-2 text-body font-bold text-fg">
                 <span>{col.name}</span>
                 <span className="num text-caption font-normal text-fg-subtle">{col.count}{col.value > 0 ? ` · ${money.format(col.value)}` : ""}</span>

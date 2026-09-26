@@ -11,7 +11,7 @@ import { signInAs, signOut } from "./support/auth";
  */
 const SCREENS = [
   "/aaj",
-  "/kaam",
+  "/work",
   "/naya",
   "/crm",
   "/crm/pipeline",
@@ -63,7 +63,7 @@ for (const width of WIDTHS) {
   test(`the product composes at ${width}px`, async ({ page }) => {
     await signInAs(page, "owner", "en");
     await page.setViewportSize({ width, height: width < 700 ? 844 : 900 });
-    for (const path of ["/aaj", "/kaam", "/crm", "/records", "/projects", "/vendors", "/automations", "/campaigns", "/settings/modules"]) {
+    for (const path of ["/aaj", "/work", "/crm", "/records", "/projects", "/vendors", "/automations", "/campaigns", "/settings/modules"]) {
       await page.goto(path);
       await expect(page.locator("main, [role=main]").first()).toBeVisible();
       expect(await horizontalOverflow(page), `${path} overflow at ${width}`).toBeLessThanOrEqual(0);

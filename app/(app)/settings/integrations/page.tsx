@@ -59,7 +59,7 @@ export default async function IntegrationsPage() {
 
         <Section title={t.howTo}>
           <p className="text-body-sm text-fg-muted">{t.howToBody}</p>
-          <pre className="num mt-2 overflow-x-auto rounded-card border border-line bg-surface p-3 text-caption text-fg">{sample}</pre>
+          <pre tabIndex={0} className="num mt-2 overflow-x-auto rounded-card border border-line bg-surface p-3 text-caption text-fg">{sample}</pre>
           <p className="mt-2 text-caption text-fg-subtle">
             {t.fields}: full_name, phone, email, source, interest, project, message, metadata
           </p>

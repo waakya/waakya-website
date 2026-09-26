@@ -106,7 +106,7 @@ export function ConfirmCard({
   return (
     // A focused flow: a comfortable card on a wide screen rather than a
     // form stretched across it.
-    <div className="mx-auto flex min-h-dvh w-full max-w-xl flex-col p-4 lg:py-10">
+    <main className="mx-auto flex min-h-dvh w-full max-w-xl flex-col p-4 lg:py-10">
       <header className="flex items-center gap-3">
         <Button
           variant="outline"
@@ -283,7 +283,7 @@ export function ConfirmCard({
         saveLabel={t.actions.save}
         multiline
       />
-    </div>
+    </main>
   );
 }
 

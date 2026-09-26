@@ -42,6 +42,7 @@ export function InstallExample({ locale, exampleKey, label }: { locale: Locale; 
     <Button
       variant="secondary"
       disabled={pending}
+      className="h-auto max-w-full whitespace-normal py-2 text-left"
       onClick={() =>
         startTransition(async () => {
           const result = await installExampleRule(exampleKey);
