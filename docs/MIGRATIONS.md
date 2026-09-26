@@ -21,6 +21,14 @@ Rules:
 2. Upgrade path: dump the production schema (`supabase db dump --linked -s public`), load it into a scratch database, apply only the new files, compare with the clean result.
 3. `npx supabase migration list --project-ref krdmzjjmbrphzcuotfgz` shows exactly 0001–0022 before pushing.
 
+### Verified 2026-09-26 (Platform V1 release)
+
+- Clean database: `supabase db reset` applies 0001–0040 and the e2e seed; unit (292), integration (55) and e2e suites green on it.
+- Upgrade path: `supabase db reset --version 0022` then `supabase migration up` (0030–0040) dumps a `public` schema identical to the clean build (0 diff lines).
+- Production drift: `supabase db dump --project-ref krdmzjjmbrphzcuotfgz -s public` diffed against a local build of 0001–0022 differs only in platform-managed extension lines and the realtime publication. No hand edits in production.
+- Backup before push: schema, data and roles dumped to `~/waakya-backups/2026-09-26-pre-platform-v1/` (the project has no automated backups on its plan; PITR is off).
+- Ledger before push: production reports exactly 0001–0022; `db push --dry-run` lists exactly 0030–0040.
+
 ## Applying to production
 
 ```
