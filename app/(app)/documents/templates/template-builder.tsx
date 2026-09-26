@@ -89,12 +89,12 @@ export function TemplateBuilder({
   if (!chosen) {
     return (
       <main className="flex-1 p-4 pb-8">
-        <Link href="/documents" className="inline-flex items-center gap-1.5 text-[14px] font-semibold text-neel-700">
+        <Link href="/documents" className="inline-flex items-center gap-1.5 text-body-sm font-semibold text-neel-700">
           <ArrowLeft className="size-4" aria-hidden="true" />
           {p.documents.title}
         </Link>
-        <h1 className="mt-3 text-[24px] leading-[30px] font-bold text-ink-900">{p.templates.title}</h1>
-        <p className="mt-0.5 text-[15px] leading-[20px] text-ink-500">{p.templates.subtitle}</p>
+        <h1 className="mt-3 text-title leading-[30px] font-bold text-ink-900">{p.templates.title}</h1>
+        <p className="mt-0.5 text-body leading-[20px] text-ink-500">{p.templates.subtitle}</p>
 
         <ul className="mt-5 grid gap-2.5 sm:grid-cols-2">
           {templates.map((template) => (
@@ -104,12 +104,12 @@ export function TemplateBuilder({
                 onClick={() => pick(template)}
                 className="flex w-full items-start gap-3 rounded-card border border-paper-200 bg-paper-0 p-4 text-left transition-colors hover:border-neel-300 hover:bg-neel-50"
               >
-                <span className="grid size-9 shrink-0 place-items-center rounded-[10px] bg-neel-50">
+                <span className="grid size-9 shrink-0 place-items-center rounded-inner bg-neel-50">
                   <FileText className="size-4 text-neel-700" aria-hidden="true" />
                 </span>
                 <span>
-                  <span className="block text-[15px] font-semibold text-ink-900">{template.title}</span>
-                  <span className="block text-[13px] text-ink-500">{template.blurb}</span>
+                  <span className="block text-body font-semibold text-ink-900">{template.title}</span>
+                  <span className="block text-label text-ink-500">{template.blurb}</span>
                 </span>
               </button>
             </li>
@@ -124,12 +124,12 @@ export function TemplateBuilder({
       <button
         type="button"
         onClick={() => setChosen(null)}
-        className="inline-flex items-center gap-1.5 text-[14px] font-semibold text-neel-700"
+        className="inline-flex items-center gap-1.5 text-body-sm font-semibold text-neel-700"
       >
         <ArrowLeft className="size-4" aria-hidden="true" />
         {p.templates.back}
       </button>
-      <h1 className="mt-3 text-[24px] leading-[30px] font-bold text-ink-900">{chosen.title}</h1>
+      <h1 className="mt-3 text-title leading-[30px] font-bold text-ink-900">{chosen.title}</h1>
 
       <div className="mt-5 grid gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
         <form
@@ -147,7 +147,7 @@ export function TemplateBuilder({
                 id="template-project"
                 value={projectId}
                 onChange={(event) => setProjectId(event.target.value)}
-                className="mt-1 h-11 w-full rounded-button border border-paper-200 bg-paper-0 px-3 text-[15px]"
+                className="mt-1 h-11 w-full rounded-button border border-paper-200 bg-paper-0 px-3 text-body"
               >
                 <option value="">{p.common.none}</option>
                 {projects.map((project) => (
@@ -159,9 +159,9 @@ export function TemplateBuilder({
             </div>
           ) : null}
           {taskId ? (
-            <p className="rounded-card bg-neel-50 px-3 py-2 text-[14px] text-neel-800">{ux.templates.linkedTask}</p>
+            <p className="rounded-card bg-neel-50 px-3 py-2 text-body-sm text-neel-800">{ux.templates.linkedTask}</p>
           ) : null}
-          <h2 className="mt-1 text-[13px] font-semibold text-ink-700">{p.templates.fields}</h2>
+          <h2 className="mt-1 text-label font-semibold text-ink-700">{p.templates.fields}</h2>
           {chosen.fields.map((field) => {
             const id = `field-${field.key}`;
             const label = p.templates.fieldLabels[field.key] ?? field.key;
@@ -177,7 +177,7 @@ export function TemplateBuilder({
                     rows={3}
                     value={data[field.key] ?? ""}
                     onChange={(event) => setData({ ...data, [field.key]: event.target.value })}
-                    className="mt-1 w-full rounded-button border border-paper-200 bg-paper-0 px-3 py-2 text-[15px] text-ink-900 outline-none focus:border-neel-600"
+                    className="mt-1 w-full rounded-button border border-paper-200 bg-paper-0 px-3 py-2 text-body text-ink-900 outline-none focus:border-neel-600"
                   />
                 ) : (
                   <Input
@@ -195,13 +195,13 @@ export function TemplateBuilder({
 
 
           {error ? (
-            <p role="alert" data-testid="template-error" className="rounded-card bg-laal-100 px-3 py-2 text-[14px] text-laal-700">
+            <p role="alert" data-testid="template-error" className="rounded-card bg-laal-100 px-3 py-2 text-body-sm text-laal-700">
               {error}
             </p>
           ) : null}
 
           {savedId ? (
-            <p className="flex items-center gap-2 rounded-card bg-hara-100 px-3 py-2 text-[14px] font-semibold text-hara-700">
+            <p className="flex items-center gap-2 rounded-card bg-hara-100 px-3 py-2 text-body-sm font-semibold text-hara-700">
               <Check className="size-4" aria-hidden="true" />
               {p.templates.saved}
               <Link href={`/documents/${savedId}`} className="ml-auto underline">
@@ -216,7 +216,7 @@ export function TemplateBuilder({
         </form>
 
         <section aria-label={p.templates.preview} className="xl:sticky xl:top-4 xl:self-start">
-          <h2 className="mb-2 text-[13px] font-semibold text-ink-700">{p.templates.preview}</h2>
+          <h2 className="mb-2 text-label font-semibold text-ink-700">{p.templates.preview}</h2>
           <iframe
             title={p.templates.preview}
             srcDoc={html}

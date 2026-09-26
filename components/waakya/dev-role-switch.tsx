@@ -28,7 +28,7 @@ export function DevRoleSwitch({ current }: { current: DevRole }) {
         "border border-paper-300 bg-paper-0/95 p-1 shadow-float backdrop-blur",
       )}
     >
-      <span className="px-2 text-[11px] font-semibold tracking-wide text-ink-400 uppercase">
+      <span className="px-2 text-micro font-semibold tracking-wide text-ink-400 uppercase">
         dev
       </span>
       {DEV_ROLES.map((role) => (
@@ -44,7 +44,7 @@ export function DevRoleSwitch({ current }: { current: DevRole }) {
             })
           }
           className={cn(
-            "rounded-chip px-3 py-1.5 text-[13px] font-semibold capitalize transition-colors",
+            "rounded-chip px-3 py-1.5 text-label font-semibold capitalize transition-colors",
             role === current
               ? "bg-neel-600 text-white"
               : "text-ink-700 hover:bg-paper-100",

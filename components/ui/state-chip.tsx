@@ -17,7 +17,7 @@ import { cn } from "@/lib/utils";
 const chipVariants = cva(
   [
     "inline-flex items-center gap-1.5 rounded-chip",
-    "px-2.5 py-1 text-[13px] font-semibold leading-tight",
+    "px-2.5 py-1 text-label font-semibold leading-tight",
     "[&_svg]:size-3.5 [&_svg]:shrink-0",
   ],
   {

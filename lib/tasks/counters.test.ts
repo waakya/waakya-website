@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { countDay, needsYou } from "./counters";
+import { countDay, justSentFirst, needsYou, waitingOnTeam } from "./counters";
 import type { TaskListItem } from "./queries";
 
 const NOW = new Date("2026-09-04T06:00:00.000Z"); // 11:30 IST
@@ -182,5 +182,46 @@ describe("Aapke liye", () => {
         NOW,
       ),
     ).toEqual([]);
+  });
+});
+
+describe("waiting on your team (Design V3)", () => {
+  it("is open work that does not need you — never a task Today already lists", () => {
+    const late = task({ dueAt: "2026-09-04T05:00:00.000Z", state: "accepted", acknowledgedAt: TODAY });
+    const unseen = task();
+    const toVerify = task({ state: "done", acknowledgedAt: TODAY, doneAt: TODAY });
+    const working = task({ state: "in_progress", acknowledgedAt: TODAY });
+    const accepted = task({ state: "accepted", acknowledgedAt: TODAY, dueAt: "2026-09-04T09:00:00.000Z" });
+    const verified = task({ state: "verified", acknowledgedAt: TODAY, doneAt: TODAY });
+    const all = [late, unseen, toVerify, working, accepted, verified];
+    const waiting = waitingOnTeam(all, NOW);
+    const needs = new Set(needsYou(all, NOW).map((item) => item.task.id));
+    expect(waiting.map((t) => t.id).sort()).toEqual([working.id, accepted.id].sort());
+    expect(waiting.some((t) => needs.has(t.id))).toBe(false);
+  });
+
+  it("lists the nearest deadline first", () => {
+    const later = task({ state: "in_progress", acknowledgedAt: TODAY, dueAt: "2026-09-05T09:00:00.000Z" });
+    const sooner = task({ state: "in_progress", acknowledgedAt: TODAY, dueAt: "2026-09-04T09:00:00.000Z" });
+    expect(waitingOnTeam([later, sooner], NOW).map((t) => t.id)).toEqual([sooner.id, later.id]);
+  });
+});
+
+describe("what you just sent leads the waiting list", () => {
+  it("puts your task from the last minutes first, keeps the rest in order, and keeps the set", () => {
+    const soon = task({ id: "soon", state: "in_progress", acknowledgedAt: TODAY, dueAt: "2026-09-04T07:00:00.000Z" });
+    const later = task({ id: "later", state: "in_progress", acknowledgedAt: TODAY, dueAt: "2026-09-04T09:00:00.000Z" });
+    const mine = task({ id: "mine", createdById: "rakesh", createdAt: "2026-09-04T05:55:00.000Z", dueAt: "2026-09-05T09:00:00.000Z", state: "acknowledged", acknowledgedAt: TODAY });
+    const out = justSentFirst([soon, later, mine], "rakesh", NOW);
+    expect(out.map((t) => t.id)).toEqual(["mine", "soon", "later"]);
+    expect(out).toHaveLength(3);
+  });
+});
+
+describe("several just sent", () => {
+  it("puts the newest of several just-sent tasks first", () => {
+    const a = task({ id: "a", createdById: "rakesh", createdAt: "2026-09-04T05:50:00.000Z" });
+    const b = task({ id: "b", createdById: "rakesh", createdAt: "2026-09-04T05:58:00.000Z" });
+    expect(justSentFirst([a, b], "rakesh", NOW).map((t) => t.id)).toEqual(["b", "a"]);
   });
 });

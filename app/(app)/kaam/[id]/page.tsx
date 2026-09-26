@@ -77,9 +77,10 @@ export default async function TaskPage({ params }: PageProps<"/kaam/[id]">) {
   if (canManage(viewer.role)) {
     const members = await getOrgMembers(viewer.org.id);
     return (
-      <AppShell {...shell} variant="owner">
+      <AppShell {...shell} variant="owner" width="list">
       <OwnerTaskDetail
         {...shared}
+        context={<TaskContext locale={locale} orgId={viewer.org.id} taskId={task.id} viewerId={viewer.userId} manages />}
         role={viewer.role}
         // Call is the primary action, so the number the owner invited them
         // with is what it dials.
@@ -90,15 +91,17 @@ export default async function TaskPage({ params }: PageProps<"/kaam/[id]">) {
           .filter((m) => m.userId !== task.assigneeId)
           .map((m) => ({ id: m.userId, name: m.name }))}
       />
-      <TaskContext locale={locale} orgId={viewer.org.id} taskId={task.id} viewerId={viewer.userId} manages />
       </AppShell>
     );
   }
 
   return (
-    <AppShell {...shell} variant="staff">
-      <StaffTaskDetail {...shared} role={viewer.role} />
-      <TaskContext locale={locale} orgId={viewer.org.id} taskId={task.id} viewerId={viewer.userId} manages={false} />
+    <AppShell {...shell} variant="staff" width="list">
+      <StaffTaskDetail
+        {...shared}
+        role={viewer.role}
+        context={<TaskContext locale={locale} orgId={viewer.org.id} taskId={task.id} viewerId={viewer.userId} manages={false} />}
+      />
     </AppShell>
   );
 }

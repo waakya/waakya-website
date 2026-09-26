@@ -12,7 +12,7 @@ import { type Locale } from "@/lib/i18n";
 import { getPhase1 } from "@/lib/i18n/phase1";
 import { requestApproval } from "@/lib/actions/approvals";
 
-const SELECT = "mt-1 h-11 w-full rounded-button border border-paper-200 bg-paper-0 px-3 text-[15px]";
+const SELECT = "mt-1 h-11 w-full rounded-button border border-paper-200 bg-paper-0 px-3 text-body";
 
 export function RequestApproval({
   locale,
@@ -83,7 +83,7 @@ export function RequestApproval({
             rows={3}
             value={details}
             onChange={(e) => setDetails(e.target.value)}
-            className="mt-1 w-full rounded-button border border-paper-200 bg-paper-0 px-3 py-2 text-[15px] outline-none focus:border-neel-600"
+            className="mt-1 w-full rounded-button border border-paper-200 bg-paper-0 px-3 py-2 text-body outline-none focus:border-neel-600"
           />
         </div>
         <div className="grid gap-3 sm:grid-cols-3">
@@ -122,7 +122,7 @@ export function RequestApproval({
           </div>
         </div>
         {error ? (
-          <p role="alert" data-testid="request-error" className="rounded-card bg-laal-100 px-3 py-2 text-[14px] text-laal-700">
+          <p role="alert" data-testid="request-error" className="rounded-card bg-laal-100 px-3 py-2 text-body-sm text-laal-700">
             {error}
           </p>
         ) : null}

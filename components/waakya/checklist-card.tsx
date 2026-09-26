@@ -30,7 +30,7 @@ export function ChecklistCard({
       </span>
 
       <div className="min-w-0 flex-1">
-        <p className="text-[17px] leading-[22px] font-bold text-ink-900">
+        <p className="text-body-lg leading-[22px] font-bold text-ink-900">
           <Link
             href={`/checklist/${checklist.id}`}
             className="after:absolute after:inset-0"
@@ -57,8 +57,8 @@ export function ChecklistCard({
       <span
         className={
           complete
-            ? "num shrink-0 text-[17px] font-bold text-hara-700"
-            : "num shrink-0 text-[17px] font-bold text-ink-700"
+            ? "num shrink-0 text-body-lg font-bold text-hara-700"
+            : "num shrink-0 text-body-lg font-bold text-ink-700"
         }
       >
         {t.checklists.progress(checklist.done, checklist.total)}

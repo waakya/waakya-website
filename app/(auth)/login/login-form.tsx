@@ -164,10 +164,10 @@ export function LoginForm({
 
         {step === "email" ? (
           <form onSubmit={send} noValidate className="mt-9">
-            <h1 className="text-[24px] leading-[30px] font-bold text-ink-900">
+            <h1 className="text-title leading-[30px] font-bold text-ink-900">
               {t.auth.title}
             </h1>
-            <p className="mt-1 text-[15px] leading-[20px] text-ink-500">
+            <p className="mt-1 text-body leading-[20px] text-ink-500">
               {t.auth.subtitle}
             </p>
 
@@ -182,7 +182,7 @@ export function LoginForm({
                   name="consent"
                 />
               </span>
-              <span className="text-[15px] leading-[22px] text-ink-900">
+              <span className="text-body leading-[22px] text-ink-900">
                 <BrandText text={t.auth.consentPrefix(brandName(locale))} brand={brandName(locale)} />
                 <Link
                   href="/privacy"
@@ -216,7 +216,7 @@ export function LoginForm({
 
             <div className="mt-5 flex items-center gap-3">
               <span aria-hidden="true" className="h-px flex-1 bg-paper-200" />
-              <span className="text-[13px] leading-[18px] text-ink-400">
+              <span className="text-label leading-[18px] text-ink-400">
                 {t.auth.orEmail}
               </span>
               <span aria-hidden="true" className="h-px flex-1 bg-paper-200" />
@@ -272,10 +272,10 @@ export function LoginForm({
           </form>
         ) : step === "guest" ? (
           <form onSubmit={enterAsGuest} noValidate className="mt-9">
-            <h1 className="text-[24px] leading-[30px] font-bold text-ink-900">
+            <h1 className="text-title leading-[30px] font-bold text-ink-900">
               {t.auth.guestTitle}
             </h1>
-            <p className="mt-1 text-[15px] leading-[20px] text-ink-500">
+            <p className="mt-1 text-body leading-[20px] text-ink-500">
               {t.auth.guestSubtitle}
             </p>
 
@@ -341,7 +341,7 @@ export function LoginForm({
                   placeholder={t.auth.guestReasonPlaceholder}
                   aria-invalid={reasonInvalid || undefined}
                   aria-describedby={stepError ? "login-error" : undefined}
-                  className="w-full rounded-button border-2 border-paper-200 bg-paper-0 px-4 py-3 text-[17px] font-semibold text-ink-900 outline-none transition-colors placeholder:font-normal placeholder:text-ink-400 focus:border-neel-600 aria-invalid:border-laal-600"
+                  className="w-full rounded-button border-2 border-paper-200 bg-paper-0 px-4 py-3 text-body-lg font-semibold text-ink-900 outline-none transition-colors placeholder:font-normal placeholder:text-ink-400 focus:border-neel-600 aria-invalid:border-laal-600"
                 />
               </div>
             </div>
@@ -367,10 +367,10 @@ export function LoginForm({
           </form>
         ) : (
           <form onSubmit={verify} noValidate className="mt-9">
-            <h1 className="text-[24px] leading-[30px] font-bold text-ink-900">
+            <h1 className="text-title leading-[30px] font-bold text-ink-900">
               {t.auth.codeTitle}
             </h1>
-            <p className="mt-1 text-[15px] leading-[20px] break-words text-ink-500">
+            <p className="mt-1 text-body leading-[20px] break-words text-ink-500">
               {t.auth.codeSubtitle(email)}
             </p>
 
@@ -436,10 +436,10 @@ export function LoginForm({
         <div className="mt-8 flex flex-col gap-3">
           {/* A new owner sees what comes after this screen; staff see where
               their door is. */}
-          <ol className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-[13px] text-ink-500">
+          <ol className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-label text-ink-500">
             {ux.login.nextSteps.map((label, index) => (
               <li key={label} className="flex items-center gap-2 whitespace-nowrap">
-                <span className="num grid size-5 place-items-center rounded-full border border-paper-300 text-[11px] font-bold text-ink-700">
+                <span className="num grid size-5 place-items-center rounded-full border border-paper-300 text-micro font-bold text-ink-700">
                   {index + 1}
                 </span>
                 {label}
@@ -447,7 +447,7 @@ export function LoginForm({
               </li>
             ))}
           </ol>
-          <p className="rounded-card border border-neel-100 bg-neel-50 px-3.5 py-2.5 text-center text-[14px] leading-[20px] text-neel-800">
+          <p className="rounded-card border border-neel-100 bg-neel-50 px-3.5 py-2.5 text-center text-body-sm leading-[20px] text-neel-800">
             {t.auth.staffHint}
           </p>
         </div>
@@ -472,7 +472,7 @@ function ErrorLine({
     <p
       id={id}
       role="alert"
-      className="mt-3 rounded-card bg-laal-100 px-3 py-2 text-[15px] leading-[20px] text-laal-700"
+      className="mt-3 rounded-card bg-laal-100 px-3 py-2 text-body leading-[20px] text-laal-700"
     >
       {error}
     </p>

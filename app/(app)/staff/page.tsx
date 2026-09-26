@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
-import { Users } from "lucide-react";
+import { Crown, User, UserCog, Users } from "lucide-react";
 
 import { requireOrg, canManage } from "@/lib/auth/session";
 import { getOrgMembers } from "@/lib/org/members";
 import { createClient } from "@/lib/supabase/server";
 import { getDictionary } from "@/lib/i18n";
 import { Avatar } from "@/components/ui/avatar";
-import { Card } from "@/components/ui/card";
 import { StateChip } from "@/components/ui/state-chip";
 import { AppShell } from "@/components/waakya/app-shell";
+import { PageHeader } from "@/components/waakya/page";
 import { InviteSheet } from "./invite-sheet";
 import { PendingInvites } from "./pending-invites";
 import { shellFor } from "@/lib/auth/shell";
@@ -50,41 +50,37 @@ export default async function StaffPage() {
   }
 
   return (
-    <AppShell {...shell}>
-      <main className="flex-1 p-4 pb-6">
-        <div className="flex flex-wrap items-start justify-between gap-3">
-          <div>
-            <h1 className="text-[24px] leading-[30px] font-bold text-ink-900">
-              {t.org.teamTitle}
-            </h1>
-            <p className="num mt-0.5 text-[15px] text-ink-500">
-              {viewer.org.name} · {t.org.teamSubtitle(members.length)}
-            </p>
-          </div>
-          {manages ? (
-            <div className="hidden lg:block">
-              <InviteSheet locale={locale} compact staffOnly={viewer.role === "manager"} />
-            </div>
-          ) : null}
-        </div>
+    <AppShell {...shell} width="list">
+      <main className="flex-1 p-4 pb-6 lg:px-0">
+        <PageHeader
+          title={t.org.teamTitle}
+          description={`${viewer.org.name} · ${t.org.teamSubtitle(members.length)}`}
+          actions={
+            manages ? (
+              <div className="hidden lg:block">
+                <InviteSheet locale={locale} compact staffOnly={viewer.role === "manager"} />
+              </div>
+            ) : null
+          }
+        />
 
-        <ul aria-label={t.org.teamTitle} className="mt-5 flex flex-col gap-2">
+        <ul aria-label={t.org.teamTitle} className="mt-6 divide-y divide-line overflow-hidden rounded-card border border-line bg-surface shadow-card">
           {members.map((member) => (
             <li key={member.userId}>
-              <Card className="flex min-h-16 items-center gap-3 p-3.5 shadow-none">
+              <div className="flex min-h-16 items-center gap-3 px-4 py-3">
               <Avatar name={member.name} size={40} />
               <div className="min-w-0 flex-1">
-                <p className="text-[15px] leading-[20px] font-bold text-ink-900">
+                <p className="text-body font-semibold text-fg">
                   {member.name}
                   {member.userId === viewer.userId ? (
                     <span className="font-normal text-ink-500"> · {t.org.you}</span>
                   ) : null}
                 </p>
                 {member.phone ? (
-                  <p className="num text-[13px] text-ink-500">{member.phone}</p>
+                  <p className="num text-label text-fg-subtle">{member.phone}</p>
                 ) : null}
                 {manages ? (
-                  <p className="num text-[13px] text-ink-500" data-testid="team-status">
+                  <p className="num text-label text-fg-subtle" data-testid="team-status">
                     {(() => {
                       const row = today.get(member.userId);
                       if (!row) return p1.team.notIn;
@@ -99,10 +95,14 @@ export default async function StaffPage() {
                   </p>
                 ) : null}
               </div>
-                <StateChip tone={member.role === "owner" ? "neel" : "muted"}>
+                <StateChip
+                  tone={member.role === "owner" ? "neel" : "muted"}
+                  icon={member.role === "owner" ? <Crown /> : member.role === "member" ? <User /> : <UserCog />}
+                  className="shrink-0"
+                >
                   {t.org.roles[member.role]}
                 </StateChip>
-              </Card>
+              </div>
             </li>
           ))}
         </ul>
@@ -110,8 +110,8 @@ export default async function StaffPage() {
         {members.length === 1 && !invites?.length ? (
           <div className="mt-6 flex flex-col items-center gap-2 rounded-card border border-dashed border-paper-300 p-6 text-center">
             <Users className="size-7 text-ink-400" aria-hidden="true" />
-            <p className="text-[17px] font-bold text-ink-900">{t.org.noStaffYet}</p>
-            <p className="text-[15px] leading-[20px] text-ink-500">
+            <p className="text-body-lg font-bold text-ink-900">{t.org.noStaffYet}</p>
+            <p className="text-body leading-[20px] text-ink-500">
               {t.org.noStaffHelp}
             </p>
           </div>

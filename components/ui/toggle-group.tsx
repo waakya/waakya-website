@@ -25,7 +25,7 @@ function ToggleGroupItem({ className, ...props }: Toggle.Props) {
       data-slot="toggle-group-item"
       className={cn(
         "inline-flex min-h-tap items-center justify-center gap-1.5 rounded-chip px-4",
-        "border border-paper-200 bg-paper-0 text-[15px] font-semibold text-ink-900",
+        "border border-paper-200 bg-paper-0 text-body font-semibold text-ink-900",
         "transition-colors outline-none",
         "hover:bg-paper-100",
         "data-[pressed]:border-neel-600 data-[pressed]:bg-neel-600 data-[pressed]:text-white",

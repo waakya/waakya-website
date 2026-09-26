@@ -49,7 +49,7 @@ function SheetContent({
 function SheetTitle({ className, ...props }: Dialog.Title.Props) {
   return (
     <Dialog.Title
-      className={cn("text-[22px] leading-[30px] font-bold text-ink-900", className)}
+      className={cn("text-title leading-[30px] font-bold text-ink-900", className)}
       {...props}
     />
   );
@@ -58,7 +58,7 @@ function SheetTitle({ className, ...props }: Dialog.Title.Props) {
 function SheetDescription({ className, ...props }: Dialog.Description.Props) {
   return (
     <Dialog.Description
-      className={cn("mt-1 text-[15px] leading-[22px] text-ink-500", className)}
+      className={cn("mt-1 text-body leading-[22px] text-ink-500", className)}
       {...props}
     />
   );

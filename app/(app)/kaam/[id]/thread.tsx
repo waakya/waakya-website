@@ -51,12 +51,12 @@ export function Thread({
 
   return (
     <section className="mt-6">
-      <h3 className="mb-2 text-[13px] leading-[18px] font-semibold text-ink-700">
+      <h3 className="mb-2 text-label leading-[18px] font-semibold text-ink-700">
         {t.detail.thread}
       </h3>
 
       {messages.length === 0 ? (
-        <p className="text-[15px] text-ink-400">{t.detail.noMessages}</p>
+        <p className="text-body text-ink-400">{t.detail.noMessages}</p>
       ) : (
         <ul className="flex flex-col gap-2">
           {messages.map((message) => {
@@ -74,11 +74,11 @@ export function Thread({
                       : "border border-paper-200 bg-paper-0 text-ink-900",
                   )}
                 >
-                  <p className="text-[13px] font-semibold">
+                  <p className="text-label font-semibold">
                     {message.authorName}
                   </p>
-                  <p className="text-[15px] leading-[20px]">{message.body}</p>
-                  <p className="num mt-0.5 text-[11px] text-ink-500">
+                  <p className="text-body leading-[20px]">{message.body}</p>
+                  <p className="num mt-0.5 text-micro text-ink-500">
                     {formatTime(message.at)}
                   </p>
                 </div>
@@ -94,7 +94,7 @@ export function Thread({
           onChange={(event) => setBody(event.target.value)}
           placeholder={t.detail.threadPlaceholder}
           aria-label={t.detail.thread}
-          className="flex-1 text-[15px] font-normal"
+          className="flex-1 text-body font-normal"
         />
         <Button
           type="submit"
@@ -107,7 +107,7 @@ export function Thread({
       </form>
 
       {error ? (
-        <p role="alert" className="mt-2 text-[13px] text-laal-700">
+        <p role="alert" className="mt-2 text-label text-laal-700">
           {error}
         </p>
       ) : null}

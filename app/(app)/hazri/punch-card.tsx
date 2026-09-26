@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Clock, LogIn, LogOut } from "lucide-react";
+import { CalendarDays, Clock, LogIn, LogOut, Palmtree } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -47,22 +47,20 @@ export function PunchCard({
   return (
     <Card className="p-4">
       <div className="flex flex-wrap items-center gap-3">
-        <span className="text-[11px] font-semibold tracking-[0.12em] uppercase text-ink-400">
-          {t.hazri.today}
-        </span>
+        <h2 className="text-body font-bold text-fg">{t.hazri.today}</h2>
         <span className="ml-auto">
           {onLeave ? (
-            <StateChip tone="neel">{t.hazri.onLeave}</StateChip>
+            <StateChip tone="neel" icon={<Palmtree />}>{t.hazri.onLeave}</StateChip>
           ) : isHoliday ? (
-            <StateChip tone="outline">{t.hazri.holiday}</StateChip>
+            <StateChip tone="outline" icon={<CalendarDays />}>{t.hazri.holiday}</StateChip>
           ) : status === "half_day" ? (
-            <StateChip tone="outline">{t.hazri.halfDay}</StateChip>
+            <StateChip tone="outline" icon={<CalendarDays />}>{t.hazri.halfDay}</StateChip>
           ) : done ? (
-            <StateChip tone="outline">{t.hazri.completed}</StateChip>
+            <StateChip tone="outline" icon={<LogOut />}>{t.hazri.completed}</StateChip>
           ) : working ? (
-            <StateChip tone="neel">{t.hazri.working}</StateChip>
+            <StateChip tone="neel" icon={<LogIn />}>{t.hazri.working}</StateChip>
           ) : (
-            <StateChip tone="outline">{t.hazri.notPunched}</StateChip>
+            <StateChip tone="outline" icon={<Clock />}>{t.hazri.notPunched}</StateChip>
           )}
         </span>
       </div>
@@ -70,26 +68,26 @@ export function PunchCard({
       {today?.punchInAt ? (
         <dl className="mt-4 grid grid-cols-3 gap-3">
           <div>
-            <dt className="text-[12px] text-ink-400">{t.hazri.punchedIn}</dt>
-            <dd className="num text-[17px] font-bold text-ink-900">
+            <dt className="text-caption text-fg-subtle">{t.hazri.punchedIn}</dt>
+            <dd className="num text-body-lg font-bold text-ink-900">
               {formatPunchTime(today.punchInAt)}
             </dd>
           </div>
           <div>
-            <dt className="text-[12px] text-ink-400">{t.hazri.punchedOut}</dt>
-            <dd className="num text-[17px] font-bold text-ink-900">
+            <dt className="text-caption text-fg-subtle">{t.hazri.punchedOut}</dt>
+            <dd className="num text-body-lg font-bold text-ink-900">
               {today.punchOutAt ? formatPunchTime(today.punchOutAt) : "—"}
             </dd>
           </div>
           <div>
-            <dt className="text-[12px] text-ink-400">{t.hazri.worked}</dt>
-            <dd className="num text-[17px] font-bold text-ink-900">
+            <dt className="text-caption text-fg-subtle">{t.hazri.worked}</dt>
+            <dd className="num text-body-lg font-bold text-ink-900">
               {today.worked ?? "—"}
             </dd>
           </div>
         </dl>
       ) : (
-        <p className="mt-3 flex items-center gap-2 text-[15px] text-ink-500">
+        <p className="mt-3 flex items-center gap-2 text-body text-ink-500">
           <Clock className="size-4 shrink-0" aria-hidden="true" />
           {onLeave
             ? t.hazri.onLeaveToday
@@ -102,7 +100,7 @@ export function PunchCard({
       {error ? (
         <p
           role="alert"
-          className="mt-3 rounded-card bg-laal-100 px-3 py-2 text-[15px] leading-[20px] text-laal-700"
+          className="mt-3 rounded-card bg-laal-100 px-3 py-2 text-body leading-[20px] text-laal-700"
         >
           {error}
         </p>

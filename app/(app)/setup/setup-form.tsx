@@ -40,10 +40,10 @@ export function SetupForm({ locale }: { locale: Locale }) {
   return (
     <OnboardingFrame locale={locale} step={1} illustration="team">
       <div>
-        <h1 className="font-display text-[28px] leading-[1.1] font-extrabold text-ink-900">
+        <h1 className="font-display text-title-lg leading-[1.1] font-extrabold text-ink-900">
           {t.org.setupTitle}
         </h1>
-        <p className="mt-2 text-[15px] leading-[21px] text-ink-500">
+        <p className="mt-2 text-body leading-[21px] text-ink-500">
           {t.org.setupSubtitle}
         </p>
 
@@ -62,7 +62,7 @@ export function SetupForm({ locale }: { locale: Locale }) {
 
           <p
             id="org-language-label"
-            className="mt-5 mb-1.5 text-[13px] leading-[18px] font-semibold text-ink-700"
+            className="mt-5 mb-1.5 text-label leading-[18px] font-semibold text-ink-700"
           >
             {t.org.languageLabel}
           </p>
@@ -76,7 +76,7 @@ export function SetupForm({ locale }: { locale: Locale }) {
             <p
               id="setup-error"
               role="alert"
-              className="mt-4 rounded-card bg-laal-100 px-3 py-2 text-[15px] leading-[20px] text-laal-700"
+              className="mt-4 rounded-card bg-laal-100 px-3 py-2 text-body leading-[20px] text-laal-700"
             >
               {error}
             </p>

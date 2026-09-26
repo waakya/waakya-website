@@ -51,16 +51,16 @@ export default async function DocumentPage({ params }: PageProps<"/documents/[id
   });
 
   return (
-    <AppShell {...shell}>
+    <AppShell {...shell} width="list">
       <main className="flex-1 p-4 pb-8">
-        <Link href="/documents" className="inline-flex items-center gap-1.5 text-[14px] font-semibold text-neel-700">
+        <Link href="/documents" className="inline-flex items-center gap-1.5 text-body-sm font-semibold text-neel-700">
           <ArrowLeft className="size-4" aria-hidden="true" />
           {p.documents.title}
         </Link>
         <div className="mt-3 flex flex-wrap items-start justify-between gap-3">
           <div className="min-w-0">
-            <h1 className="truncate text-[22px] leading-[28px] font-bold text-ink-900">{doc.name}</h1>
-            <p className="num mt-0.5 text-[14px] text-ink-500">
+            <h1 className="truncate text-title leading-[28px] font-bold text-ink-900">{doc.name}</h1>
+            <p className="num mt-0.5 text-body-sm text-ink-500">
               {p.documents.categories[doc.category]} · {formatBytes(doc.sizeBytes)} · {doc.uploaderName}
               {doc.projectName ? ` · ${doc.projectName}` : ""}
             </p>

@@ -8,7 +8,7 @@ import {
   TEST_LOCALE,
   TEST_USERS,
 } from "./support/auth";
-import { onScreen } from "./support/visible";
+import { onScreen, rowFromToday } from "./support/visible";
 
 /**
  * Proof of completion. The photo goes straight from the phone to private
@@ -87,11 +87,12 @@ test("finishing a task that needs a photo asks for one first", async ({
   await expect(trail).toContainText("Ho gaya");
   await staffContext.close();
 
-  // The owner sees the proof, and only then verifies.
-  await page.goto("/aaj");
-  // Today may mention the task twice (the row and the "needs you" line); the
-  // row's own link is the exact title.
-  await onScreen(page.getByRole("link", { name: title, exact: true })).click();
+  // The owner sees the proof, and only then verifies. The title shows twice
+  // on Today once it is done — in "Needs you" and in the list — so the task's
+  // own row link is addressed by its exact name.
+  // Design V3: on a busy day the newest item may sit behind "N aur".
+  const row = await rowFromToday(page, title, "Verify baaki");
+  await row.getByRole("link", { name: title }).first().click();
   await expect(
     page.getByRole("heading", { name: "Proof", exact: true }),
   ).toBeVisible();

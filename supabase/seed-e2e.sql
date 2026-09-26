@@ -116,6 +116,7 @@ declare
   v_owner uuid;
   v_staff uuid;
   v_org   uuid;
+  v_task  uuid;
 begin
   select id into v_owner from auth.users where email = 'owner@waakya.test';
   select id into v_staff from auth.users where email = 'staff@waakya.test';
@@ -124,6 +125,10 @@ begin
   if not exists (select 1 from tasks t where t.org_id = v_org and t.title = 'Fixture: dukaan ka shutter theek karwao') then
     insert into tasks (org_id, title, created_by, assigned_to, state, priority, due_at, delivered_at, created_at)
     values (v_org, 'Fixture: dukaan ka shutter theek karwao', v_owner, v_staff, 'delivered', 'high',
-            now() - interval '1 day', now() - interval '2 days', now() - interval '2 days');
+            now() - interval '1 day', now() - interval '2 days', now() - interval '2 days')
+    returning id into v_task;
+    insert into task_events (task_id, org_id, from_state, to_state, actor_id, created_at) values
+      (v_task, v_org, null, 'created', v_owner, now() - interval '2 days'),
+      (v_task, v_org, 'created', 'delivered', v_owner, now() - interval '2 days');
   end if;
 end $$;

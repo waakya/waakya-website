@@ -65,17 +65,17 @@ export function StartConversation({
         <Card className="mt-3 p-3">
           {mode === "group" ? (
             <div className="mb-3">
-              <label htmlFor="group-name" className="text-[13px] font-semibold text-ink-700">
+              <label htmlFor="group-name" className="text-label font-semibold text-ink-700">
                 {p.conversations.groupName}
               </label>
               <Input id="group-name" className="mt-1" value={title} maxLength={80} onChange={(e) => setTitle(e.target.value)} />
             </div>
           ) : null}
-          <p className="mb-2 text-[13px] font-semibold text-ink-700">
+          <p className="mb-2 text-label font-semibold text-ink-700">
             {mode === "group" ? p.conversations.choosePeople : t.baat.choosePerson}
           </p>
           {error ? (
-            <p role="alert" className="mb-2 rounded-card bg-laal-100 px-3 py-2 text-[14px] text-laal-700">
+            <p role="alert" className="mb-2 rounded-card bg-laal-100 px-3 py-2 text-body-sm text-laal-700">
               {error}
             </p>
           ) : null}
@@ -99,9 +99,9 @@ export function StartConversation({
                     )}
                   >
                     <Avatar name={person.name} size={30} />
-                    <span className="min-w-0 flex-1 truncate text-[14px] font-semibold text-ink-900">{person.name}</span>
+                    <span className="min-w-0 flex-1 truncate text-body-sm font-semibold text-ink-900">{person.name}</span>
                     {mode === "group" && on ? (
-                      <span className="text-[12px] font-semibold text-neel-700">✓</span>
+                      <span className="text-caption font-semibold text-neel-700">✓</span>
                     ) : null}
                   </button>
                 </li>

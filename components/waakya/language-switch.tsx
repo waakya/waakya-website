@@ -54,7 +54,7 @@ export function LanguageSwitch({
               })
             }
             className={cn(
-              "min-h-tap rounded-chip px-4 text-[15px] font-semibold transition-colors",
+              "min-h-tap rounded-chip px-4 text-body font-semibold transition-colors",
               selected
                 ? "bg-neel-100 text-neel-700"
                 : "text-ink-700 hover:bg-paper-100",

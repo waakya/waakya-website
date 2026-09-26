@@ -12,7 +12,7 @@ function Input({ className, type, ...props }: React.ComponentProps<"input">) {
       data-slot="input"
       className={cn(
         "h-tap w-full rounded-button border-2 border-paper-200 bg-paper-0 px-4",
-        "text-[17px] font-semibold text-ink-900 placeholder:font-normal placeholder:text-ink-400",
+        "text-body-lg font-semibold text-ink-900 placeholder:font-normal placeholder:text-ink-400",
         "outline-none transition-colors",
         "focus:border-neel-600 focus-visible:outline-none",
         "disabled:bg-paper-100 disabled:text-ink-400",

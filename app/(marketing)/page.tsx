@@ -129,7 +129,7 @@ export default async function LandingPage() {
           <div className="grid items-center gap-10 lg:grid-cols-[0.8fr_1.2fr]">
             <div>
               <p className="inline-flex items-center gap-2 text-[12.5px] font-bold tracking-[0.16em] text-neel-700 uppercase">
-                <span aria-hidden="true" className="h-[3px] w-6 rounded-full bg-[#f6c85f]" />
+                <span aria-hidden="true" className="h-[3px] w-6 rounded-full bg-neel-600" />
                 The new era of business communication
               </p>
               <h1 className={`${heading} mt-4 text-[44px] leading-[1.02] sm:text-[56px] lg:text-[58px]`}>
@@ -189,7 +189,7 @@ export default async function LandingPage() {
                       <p className="text-[12px] text-ink-500">Priya, Rahul and 2 others</p>
                     </div>
                     <Bubble initials="PS" name="Priya" time="11:24 AM" text="Rahul, please send the revised quotation by 5 PM." highlight>
-                      <span className="mt-1.5 inline-flex items-center rounded-full bg-hara-100 px-2 py-0.5 text-[11px] font-semibold text-hara-700">
+                      <span className="mt-1.5 inline-flex items-center rounded-full bg-neel-50 px-2 py-0.5 text-[11px] font-semibold text-neel-700">
                         Task created
                       </span>
                     </Bubble>
@@ -198,7 +198,7 @@ export default async function LandingPage() {
                   </div>
                   <div className="flex min-w-0 flex-col gap-2.5 border-t border-[#eceef6] p-4 md:border-t-0 md:border-l">
                     <p className="text-[11px] font-semibold tracking-wide text-ink-500 uppercase">Tasks from this chat</p>
-                    <TaskCard title="Revised quotation" who="Rahul" due="5 PM" state="Proof submitted" tone="amber" />
+                    <TaskCard title="Revised quotation" who="Rahul" due="5 PM" state="Proof submitted" tone="neel" />
                     <DocCard name="Quotation v2.pdf" meta="PDF · 1.8 MB" />
                     <p className="flex items-center gap-1.5 text-[12px] text-ink-700">
                       <CalendarCheck className="size-3.5 shrink-0 text-neel-700" aria-hidden="true" /> Rahul in at 9:41 AM
@@ -256,10 +256,10 @@ export default async function LandingPage() {
         {/* ----------------------------------------------------------- chain */}
         <section id="how" className="mx-auto w-full max-w-6xl scroll-mt-20 px-4 py-16 lg:px-8 lg:py-20">
           <div className="max-w-2xl">
-            <p className="text-[12.5px] font-bold tracking-[0.16em] text-neel-700 uppercase">Talk · Assign · Execute · Prove</p>
-            <h2 className={`${heading} mt-2 text-[34px] leading-[1.06] sm:text-[44px]`}>From a message to a record, in five steps.</h2>
+            <h2 className={`${heading} text-[34px] leading-[1.06] sm:text-[44px]`}>Every conversation. A clear next step.</h2>
             <p className="mt-3 text-[16.5px] leading-[26px] text-ink-700">
-              Follow one quotation at Sharma Interiors, from the moment it is asked for to the moment it is verified.
+              Talk, assign, execute, prove. Follow one quotation at Sharma Interiors, from the moment it is asked for to
+              the moment it is verified.
             </p>
           </div>
           <div className="mt-8">
@@ -271,8 +271,7 @@ export default async function LandingPage() {
         <section id="inside" className="scroll-mt-20 border-y border-[#ecebe4] bg-white">
           <div className="mx-auto w-full max-w-6xl px-4 py-16 lg:px-8 lg:py-20">
             <div className="max-w-2xl">
-              <p className="text-[12.5px] font-bold tracking-[0.16em] text-neel-700 uppercase">Everything inside</p>
-              <h2 className={`${heading} mt-2 text-[34px] leading-[1.06] sm:text-[44px]`}>One business. Everything connected.</h2>
+              <h2 className={`${heading} text-[34px] leading-[1.06] sm:text-[44px]`}>One business. Everything connected.</h2>
               <p className="mt-3 text-[16.5px] leading-[26px] text-ink-700">
                 Every part of Waakya knows about the others. A task knows the conversation it came from, the project it
                 belongs to, the documents that prove it and who is in today to do it.
@@ -287,8 +286,7 @@ export default async function LandingPage() {
         {/* ------------------------------------------------------- owner day */}
         <section className="mx-auto grid w-full max-w-6xl items-center gap-10 px-4 py-16 lg:grid-cols-[0.85fr_1.15fr] lg:px-8 lg:py-20">
           <div>
-            <p className="text-[12.5px] font-bold tracking-[0.16em] text-neel-700 uppercase">Your day</p>
-            <h2 className={`${heading} mt-2 text-[34px] leading-[1.06] sm:text-[42px]`}>
+            <h2 className={`${heading} text-[34px] leading-[1.06] sm:text-[42px]`}>
               Open Waakya.
               <br />
               See what needs you.

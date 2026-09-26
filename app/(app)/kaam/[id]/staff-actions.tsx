@@ -79,8 +79,8 @@ export function StaffActions({
     // Nothing left to do: the line sits in the page, not in a fixed bar that
     // would cover the proof above it.
     return (
-      <footer className="mx-auto mt-2 w-full max-w-md border-t border-paper-200 px-4 py-4 lg:mt-6 lg:max-w-none lg:rounded-card lg:border lg:border-paper-200 lg:p-5">
-        <p className="flex items-center justify-center gap-2 text-center text-[13px] text-ink-400">
+      <footer className="mx-auto mt-2 w-full max-w-md md:max-w-2xl border-t border-paper-200 px-4 py-4 lg:mt-0 lg:max-w-none lg:rounded-card lg:border lg:border-line lg:bg-surface lg:p-4 lg:shadow-card">
+        <p className="flex items-center justify-center gap-2 text-center text-label text-ink-400">
           <Shield className="size-4" aria-hidden="true" />
           {t.detail.recordLine}
         </p>
@@ -90,11 +90,11 @@ export function StaffActions({
 
   return (
     <>
-      <footer className="fixed inset-x-0 bottom-0 z-30 mx-auto w-full max-w-md border-t border-paper-200 bg-paper-50 p-4 pb-[calc(1rem_+_env(safe-area-inset-bottom))] lg:static lg:mt-6 lg:max-w-none lg:rounded-card lg:border lg:border-paper-200 lg:p-5">
+      <footer className="fixed inset-x-0 bottom-0 z-30 mx-auto w-full max-w-md md:max-w-2xl border-t border-paper-200 bg-paper-50 p-4 pb-[calc(1rem_+_env(safe-area-inset-bottom))] lg:static lg:mt-0 lg:max-w-none lg:rounded-card lg:border lg:border-line lg:bg-surface lg:p-4 lg:shadow-card">
         {error ? (
           <p
             role="alert"
-            className="mb-3 rounded-card bg-laal-100 px-3 py-2 text-[15px] leading-[20px] text-laal-700"
+            className="mb-3 rounded-card bg-laal-100 px-3 py-2 text-body leading-[20px] text-laal-700"
           >
             {error}
           </p>
@@ -156,7 +156,7 @@ export function StaffActions({
           ) : null}
         </div>
 
-        <p className="mt-3 flex items-center justify-center gap-2 text-center text-[13px] text-ink-400">
+        <p className="mt-3 flex items-center justify-center gap-2 text-center text-label text-ink-400">
           <Shield className="size-4" aria-hidden="true" />
           {t.detail.recordLine}
         </p>
@@ -184,7 +184,7 @@ export function StaffActions({
             onChange={(event) => setReason(event.target.value)}
             placeholder={t.detail.declineReason}
             aria-label={t.detail.declineReason}
-            className="mt-4 text-[15px] font-normal"
+            className="mt-4 text-body font-normal"
           />
           <Button
             size="block"

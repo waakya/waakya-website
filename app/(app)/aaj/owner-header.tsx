@@ -2,6 +2,7 @@ import { Clock, EyeOff } from "lucide-react";
 
 import { Mark } from "@/components/waakya/mark";
 import { Bell } from "@/components/waakya/bell";
+import { getDesign } from "@/lib/i18n/design";
 import { getDictionary, type Locale } from "@/lib/i18n";
 import type { DayCounters } from "@/lib/tasks/counters";
 import { formatIndianDate } from "@/lib/tasks/format-date";
@@ -31,15 +32,16 @@ export function OwnerHeader({
   now: Date;
 }) {
   const t = getDictionary(locale);
+  const d = getDesign(locale);
 
   return (
     <header className="bg-neel-700 px-4 pt-[max(1rem,env(safe-area-inset-top))] pb-4 text-white">
       <div className="flex items-start gap-2">
         <div className="min-w-0 flex-1">
-          <h1 className="text-[24px] leading-[30px] font-bold">
+          <h1 className="text-title leading-[30px] font-bold">
             {ownerName ? t.lists.greeting(ownerName) : orgName}
           </h1>
-          <p className="num mt-0.5 text-[15px] leading-[20px] text-white/70">
+          <p className="num mt-0.5 text-body leading-[20px] text-white/70">
             {orgName} · {formatIndianDate(now, locale)}
           </p>
         </div>
@@ -49,7 +51,10 @@ export function OwnerHeader({
         </span>
       </div>
 
-      <div className="mt-3 flex items-end gap-4">
+      {/* The numbers are today's: after midnight they restart at zero, so
+          the period is said, not left to guess (V3 critique). */}
+      <p className="mt-3 text-label font-semibold text-white/70">{d.today.dayStrip}</p>
+      <div className="mt-1 flex items-end gap-4">
         <dl className="flex flex-1 gap-4">
           <Counter label={t.lists.bheje} value={counters.bheje} />
           <Counter label={t.lists.dekhe} value={counters.dekhe} />
@@ -59,13 +64,13 @@ export function OwnerHeader({
 
         <div className="flex shrink-0 flex-col items-end gap-1.5">
           {counters.late > 0 ? (
-            <span className="num inline-flex items-center gap-1.5 rounded-chip bg-laal-600 px-2.5 py-1 text-[13px] font-semibold text-white">
+            <span className="num inline-flex items-center gap-1.5 rounded-chip bg-laal-600 px-2.5 py-1 text-label font-semibold text-white">
               <Clock className="size-3.5" aria-hidden="true" />
               {counters.late} {t.chips.late}
             </span>
           ) : null}
           {counters.dekhaNahi > 0 ? (
-            <span className="num inline-flex items-center gap-1.5 rounded-chip bg-amber-100 px-2.5 py-1 text-[13px] font-semibold text-amber-700">
+            <span className="num inline-flex items-center gap-1.5 rounded-chip bg-amber-100 px-2.5 py-1 text-label font-semibold text-amber-700">
               <EyeOff className="size-3.5" aria-hidden="true" />
               {counters.dekhaNahi} {t.chips.dekhaNahi}
             </span>
@@ -73,8 +78,9 @@ export function OwnerHeader({
         </div>
       </div>
 
-      {counters.completionRate !== null ? (
-        <p className="num mt-3 text-[13px] text-white/70">
+      {/* 0% in a header reads as a verdict; show the rate once there is one. */}
+      {counters.completionRate !== null && counters.completionRate > 0 ? (
+        <p className="num mt-3 text-label text-white/70">
           {t.lists.completionRate}:{" "}
           <span className="font-semibold text-white">
             {counters.completionRate}%
@@ -91,7 +97,7 @@ function Counter({ label, value }: { label: string; value: number }) {
       <dd className="num font-display text-[32px] leading-none font-extrabold">
         {value}
       </dd>
-      <dt className="mt-1 text-[13px] leading-none text-white/70">{label}</dt>
+      <dt className="mt-1 text-label leading-none text-white/70">{label}</dt>
     </div>
   );
 }

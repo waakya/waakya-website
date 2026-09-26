@@ -39,10 +39,10 @@ export default async function ChecklistsPage() {
       unread={await getUnreadCount()}
     >
       <main className="flex-1 p-4 pb-6">
-        <h1 className="text-[24px] leading-[30px] font-bold text-ink-900">
+        <h1 className="text-title leading-[30px] font-bold text-ink-900">
           {t.checklists.title}
         </h1>
-        <p className="mt-0.5 text-[15px] leading-[20px] text-ink-500">
+        <p className="mt-0.5 text-body leading-[20px] text-ink-500">
           {t.checklists.subtitle}
         </p>
 
@@ -53,10 +53,10 @@ export default async function ChecklistsPage() {
           empty={
             <div className="mt-6 flex flex-col items-center gap-2 rounded-card border border-dashed border-paper-300 p-6 text-center">
               <ListChecks className="size-7 text-ink-400" aria-hidden="true" />
-              <p className="text-[17px] font-bold text-ink-900">
+              <p className="text-body-lg font-bold text-ink-900">
                 {t.checklists.empty}
               </p>
-              <p className="text-[15px] leading-[20px] text-ink-500">
+              <p className="text-body leading-[20px] text-ink-500">
                 {t.checklists.emptyHelp}
               </p>
             </div>

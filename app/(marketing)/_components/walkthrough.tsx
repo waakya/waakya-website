@@ -90,7 +90,7 @@ export function Walkthrough() {
 
       <div id="stage-panel" role="tabpanel" aria-labelledby={`stage-tab-${stage.id}`} className="mt-5 grid gap-5 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
         <div className="lg:pt-2">
-          <p className="text-[13px] font-semibold tracking-[0.12em] text-neel-700 uppercase">
+          <p className="text-[13px] font-semibold text-neel-700">
             Step {index + 1} · {stage.verb}
           </p>
           <h3 className="mt-1 font-display text-[30px] leading-[1.1] font-extrabold text-neel-900">{stage.stage}</h3>
@@ -127,7 +127,7 @@ export function Walkthrough() {
               </p>
               <Bubble initials="PS" name="Priya Sharma" time="11:24 AM" text="Rahul, please send the revised quotation by 5 PM." highlight={index === 0}>
                 {index >= 1 ? (
-                  <span className="mt-1.5 inline-flex items-center rounded-full bg-hara-100 px-2 py-0.5 text-[11px] font-semibold text-hara-700">
+                  <span className="mt-1.5 inline-flex items-center rounded-full bg-neel-50 px-2 py-0.5 text-[11px] font-semibold text-neel-700">
                     Task created
                   </span>
                 ) : (

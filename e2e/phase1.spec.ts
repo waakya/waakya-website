@@ -104,6 +104,8 @@ test("projects and approvals: create, attach, request, approve", async ({ page, 
   await expect(page.getByRole("heading", { name: project })).toBeVisible();
   const docName = `boq-${stamp()}.pdf`;
   await upload(page, docName);
+  // Design V3: changing a project waits behind "Manage project".
+  await page.getByText("Manage project").click();
   await page.getByLabel("Status").selectOption("active");
   await page.reload();
   await expect(page.getByLabel("Status")).toHaveValue("active");
@@ -162,8 +164,6 @@ test("a member cannot manage projects; an outsider sees nothing", async ({ page 
 
 for (const who of ["owner", "staff"] as const) {
   test(`every Phase 1 screen fits a 390px phone (${who})`, async ({ page }) => {
-    // Seventeen screens through a dev server on a small laptop.
-    test.setTimeout(600_000);
     await page.setViewportSize({ width: 390, height: 844 });
     await signInAs(page, who, "en");
     const paths = ["/aaj", "/baat", "/work", "/projects", "/documents", "/documents/templates", "/hazri", "/approvals", "/staff", "/search?q=a", "/settings", "/more", "/khabar"];

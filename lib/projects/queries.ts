@@ -40,7 +40,16 @@ export interface ProjectDetail extends ProjectSummary {
   createdByName: string;
   members: { userId: string; name: string }[];
   tasks: ProjectTask[];
-  activity: { id: string; text: string; at: string }[];
+  activity: {
+    id: string;
+    text: string;
+    at: string;
+    /** Structured, so the screen can say it in the reader's language. */
+    actor: string;
+    kind: "task" | "document";
+    subject: string;
+    toState: TaskState | null;
+  }[];
 }
 
 const OPEN_STATES: TaskState[] = [
@@ -127,11 +136,19 @@ export const getProject = cache(
         id: event.id,
         text: `${names.get(event.actor_id ?? "") ?? "Someone"} moved "${titleOf.get(event.task_id) ?? "a task"}" to ${String(event.to_state).replace("_", " ")}`,
         at: event.created_at,
+        actor: names.get(event.actor_id ?? "") ?? "Someone",
+        kind: "task" as const,
+        subject: titleOf.get(event.task_id) ?? "",
+        toState: event.to_state as TaskState,
       })),
       ...(docs ?? []).map((doc) => ({
         id: doc.id,
         text: `${names.get(doc.uploaded_by) ?? "Someone"} added ${doc.name}`,
         at: doc.created_at,
+        actor: names.get(doc.uploaded_by) ?? "Someone",
+        kind: "document" as const,
+        subject: doc.name,
+        toState: null,
       })),
     ]
       .sort((a, b) => b.at.localeCompare(a.at))

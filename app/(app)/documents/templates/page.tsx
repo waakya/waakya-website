@@ -32,7 +32,7 @@ export default async function TemplatesPage({ searchParams }: PageProps<"/docume
   ]);
 
   return (
-    <AppShell {...shell}>
+    <AppShell {...shell} width="list">
       <TemplateBuilder
         locale={shell.locale}
         templates={TEMPLATES}

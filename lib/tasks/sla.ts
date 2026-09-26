@@ -27,6 +27,8 @@ export interface Clock {
   /** Milliseconds left; negative once it is breached. */
   remainingMs: number;
   breached: boolean;
+  /** The clock stopped because the thing happened (on time or late). */
+  met?: boolean;
   /** `hara` once the clock was met and stopped. */
   tone: ClockTone;
 }
@@ -73,6 +75,7 @@ export function clock({ startedAt, endsAt, metAt, now }: ClockInput): Clock {
       elapsedMs: elapsed,
       remainingMs,
       breached,
+      met: true,
       tone: breached ? "laal" : "hara",
     };
   }

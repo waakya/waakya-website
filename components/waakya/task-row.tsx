@@ -81,11 +81,11 @@ export function TaskRow({
       <div className="min-w-0 flex-1">
         <Link
           href={`/kaam/${task.id}`}
-          className="text-[15px] leading-[20px] font-bold text-ink-900 after:absolute after:inset-0"
+          className="text-body leading-[20px] font-bold text-ink-900 after:absolute after:inset-0"
         >
           {task.title}
         </Link>
-        <p className="num mt-0.5 text-[13px] leading-[18px] text-ink-500">
+        <p className="num mt-0.5 text-label leading-[18px] text-ink-500">
           {meta}
         </p>
       </div>

@@ -2,11 +2,12 @@ import type { Metadata } from "next";
 
 import { requireModule, canManage } from "@/lib/auth/session";
 import Link from "next/link";
-import { CalendarClock } from "lucide-react";
+import { CalendarClock, ChevronRight } from "lucide-react";
 
 import { shellFor } from "@/lib/auth/shell";
 import { getUx } from "@/lib/i18n/ux";
 import { AppShell } from "@/components/waakya/app-shell";
+import { PageHeader } from "@/components/waakya/page";
 import { formatIndianDate } from "@/lib/tasks/format-date";
 import {
   getHolidays,
@@ -58,63 +59,70 @@ export default async function HazriPage() {
     : [[], [], [], []];
 
   const names = new Map(members.map((member) => [member.userId, member.name]));
+  // Nobody decides their own leave (the database refuses it), so a
+  // manager's own request is neither offered nor counted as waiting on them.
+  const pendingForMe = pending.filter((request) => request.userId !== viewer.userId);
 
   return (
-    <AppShell {...shell}>
-      <main className="flex-1 p-4 pb-8">
-        <h1 className="text-[24px] leading-[30px] font-bold text-ink-900">
-          {ux.nav.attendance}
-        </h1>
-        <p className="mt-0.5 text-[15px] leading-[20px] text-ink-500">
-          {formatIndianDate(new Date(), locale)}
-        </p>
+    <AppShell {...shell} width="list">
+      <main className="flex-1 p-4 pb-8 lg:px-0">
+        <PageHeader title={ux.nav.attendance} description={formatIndianDate(new Date(), locale)} />
 
         {/* Leave and holidays live further down this page; say so up front. */}
-        <nav aria-label={ux.nav.attendance} className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-[14px] font-semibold">
+        <nav aria-label={ux.nav.attendance} className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-body-sm font-semibold lg:hidden">
           <a href="#leave" className="text-neel-700 hover:underline">{ux.attendance.sectionLeave}</a>
           <a href={manages ? "#holidays" : "#leave"} className="text-neel-700 hover:underline">{ux.attendance.sectionHolidays}</a>
           {manages ? <a href="#team" className="text-neel-700 hover:underline">{ux.attendance.sectionTeam}</a> : null}
         </nav>
 
-        {manages && pending.length > 0 ? (
+        {manages && pendingForMe.length > 0 ? (
           <Link
             href="#leave-requests"
-            className="mt-4 flex items-center gap-2 rounded-card border border-amber-600/40 bg-amber-100 px-4 py-3 text-[15px] font-semibold text-amber-700"
+            className="mt-4 flex items-center gap-3 rounded-card border border-neel-100 bg-neel-50 px-4 py-3 text-body font-semibold text-neel-800 transition-colors duration-150 hover:border-neel-200"
           >
+            {/* A decision waiting, not a clock running out: Neel, not amber. */}
             <CalendarClock className="size-5 shrink-0" aria-hidden="true" />
-            {ux.attendance.pendingCount(pending.length)}
+            <span className="flex-1">{ux.attendance.pendingCount(pendingForMe.length)}</span>
+            <ChevronRight className="size-4 shrink-0" aria-hidden="true" />
           </Link>
         ) : null}
 
-        <div className="mt-5">
-          <PunchCard locale={locale} today={today} />
-        </div>
+        {/* Desktop: you on the left, the team on the right — the manager's
+            decisions sit beside their own day instead of under it. */}
+        <div className={manages ? "lg:mt-6 lg:grid lg:grid-cols-2 lg:items-start lg:gap-8" : "lg:mt-6 lg:max-w-2xl"}>
+          <div className="min-w-0">
+            <div className="mt-5 lg:mt-0">
+              <PunchCard locale={locale} today={today} />
+            </div>
 
-        <div className="mt-6">
-          <LeavePanel
-            locale={locale}
-            balance={balance}
-            requests={myRequests}
-            holidays={holidays}
-          />
-        </div>
+            <div className="mt-6">
+              <LeavePanel
+                locale={locale}
+                balance={balance}
+                requests={myRequests}
+                holidays={holidays}
+                showHolidays={!manages}
+              />
+            </div>
 
-        <div className="mt-6">
-          <MonthHistory locale={locale} days={month} />
-        </div>
-
-        {manages ? (
-          <div id="team" className="mt-8 scroll-mt-4 border-t border-paper-200 pt-6">
-            <TeamPanel
-              locale={locale}
-              team={team}
-              pending={pending}
-              balances={balances}
-              holidays={holidays}
-              names={Object.fromEntries(names)}
-            />
+            <div className="mt-6">
+              <MonthHistory locale={locale} days={month} />
+            </div>
           </div>
-        ) : null}
+
+          {manages ? (
+            <div id="team" className="mt-8 min-w-0 scroll-mt-4 border-t border-line pt-6 lg:mt-0 lg:border-t-0 lg:pt-0">
+              <TeamPanel
+                locale={locale}
+                team={team}
+                pending={pendingForMe}
+                balances={balances}
+                holidays={holidays}
+                names={Object.fromEntries(names)}
+              />
+            </div>
+          ) : null}
+        </div>
       </main>
     </AppShell>
   );

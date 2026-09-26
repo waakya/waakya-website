@@ -49,34 +49,34 @@ export async function TaskContext({
   const origin = originLine(locale, task?.origin_kind ?? "manual", task?.origin_id ?? null, task?.origin_label ?? null);
 
   return (
-    <section className="mx-auto w-full max-w-3xl min-w-0 px-4 pb-8" aria-label={p.documents.attached}>
-      <div className="flex flex-col gap-4 rounded-card border border-paper-200 bg-paper-0 p-4">
+    <section className="w-full min-w-0 pt-4 lg:pt-0" aria-label={p.documents.attached}>
+      <div className="flex flex-col gap-4 rounded-card border border-line bg-surface p-4 shadow-card">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-[13px] font-semibold text-ink-700">{origin.title}</span>
+          <span className="text-label font-semibold text-ink-700">{origin.title}</span>
           {origin.href ? (
-            <Link href={origin.href} className="text-[14px] font-semibold text-neel-700 underline-offset-2 hover:underline">
+            <Link href={origin.href} className="text-body-sm font-semibold text-neel-700 underline-offset-2 hover:underline">
               {origin.text}
             </Link>
           ) : (
-            <span className="text-[14px] text-ink-900">{origin.text}</span>
+            <span className="text-body-sm text-ink-900">{origin.text}</span>
           )}
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-[13px] font-semibold text-ink-700">{p.documents.linkedProject}</span>
+          <span className="text-label font-semibold text-ink-700">{p.documents.linkedProject}</span>
           {manages ? (
             <TaskProjectPicker locale={locale} taskId={taskId} projectId={task?.project_id ?? null} projects={projects ?? []} />
           ) : (
-            <span className="text-[14px] text-ink-900">{projectName ?? p.common.none}</span>
+            <span className="text-body-sm text-ink-900">{projectName ?? p.common.none}</span>
           )}
         </div>
 
         <div>
           <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-            <h2 className="text-[13px] font-semibold text-ink-700">{p.documents.attached}</h2>
+            <h2 className="text-label font-semibold text-ink-700">{p.documents.attached}</h2>
             <div className="flex min-w-0 flex-wrap items-center gap-2">
               <Link
                 href={`/documents/templates?task=${taskId}${task?.project_id ? `&project=${task.project_id}` : ""}`}
-                className="inline-flex h-9 items-center gap-1.5 rounded-button border border-neel-200 bg-paper-0 px-3 text-[13.5px] font-semibold text-neel-700 hover:bg-neel-50"
+                className="inline-flex h-9 items-center gap-1.5 rounded-button border border-neel-200 bg-paper-0 px-3 text-label font-semibold text-neel-700 hover:bg-neel-50"
               >
                 <FilePlus2 className="size-4" aria-hidden="true" />
                 {ux.templates.createFromTemplate}
@@ -87,7 +87,7 @@ export async function TaskContext({
           {documents.length ? (
             <DocumentList locale={locale} documents={documents} viewerId={viewerId} manages={manages} showLinks={false} />
           ) : (
-            <p className="text-[14px] text-ink-500">{p.projects.noDocuments.replace(/project/i, "task")}</p>
+            <p className="text-body-sm text-ink-500">{p.projects.noDocuments.replace(/project/i, "task")}</p>
           )}
         </div>
       </div>

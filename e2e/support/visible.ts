@@ -18,3 +18,18 @@ export function onScreen(locator: Locator): Locator {
 export function textOnScreen(page: Page, text: string): Locator {
   return onScreen(page.getByText(text));
 }
+
+/**
+ * Reach a task the way an owner does on Design V3's Today: on the "Aapke
+ * liye" list if it is among the first rows of its group, otherwise through
+ * that group's "N aur · <group>" link into Work — the busy-day fold. Returns
+ * the visible row (a list item) holding the task.
+ */
+export async function rowFromToday(page: Page, title: string, group: string): Promise<Locator> {
+  await page.goto("/aaj");
+  const onToday = onScreen(page.getByRole("list", { name: "Aapke liye" }).locator("li", { hasText: title }));
+  if ((await onToday.count()) > 0) return onToday.first();
+  await onScreen(page.getByRole("link", { name: new RegExp(`^\\d+ aur · ${group}`) })).first().click();
+  await page.waitForURL(/\/work\?need=/);
+  return onScreen(page.getByTestId("work-list").locator("li", { hasText: title })).first();
+}

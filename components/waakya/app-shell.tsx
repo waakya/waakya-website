@@ -22,9 +22,13 @@ export function AppShell({
   modules,
   children,
   /**
-   * Screens that lay themselves out across the full width (the dashboard) opt
-   * out of the centred reading column that everything else keeps.
+   * How much of a wide screen the content takes (design system §8):
+   *  - `reading` (default): one centred column, for detail and forms;
+   *  - `list`: a wider centred container, for lists and tables;
+   *  - `full`: the screen lays itself out edge to edge (Today, a thread).
+   * `wide` is the older name for `full`.
    */
+  width,
   wide = false,
 }: {
   locale: Locale;
@@ -37,8 +41,10 @@ export function AppShell({
   modules?: ReadonlySet<ModuleKey>;
   memberships?: unknown;
   children: React.ReactNode;
+  width?: "reading" | "list" | "full";
   wide?: boolean;
 }) {
+  const layout = width ?? (wide ? "full" : "reading");
   const moduleList = modules ? [...modules] : undefined;
   return (
     <div className="flex min-h-dvh bg-paper-50">
@@ -60,9 +66,14 @@ export function AppShell({
         <div
           className={cn(
             "flex w-full flex-1 flex-col",
-            // The phone column, kept exactly as it was.
-            "mx-auto max-w-md lg:mx-0",
-            wide ? "lg:max-w-none" : "lg:max-w-3xl lg:px-8 lg:py-2",
+            // The phone column; a tablet gets a wider one rather than a
+            // phone floating in the middle of the screen.
+            "mx-auto max-w-md md:max-w-2xl",
+            // From lg the column centres in what the sidebar leaves, instead
+            // of pinning a phone-width strip to the left of an empty canvas.
+            layout === "full" && "lg:max-w-none",
+            layout === "reading" && "lg:max-w-3xl lg:px-8 lg:py-4",
+            layout === "list" && "lg:max-w-5xl lg:px-8 lg:py-4",
           )}
         >
           {children}

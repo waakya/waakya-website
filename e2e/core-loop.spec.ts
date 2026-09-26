@@ -32,11 +32,20 @@ async function createTask(page: Page, title: string) {
 }
 
 async function openTask(page: Page, title: string) {
-  await page.goto("/aaj");
+  // Where a person would look (Design V3): Today shows what needs them and a
+  // short list of what is waiting; everything else is in Work, open or done.
   // The title also appears inside a notification about the same task, so the
   // row is addressed as a link with exactly that name.
-  await onScreen(page.getByRole("link", { name: title, exact: true })).click();
-  await expect(page).toHaveURL(/\/kaam\/[0-9a-f-]{36}$/);
+  for (const path of ["/aaj", "/work", "/work?status=done"]) {
+    await page.goto(path);
+    const link = onScreen(page.getByRole("link", { name: title, exact: true }));
+    if ((await link.count()) > 0) {
+      await link.first().click();
+      await expect(page).toHaveURL(/\/kaam\/[0-9a-f-]{36}$/);
+      return;
+    }
+  }
+  throw new Error(`"${title}" is on neither Today nor Work`);
 }
 
 test("create → acknowledge → done → verify", async ({ page, browser }) => {
@@ -95,16 +104,23 @@ test("create → acknowledge → done → verify", async ({ page, browser }) => 
     "Verified",
   );
 
-  // The glyph on the list is now the green verified tick.
+  // The glyph on the list is now the green verified tick. Design V3 keeps
+  // the day's finished work behind one tap ("Done today") on Today.
   await page.goto("/aaj");
+  const doneToday = page.getByText("Aaj ho gaye");
+  // Centre it: the phone's sticky New task button covers the bottom edge.
+  await doneToday.evaluate((el) => el.scrollIntoView({ block: "center" }));
+  await doneToday.click();
   const row = page
     .getByRole("list", { name: "Ho gaya" })
     .locator("li", { hasText: title })
     .first();
   await expect(row.getByRole("img", { name: "Verified" })).toBeVisible();
 
-  // And the timeline records every step, in order, with who did it.
-  await openTask(page, title);
+  // And the timeline records every step, in order, with who did it. The
+  // finished task is opened from that same row.
+  await row.getByRole("link").first().click();
+  await expect(page).toHaveURL(/\/kaam\/[0-9a-f-]{36}$/);
   const timeline = page.getByRole("list", { name: "Timeline" });
   await expect(timeline).toContainText("Bheja");
   await expect(timeline).toContainText("Dekha");
@@ -187,11 +203,11 @@ test("the assignee can decline, and it lands with the owner rather than dying", 
 
   // The owner's row says so twice — in the meta line and on the chip that
   // replaces the glyph — so the state never depends on colour alone (D-03).
-  // Scoped to the day's list: a declined task is also an "Aapke liye" card,
-  // which is a different thing with different chrome.
-  await page.goto("/aaj");
+  // Design V3: the owner's Today keeps only what needs them (the declined task
+  // is there as a "Needs you" row); the list of work, with its rows, is Work.
+  await page.goto("/work");
   const row = page
-    .getByRole("list", { name: "Aaj" })
+    .getByRole("main")
     .locator("li", { hasText: title })
     .first();
   await expect(row.locator("p", { hasText: "Aap tak aaya" })).toBeVisible();

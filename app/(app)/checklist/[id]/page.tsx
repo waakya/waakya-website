@@ -53,7 +53,7 @@ export default async function ChecklistPage({
         >
           <ArrowLeft className="size-6" />
         </Link>
-        <h1 className="flex-1 text-[20px] leading-[26px] font-bold text-ink-900">
+        <h1 className="flex-1 text-title-sm leading-[26px] font-bold text-ink-900">
           {checklist.name}
         </h1>
       </header>
@@ -73,7 +73,7 @@ export default async function ChecklistPage({
       </ul>
 
       {todays.length === 0 ? (
-        <p className="mt-8 text-center text-[15px] text-ink-500">
+        <p className="mt-8 text-center text-body text-ink-500">
           {t.common.nothingHere}
         </p>
       ) : null}

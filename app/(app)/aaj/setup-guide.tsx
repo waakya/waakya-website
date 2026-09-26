@@ -12,6 +12,10 @@ import { Illustration } from "@/components/waakya/illustrations";
  * has actually done — not from a checkbox — and the guide disappears once
  * every step is real. Until someone joins, the steps that need a colleague
  * say so instead of leading to an empty picker.
+ *
+ * V3: only the next step explains itself and carries a button; the others
+ * are one quiet line each — the rest of the week, not five things to do now.
+ * Every place is still reachable from More.
  */
 export async function SetupGuide({ locale, orgId }: { locale: Locale; orgId: string }) {
   const ux = getUx(locale);
@@ -39,6 +43,27 @@ export async function SetupGuide({ locale, orgId }: { locale: Locale; orgId: str
   if (completed === steps.length) return null;
   const next = steps.find((step) => !step.done && (!step.needsTeam || teamJoined));
 
+  // Once the business is actually running (team, a conversation, a task),
+  // the remaining setup is optional: one quiet line, so it never pushes the
+  // day's real work below the fold.
+  if (steps.slice(0, 3).every((step) => step.done) && next) {
+    const Icon = next.icon;
+    return (
+      <section aria-label={ux.guide.title} data-testid="setup-guide" className="mb-2">
+        <Link
+          href={next.href}
+          className="num inline-flex min-h-11 items-center gap-2 text-body-sm text-fg-muted hover:text-fg"
+        >
+          <Icon className="size-4 shrink-0 text-neel-700" aria-hidden="true" />
+          <span>
+            {ux.guide.progress(completed, steps.length)} · <span className="font-semibold text-neel-700">{next.copy.title}</span>
+          </span>
+          <ChevronRight className="size-4 shrink-0 text-neel-700" aria-hidden="true" />
+        </Link>
+      </section>
+    );
+  }
+
   return (
     <section
       aria-labelledby="setup-guide-title"
@@ -47,11 +72,11 @@ export async function SetupGuide({ locale, orgId }: { locale: Locale; orgId: str
     >
       <div className="flex items-start gap-4 border-b border-paper-100 px-4 py-4 sm:px-5">
         <div className="min-w-0 flex-1">
-          <h2 id="setup-guide-title" className="font-display text-[22px] leading-[1.15] font-extrabold text-ink-900">
+          <h2 id="setup-guide-title" className="font-display text-title leading-[1.15] font-extrabold text-ink-900">
             {ux.guide.title}
           </h2>
-          <p className="mt-1 text-[14.5px] leading-[20px] text-ink-500">{ux.guide.lead}</p>
-          <p className="num mt-2 text-[13px] font-semibold text-neel-700">{ux.guide.progress(completed, steps.length)}</p>
+          <p className="mt-1 text-body-sm leading-[20px] text-ink-500">{ux.guide.lead}</p>
+          <p className="num mt-2 text-label font-semibold text-neel-700">{ux.guide.progress(completed, steps.length)}</p>
         </div>
         <Illustration name="team" className="hidden h-20 w-auto shrink-0 sm:block" />
       </div>
@@ -62,10 +87,10 @@ export async function SetupGuide({ locale, orgId }: { locale: Locale; orgId: str
           const isNext = next?.key === step.key;
           return (
             <li key={step.key} className="border-b border-paper-100 last:border-b-0">
-              <div className={cn("flex items-center gap-3 px-4 py-3 sm:px-5", isNext && "bg-neel-50")}>
+              <div className={cn("flex items-center gap-3 px-4 sm:px-5", isNext ? "bg-neel-50 py-3" : "py-2")}>
                 <span
                   className={cn(
-                    "num grid size-8 shrink-0 place-items-center rounded-full text-[13px] font-bold",
+                    "num grid size-8 shrink-0 place-items-center rounded-full text-label font-bold",
                     step.done ? "bg-hara-600 text-white" : isNext ? "bg-neel-600 text-white" : "border border-paper-300 text-ink-500",
                   )}
                   aria-hidden="true"
@@ -73,25 +98,22 @@ export async function SetupGuide({ locale, orgId }: { locale: Locale; orgId: str
                   {step.done ? <Check className="size-4" strokeWidth={3} /> : index + 1}
                 </span>
                 <span className="min-w-0 flex-1">
-                  <span className={cn("flex items-center gap-1.5 text-[15px] font-semibold", step.done ? "text-ink-500 line-through decoration-ink-400/60" : "text-ink-900")}>
+                  <span className={cn("flex items-center gap-1.5 text-body font-semibold", step.done ? "text-ink-500 line-through decoration-ink-400/60" : "text-ink-900")}>
                     <Icon className="size-4 shrink-0 text-neel-700" aria-hidden="true" />
                     {step.copy.title}
                   </span>
-                  {!step.done ? (
-                    <span className="mt-0.5 block text-[13.5px] leading-[19px] text-ink-500">
-                      {blocked ? ux.guide.waitingForTeam : step.copy.body}
-                    </span>
+                  {isNext ? (
+                    <span className="mt-0.5 block text-label leading-[19px] text-ink-500">{step.copy.body}</span>
+                  ) : blocked && index === steps.findIndex((s) => s.needsTeam && !s.done) ? (
+                    <span className="mt-0.5 block text-label leading-[19px] text-ink-500">{ux.guide.waitingForTeam}</span>
                   ) : null}
                 </span>
                 {step.done ? (
                   <span className="sr-only">{ux.guide.doneLabel}</span>
-                ) : blocked ? null : (
+                ) : !isNext ? null : (
                   <Link
                     href={step.href}
-                    className={cn(
-                      "inline-flex min-h-10 shrink-0 items-center gap-1 rounded-button px-3 text-[14px] font-semibold",
-                      isNext ? "bg-neel-600 text-white hover:bg-neel-700" : "text-neel-700 hover:bg-neel-50",
-                    )}
+                    className="inline-flex min-h-10 shrink-0 items-center gap-1 rounded-button bg-neel-600 px-3 text-body-sm font-semibold text-white hover:bg-neel-700"
                   >
                     {step.copy.action}
                     <ChevronRight className="size-4" aria-hidden="true" />

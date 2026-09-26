@@ -33,8 +33,8 @@ function InputOTP({
           inputMode="numeric"
           aria-invalid={invalid || undefined}
           className={cn(
-            "num size-tap flex-1 rounded-[10px] border-2 border-paper-200 bg-paper-0",
-            "text-center text-[22px] font-bold text-ink-900",
+            "num size-tap flex-1 rounded-inner border-2 border-paper-200 bg-paper-0",
+            "text-center text-title font-bold text-ink-900",
             "outline-none transition-colors",
             "focus:border-neel-600",
             // Laal is allowed here: a wrong code is the reader being told

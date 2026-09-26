@@ -44,7 +44,7 @@ export function PendingInvites({
 
   return (
     <section className="mt-6">
-      <h2 className="mb-2 text-[13px] leading-[18px] font-semibold text-ink-700">
+      <h2 className="mb-2 text-label leading-[18px] font-semibold text-ink-700">
         {t.org.pendingInvites}
       </h2>
       <ul aria-label={t.org.pendingInvites} className="flex flex-col gap-2">
@@ -52,10 +52,10 @@ export function PendingInvites({
           <li key={invite.id}>
             <Card className="flex min-h-16 items-center gap-2 p-3.5 shadow-none">
               <div className="min-w-0 flex-1">
-                <p className="text-[15px] leading-[20px] font-bold text-ink-900">
+                <p className="text-body leading-[20px] font-bold text-ink-900">
                   {invite.full_name}
                 </p>
-                <p className="num text-[13px] text-ink-500">{invite.phone}</p>
+                <p className="num text-label text-ink-500">{invite.phone}</p>
               </div>
               <Button
                 size="sm"

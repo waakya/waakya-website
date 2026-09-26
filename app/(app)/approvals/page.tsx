@@ -4,12 +4,16 @@ import { requireOrg, canManage } from "@/lib/auth/session";
 import { shellFor } from "@/lib/auth/shell";
 import { createClient } from "@/lib/supabase/server";
 import { getPhase1 } from "@/lib/i18n/phase1";
+import { getDesign } from "@/lib/i18n/design";
 import { listApprovals, waitingOn } from "@/lib/approvals/queries";
 import { getOrgMembers } from "@/lib/org/members";
 import { AppShell } from "@/components/waakya/app-shell";
+import { PageHeader } from "@/components/waakya/page";
 import { Illustration } from "@/components/waakya/illustrations";
 import { ApprovalCard } from "./approval-card";
 import { RequestApproval } from "./request-approval";
+import { RevealGroup, RevealToggle } from "@/components/waakya/reveal";
+import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = { title: "Approvals" };
 
@@ -17,6 +21,7 @@ export default async function ApprovalsPage() {
   const viewer = await requireOrg();
   const shell = await shellFor(viewer);
   const p = getPhase1(shell.locale);
+  const d = getDesign(shell.locale);
   const manages = canManage(viewer.role);
   const supabase = await createClient();
 
@@ -45,10 +50,9 @@ export default async function ApprovalsPage() {
   ];
 
   return (
-    <AppShell {...shell}>
-      <main className="flex-1 p-4 pb-8">
-        <h1 className="text-[24px] leading-[30px] font-bold text-ink-900">{p.approvals.title}</h1>
-        <p className="mt-0.5 text-[15px] leading-[20px] text-ink-500">{p.approvals.subtitle}</p>
+    <AppShell {...shell} width="list">
+      <main className="flex-1 p-4 pb-8 lg:px-0">
+        <PageHeader title={p.approvals.title} description={p.approvals.subtitle} />
 
         <div className="mt-5">
           <RequestApproval
@@ -60,26 +64,31 @@ export default async function ApprovalsPage() {
         </div>
 
         {approvals.length === 0 ? (
-          <div className="mt-8 flex flex-col items-center rounded-card border border-dashed border-paper-300 px-6 py-10 text-center">
-            <Illustration name="review" className="h-32 w-auto" />
-            <p className="mt-4 font-display text-[22px] font-bold text-ink-900">{p.approvals.empty}</p>
-            <p className="mt-1 text-[15px] text-ink-500">{p.approvals.emptyHelp}</p>
+          <div className="mt-8 flex flex-col items-center rounded-card border border-dashed border-line-strong px-6 py-10 text-center">
+            <Illustration name="review" className="h-28 w-auto" />
+            <p className="mt-4 text-title-sm font-bold text-fg">{p.approvals.empty}</p>
+            <p className="mt-1 max-w-sm text-body text-fg-subtle">{p.approvals.emptyHelp}</p>
           </div>
         ) : (
           sections.map((section) =>
             section.items.length ? (
-              <section key={section.key} className="mt-6">
-                <h2 className="mb-2 text-[13px] font-semibold text-ink-700">
-                  {section.title} <span className="num font-normal text-ink-400">{section.items.length}</span>
+              // Decisions waiting on you all show; your own requests and what
+              // was decided show the latest five, the rest one tap away.
+              <RevealGroup as="section" key={section.key} id={`approvals-${section.key}`} className="group/older mt-8">
+                <h2 className="mb-3 text-body font-bold text-fg">
+                  {section.title} <span className="num font-normal text-fg-subtle">{section.items.length}</span>
                 </h2>
-                <ul aria-label={section.title} className="flex flex-col gap-2">
-                  {section.items.map((approval) => (
-                    <li key={approval.id}>
+                <ul id={`approvals-${section.key}`} aria-label={section.title} className="flex flex-col gap-2">
+                  {section.items.map((approval, index) => (
+                    <li key={approval.id} id={`approval-${approval.id}`} className={cn("scroll-mt-20 rounded-card target:ring-2 target:ring-neel-600 target:ring-offset-2", !section.act && index >= 5 && "hidden group-data-[open=true]/older:block")}>
                       <ApprovalCard locale={shell.locale} approval={approval} canDecide={section.act} />
                     </li>
                   ))}
                 </ul>
-              </section>
+                {!section.act && section.items.length > 5 ? (
+                  <RevealToggle className="mt-1 text-label font-semibold text-neel-700" more={d.v3.showAll(section.items.length)} less={d.v3.showLess} />
+                ) : null}
+              </RevealGroup>
             ) : null,
           )
         )}

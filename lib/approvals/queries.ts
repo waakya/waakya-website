@@ -29,14 +29,15 @@ export interface ApprovalItem {
 /** Everything this person may see: their own requests, and what they may decide. */
 export const listApprovals = cache(async (orgId: string): Promise<ApprovalItem[]> => {
   const supabase = await createClient();
-  const { data } = await supabase
-    .from("approvals")
-    .select(
-      "id, title, details, status, requested_by, approver_id, decided_by, decided_at, decision_note, task_id, project_id, document_id, created_at",
-    )
-    .eq("org_id", orgId)
-    .order("created_at", { ascending: false })
-    .limit(200);
+  // Every pending request (a decision must never fall off the list because
+  // newer ones arrived), plus the most recent decided ones as history.
+  const COLS =
+    "id, title, details, status, requested_by, approver_id, decided_by, decided_at, decision_note, task_id, project_id, document_id, created_at";
+  const [pending, decided] = await Promise.all([
+    supabase.from("approvals").select(COLS).eq("org_id", orgId).eq("status", "pending").order("created_at", { ascending: false }).limit(1000),
+    supabase.from("approvals").select(COLS).eq("org_id", orgId).neq("status", "pending").order("created_at", { ascending: false }).limit(150),
+  ]);
+  const data = [...(pending.data ?? []), ...(decided.data ?? [])].sort((a, b) => b.created_at.localeCompare(a.created_at));
 
   const rows = data ?? [];
   if (!rows.length) return [];

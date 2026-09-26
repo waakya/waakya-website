@@ -75,17 +75,60 @@
   --color-input: var(--color-paper-200);
   --color-ring: var(--color-neel-600);
 
+  /* V2 semantic roles (docs/WAAKYA_DESIGN_SYSTEM.md §1.2). New code reaches
+     for these; the palette steps stay for the state machine. */
+  --color-canvas: var(--color-paper-50);
+  --color-surface: var(--color-paper-0);
+  --color-surface-muted: var(--color-paper-100);
+  --color-surface-inverse: var(--color-neel-900);
+  --color-fg: var(--color-ink-900);
+  --color-fg-muted: var(--color-ink-700);
+  --color-fg-subtle: var(--color-ink-500);
+  --color-line: var(--color-paper-200);
+  --color-line-strong: var(--color-paper-300);
+  --color-brand: var(--color-neel-600);
+  --color-brand-hover: var(--color-neel-700);
+  --color-brand-soft: var(--color-neel-50);
+
   /* Type — Baloo 2 display only; Inter + Noto Sans Devanagari for working UI */
   --font-sans: var(--font-inter), var(--font-noto-devanagari), system-ui, sans-serif;
   --font-hindi: var(--font-noto-devanagari), var(--font-inter), system-ui, sans-serif;
   --font-display: var(--font-baloo), var(--font-inter), system-ui, sans-serif;
 
-  /* Shape — Design Direction §5.1 */
+  /* V2 type scale — fixed px, ratio ≈1.15 (§2.1). Line heights go through a
+     variable so Hindi can open them to 1.5 without touching any screen. */
+  --text-micro: 11px;
+  --text-micro--line-height: var(--lh-micro, 14px);
+  --text-caption: 12px;
+  --text-caption--line-height: var(--lh-caption, 16px);
+  --text-label: 13px;
+  --text-label--line-height: var(--lh-label, 18px);
+  --text-body-sm: 14px;
+  --text-body-sm--line-height: var(--lh-body-sm, 20px);
+  --text-body: 15px;
+  --text-body--line-height: var(--lh-body, 22px);
+  --text-body-lg: 17px;
+  --text-body-lg--line-height: var(--lh-body-lg, 24px);
+  --text-title-sm: 20px;
+  --text-title-sm--line-height: var(--lh-title-sm, 26px);
+  --text-title: 24px;
+  --text-title--line-height: var(--lh-title, 30px);
+  --text-title-lg: 28px;
+  --text-title-lg--line-height: var(--lh-title-lg, 34px);
+
+  /* Shape — Design Direction §5.1, plus one step for things nested in a card */
+  --radius-inner: 10px;
   --radius-card: 12px;
   --radius-button: 14px;
   --radius-chip: 999px;
   --radius-sheet: 24px;
   --radius-tile: 12px;
+
+  /* Motion — transitions explain a change of state (§7). Strong curves:
+     the built-in ease-out is too soft to read as a response. */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
 
   /* Depth — shadows are almost absent */
   --shadow-card: 0 1px 2px rgba(28, 26, 23, 0.05);
@@ -175,10 +218,43 @@
     -webkit-tap-highlight-color: transparent;
   }
 
-  /* Hindi UI: swap the family and open the line-height for Devanagari (§4). */
+  /* Hindi UI: swap the family and open the line-height for Devanagari (§4).
+     The scale's line heights follow, so no Devanagari line sits under 1.5. */
   html[lang="hi"] body {
     font-family: var(--font-hindi);
     line-height: 1.5;
+  }
+  html[lang="hi"] {
+    --lh-micro: 1.5;
+    --lh-caption: 1.5;
+    --lh-label: 1.5;
+    --lh-body-sm: 1.5;
+    --lh-body: 1.5;
+    --lh-body-lg: 1.5;
+    --lh-title-sm: 1.5;
+    --lh-title: 1.5;
+    --lh-title-lg: 1.5;
+  }
+
+  /* The parts of the page nobody draws still carry the palette. */
+  ::selection {
+    background-color: var(--neel-100);
+    color: var(--ink-900);
+  }
+  html {
+    scrollbar-color: var(--paper-300) transparent;
+  }
+  /* On a phone the bottom bar (4rem) and a screen's own sticky action sit
+     over the page; anything scrolled to or focused lands above them, never
+     under them (WCAG 2.4.11). */
+  @media (width < 64rem) {
+    html {
+      scroll-padding-bottom: 9rem;
+    }
+  }
+  input,
+  textarea {
+    caret-color: var(--neel-600);
   }
   /* Never letter-space Devanagari. */
   html[lang="hi"] * {
@@ -215,5 +291,28 @@
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+/* An inline panel appearing where it was asked for (the Message → Task form,
+   a disclosure): 180 ms from 97% and transparent, never from nothing. Pure CSS
+   via @starting-style, so it costs no JavaScript and no library. */
+@utility enter-pop {
+  transform-origin: top;
+  transition:
+    opacity 180ms var(--ease-out),
+    transform 180ms var(--ease-out);
+  @starting-style {
+    opacity: 0;
+    transform: scale(0.97) translateY(-2px);
+  }
+}
+
+/* A sheet rising from the bottom edge it belongs to (the proof sheet): the
+   one direction that explains where it came from. Same 220 ms ease-out. */
+@utility enter-rise {
+  transition: transform 220ms var(--ease-out);
+  @starting-style {
+    transform: translateY(24px);
   }
 }

@@ -75,7 +75,7 @@ export function NewProject({
             rows={2}
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="mt-1 w-full rounded-button border border-paper-200 bg-paper-0 px-3 py-2 text-[15px] outline-none focus:border-neel-600"
+            className="mt-1 w-full rounded-button border border-paper-200 bg-paper-0 px-3 py-2 text-body outline-none focus:border-neel-600"
           />
         </div>
         <div className="grid gap-3 sm:grid-cols-2">
@@ -90,7 +90,7 @@ export function NewProject({
         </div>
         {people.length > 0 ? (
           <div>
-            <p className="text-[13px] font-semibold text-ink-700">{p.projects.members}</p>
+            <p className="text-label font-semibold text-ink-700">{p.projects.members}</p>
             <div className="mt-1.5 flex flex-wrap gap-1.5">
               {people.map((person) => {
                 const on = members.includes(person.id);
@@ -103,7 +103,7 @@ export function NewProject({
                       setMembers(on ? members.filter((id) => id !== person.id) : [...members, person.id])
                     }
                     className={cn(
-                      "rounded-chip border px-3 py-1 text-[13px] font-semibold",
+                      "rounded-chip border px-3 py-1 text-label font-semibold",
                       on ? "border-neel-600 bg-neel-600 text-white" : "border-paper-200 bg-paper-0 text-ink-700",
                     )}
                   >
@@ -115,7 +115,7 @@ export function NewProject({
           </div>
         ) : null}
         {error ? (
-          <p role="alert" data-testid="project-error" className="rounded-card bg-laal-100 px-3 py-2 text-[14px] text-laal-700">
+          <p role="alert" data-testid="project-error" className="rounded-card bg-laal-100 px-3 py-2 text-body-sm text-laal-700">
             {error}
           </p>
         ) : null}

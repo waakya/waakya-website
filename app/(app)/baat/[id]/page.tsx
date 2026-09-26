@@ -6,7 +6,8 @@ import { getDictionary } from "@/lib/i18n";
 import { getLocale } from "@/lib/i18n/server";
 import { AppShell } from "@/components/waakya/app-shell";
 import { getUnreadCount } from "@/lib/notify/inbox";
-import { getConversation } from "@/lib/conversations/queries";
+import { getConversation, listConversations } from "@/lib/conversations/queries";
+import { ConversationList } from "@/components/waakya/conversation-list";
 import { getOrgMembers } from "@/lib/org/members";
 import { Thread } from "./thread";
 import { listMessageDocuments } from "@/lib/documents/queries";
@@ -44,10 +45,15 @@ export default async function ConversationPage({
       .is("read_at", null),
   ]);
 
-  const attachmentMap = await listMessageDocuments(
-    viewer.org.id,
-    conversation.messages.map((message) => message.id),
-  );
+  // Read after marking this one read, so the pane beside it is already true.
+  const [attachmentMap, conversations, unread] = await Promise.all([
+    listMessageDocuments(
+      viewer.org.id,
+      conversation.messages.map((message) => message.id),
+    ),
+    listConversations(viewer.org.id, viewer.userId),
+    getUnreadCount(),
+  ]);
   const attachments = Object.fromEntries(
     [...attachmentMap.entries()].map(([messageId, docs]) => [
       messageId,
@@ -62,9 +68,24 @@ export default async function ConversationPage({
       orgName={viewer.org.name}
       personName={viewer.fullName ?? "—"}
       roleLabel={viewer.role ? t.org.roles[viewer.role] : ""}
-      unread={await getUnreadCount()}
+      unread={unread}
+      width="full"
     >
+      <div className="flex min-h-0 flex-1">
+        {/* On a desk the list stays beside the thread, so moving between
+            conversations never loses your place. */}
+        <aside className="hidden w-96 shrink-0 overflow-y-auto border-r border-line px-5 pt-6 pb-8 lg:block lg:h-dvh">
+          <h2 className="mb-4 text-title font-bold text-fg">{t.baat.title}</h2>
+          <ConversationList
+            conversations={conversations}
+            locale={locale}
+            activeId={conversation.id}
+            hasTeam={members.length > 1}
+            manages={canManage(viewer.role)}
+          />
+        </aside>
       <Thread
+        participantCount={conversation.participantIds.length}
         locale={locale}
         conversationId={conversation.id}
         title={conversation.title}
@@ -76,6 +97,7 @@ export default async function ConversationPage({
           name: member.name,
         }))}
       />
+      </div>
     </AppShell>
   );
 }

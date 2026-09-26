@@ -100,3 +100,26 @@ export function needsYou(tasks: TaskListItem[], now: Date): NeedsYou[] {
   };
   return out.sort((a, b) => order[a.reason] - order[b.reason]);
 }
+
+/**
+ * Open work that does not need this person right now — what they are
+ * waiting on their team for. Today lists the nearest of these; Work's
+ * `?need=waiting` lists all of them, by the same rule.
+ */
+export function waitingOnTeam(tasks: TaskListItem[], now: Date): TaskListItem[] {
+  const needs = new Set(needsYou(tasks, now).map((item) => item.task.id));
+  return tasks
+    .filter((task) => !["done", "verified", "cancelled"].includes(task.state) && !needs.has(task.id))
+    .sort((a, b) => (a.dueAt ? Date.parse(a.dueAt) : Infinity) - (b.dueAt ? Date.parse(b.dueAt) : Infinity));
+}
+
+/**
+ * What this person sent in the last few minutes leads the waiting list, so
+ * the work they just gave lands in front of them — then the nearest
+ * deadlines. The set is unchanged (the count still matches Work).
+ */
+export function justSentFirst(tasks: TaskListItem[], userId: string, now: Date, withinMs = 15 * 60_000): TaskListItem[] {
+  const fresh = (task: TaskListItem) => task.createdById === userId && now.getTime() - Date.parse(task.createdAt) < withinMs;
+  const newestFirst = tasks.filter(fresh).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  return [...newestFirst, ...tasks.filter((task) => !fresh(task))];
+}

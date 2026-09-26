@@ -9,7 +9,7 @@ import { addProjectMember, setTaskProject, updateProject } from "@/lib/actions/p
 import type { ProjectStatus } from "@/lib/projects/queries";
 
 const SELECT =
-  "h-10 max-w-full min-w-0 rounded-button border border-paper-200 bg-paper-0 px-3 text-[14px] text-ink-900";
+  "h-10 max-w-full min-w-0 rounded-button border border-paper-200 bg-paper-0 px-3 text-body-sm text-ink-900";
 
 /** Status, people and tasks — the three things a manager changes on a project. */
 export function ProjectControls({
@@ -99,7 +99,7 @@ export function ProjectControls({
         ) : null}
       </div>
       {error ? (
-        <p role="alert" className="rounded-card bg-laal-100 px-3 py-2 text-[14px] text-laal-700">
+        <p role="alert" className="rounded-card bg-laal-100 px-3 py-2 text-body-sm text-laal-700">
           {error}
         </p>
       ) : null}

@@ -76,6 +76,7 @@ export function formatPunchTime(value: string | null): string {
     hour12: true,
   })
     .format(new Date(value))
-    .toUpperCase()
+    // Lower case, as every other time on the screens is written ("9:42 am").
+    .toLowerCase()
     .replace(/\s+/g, " ");
 }

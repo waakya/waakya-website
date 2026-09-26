@@ -87,6 +87,19 @@ export const getViewer = cache(async (): Promise<Viewer | null> => {
   const membership = rows.find((row) => row.org_id === wanted) ?? rows[0] ?? null;
   const org = membership?.orgs ?? null;
 
+  // The claims were verified locally, which proves the token was signed with a
+  // key this project trusts — not that its user still exists here. A token for
+  // a deleted user, or one minted by another project that shares the signing
+  // key (every local Supabase stack ships the same default key), would
+  // otherwise read as "a new user with no business" and be sent to /setup,
+  // where nothing can be created for a user who is not in auth.users. So on
+  // this one path — no membership — ask the auth server. Members keep the
+  // fast local check; only people about to see /setup pay the round trip.
+  if (!membership) {
+    const { data: confirmed, error } = await supabase.auth.getUser();
+    if (error || confirmed.user?.id !== user.id) return null;
+  }
+
   const { data: moduleRows } = org
     ? await supabase.from("organization_modules").select("module_key, enabled").eq("org_id", org.id)
     : { data: [] };

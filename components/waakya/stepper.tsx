@@ -117,7 +117,7 @@ export function Stepper({
 
               <span
                 className={cn(
-                  "text-center text-[11px] leading-tight font-bold",
+                  "text-center text-micro leading-tight font-bold",
                   isCurrent
                     ? step === "verified"
                       ? "text-hara-700"
@@ -132,7 +132,7 @@ export function Stepper({
               {at ? (
                 <span
                   className={cn(
-                    "num text-center text-[11px] leading-tight",
+                    "num text-center text-micro leading-tight",
                     isCurrent ? "text-neel-700" : "text-ink-500",
                   )}
                 >
@@ -150,8 +150,12 @@ export function Stepper({
           label={`${t.time.ackClock} (${ackMinutes} min SLA)`}
           clock={ack}
           right={
-            ack.tone === "hara"
-              ? t.time.metIn(formatDuration(ack.elapsedMs, t.time))
+            // Once seen, the clock says what happened — in time, or how late —
+            // rather than a spent percentage (V3 review).
+            ack.met
+              ? ack.breached
+                ? `${t.time.metIn(formatDuration(ack.elapsedMs, t.time))} · ${t.chips.lateBy(formatDuration(-ack.remainingMs, t.time))}`
+                : t.time.metIn(formatDuration(ack.elapsedMs, t.time))
               : t.time.percentGaya(percent(ack.progress))
           }
         />
@@ -191,10 +195,10 @@ function ClockBar({
   return (
     <div>
       <div className="flex items-baseline justify-between gap-2">
-        <span className="text-[13px] leading-[18px] font-bold text-ink-900">
+        <span className="text-label leading-[18px] font-bold text-ink-900">
           {label}
         </span>
-        <span className="num text-[13px] leading-[18px] text-ink-500">
+        <span className="num text-label leading-[18px] text-ink-500">
           {right}
         </span>
       </div>

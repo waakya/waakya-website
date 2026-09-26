@@ -36,13 +36,14 @@ export function Bell({
         <span
           aria-hidden="true"
           className={cn(
-            "num absolute top-1 right-1 min-w-4 rounded-full px-1 text-center text-[11px] leading-4 font-bold",
+            "num absolute top-1 right-1 min-w-4 rounded-full px-1 text-center text-micro leading-4 font-bold",
             // Laal is for Late, Urgent and Cancel only, so the badge is Neel
             // on paper and white on the Neel header.
             onNeel ? "bg-white text-neel-700" : "bg-neel-600 text-white",
           )}
         >
-          {unread > 9 ? "9+" : unread}
+          {/* The same number the accessible name says (WCAG 2.5.3). */}
+          {unread > 99 ? "99+" : unread}
         </span>
       ) : null}
     </Link>

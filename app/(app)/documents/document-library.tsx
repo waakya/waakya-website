@@ -44,7 +44,7 @@ export function DocumentLibrary({
   });
 
   return (
-    <section className="mt-5">
+    <section className="mt-3">
       <div className="relative">
         <Search
           className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-ink-400"
@@ -59,6 +59,9 @@ export function DocumentLibrary({
         />
       </div>
 
+      {/* Categories earn their chips only once the library is big enough
+          that search alone is slow to scan (V3: fewer competing controls). */}
+      {documents.length > 8 && present.length > 1 ? (
       <div className="mt-3 flex flex-wrap gap-1.5" role="group" aria-label={p.documents.category}>
         {["all", ...present].map((value) => (
           <button
@@ -67,19 +70,20 @@ export function DocumentLibrary({
             onClick={() => setCategory(value)}
             aria-pressed={category === value}
             className={cn(
-              "rounded-chip border px-3 py-1 text-[13px] font-semibold transition-colors",
+              "rounded-chip border px-3 py-1 text-label font-semibold transition-colors",
               category === value
-                ? "border-neel-600 bg-neel-600 text-white"
-                : "border-paper-200 bg-paper-0 text-ink-700 hover:bg-paper-100",
+                ? "border-neel-200 bg-neel-100 text-neel-800"
+                : "border-line bg-surface text-fg-muted hover:bg-paper-100",
             )}
           >
             {value === "all" ? p.common.all : p.documents.categories[value]}
           </button>
         ))}
       </div>
+      ) : null}
 
       {shown.length === 0 ? (
-        <p className="mt-6 text-center text-[15px] text-ink-500">{p.documents.noResults}</p>
+        <p className="mt-6 text-center text-body text-ink-500">{p.documents.noResults}</p>
       ) : (
         <DocumentList
           className="mt-4"

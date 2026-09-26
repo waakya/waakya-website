@@ -53,19 +53,19 @@ export default async function HaftaPage() {
       unread={0}
     >
       <main className="flex-1 p-4 pb-6">
-        <h1 className="text-[24px] leading-[30px] font-bold text-ink-900">
+        <h1 className="text-title leading-[30px] font-bold text-ink-900">
           {t.lists.weekTitle}
         </h1>
 
         {days.size === 0 ? (
-          <p className="mt-10 text-center text-[17px] text-ink-500">
+          <p className="mt-10 text-center text-body-lg text-ink-500">
             {t.lists.weekEmpty}
           </p>
         ) : null}
 
         {[...days.entries()].map(([key, dayTasks]) => (
           <section key={key} className="mt-5">
-            <h2 className="num mb-2 text-[13px] leading-[18px] font-semibold text-ink-700">
+            <h2 className="num mb-2 text-label leading-[18px] font-semibold text-ink-700">
               {formatIndianDate(dayTasks[0].dueAt!, locale)}{" "}
               <span className="font-normal text-ink-400">{dayTasks.length}</span>
             </h2>

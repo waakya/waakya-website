@@ -1,7 +1,9 @@
 "use client";
 
 import * as React from "react";
-import { Check, Plus, X } from "lucide-react";
+import { CalendarDays, Check, Clock, LogIn, LogOut, Palmtree, Plus, X } from "lucide-react";
+
+import { RevealGroup, RevealToggle } from "@/components/waakya/reveal";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -10,6 +12,7 @@ import { StateChip } from "@/components/ui/state-chip";
 import { Avatar } from "@/components/ui/avatar";
 import { getDictionary, type Locale } from "@/lib/i18n";
 import { getUx } from "@/lib/i18n/ux";
+import { getDesign } from "@/lib/i18n/design";
 import { addHoliday, creditLeave, decideLeave } from "@/lib/actions/attendance";
 import { formatDays } from "@/lib/attendance/leave";
 import { formatPunchTime, formatWorkDate, workDate } from "@/lib/attendance/time";
@@ -43,6 +46,7 @@ export function TeamPanel({
 }) {
   const t = getDictionary(locale);
   const ux = getUx(locale);
+  const d = getDesign(locale);
   const [error, setError] = React.useState<string | null>(null);
   const [busy, startTransition] = React.useTransition();
 
@@ -63,7 +67,7 @@ export function TeamPanel({
         <p
           role="alert"
           data-testid="team-error"
-          className="rounded-card bg-laal-100 px-3 py-2 text-[15px] leading-[20px] text-laal-700"
+          className="rounded-card bg-laal-100 px-3 py-2 text-body leading-[20px] text-laal-700"
         >
           {error}
         </p>
@@ -71,23 +75,24 @@ export function TeamPanel({
 
       {/* waiting on a decision */}
       <section id="leave-requests" className="scroll-mt-4">
-        <h2 className="mb-2 text-[13px] leading-[18px] font-semibold text-ink-700">
+        <h2 className="mb-2 text-label leading-[18px] font-semibold text-ink-700">
           {t.hazri.pendingLeave}
         </h2>
         {pending.length === 0 ? (
-          <p className="rounded-card border border-dashed border-paper-300 px-4 py-5 text-center text-[15px] text-ink-500">
+          <p className="rounded-card border border-dashed border-paper-300 px-4 py-5 text-center text-body text-ink-500">
             {t.hazri.nothingWaiting}
           </p>
         ) : (
           <ul className="flex flex-col gap-2">
             {pending.map((request) => (
-              <li key={request.id}>
+              // Today's Reject lands here: the request it meant is outlined.
+              <li key={request.id} id={`leave-${request.id}`} className="scroll-mt-20 rounded-card target:ring-2 target:ring-neel-600 target:ring-offset-2">
                 <Card className="flex flex-wrap items-center gap-3 p-3.5">
                   <span className="min-w-0 flex-1">
-                    <span className="block truncate text-[14px] font-semibold text-ink-900">
+                    <span className="block truncate text-body-sm font-semibold text-ink-900">
                       {names[request.userId] ?? t.desktop.noOne}
                     </span>
-                    <span className="num block truncate text-[12px] text-ink-400">
+                    <span className="num block truncate text-caption text-ink-400">
                       {formatWorkDate(request.startDate)}
                       {request.endDate !== request.startDate
                         ? ` – ${formatWorkDate(request.endDate)}`
@@ -128,7 +133,7 @@ export function TeamPanel({
 
       {/* who is in */}
       <section>
-        <h2 className="mb-2 text-[13px] leading-[18px] font-semibold text-ink-700">
+        <h2 className="mb-2 text-label leading-[18px] font-semibold text-ink-700">
           {t.hazri.teamToday}
         </h2>
         <ul className="overflow-hidden rounded-card border border-paper-200 bg-paper-0">
@@ -139,10 +144,10 @@ export function TeamPanel({
             >
               <Avatar name={member.name} size={30} />
               <span className="min-w-0 flex-1">
-                <span className="block truncate text-[14px] font-semibold text-ink-900">
+                <span className="block truncate text-body-sm font-semibold text-ink-900">
                   {member.name}
                 </span>
-                <span className="num block truncate text-[12px] text-ink-400">
+                <span className="num block truncate text-caption text-ink-400">
                   {member.punchInAt
                     ? `${formatPunchTime(member.punchInAt)}${
                         member.punchOutAt ? ` – ${formatPunchTime(member.punchOutAt)}` : ""
@@ -151,29 +156,32 @@ export function TeamPanel({
                 </span>
               </span>
               {member.status === "leave" ? (
-                <StateChip tone="neel">{t.hazri.onLeave}</StateChip>
+                <StateChip tone="neel" icon={<Palmtree />}>{t.hazri.onLeave}</StateChip>
               ) : member.status === "half_day" ? (
-                <StateChip tone="outline">{t.hazri.halfDay}</StateChip>
+                <StateChip tone="outline" icon={<CalendarDays />}>{t.hazri.halfDay}</StateChip>
               ) : member.status === "holiday" ? (
-                <StateChip tone="outline">{t.hazri.holiday}</StateChip>
+                <StateChip tone="outline" icon={<CalendarDays />}>{t.hazri.holiday}</StateChip>
               ) : member.punchOutAt ? (
-                <StateChip tone="outline">{t.hazri.completed}</StateChip>
+                <StateChip tone="outline" icon={<LogOut />}>{t.hazri.completed}</StateChip>
               ) : member.punchInAt ? (
-                <StateChip tone="neel">{t.hazri.working}</StateChip>
+                <StateChip tone="neel" icon={<LogIn />}>{t.hazri.working}</StateChip>
               ) : (
-                <StateChip tone="outline">{t.hazri.notPunched}</StateChip>
+                <StateChip tone="outline" icon={<Clock />}>{t.hazri.notPunched}</StateChip>
               )}
             </li>
           ))}
         </ul>
       </section>
 
-      {/* balances */}
-      <section>
-        <h2 className="mb-2 text-[13px] leading-[18px] font-semibold text-ink-700">
-          {t.hazri.balances}
-        </h2>
-        <ul className="overflow-hidden rounded-card border border-paper-200 bg-paper-0">
+      {/* balances — adjusted now and then, so folded (V3) */}
+      <RevealGroup as="section" id="team-balances" className="group/balances" aria-labelledby="team-balances-h">
+        <div className="flex items-center gap-2">
+          <h2 id="team-balances-h" className="flex-1 text-label leading-[18px] font-semibold text-ink-700">
+            {t.hazri.balances} <span className="num font-normal text-fg-subtle">{balances.length}</span>
+          </h2>
+          <RevealToggle chevron className="text-label font-semibold text-neel-700" more={d.v3.showAll(balances.length)} less={d.v3.showLess} />
+        </div>
+        <ul id="team-balances" className="hidden overflow-hidden rounded-card border border-paper-200 bg-paper-0 group-data-[open=true]/balances:block">
           {balances.map((person) => (
             <li
               key={person.userId}
@@ -182,8 +190,8 @@ export function TeamPanel({
               {/* Name and balance on one line; the buttons wrap below on a
                   phone so a name is never squeezed out. */}
               <span className="flex min-w-[10rem] flex-1 items-baseline gap-3">
-                <span className="min-w-0 flex-1 truncate text-[14px] text-ink-900">{person.name}</span>
-                <span className="num shrink-0 text-[14px] font-semibold text-ink-900">{formatDays(person.days)}</span>
+                <span className="min-w-0 flex-1 truncate text-body-sm text-ink-900">{person.name}</span>
+                <span className="num shrink-0 text-body-sm font-semibold text-ink-900">{formatDays(person.days)}</span>
               </span>
               <span className="flex shrink-0 gap-2">
                 <Button
@@ -208,11 +216,11 @@ export function TeamPanel({
             </li>
           ))}
         </ul>
-      </section>
+      </RevealGroup>
 
       {/* holidays */}
       <section id="holidays" className="scroll-mt-4">
-        <h2 className="mb-2 text-[13px] leading-[18px] font-semibold text-ink-700">
+        <h2 className="mb-2 text-label leading-[18px] font-semibold text-ink-700">
           {t.hazri.holidays}
         </h2>
         <Card className="p-3.5">
@@ -220,10 +228,10 @@ export function TeamPanel({
             <ul className="mb-3 flex flex-col gap-1.5">
               {holidays.map((holiday) => (
                 <li key={holiday.id} className="flex items-center gap-3">
-                  <span className="num w-[58px] shrink-0 text-[13px] font-semibold text-ink-900">
+                  <span className="num w-[58px] shrink-0 text-label font-semibold text-ink-900">
                     {formatWorkDate(holiday.date)}
                   </span>
-                  <span className="truncate text-[13px] text-ink-700">{holiday.title}</span>
+                  <span className="truncate text-label text-ink-700">{holiday.title}</span>
                 </li>
               ))}
             </ul>

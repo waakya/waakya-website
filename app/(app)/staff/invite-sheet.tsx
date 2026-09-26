@@ -99,10 +99,10 @@ export function InviteSheet({ locale, compact = false, staffOnly = false }: { lo
 
         {link ? (
           <div className="mt-4">
-            <p className="text-[13px] font-semibold text-ink-700">
+            <p className="text-label font-semibold text-ink-700">
               {t.org.linkReady}
             </p>
-            <p className="mt-1 rounded-card border border-paper-200 bg-paper-0 p-3 text-[13px] break-all text-ink-700 select-all">
+            <p className="mt-1 rounded-card border border-paper-200 bg-paper-0 p-3 text-label break-all text-ink-700 select-all">
               {link}
             </p>
             <div className="mt-3 flex flex-col gap-2">
@@ -140,7 +140,7 @@ export function InviteSheet({ locale, compact = false, staffOnly = false }: { lo
               className="num mt-1.5"
             />
 
-            <p className="mt-4 mb-1.5 text-[13px] font-semibold text-ink-700">
+            <p className="mt-4 mb-1.5 text-label font-semibold text-ink-700">
               {t.org.roleLabel}
             </p>
             <ToggleGroup
@@ -159,7 +159,7 @@ export function InviteSheet({ locale, compact = false, staffOnly = false }: { lo
             {error ? (
               <p
                 role="alert"
-                className="mt-4 rounded-card bg-laal-100 px-3 py-2 text-[15px] leading-[20px] text-laal-700"
+                className="mt-4 rounded-card bg-laal-100 px-3 py-2 text-body leading-[20px] text-laal-700"
               >
                 {error}
               </p>

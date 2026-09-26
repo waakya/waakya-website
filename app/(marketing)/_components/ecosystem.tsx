@@ -70,7 +70,7 @@ export function Ecosystem() {
     <div>
       <div className="grid gap-8 lg:grid-cols-[1fr_minmax(280px,340px)_1fr] lg:items-center lg:gap-10">
         <div>
-          <p className="text-[12px] font-semibold tracking-[0.14em] text-ink-500 uppercase">The work</p>
+          <p className="text-[13px] font-semibold text-ink-500">The work</p>
           <ul className="mt-1 divide-y divide-[#eceef3]">
             {WORK.map((node) => (
               <Row key={node.name} node={node} side="left" />
@@ -80,7 +80,7 @@ export function Ecosystem() {
 
         <div className="relative order-first lg:order-none">
           <div className="rounded-[18px] border-2 border-neel-600 bg-white p-5 shadow-[0_20px_50px_-30px_rgba(27,32,96,0.5)]">
-            <p className="flex items-center gap-2 text-[12px] font-semibold tracking-[0.12em] text-neel-700 uppercase">
+            <p className="flex items-center gap-2 text-[13px] font-semibold text-neel-700">
               <FolderKanban className="size-4" aria-hidden="true" /> Project
             </p>
             <p className="mt-2 font-display text-[26px] leading-[1.1] font-extrabold text-neel-900">Office renovation</p>
@@ -102,7 +102,7 @@ export function Ecosystem() {
                 <span className="size-1.5 rounded-full bg-hara-600" aria-hidden="true" /> Revised quotation · verified
               </li>
               <li className="flex items-center gap-2">
-                <span className="size-1.5 rounded-full bg-amber-600" aria-hidden="true" /> Vendor comparison · waiting for approval
+                <span className="size-1.5 rounded-full bg-neel-600" aria-hidden="true" /> Vendor comparison · waiting for approval
               </li>
               <li className="flex items-center gap-2">
                 <span className="size-1.5 rounded-full bg-neel-600" aria-hidden="true" /> Neha · half day on Friday
@@ -112,7 +112,7 @@ export function Ecosystem() {
         </div>
 
         <div>
-          <p className="text-[12px] font-semibold tracking-[0.14em] text-ink-500 uppercase">The paperwork</p>
+          <p className="text-[13px] font-semibold text-ink-500">The paperwork</p>
           <ul className="mt-1 divide-y divide-[#eceef3]">
             {PAPER.map((node) => (
               <Row key={node.name} node={node} side="right" />
@@ -124,7 +124,7 @@ export function Ecosystem() {
       <div className="relative mt-10 lg:mt-12">
         {/* The people thread runs up into the project. */}
         <span aria-hidden="true" className="absolute -top-12 left-1/2 hidden h-12 border-l border-dashed border-neel-300 lg:block" />
-        <p className="text-[12px] font-semibold tracking-[0.14em] text-ink-500 uppercase lg:text-center">The people</p>
+        <p className="text-[13px] font-semibold text-ink-500 lg:text-center">The people</p>
         <ul className="mt-1 grid gap-x-6 divide-y divide-[#eceef3] sm:grid-cols-2 sm:divide-y-0 lg:grid-cols-5">
           {PEOPLE.map((node) => (
             <Row key={node.name} node={node} side="none" />

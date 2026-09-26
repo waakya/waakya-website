@@ -86,14 +86,14 @@ export function OwnerActions({
           // A closed task has nothing urgent to do: its one action sits in the
           // page instead of a fixed bar over the proof.
           ["verified", "cancelled"].includes(state)
-            ? "mx-auto mt-2 w-full max-w-md border-t border-paper-200 p-4 lg:mt-6 lg:max-w-none lg:rounded-card lg:border lg:border-paper-200 lg:p-5"
-            : "fixed inset-x-0 bottom-0 z-30 mx-auto w-full max-w-md border-t border-paper-200 bg-paper-50 p-4 pb-[calc(1rem_+_env(safe-area-inset-bottom))] lg:static lg:mt-6 lg:max-w-none lg:rounded-card lg:border lg:border-paper-200 lg:p-5"
+            ? "mx-auto mt-2 w-full max-w-md md:max-w-2xl border-t border-paper-200 p-4 lg:mt-0 lg:max-w-none lg:rounded-card lg:border lg:border-line lg:bg-surface lg:p-4 lg:shadow-card"
+            : "fixed inset-x-0 bottom-0 z-30 mx-auto w-full max-w-md md:max-w-2xl border-t border-paper-200 bg-paper-50 p-4 pb-[calc(1rem_+_env(safe-area-inset-bottom))] lg:static lg:mt-0 lg:max-w-none lg:rounded-card lg:border lg:border-line lg:bg-surface lg:p-4 lg:shadow-card"
         }
       >
         {error ? (
           <p
             role="alert"
-            className="mb-3 rounded-card bg-laal-100 px-3 py-2 text-[15px] leading-[20px] text-laal-700"
+            className="mb-3 rounded-card bg-laal-100 px-3 py-2 text-body leading-[20px] text-laal-700"
           >
             {error}
           </p>
@@ -236,7 +236,7 @@ export function OwnerActions({
             ))}
           </ul>
           {members.length === 0 ? (
-            <p className="mt-4 text-[15px] text-ink-500">{t.org.noStaffHelp}</p>
+            <p className="mt-4 text-body text-ink-500">{t.org.noStaffHelp}</p>
           ) : null}
         </SheetContent>
       </Sheet>
@@ -285,7 +285,7 @@ export function OwnerActions({
         <SheetContent>
           <SheetTitle>{ux.task.sendBackTitle}</SheetTitle>
           <SheetDescription>{ux.task.sendBackHelp}</SheetDescription>
-          <label htmlFor="send-back-reason" className="mt-4 block text-[13px] font-semibold text-ink-700">
+          <label htmlFor="send-back-reason" className="mt-4 block text-label font-semibold text-ink-700">
             {ux.task.sendBackReason}
           </label>
           <textarea
@@ -294,10 +294,10 @@ export function OwnerActions({
             maxLength={500}
             value={reason}
             onChange={(event) => setReason(event.target.value)}
-            className="mt-1 w-full rounded-button border border-paper-200 bg-paper-0 px-3 py-2 text-[16px] text-ink-900 outline-none focus:border-neel-600"
+            className="mt-1 w-full rounded-button border border-paper-200 bg-paper-0 px-3 py-2 text-body-lg text-ink-900 outline-none focus:border-neel-600"
           />
           {error ? (
-            <p role="alert" className="mt-2 text-[14px] text-laal-700">{error}</p>
+            <p role="alert" className="mt-2 text-body-sm text-laal-700">{error}</p>
           ) : null}
           <Button
             size="staff"
@@ -373,7 +373,7 @@ function ActionTile({
       >
         {icon}
       </span>
-      <span className="text-center text-[11px] leading-tight font-semibold text-ink-700">
+      <span className="text-center text-micro leading-tight font-semibold text-ink-700">
         {label}
       </span>
     </>

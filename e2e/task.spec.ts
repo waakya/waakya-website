@@ -35,9 +35,10 @@ test("the owner sends a task on the Confirm card, and the staff member sees it",
   await expect(page).toHaveURL(/\/aaj$/);
   await expect(onScreen(page.getByText(title))).toBeVisible();
 
-  // The owner's row states the state in words, not by colour alone.
+  // The owner's row states the state in words, not by colour alone. Design
+  // V3: on Today, work in motion is "Team par baaki" (waiting on the team).
   const row = page
-    .getByRole("list", { name: "Aaj" })
+    .getByRole("list", { name: "Team par baaki" })
     .locator("li", { hasText: title })
     .first();
   await expect(row.getByText(/Bheja/)).toBeVisible();

@@ -1,27 +1,28 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { MessageSquare, UserPlus } from "lucide-react";
+import { MessageSquare } from "lucide-react";
 
 import { requireOrg, canManage } from "@/lib/auth/session";
 import { getDictionary } from "@/lib/i18n";
+import { getDesign } from "@/lib/i18n/design";
 import { shellFor } from "@/lib/auth/shell";
-import { getUx } from "@/lib/i18n/ux";
 import { AppShell } from "@/components/waakya/app-shell";
-import { Avatar } from "@/components/ui/avatar";
+import { ConversationList } from "@/components/waakya/conversation-list";
 import { listConversations } from "@/lib/conversations/queries";
 import { getOrgMembers } from "@/lib/org/members";
-import { formatPunchTime } from "@/lib/attendance/time";
 import { StartConversation } from "./start-conversation";
 
 export const metadata: Metadata = { title: "Baat-cheet" };
 
-/** Every conversation this person is in, and a way to start another. */
+/**
+ * Every conversation this person is in, and a way to start another. On a desk
+ * the list is a pane and the right side waits for a thread to open.
+ */
 export default async function BaatPage() {
   const viewer = await requireOrg();
   const shell = await shellFor(viewer);
   const locale = shell.locale;
   const t = getDictionary(locale);
-  const ux = getUx(locale);
+  const d = getDesign(locale);
 
   const [conversations, members] = await Promise.all([
     listConversations(viewer.org.id, viewer.userId),
@@ -31,68 +32,34 @@ export default async function BaatPage() {
   const others = members.filter((member) => member.userId !== viewer.userId);
 
   return (
-    <AppShell {...shell}>
-      <main className="flex-1 p-4 pb-8">
-        <h1 className="text-[24px] leading-[30px] font-bold text-ink-900">
-          {t.baat.title}
-        </h1>
+    <AppShell {...shell} width="full">
+      <div className="flex min-h-0 flex-1 lg:h-dvh">
+        <main className="flex min-h-0 w-full flex-col p-4 pb-8 lg:w-96 lg:shrink-0 lg:overflow-y-auto lg:border-r lg:border-line lg:px-5 lg:pt-6">
+          <h1 className="text-title font-bold text-fg">{t.baat.title}</h1>
 
-        <div className="mt-4">
-          <StartConversation locale={locale} people={others} />
-        </div>
+          <div className="mt-4">
+            <StartConversation locale={locale} people={others} />
+          </div>
 
-        {conversations.length === 0 && others.length === 0 ? (
-          // Nobody to talk to yet: say why, and lead to the one step that fixes it.
-          <div className="mt-6 flex flex-col items-center gap-2 rounded-card border border-dashed border-paper-300 p-6 text-center">
-            <UserPlus className="size-7 text-ink-400" aria-hidden="true" />
-            <p className="text-[17px] font-bold text-ink-900">{ux.team.noTeamYet}</p>
-            <p className="max-w-sm text-[15px] leading-[20px] text-ink-500">{ux.team.noTeamHelp}</p>
-            {canManage(viewer.role) ? (
-              <Link href="/staff" className="mt-2 inline-flex min-h-11 items-center gap-2 rounded-button bg-neel-600 px-4 text-[15px] font-semibold text-white hover:bg-neel-700">
-                <UserPlus className="size-4" aria-hidden="true" />
-                {ux.team.invite}
-              </Link>
-            ) : null}
+          <div className="mt-5">
+            <ConversationList
+              conversations={conversations}
+              locale={locale}
+              hasTeam={others.length > 0}
+              manages={canManage(viewer.role)}
+            />
           </div>
-        ) : conversations.length === 0 ? (
-          <div className="mt-6 flex flex-col items-center gap-2 rounded-card border border-dashed border-paper-300 p-6 text-center">
-            <MessageSquare className="size-7 text-ink-400" aria-hidden="true" />
-            <p className="text-[17px] font-bold text-ink-900">{t.baat.empty}</p>
-            <p className="text-[15px] leading-[20px] text-ink-500">{t.baat.emptyHelp}</p>
-          </div>
-        ) : (
-          <ul className="mt-5 overflow-hidden rounded-card border border-paper-200 bg-paper-0">
-            {conversations.map((conversation) => (
-              <li key={conversation.id} className="border-b border-paper-100 last:border-b-0">
-                <Link
-                  href={`/baat/${conversation.id}`}
-                  className="flex items-center gap-3 px-3.5 py-3"
-                >
-                  <Avatar name={conversation.title} size={34} />
-                  <span className="min-w-0 flex-1">
-                    <span className="block truncate text-[15px] font-semibold text-ink-900">
-                      {conversation.title}
-                    </span>
-                    <span className="block truncate text-[13px] text-ink-500">
-                      {conversation.preview ?? "—"}
-                    </span>
-                  </span>
-                  <span className="flex shrink-0 flex-col items-end gap-1">
-                    <span className="num text-[12px] text-ink-400">
-                      {formatPunchTime(conversation.lastMessageAt)}
-                    </span>
-                    {conversation.unread > 0 ? (
-                      <span className="num grid size-5 place-items-center rounded-full bg-neel-600 text-[11px] font-bold text-white">
-                        {conversation.unread}
-                      </span>
-                    ) : null}
-                  </span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        )}
-      </main>
+        </main>
+
+        <section
+          aria-hidden="true"
+          className="hidden flex-1 flex-col items-center justify-center gap-2 px-8 text-center lg:flex"
+        >
+          <MessageSquare className="size-8 text-line-strong" />
+          <p className="text-body-lg font-bold text-fg-muted">{d.thread.pickConversation}</p>
+          <p className="max-w-xs text-body text-fg-subtle">{d.thread.pickConversationHelp}</p>
+        </section>
+      </div>
     </AppShell>
   );
 }

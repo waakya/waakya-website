@@ -110,7 +110,7 @@ export function DocumentUploader({
           aria-label={p.documents.category}
           value={category}
           onChange={(event) => setCategory(event.target.value as DocumentCategory)}
-          className="h-10 max-w-full min-w-0 rounded-button border border-paper-200 bg-paper-0 px-3 text-[14px] text-ink-900"
+          className="h-10 max-w-full min-w-0 rounded-button border border-line-strong bg-surface px-3 text-body-sm text-fg"
         >
           {DOCUMENT_CATEGORIES.map((value) => (
             <option key={value} value={value}>
@@ -123,6 +123,9 @@ export function DocumentUploader({
           type="file"
           multiple
           className="sr-only"
+          // The Upload button is the control; this input is its engine.
+          aria-label={p.documents.upload}
+          tabIndex={-1}
           data-testid="document-file-input"
           accept=".pdf,.jpg,.jpeg,.png,.webp,.heic,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv"
           onChange={(event) => upload(event.target.files)}
@@ -142,7 +145,7 @@ export function DocumentUploader({
         <p
           role="alert"
           data-testid="upload-error"
-          className="mt-2 rounded-card bg-laal-100 px-3 py-2 text-[14px] text-laal-700"
+          className="mt-2 rounded-card bg-laal-100 px-3 py-2 text-body-sm text-laal-700"
         >
           {error}
         </p>

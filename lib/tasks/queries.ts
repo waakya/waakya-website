@@ -25,24 +25,48 @@ export interface TaskListItem extends TaskForDisplay {
 const COLUMNS =
   "id, title, details, state, priority, proof_required, assigned_to, created_by, ack_minutes, due_at, delivered_at, acknowledged_at, accepted_at, started_at, done_at, verified_at, cancelled_at, created_at, checklist_item_id, checklist_date";
 
-/** Everything in the org, newest first. RLS keeps it to this org. */
+/**
+ * How much of a business's work the lists load. Open work is loaded whole
+ * (up to a safety cap no 2–30 person business reaches), so nothing late,
+ * unseen or waiting for verification can fall off a list because newer work
+ * arrived; finished work is history, so only the most recent is loaded.
+ *
+ * Found with a realistic busy business (Design V3): a plain "newest 200"
+ * dropped 58 of 60 late tasks from Today and Work once the business had
+ * more than 200 tasks.
+ */
+const OPEN_CAP = 2000;
+const FINISHED_RECENT = 150;
+const FINISHED = "(verified,cancelled)";
+
+/** Everything open in the org plus recent history, newest first. RLS keeps it to this org. */
 export const getOrgTasks = cache(
   async (orgId: string, orgAckMinutes: number): Promise<TaskListItem[]> => {
     const supabase = await createClient();
-    const [{ data }, names] = await Promise.all([
+    const [open, finished, names] = await Promise.all([
       supabase
         .from("tasks")
         .select(COLUMNS)
         .eq("org_id", orgId)
+        .not("state", "in", FINISHED)
         .order("created_at", { ascending: false })
-        .limit(200),
+        .limit(OPEN_CAP),
+      supabase
+        .from("tasks")
+        .select(COLUMNS)
+        .eq("org_id", orgId)
+        .in("state", ["verified", "cancelled"])
+        .order("created_at", { ascending: false })
+        .limit(FINISHED_RECENT),
       getMemberNames(orgId),
     ]);
-    return (data ?? []).map((row) => shape(row, names, orgAckMinutes));
+    return [...(open.data ?? []), ...(finished.data ?? [])]
+      .sort((a, b) => b.created_at.localeCompare(a.created_at))
+      .map((row) => shape(row, names, orgAckMinutes));
   },
 );
 
-/** One person's work. */
+/** One person's work: everything open plus recent history, by deadline. */
 export const getMyTasks = cache(
   async (
     orgId: string,
@@ -50,17 +74,28 @@ export const getMyTasks = cache(
     orgAckMinutes: number,
   ): Promise<TaskListItem[]> => {
     const supabase = await createClient();
-    const [{ data }, names] = await Promise.all([
+    const [open, finished, names] = await Promise.all([
       supabase
         .from("tasks")
         .select(COLUMNS)
         .eq("org_id", orgId)
         .eq("assigned_to", userId)
+        .not("state", "in", FINISHED)
         .order("due_at", { ascending: true, nullsFirst: false })
-        .limit(200),
+        .limit(OPEN_CAP),
+      supabase
+        .from("tasks")
+        .select(COLUMNS)
+        .eq("org_id", orgId)
+        .eq("assigned_to", userId)
+        .in("state", ["verified", "cancelled"])
+        .order("created_at", { ascending: false })
+        .limit(FINISHED_RECENT),
       getMemberNames(orgId),
     ]);
-    return (data ?? []).map((row) => shape(row, names, orgAckMinutes));
+    const byDue = (a: { due_at: string | null }, b: { due_at: string | null }) =>
+      (a.due_at ?? "9999").localeCompare(b.due_at ?? "9999");
+    return [...(open.data ?? []), ...(finished.data ?? [])].sort(byDue).map((row) => shape(row, names, orgAckMinutes));
   },
 );
 

@@ -117,7 +117,7 @@ export function ConfirmCard({
         >
           <X />
         </Button>
-        <h1 className="flex-1 text-center text-[17px] font-bold text-ink-900">
+        <h1 className="flex-1 text-center text-body-lg font-bold text-ink-900">
           {t.create.confirmTitle}
         </h1>
         <span className="size-tap" aria-hidden="true" />
@@ -128,19 +128,19 @@ export function ConfirmCard({
           {assignee ? (
             <span className="inline-flex items-center gap-2 rounded-chip bg-neel-100 py-1 pr-3 pl-1">
               <Avatar name={assignee.name} size={28} />
-              <span className="text-[17px] font-bold text-neel-800">
+              <span className="text-body-lg font-bold text-neel-800">
                 {assignee.name}
               </span>
             </span>
           ) : (
-            <span className="text-[17px] text-ink-400">{t.create.notChosen}</span>
+            <span className="text-body-lg text-ink-400">{t.create.notChosen}</span>
           )}
         </Row>
 
         <Row label={t.create.kya} onOpen={() => openText("what")}>
           <span
             className={cn(
-              "text-[20px] leading-[26px] font-bold",
+              "text-title-sm leading-[26px] font-bold",
               title ? "text-ink-900" : "font-normal text-ink-400",
             )}
           >
@@ -188,10 +188,10 @@ export function ConfirmCard({
         </StaticRow>
 
         <label className="flex min-h-tap items-center gap-4 p-4">
-          <span className="w-24 shrink-0 text-[13px] font-semibold text-ink-500">
+          <span className="w-24 shrink-0 text-label font-semibold text-ink-500">
             {t.create.proof}
           </span>
-          <span className="flex flex-1 items-center gap-2 text-[17px] font-bold text-ink-900">
+          <span className="flex flex-1 items-center gap-2 text-body-lg font-bold text-ink-900">
             <Camera className="size-5" aria-hidden="true" />
             {proof ? t.create.proofOn : t.create.proofOff}
           </span>
@@ -201,7 +201,7 @@ export function ConfirmCard({
         <Row label={t.create.note} onOpen={() => openText("note")}>
           <span
             className={cn(
-              "text-[17px]",
+              "text-body-lg",
               note ? "text-ink-900" : "text-ink-400",
             )}
           >
@@ -210,14 +210,14 @@ export function ConfirmCard({
         </Row>
       </Card>
 
-      <p className="mt-3 px-1 text-[13px] leading-[18px] text-ink-500">
+      <p className="mt-3 px-1 text-label leading-[18px] text-ink-500">
         {t.create.ackHelp.replace("{n}", String(ackMinutes))}
       </p>
 
       {error ? (
         <p
           role="alert"
-          className="mt-3 rounded-card bg-laal-100 px-3 py-2 text-[15px] leading-[20px] text-laal-700"
+          className="mt-3 rounded-card bg-laal-100 px-3 py-2 text-body leading-[20px] text-laal-700"
         >
           {error}
         </p>
@@ -255,7 +255,7 @@ export function ConfirmCard({
             ))}
           </ul>
           {members.length === 0 ? (
-            <p className="mt-4 text-[15px] text-ink-500">{t.org.noStaffHelp}</p>
+            <p className="mt-4 text-body text-ink-500">{t.org.noStaffHelp}</p>
           ) : null}
         </SheetContent>
       </Sheet>
@@ -303,7 +303,7 @@ function Row({
       onClick={onOpen}
       className="flex min-h-tap w-full items-center gap-4 p-4 text-left"
     >
-      <span className="w-24 shrink-0 text-[13px] font-semibold text-ink-500">
+      <span className="w-24 shrink-0 text-label font-semibold text-ink-500">
         {label}
       </span>
       <span className="min-w-0 flex-1">{children}</span>
@@ -322,7 +322,7 @@ function StaticRow({
 }) {
   return (
     <div className="flex min-h-tap items-start gap-4 p-4">
-      <span className="w-24 shrink-0 pt-2 text-[13px] font-semibold text-ink-500">
+      <span className="w-24 shrink-0 pt-2 text-label font-semibold text-ink-500">
         {label}
       </span>
       <div className="min-w-0 flex-1">{children}</div>
@@ -365,7 +365,7 @@ function TextSheet({
               placeholder={placeholder}
               aria-label={title}
               maxLength={1000}
-              className="w-full rounded-button border-2 border-paper-200 bg-paper-0 p-3 text-[17px] text-ink-900 outline-none placeholder:text-ink-400 focus:border-neel-600"
+              className="w-full rounded-button border-2 border-paper-200 bg-paper-0 p-3 text-body-lg text-ink-900 outline-none placeholder:text-ink-400 focus:border-neel-600"
             />
           ) : (
             <Input

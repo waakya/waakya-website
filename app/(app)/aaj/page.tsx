@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 
 import { requireOrg, canManage } from "@/lib/auth/session";
 import { getMyTasks, getOrgTasks } from "@/lib/tasks/queries";
@@ -7,16 +8,17 @@ import { getOrgMembers } from "@/lib/org/members";
 import { getTodayChecklists } from "@/lib/checklists/queries";
 import { getDictionary } from "@/lib/i18n";
 import { getLocale } from "@/lib/i18n/server";
-import { countDay, needsYou } from "@/lib/tasks/counters";
+import { countDay, justSentFirst, needsYou, waitingOnTeam } from "@/lib/tasks/counters";
 import { groupBySection } from "@/lib/tasks/sections";
 import { isLate } from "@/lib/tasks/present";
 import { AppShell } from "@/components/waakya/app-shell";
-import { OwnerToday } from "./owner-today";
-import { OwnerDesktop } from "./owner-desktop";
-import { NeedsYouList } from "./needs-you-list";
+import { OwnerHome } from "./owner-home";
 import { StaffToday } from "./staff-today";
-import { AttentionStrip } from "./attention-strip";
+import { PunchLine } from "./punch-line";
+import { AttentionList } from "./attention";
 import { SetupGuide } from "./setup-guide";
+import { getMyToday, getTeamToday } from "@/lib/attendance/queries";
+import { isToday } from "@/lib/tasks/time";
 
 export const metadata: Metadata = { title: "Aaj" };
 
@@ -35,26 +37,19 @@ export default async function AajPage() {
   const now = new Date();
 
   if (canManage(viewer.role)) {
-    const [tasks, unread, members] = await Promise.all([
+    const [tasks, unread, members, myToday, teamAttendance] = await Promise.all([
       getOrgTasks(viewer.org.id, viewer.org.ackMinutes),
       getUnreadCount(),
       getOrgMembers(viewer.org.id),
+      getMyToday(viewer.org.id, viewer.userId),
+      getTeamToday(viewer.org.id),
     ]);
 
-    const phones = Object.fromEntries(
-      members.map((member) => [member.userId, member.phone]),
-    );
     const counters = countDay(tasks, now);
     const attention = needsYou(tasks, now);
     const groups = groupBySection(tasks, now);
-    const live = [
-      ...groups.late,
-      ...groups.naya,
-      ...groups.aaj,
-      ...groups.later,
-    ];
 
-    // Who is carrying what today — the right rail on a wide screen.
+    // Who is carrying what today, and who is behind.
     const staff = members
       .filter((member) => member.userId !== viewer.userId)
       .map((member) => {
@@ -65,35 +60,10 @@ export default async function AajPage() {
           id: member.userId,
           name: member.name,
           total: theirs.length,
-          done: theirs.filter((task) =>
-            ["done", "verified"].includes(task.state),
-          ).length,
+          done: theirs.filter((task) => ["done", "verified"].includes(task.state)).length,
           late: theirs.filter((task) => isLate(task, now)).length,
         };
       });
-
-    // The owner's first-run guide sits above what is waiting; it removes
-    // itself once the business has really been set up.
-    const strip = (
-      <>
-        {viewer.role === "owner" || viewer.role === "admin" ? (
-          <SetupGuide locale={locale} orgId={viewer.org.id} />
-        ) : null}
-        <AttentionStrip locale={locale} orgId={viewer.org.id} userId={viewer.userId} manages />
-      </>
-    );
-
-    const needsYouCards = (
-      <>
-      <NeedsYouList
-        locale={locale}
-        attention={attention}
-        phones={phones}
-        nowIso={now.toISOString()}
-        columns
-      />
-      </>
-    );
 
     return (
       <AppShell
@@ -105,39 +75,42 @@ export default async function AajPage() {
         unread={unread}
         wide
       >
-        <OwnerToday
-          tasks={tasks}
+        <OwnerHome
           locale={locale}
+          orgId={viewer.org.id}
+          userId={viewer.userId}
+          manages
           orgName={viewer.org.name}
-          ownerName={viewer.fullName}
-          nowIso={now.toISOString()}
-          unread={unread}
-          phones={phones}
-          extra={strip}
-        />
-        <OwnerDesktop
-          locale={locale}
-          orgName={viewer.org.name}
-          ownerName={viewer.fullName}
+          personName={viewer.fullName}
           counters={counters}
           attention={attention}
-          live={live}
-          done={groups.done}
+          // Finished today; work still waiting for verification is already
+          // in "Needs you", so it is not listed twice.
+          done={groups.done.filter(
+            (task) => task.state !== "done" && (task.doneAt ? isToday(task.doneAt, now) : false),
+          )}
+          waiting={justSentFirst(waitingOnTeam(tasks, now), viewer.userId, now)}
+          hasAnyWork={tasks.length > 0}
           staff={staff}
+          teamAttendance={teamAttendance}
+          myToday={myToday}
+          showPunch={viewer.role !== "owner" || Boolean(myToday?.punchInAt)}
           unread={unread}
           nowIso={now.toISOString()}
-          phones={phones}
-          extra={strip}
-        >
-          {needsYouCards}
-        </OwnerDesktop>
+          guide={
+            viewer.role === "owner" || viewer.role === "admin" ? (
+              <SetupGuide locale={locale} orgId={viewer.org.id} />
+            ) : null
+          }
+        />
       </AppShell>
     );
   }
 
-  const [tasks, unread] = await Promise.all([
+  const [tasks, unread, myToday] = await Promise.all([
     getMyTasks(viewer.org.id, viewer.userId, viewer.org.ackMinutes),
     getUnreadCount(),
+    getMyToday(viewer.org.id, viewer.userId),
   ]);
 
   return (
@@ -154,7 +127,27 @@ export default async function AajPage() {
         locale={locale}
         orgName={viewer.org.name}
         staffName={viewer.fullName}
-        extra={<AttentionStrip locale={locale} orgId={viewer.org.id} userId={viewer.userId} manages={false} />}
+        extra={
+          <>
+            <PunchLine locale={locale} today={myToday} size="staff" />
+            {/* Staff can be approvers too, and they talk all day: whatever
+                waits on them outside their own tasks (V3 review). */}
+            {/* Streamed: the person's own tasks never wait for these. */}
+            <Suspense fallback={null}>
+            <div className="mt-4 empty:hidden">
+              <AttentionList
+                locale={locale}
+                orgId={viewer.org.id}
+                userId={viewer.userId}
+                manages={false}
+                attention={[]}
+                nowIso={now.toISOString()}
+                hideWhenEmpty
+              />
+            </div>
+            </Suspense>
+          </>
+        }
         nowIso={now.toISOString()}
         unread={unread}
         checklists={await getTodayChecklists(viewer.org.id, tasks, now)}

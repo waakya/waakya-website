@@ -37,7 +37,7 @@ export function TaskProjectPicker({
             else router.refresh();
           })
         }
-        className="h-9 rounded-button border border-paper-200 bg-paper-0 px-3 text-[14px]"
+        className="h-9 rounded-button border border-paper-200 bg-paper-0 px-3 text-body-sm"
       >
         <option value="">{p.common.none}</option>
         {projects.map((project) => (
@@ -46,7 +46,7 @@ export function TaskProjectPicker({
           </option>
         ))}
       </select>
-      {error ? <span role="alert" className="text-[13px] text-laal-700">{error}</span> : null}
+      {error ? <span role="alert" className="text-label text-laal-700">{error}</span> : null}
     </span>
   );
 }

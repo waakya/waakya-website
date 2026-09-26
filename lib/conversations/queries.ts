@@ -33,6 +33,8 @@ export interface Message {
   mine: boolean;
   /** The task this message produced, if somebody turned it into work. */
   taskId: string | null;
+  /** Where that task stands now, so the thread can say so in words. */
+  task: { state: string; assigneeName: string } | null;
 }
 
 export interface ConversationDetail {
@@ -53,7 +55,9 @@ export const listConversations = cache(
       .select("id, kind, title, last_message_at")
       .eq("org_id", orgId)
       .order("last_message_at", { ascending: false })
-      .limit(40);
+      // Wide enough that a chat with unread messages is not dropped because
+      // newer chats arrived (Today counts unread chats from this list).
+      .limit(200);
 
     if (!rows?.length) return [];
     const ids = rows.map((row) => row.id);
@@ -147,16 +151,22 @@ export const getConversation = cache(
     const { data: born } = messageIds.length
       ? await supabase
           .from("tasks")
-          .select("id, source_message_id")
+          .select("id, source_message_id, state, assigned_to")
           .in("source_message_id", messageIds)
       : { data: [] };
-    const taskOf = new Map(
-      (born ?? [])
-        .filter((task) => task.source_message_id)
-        .map((task) => [task.source_message_id as string, task.id]),
-    );
+    const bornRows = (born ?? []).filter((task) => task.source_message_id);
+    const taskOf = new Map(bornRows.map((task) => [task.source_message_id as string, task.id]));
 
     const nameOf = new Map(members.map((member) => [member.userId, member.name]));
+    const taskInfo = new Map(
+      bornRows.map((task) => [
+        task.source_message_id as string,
+        {
+          state: task.state as string,
+          assigneeName: nameOf.get(task.assigned_to ?? "") ?? "Someone",
+        },
+      ]),
+    );
     const participantIds = (participants ?? []).map((row) => row.user_id);
     const other = participantIds.find((id) => id !== userId);
 
@@ -176,6 +186,7 @@ export const getConversation = cache(
         createdAt: row.created_at,
         mine: row.author_id === userId,
         taskId: taskOf.get(row.id) ?? null,
+        task: taskInfo.get(row.id) ?? null,
       })),
     };
   },

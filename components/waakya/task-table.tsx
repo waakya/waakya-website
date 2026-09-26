@@ -16,10 +16,9 @@ import {
 import { Avatar } from "@/components/ui/avatar";
 import { StateChip } from "@/components/ui/state-chip";
 import { Ticks } from "@/components/waakya/ticks";
-import { rowStatus, stateWord, type ChipIcon } from "@/lib/tasks/present";
+import { formatDeadline, rowStatus, stateWord, type ChipIcon } from "@/lib/tasks/present";
 import type { TaskListItem } from "@/lib/tasks/queries";
 import { getDictionary, type Locale } from "@/lib/i18n";
-import { formatTime } from "@/lib/tasks/time";
 import { cn } from "@/lib/utils";
 
 const ICONS: Record<ChipIcon, React.ComponentType<{ className?: string }>> = {
@@ -59,15 +58,17 @@ export function TaskTable({
   const t = getDictionary(locale);
 
   return (
-    <div className="overflow-hidden rounded-card border border-paper-200 bg-paper-0">
-      <table className="w-full border-collapse text-left">
-        <thead>
-          <tr className="border-b border-paper-200">
+    <div className="overflow-hidden rounded-card border border-line bg-surface shadow-card">
+      {/* Fixed layout: the title takes whatever the other columns leave, so a
+          long name or a wide chip can never squeeze it to a word per line. */}
+      <table className="w-full table-fixed border-collapse text-left">
+        <thead className="bg-surface-muted/60">
+          <tr className="border-b border-line">
             <Th>{t.desktop.columnTask}</Th>
-            <Th className="w-40">{t.desktop.columnWho}</Th>
-            <Th className="w-32">{t.desktop.columnWhen}</Th>
-            <Th className="w-56">{t.desktop.columnStatus}</Th>
-            <Th className="w-28 text-right">{t.desktop.columnAction}</Th>
+            <Th className="w-[19%]">{t.desktop.columnWho}</Th>
+            <Th className="w-[16%]">{t.desktop.columnWhen}</Th>
+            <Th className="w-[21%]">{t.desktop.columnStatus}</Th>
+            <Th className="w-[5.5rem] text-right">{t.desktop.columnAction}</Th>
           </tr>
         </thead>
         <tbody>
@@ -80,34 +81,35 @@ export function TaskTable({
               <tr
                 key={task.id}
                 className={cn(
-                  "border-b border-paper-100 last:border-0",
-                  late && "bg-laal-100/40",
+                  "border-b border-line/70 align-middle transition-colors duration-150 last:border-0 hover:bg-paper-50",
+                  late && "bg-laal-100/40 hover:bg-laal-100/60",
                 )}
               >
                 <td className="px-4 py-3">
                   <Link
                     href={`/kaam/${task.id}`}
-                    className="text-[15px] font-bold text-ink-900 hover:underline"
+                    title={task.title}
+                    className="line-clamp-2 text-body font-semibold text-fg hover:text-neel-700"
                   >
                     {task.title}
                   </Link>
                 </td>
                 <td className="px-4 py-3">
-                  <span className="flex items-center gap-2">
-                    <Avatar name={task.assigneeName} size={28} />
-                    <span className="text-[15px] text-ink-900">
+                  <span className="flex min-w-0 items-center gap-2">
+                    <Avatar name={task.assigneeName} size={26} />
+                    <span className="truncate text-body-sm text-fg" title={task.assigneeName}>
                       {task.assigneeName}
                     </span>
                   </span>
                 </td>
-                <td className="num px-4 py-3 text-[15px] text-ink-700">
-                  {task.dueAt ? formatTime(task.dueAt) : "—"}
+                <td className="num px-4 py-3 text-body-sm text-fg-muted">
+                  {task.dueAt ? formatDeadline(task.dueAt, locale, now) : "—"}
                 </td>
                 <td className="px-4 py-3">
                   {status.kind === "ticks" ? (
                     <span className="flex items-center gap-2">
                       <Ticks state={status.state} locale={locale} size={18} />
-                      <span className="text-[15px] text-ink-700">
+                      <span className="truncate text-body-sm text-fg-muted">
                         {stateWord(task.state, locale)}
                       </span>
                     </span>
@@ -115,6 +117,7 @@ export function TaskTable({
                     <StateChip
                       tone={status.chip.tone}
                       icon={iconFor(status.chip.icon)}
+                      className="whitespace-nowrap"
                     >
                       {status.chip.label}
                     </StateChip>
@@ -126,7 +129,7 @@ export function TaskTable({
                       <a
                         href={`tel:${phone}`}
                         aria-label={`${t.actions.call} ${task.assigneeName}`}
-                        className="flex size-9 items-center justify-center rounded-tile border border-paper-200 text-neel-700 hover:bg-neel-50"
+                        className="flex size-9 items-center justify-center rounded-inner text-neel-700 transition-colors duration-150 hover:bg-neel-50"
                       >
                         <Phone className="size-4" aria-hidden="true" />
                       </a>
@@ -134,7 +137,7 @@ export function TaskTable({
                     <Link
                       href={`/kaam/${task.id}`}
                       aria-label={`${t.actions.dekhein} ${task.title}`}
-                      className="flex size-9 items-center justify-center rounded-tile border border-paper-200 text-neel-700 hover:bg-neel-50"
+                      className="flex size-9 items-center justify-center rounded-inner text-neel-700 transition-colors duration-150 hover:bg-neel-50"
                     >
                       <MoreHorizontal className="size-4" aria-hidden="true" />
                     </Link>
@@ -160,7 +163,7 @@ function Th({
     <th
       scope="col"
       className={cn(
-        "px-4 py-3 text-[11px] font-semibold tracking-wider text-ink-400 uppercase",
+        "px-4 py-2.5 text-caption font-semibold text-fg-subtle",
         className,
       )}
     >

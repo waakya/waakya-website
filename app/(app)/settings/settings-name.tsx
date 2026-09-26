@@ -66,13 +66,13 @@ export function SettingsName({
         <p
           id="name-error"
           role="alert"
-          className="rounded-card bg-laal-100 px-3 py-2 text-[15px] leading-[20px] text-laal-700"
+          className="rounded-card bg-laal-100 px-3 py-2 text-body leading-[20px] text-laal-700"
         >
           {error}
         </p>
       ) : null}
       {justSaved ? (
-        <p id="name-saved" role="status" className="text-[15px] text-ink-700">
+        <p id="name-saved" role="status" className="text-body text-ink-700">
           {t.settings.nameSaved}
         </p>
       ) : null}

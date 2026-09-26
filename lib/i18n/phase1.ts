@@ -573,7 +573,7 @@ const hi: Phase1Copy = {
     mine: "मेरा",
     team: "टीम",
     pending: "बाकी",
-    late: "देर",
+    late: "लेट",
     done: "हो गया",
     empty: "अभी यहाँ कुछ नहीं।",
     newTask: "नया काम",
@@ -591,6 +591,27 @@ const hi: Phase1Copy = {
     reject: "नामंज़ूर",
   },
   search: { ...hiLatn.search, title: "खोजें" },
+  // Design V3: what Today shows everyone, in Devanagari (it fell back to
+  // Roman Hinglish before).
+  team: {
+    ...hiLatn.team,
+    title: "टीम",
+    inToday: "आज आए",
+    notIn: "पंच इन नहीं",
+    onLeave: "छुट्टी",
+    openWork: (n) => `${n} काम बाकी`,
+  },
+  today: {
+    ...hiLatn.today,
+    alsoNeedsYou: "ये भी आपका इंतज़ार कर रहे हैं",
+    approvalsWaiting: (n) => `${n} मंज़ूरी बाकी`,
+    leaveWaiting: (n) => `${n} छुट्टी की अर्ज़ी`,
+    unreadConversations: (n) => `${n} बातचीत में नए संदेश`,
+    punchedIn: (time) => `${time} पर पंच इन`,
+    notPunchedIn: "आज पंच इन नहीं किया",
+    activeProjects: "चल रहे प्रोजेक्ट",
+    recentDocuments: "नए दस्तावेज़",
+  },
 };
 
 const COPY: Record<Locale, Phase1Copy> = { en, "hi-Latn": hiLatn, hi };

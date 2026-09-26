@@ -146,10 +146,12 @@ export function ProofSheet({
             className={cn(
               "flex size-24 shrink-0 cursor-pointer flex-col items-center justify-center gap-1",
               "rounded-card border-2 border-dashed border-neel-300 bg-neel-50 text-neel-700",
+              // The real input is visually hidden; keyboard focus shows here.
+              "focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-neel-600",
             )}
           >
             <Camera className="size-7" aria-hidden="true" />
-            <span className="text-[13px] font-semibold">{t.proof.takePhoto}</span>
+            <span className="text-label font-semibold">{t.proof.takePhoto}</span>
             <input
               type="file"
               data-testid="proof-file-input"
@@ -164,7 +166,7 @@ export function ProofSheet({
           {picked.map((item) => (
             <span key={item.id} className="relative size-24 shrink-0">
               {item.file.type.startsWith("audio/") ? (
-                <span className="flex size-24 items-center justify-center rounded-card bg-paper-200 text-[13px] font-semibold text-ink-700">
+                <span className="flex size-24 items-center justify-center rounded-card bg-paper-200 text-label font-semibold text-ink-700">
                   {t.proof.voiceNote}
                 </span>
               ) : (
@@ -183,7 +185,7 @@ export function ProofSheet({
           ))}
 
           {picked.length > 0 ? (
-            <span className="num shrink-0 text-[15px] text-ink-500">
+            <span className="num shrink-0 text-body text-ink-500">
               {t.proof.photoCount(picked.length)}
             </span>
           ) : null}
@@ -197,7 +199,7 @@ export function ProofSheet({
             onChange={(event) => setNote(event.target.value)}
             placeholder={t.proof.writePlaceholder}
             aria-label={t.proof.write}
-            className="mt-3 w-full rounded-button border-2 border-paper-200 bg-paper-0 p-3 text-[17px] text-ink-900 outline-none placeholder:text-ink-400 focus:border-neel-600"
+            className="mt-3 w-full rounded-button border-2 border-paper-200 bg-paper-0 p-3 text-body-lg text-ink-900 outline-none placeholder:text-ink-400 focus:border-neel-600"
           />
         ) : (
           <Button
@@ -214,7 +216,7 @@ export function ProofSheet({
         {error ? (
           <p
             role="alert"
-            className="mt-3 rounded-card bg-laal-100 px-3 py-2 text-[15px] leading-[20px] text-laal-700"
+            className="mt-3 rounded-card bg-laal-100 px-3 py-2 text-body leading-[20px] text-laal-700"
           >
             {error}
           </p>
@@ -241,7 +243,7 @@ export function ProofSheet({
           </Button>
         ) : null}
 
-        <p className="mt-3 text-center text-[13px] text-ink-400">
+        <p className="mt-3 text-center text-label text-ink-400">
           {t.proof.onRecord}
         </p>
       </SheetContent>

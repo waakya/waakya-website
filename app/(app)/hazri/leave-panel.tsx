@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { CalendarPlus } from "lucide-react";
+import { CalendarPlus, Check, Hourglass, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -27,11 +27,14 @@ export function LeavePanel({
   balance,
   requests,
   holidays,
+  showHolidays = true,
 }: {
   locale: Locale;
   balance: number;
   requests: LeaveRequestRow[];
   holidays: HolidayRow[];
+  /** Managers see (and edit) holidays in the team panel; once is enough. */
+  showHolidays?: boolean;
 }) {
   const t = getDictionary(locale);
   const [open, setOpen] = React.useState(false);
@@ -71,17 +74,17 @@ export function LeavePanel({
 
   return (
     <section id="leave" className="scroll-mt-4">
-      <h2 className="mb-2 text-[13px] leading-[18px] font-semibold text-ink-700">
+      <h2 className="mb-2 text-label leading-[18px] font-semibold text-ink-700">
         {t.hazri.leave}
       </h2>
 
       <Card className="p-4">
         <div className="flex flex-wrap items-center gap-3">
           <div>
-            <p className="text-[12px] text-ink-400">{t.hazri.balance}</p>
+            <p className="text-caption text-ink-400">{t.hazri.balance}</p>
             <p
               data-testid="leave-balance"
-              className="num text-[24px] leading-tight font-bold text-ink-900"
+              className="num text-title leading-tight font-bold text-ink-900"
             >
               {formatDays(balance)}
             </p>
@@ -149,14 +152,14 @@ export function LeavePanel({
               />
             </div>
 
-            <p className="num mt-3 text-[13px] text-ink-500">
+            <p className="num mt-3 text-label text-ink-500">
               {t.hazri.thisCosts(formatDays(cost))}
             </p>
 
             {error ? (
               <p
                 role="alert"
-                className="mt-2 rounded-card bg-laal-100 px-3 py-2 text-[15px] leading-[20px] text-laal-700"
+                className="mt-2 rounded-card bg-laal-100 px-3 py-2 text-body leading-[20px] text-laal-700"
               >
                 {error}
               </p>
@@ -172,22 +175,22 @@ export function LeavePanel({
           <ul className="mt-4 flex flex-col gap-1.5 border-t border-paper-100 pt-3">
             {requests.slice(0, 5).map((request) => (
               <li key={request.id} className="flex items-center gap-2.5">
-                <span className="num text-[13px] text-ink-700">
+                <span className="num text-label text-ink-700">
                   {formatWorkDate(request.startDate)}
                   {request.endDate !== request.startDate
                     ? ` – ${formatWorkDate(request.endDate)}`
                     : ""}
                 </span>
-                <span className="num text-[12px] text-ink-400">
+                <span className="num text-caption text-ink-400">
                   {formatDays(request.days)}
                 </span>
                 <span className="ml-auto">
                   {request.status === "approved" ? (
-                    <StateChip tone="hara">{t.hazri.approved}</StateChip>
+                    <StateChip tone="hara" icon={<Check />}>{t.hazri.approved}</StateChip>
                   ) : request.status === "rejected" ? (
-                    <StateChip tone="laal">{t.hazri.rejected}</StateChip>
+                    <StateChip tone="laal" icon={<X />}>{t.hazri.rejected}</StateChip>
                   ) : (
-                    <StateChip tone="outline">{t.hazri.pending}</StateChip>
+                    <StateChip tone="neel" icon={<Hourglass />}>{t.hazri.pending}</StateChip>
                   )}
                 </span>
               </li>
@@ -195,18 +198,18 @@ export function LeavePanel({
           </ul>
         ) : null}
 
-        {holidays.length > 0 ? (
+        {showHolidays && holidays.length > 0 ? (
           <div className="mt-4 border-t border-paper-100 pt-3">
-            <p className="mb-1.5 text-[12px] font-semibold text-ink-500">
+            <p className="mb-1.5 text-caption font-semibold text-ink-500">
               {t.hazri.holidays}
             </p>
             <ul className="flex flex-col gap-1">
               {holidays.map((holiday) => (
                 <li key={holiday.id} className="flex items-center gap-3">
-                  <span className="num w-[58px] shrink-0 text-[13px] font-semibold text-ink-900">
+                  <span className="num w-[58px] shrink-0 text-label font-semibold text-ink-900">
                     {formatWorkDate(holiday.date)}
                   </span>
-                  <span className="truncate text-[13px] text-ink-700">{holiday.title}</span>
+                  <span className="truncate text-label text-ink-700">{holiday.title}</span>
                 </li>
               ))}
             </ul>

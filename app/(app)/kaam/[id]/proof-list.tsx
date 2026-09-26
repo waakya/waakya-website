@@ -23,7 +23,7 @@ export function ProofList({
 
   return (
     <section className="mt-6">
-      <h3 className="mb-2 flex items-center gap-1.5 text-[13px] leading-[18px] font-semibold text-ink-700">
+      <h3 className="mb-2 flex items-center gap-1.5 text-label leading-[18px] font-semibold text-ink-700">
         <Camera className="size-4" aria-hidden="true" />
         {t.proof.heading}
       </h3>
@@ -41,12 +41,12 @@ export function ProofList({
               <img
                 src={proof.url}
                 alt={t.proof.photoAlt(proof.byName)}
-                className="max-h-64 w-full rounded-[8px] object-cover"
+                className="max-h-64 w-full rounded-inner object-cover"
               />
             ) : null}
 
             {proof.url && proof.kind === "voice" ? (
-              <span className="flex items-center gap-2 text-[15px] text-ink-900">
+              <span className="flex items-center gap-2 text-body text-ink-900">
                 <Volume2 className="size-5 text-neel-600" aria-hidden="true" />
                 <audio controls src={proof.url} className="w-full">
                   {t.proof.voiceNote}
@@ -55,7 +55,7 @@ export function ProofList({
             ) : null}
 
             {proof.body ? (
-              <p className="flex items-start gap-2 text-[15px] leading-[20px] text-ink-900">
+              <p className="flex items-start gap-2 text-body leading-[20px] text-ink-900">
                 <FileText
                   className="mt-0.5 size-4 shrink-0 text-ink-400"
                   aria-hidden="true"
@@ -64,7 +64,7 @@ export function ProofList({
               </p>
             ) : null}
 
-            <p className="num mt-1.5 text-[13px] text-ink-500">
+            <p className="num mt-1.5 text-label text-ink-500">
               {t.proof.byAt(proof.byName, formatTime(proof.at))}
             </p>
           </li>

@@ -27,11 +27,11 @@ export function StaffTaskDetail(props: DetailProps & { role: MemberRole | null }
         <div className="flex items-center gap-3">
           <Avatar name={task.createdByName} size={44} />
           <div className="min-w-0">
-            <p className="text-[17px] leading-[22px] font-bold text-ink-900">
+            <p className="text-body-lg leading-[22px] font-bold text-ink-900">
               {task.createdByName}
             </p>
             {task.deliveredAt ? (
-              <p className="num text-[15px] leading-[20px] text-ink-500">
+              <p className="num text-body leading-[20px] text-ink-500">
                 {t.detail.sentAt(formatTime(task.deliveredAt))}
               </p>
             ) : null}

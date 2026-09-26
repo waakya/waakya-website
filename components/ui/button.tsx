@@ -13,9 +13,13 @@ const buttonVariants = cva(
   [
     "inline-flex shrink-0 items-center justify-center gap-2",
     "rounded-button font-semibold whitespace-nowrap",
-    "transition-colors outline-none select-none",
+    "outline-none select-none",
+    // Press feedback: the interface heard you (§7). Only these properties
+    // move, and reduced motion keeps the colour change without the scale.
+    "transition-[background-color,border-color,color,transform] duration-150 ease-out",
+    "active:scale-[0.97] motion-reduce:active:scale-100",
     // Keyboard focus must be visible on every button (WCAG 2.4.7).
-    "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neel-600",
+    "focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-2 focus-visible:outline-neel-600",
     "disabled:pointer-events-none disabled:bg-paper-200 disabled:text-ink-400 disabled:border-transparent",
     "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5",
   ],
@@ -33,15 +37,15 @@ const buttonVariants = cva(
       },
       size: {
         /** Inline actions inside a card row. */
-        sm: "h-10 px-3 text-[13px]",
+        sm: "h-10 px-3 text-label",
         /** Owner tap target. */
-        owner: "h-tap px-4 text-[15px]",
+        owner: "h-tap px-4 text-body",
         /** Staff tap target. */
-        staff: "h-tap-staff px-5 text-[17px]",
+        staff: "h-tap-staff px-5 text-body-lg",
         /** The one big button on a staff screen. */
-        staffPrimary: "h-tap-staff-primary w-full px-5 text-[17px]",
+        staffPrimary: "h-tap-staff-primary w-full px-5 text-body-lg",
         /** Full-width owner primary (the Confirm card's Bhejo). */
-        block: "h-tap-staff w-full px-5 text-[17px]",
+        block: "h-tap-staff w-full px-5 text-body-lg",
         icon: "size-tap",
         iconStaff: "size-tap-staff",
       },

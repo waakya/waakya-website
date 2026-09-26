@@ -85,33 +85,37 @@ export function DocumentList({
         <p
           role="alert"
           data-testid="documents-error"
-          className="mb-2 rounded-card bg-laal-100 px-3 py-2 text-[14px] text-laal-700"
+          className="mb-2 rounded-card bg-laal-100 px-3 py-2 text-body-sm text-laal-700"
         >
           {error}
         </p>
       ) : null}
-      <ul className="overflow-hidden rounded-card border border-paper-200 bg-paper-0">
+      <ul className="overflow-hidden rounded-card border border-line bg-surface shadow-card">
         {documents.map((doc) => {
           const Icon = iconFor(doc.mimeType);
           const canDelete = doc.uploadedBy === viewerId || manages;
+          // A template document is a page Waakya laid out; its ".html" is a
+          // storage detail, not part of the name people gave it.
+          const shownName = doc.source === "template" ? doc.name.replace(/\.html$/i, "") : doc.name;
           return (
             <li
               key={doc.id}
               data-testid="document-row"
-              className="flex items-center gap-3 border-b border-paper-100 px-3.5 py-3 last:border-b-0"
+              className="flex items-center gap-3 border-b border-line/70 px-3.5 py-3 transition-colors duration-150 last:border-b-0 hover:bg-paper-50"
             >
-              <span className="grid size-9 shrink-0 place-items-center rounded-[10px] bg-neel-50">
+              <span className="grid size-9 shrink-0 place-items-center rounded-inner bg-neel-50">
                 <Icon className="size-4 text-neel-700" aria-hidden="true" />
               </span>
               <span className="min-w-0 flex-1">
                 <button
                   type="button"
                   onClick={() => run(doc.id, false)}
-                  className="block max-w-full truncate text-left text-[14.5px] font-semibold text-ink-900 hover:text-neel-700"
+                  title={shownName}
+                  className="block max-w-full truncate text-left text-body-sm font-semibold text-fg hover:text-neel-700"
                 >
-                  {doc.name}
+                  {shownName}
                 </button>
-                <span className="num block truncate text-[12.5px] text-ink-500">
+                <span className="num block truncate text-caption text-fg-subtle">
                   {p.documents.categories[doc.category] ?? doc.category}
                   {" · "}
                   {formatBytes(doc.sizeBytes)}
@@ -121,7 +125,7 @@ export function DocumentList({
                   {formatIndianDate(doc.createdAt, locale)}
                 </span>
                 {showLinks && (doc.taskTitle || doc.projectName) ? (
-                  <span className="mt-0.5 flex flex-wrap gap-x-3 text-[12.5px]">
+                  <span className="mt-0.5 flex flex-wrap gap-x-3 text-caption">
                     {doc.taskId && doc.taskTitle ? (
                       <Link href={`/kaam/${doc.taskId}`} className="truncate text-neel-700 hover:underline">
                         {p.documents.linkedTask}: {doc.taskTitle}
@@ -142,7 +146,7 @@ export function DocumentList({
                   title={p.common.download}
                   disabled={busy === doc.id}
                   onClick={() => run(doc.id, true)}
-                  className="grid size-9 place-items-center rounded-[10px] text-ink-500 transition-colors hover:bg-paper-100 hover:text-ink-900 disabled:opacity-40"
+                  className="grid size-9 place-items-center rounded-inner text-ink-500 transition-colors hover:bg-paper-100 hover:text-ink-900 disabled:opacity-40"
                 >
                   <Download className="size-4" aria-hidden="true" />
                 </button>
@@ -154,7 +158,7 @@ export function DocumentList({
                     disabled={busy === doc.id}
                     onClick={() => remove(doc.id)}
                     className={cn(
-                      "grid size-9 place-items-center rounded-[10px] text-ink-400 transition-colors hover:bg-laal-100 hover:text-laal-700 disabled:opacity-40",
+                      "grid size-9 place-items-center rounded-inner text-ink-400 transition-colors hover:bg-laal-100 hover:text-laal-700 disabled:opacity-40",
                     )}
                   >
                     <Trash2 className="size-4" aria-hidden="true" />

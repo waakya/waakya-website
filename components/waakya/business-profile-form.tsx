@@ -79,7 +79,7 @@ export function BusinessProfileForm({
           rows={2}
           value={form.address}
           onChange={(event) => setForm({ ...form, address: event.target.value })}
-          className="mt-1 w-full rounded-button border border-paper-200 bg-paper-0 px-3 py-2 text-[15px] outline-none focus:border-neel-600"
+          className="mt-1 w-full rounded-button border border-paper-200 bg-paper-0 px-3 py-2 text-body outline-none focus:border-neel-600"
         />
       </div>
       <div className="grid gap-3 sm:grid-cols-2">
@@ -88,12 +88,12 @@ export function BusinessProfileForm({
       </div>
       {field("email", p.onboarding.email, { type: "email", inputMode: "email", maxLength: 120 })}
       {error ? (
-        <p role="alert" data-testid="profile-error" className="rounded-card bg-laal-100 px-3 py-2 text-[14px] text-laal-700">
+        <p role="alert" data-testid="profile-error" className="rounded-card bg-laal-100 px-3 py-2 text-body-sm text-laal-700">
           {error.message}
         </p>
       ) : null}
       {saved ? (
-        <p className="flex items-center gap-2 text-[14px] font-semibold text-hara-700">
+        <p className="flex items-center gap-2 text-body-sm font-semibold text-hara-700">
           <Check className="size-4" aria-hidden="true" />
           {p.common.save}
         </p>
@@ -115,10 +115,10 @@ export function BusinessProfileForm({
 
   return (
     <OnboardingFrame locale={locale} step={2} illustration="handoff">
-      <h1 className="font-display text-[28px] leading-[1.1] font-extrabold text-ink-900">
+      <h1 className="font-display text-title-lg leading-[1.1] font-extrabold text-ink-900">
         {p.onboarding.profileTitle}
       </h1>
-      <p className="mt-2 text-[15px] leading-[21px] text-ink-500">{p.onboarding.profileLead}</p>
+      <p className="mt-2 text-body leading-[21px] text-ink-500">{p.onboarding.profileLead}</p>
       <div className="mt-5">{body}</div>
     </OnboardingFrame>
   );

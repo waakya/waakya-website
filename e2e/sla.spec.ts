@@ -1,3 +1,4 @@
+import { rowFromToday } from "./support/visible";
 import { expect, test, type Page } from "@playwright/test";
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/supabase/types";
@@ -68,12 +69,9 @@ test("an unacknowledged task past its SLA reaches the owner", async ({ page }) =
 
   // The row already says so, before any job runs: the chip is derived from
   // the clock, not from a flag somebody has to remember to set.
-  await page.goto("/aaj");
-  const row = page
-    .getByRole("list", { name: "Aaj" })
-    .locator("li", { hasText: title })
-    .first();
-  await expect(row.getByText("Dekha nahi")).toBeVisible();
+  // Design V3: on a busy day the newest item may sit behind "N aur".
+  const row = await rowFromToday(page, title, "Dekha nahi");
+  await expect(row.getByText("Dekha nahi").first()).toBeVisible();
 
   // Now the job runs, and the owner is told.
   const tick = await page.request.post("/api/cron/sla");
@@ -152,12 +150,9 @@ test("an overdue task reads Late, in words and in red", async ({ page }) => {
     })
     .eq("id", task!.id);
 
-  await page.goto("/aaj");
-  const row = page
-    .getByRole("list", { name: "Aaj" })
-    .locator("li", { hasText: title })
-    .first();
-  await expect(row.getByText("Late 40 min")).toBeVisible();
+  // Design V3: the most overdue show first; a fresh one may sit behind "N aur".
+  const row = await rowFromToday(page, title, "Late");
+  await expect(row.getByText("Late 40 min").first()).toBeVisible();
   // The row never shows the glyph as well as the chip (D-11).
   await expect(row.locator("[data-slot='ticks']")).toHaveCount(0);
 

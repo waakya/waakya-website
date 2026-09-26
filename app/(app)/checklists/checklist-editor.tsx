@@ -129,10 +129,10 @@ export function ChecklistEditor({
             <Card className="p-3.5">
               <div className="flex items-start gap-3">
                 <div className="min-w-0 flex-1">
-                  <p className="text-[17px] leading-[22px] font-bold text-ink-900">
+                  <p className="text-body-lg leading-[22px] font-bold text-ink-900">
                     {checklist.name}
                   </p>
-                  <p className="num mt-0.5 text-[13px] text-ink-500">
+                  <p className="num mt-0.5 text-label text-ink-500">
                     {checklist.runAt.slice(0, 5)} ·{" "}
                     {nameOf(checklist.assignedTo)} · {checklist.items.length}{" "}
                     {t.checklists.items}
@@ -268,7 +268,7 @@ export function ChecklistEditor({
               </div>
 
               <div>
-                <p className="mb-1.5 text-[13px] font-semibold text-ink-700">
+                <p className="mb-1.5 text-label font-semibold text-ink-700">
                   {t.checklists.who}
                 </p>
                 <ul className="flex flex-wrap gap-2">
@@ -292,7 +292,7 @@ export function ChecklistEditor({
               </div>
 
               <div>
-                <p className="mb-1.5 text-[13px] font-semibold text-ink-700">
+                <p className="mb-1.5 text-label font-semibold text-ink-700">
                   {t.checklists.items}
                 </p>
                 <ul className="flex flex-col gap-2">
@@ -310,7 +310,7 @@ export function ChecklistEditor({
                           };
                           setDraft({ ...draft, items });
                         }}
-                        className="flex-1 text-[15px] font-normal"
+                        className="flex-1 text-body font-normal"
                       />
                       <label
                         className="flex size-tap shrink-0 items-center justify-center"
@@ -376,7 +376,7 @@ export function ChecklistEditor({
               {error ? (
                 <p
                   role="alert"
-                  className="rounded-card bg-laal-100 px-3 py-2 text-[15px] leading-[20px] text-laal-700"
+                  className="rounded-card bg-laal-100 px-3 py-2 text-body leading-[20px] text-laal-700"
                 >
                   {error}
                 </p>
