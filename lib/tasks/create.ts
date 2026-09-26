@@ -117,6 +117,7 @@ export async function createTask(
       project_id: task.links?.projectId ?? null,
       contact_id: task.links?.contactId ?? null,
       opportunity_id: task.links?.opportunityId ?? null,
+      record_id: task.links?.recordId ?? null,
     })
     .select("id")
     .single();

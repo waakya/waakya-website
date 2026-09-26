@@ -609,6 +609,13 @@ export type Database = {
             referencedRelation: "crm_pipeline_stages"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "crm_opps_record_fk"
+            columns: ["record_id"]
+            isOneToOne: false
+            referencedRelation: "records"
+            referencedColumns: ["id"]
+          },
         ]
       }
       crm_pipeline_stages: {
@@ -1453,6 +1460,223 @@ export type Database = {
           },
         ]
       }
+      record_fields: {
+        Row: {
+          archived_at: string | null
+          created_at: string
+          customer_visible: boolean
+          field_type: string
+          id: string
+          key: string
+          label: string
+          options: Json
+          org_id: string
+          position: number
+          record_type_id: string
+          required: boolean
+          show_in_list: boolean
+          unit: string | null
+        }
+        Insert: {
+          archived_at?: string | null
+          created_at?: string
+          customer_visible?: boolean
+          field_type: string
+          id?: string
+          key: string
+          label: string
+          options?: Json
+          org_id: string
+          position?: number
+          record_type_id: string
+          required?: boolean
+          show_in_list?: boolean
+          unit?: string | null
+        }
+        Update: {
+          archived_at?: string | null
+          created_at?: string
+          customer_visible?: boolean
+          field_type?: string
+          id?: string
+          key?: string
+          label?: string
+          options?: Json
+          org_id?: string
+          position?: number
+          record_type_id?: string
+          required?: boolean
+          show_in_list?: boolean
+          unit?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "record_fields_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "orgs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "record_fields_record_type_id_fkey"
+            columns: ["record_type_id"]
+            isOneToOne: false
+            referencedRelation: "record_types"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      record_types: {
+        Row: {
+          archived_at: string | null
+          created_at: string
+          created_by: string | null
+          customer_visible_default: boolean
+          default_status: string | null
+          description: string | null
+          icon: string | null
+          id: string
+          key: string
+          name: string
+          name_plural: string
+          org_id: string
+          statuses: Json
+          template_key: string | null
+          updated_at: string
+        }
+        Insert: {
+          archived_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          customer_visible_default?: boolean
+          default_status?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          key: string
+          name: string
+          name_plural: string
+          org_id: string
+          statuses?: Json
+          template_key?: string | null
+          updated_at?: string
+        }
+        Update: {
+          archived_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          customer_visible_default?: boolean
+          default_status?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          key?: string
+          name?: string
+          name_plural?: string
+          org_id?: string
+          statuses?: Json
+          template_key?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "record_types_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "orgs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      records: {
+        Row: {
+          archived_at: string | null
+          assignee_id: string | null
+          contact_id: string | null
+          created_at: string
+          created_by: string | null
+          customer_visible: boolean
+          id: string
+          org_id: string
+          project_id: string | null
+          record_type_id: string
+          sort_key: number | null
+          status_key: string | null
+          title: string
+          updated_at: string
+          updated_by: string | null
+          values: Json
+          vendor_id: string | null
+        }
+        Insert: {
+          archived_at?: string | null
+          assignee_id?: string | null
+          contact_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          customer_visible?: boolean
+          id?: string
+          org_id: string
+          project_id?: string | null
+          record_type_id: string
+          sort_key?: number | null
+          status_key?: string | null
+          title: string
+          updated_at?: string
+          updated_by?: string | null
+          values?: Json
+          vendor_id?: string | null
+        }
+        Update: {
+          archived_at?: string | null
+          assignee_id?: string | null
+          contact_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          customer_visible?: boolean
+          id?: string
+          org_id?: string
+          project_id?: string | null
+          record_type_id?: string
+          sort_key?: number | null
+          status_key?: string | null
+          title?: string
+          updated_at?: string
+          updated_by?: string | null
+          values?: Json
+          vendor_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "records_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "crm_contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "records_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "orgs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "records_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "records_record_type_id_fkey"
+            columns: ["record_type_id"]
+            isOneToOne: false
+            referencedRelation: "record_types"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       task_events: {
         Row: {
           actor_id: string | null
@@ -1568,6 +1792,7 @@ export type Database = {
           priority: Database["public"]["Enums"]["task_priority"]
           project_id: string | null
           proof_required: boolean
+          record_id: string | null
           source_message_id: string | null
           started_at: string | null
           state: Database["public"]["Enums"]["task_state"]
@@ -1599,6 +1824,7 @@ export type Database = {
           priority?: Database["public"]["Enums"]["task_priority"]
           project_id?: string | null
           proof_required?: boolean
+          record_id?: string | null
           source_message_id?: string | null
           started_at?: string | null
           state?: Database["public"]["Enums"]["task_state"]
@@ -1630,6 +1856,7 @@ export type Database = {
           priority?: Database["public"]["Enums"]["task_priority"]
           project_id?: string | null
           proof_required?: boolean
+          record_id?: string | null
           source_message_id?: string | null
           started_at?: string | null
           state?: Database["public"]["Enums"]["task_state"]
@@ -1671,6 +1898,13 @@ export type Database = {
             columns: ["project_id"]
             isOneToOne: false
             referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tasks_record_id_fkey"
+            columns: ["record_id"]
+            isOneToOne: false
+            referencedRelation: "records"
             referencedColumns: ["id"]
           },
           {
@@ -1879,6 +2113,22 @@ export type Database = {
         }
       }
       display_name: { Args: { p_user: string }; Returns: string }
+      install_record_type: {
+        Args: {
+          p_customer_visible_default: boolean
+          p_default_status: string
+          p_description: string
+          p_fields: Json
+          p_icon: string
+          p_key: string
+          p_name: string
+          p_name_plural: string
+          p_org: string
+          p_statuses: Json
+          p_template_key: string
+        }
+        Returns: string
+      }
       invite_preview: {
         Args: { p_token: string }
         Returns: {
@@ -2086,6 +2336,34 @@ export type Database = {
         SetofOptions: {
           from: "*"
           to: "organization_modules"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      set_record_status: {
+        Args: { p_note?: string; p_record: string; p_status: string }
+        Returns: {
+          archived_at: string | null
+          assignee_id: string | null
+          contact_id: string | null
+          created_at: string
+          created_by: string | null
+          customer_visible: boolean
+          id: string
+          org_id: string
+          project_id: string | null
+          record_type_id: string
+          sort_key: number | null
+          status_key: string | null
+          title: string
+          updated_at: string
+          updated_by: string | null
+          values: Json
+          vendor_id: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "records"
           isOneToOne: true
           isSetofReturn: false
         }
