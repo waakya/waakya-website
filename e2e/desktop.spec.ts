@@ -31,41 +31,19 @@ test("the landing page sells the product to a logged-out visitor", async ({
     page.getByRole("banner").locator('[translate="no"]', { hasText: "Waakya" }),
   ).toBeVisible();
 
-  // The positioning, in the first viewport.
-  await expect(page.getByText("The new era of business communication", { exact: true })).toBeInViewport();
+  // The positioning, in the first viewport, on a desk.
+  await expect(page.getByText("Bolo. Ho jayega.", { exact: true }).first()).toBeInViewport();
   await expect(
-    page.getByRole("heading", { level: 1, name: /All your business work\.\s*One workspace\./ }),
+    page.getByRole("heading", { level: 1, name: /Your entire business\.\s*One workspace\./ }),
   ).toBeInViewport();
-  // The chain, and every Phase-1 capability named on the page.
-  for (const stage of ["Conversation", "Commitment", "Execution", "Proof", "Record"]) {
-    await expect(page.getByRole("list", { name: "How work moves in Waakya" })).toContainText(stage);
-  }
-  for (const capability of ["Conversations", "Work & tasks", "Approvals", "Documents", "Business templates", "Search", "Team", "Attendance", "Leave", "Holidays", "Notifications"]) {
-    await expect(page.locator("#inside").getByText(capability, { exact: true }).first()).toBeVisible();
-  }
-  await expect(page.locator("#inside").getByText("Office renovation")).toBeVisible();
-  await expect(page.getByText(/two businesses|shared workspace/i)).toHaveCount(0);
-
-  // The sections a visitor is promised by the nav all exist.
-  for (const id of ["how", "inside", "businesses", "faq"]) {
+  await expect(page.getByRole("link", { name: "Start with my business" }).first()).toBeInViewport();
+  // The nav's three sections exist and the story's one business is named.
+  for (const id of ["one-day", "adapts", "customers"]) {
     await expect(page.locator(`#${id}`)).toHaveCount(1);
   }
-
-  // Both calls to action lead into the product.
-  await expect(
-    page.getByRole("link", { name: "Get started" }).first(),
-  ).toHaveAttribute("href", "/login");
-});
-
-test("the five steps move one quotation from message to record", async ({ page }) => {
-  await signOut(page);
-  await page.goto("/");
-  const stages = page.getByRole("tablist", { name: "From conversation to record" });
-  await stages.getByRole("tab", { name: /Commitment/ }).click();
-  await expect(page.getByRole("tabpanel").getByText("Task created")).toBeVisible();
-  await stages.getByRole("tab", { name: /Record/ }).click();
-  await expect(page.getByRole("tabpanel").getByText("Verified by Priya · 4:52 PM")).toBeVisible();
-  await expect(page.getByRole("tabpanel").getByRole("link", { name: /Get started/ })).toHaveAttribute("href", "/login");
+  await expect(page.getByText("ABC Interiors").first()).toBeVisible();
+  // The old story's vocabulary is gone.
+  await expect(page.getByText(/The new era of business communication|Get started/)).toHaveCount(0);
 });
 
 test("a signed-in visitor is taken to their day, not sold to", async ({ page }) => {
