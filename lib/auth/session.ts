@@ -71,7 +71,7 @@ export const getViewer = cache(async (): Promise<Viewer | null> => {
     email: typeof claims.email === "string" ? claims.email : null,
   };
 
-  const [{ data: profile }, { data: membershipRows }, cookieStore] = await Promise.all([
+  const [{ data: profile }, { data: membershipRows, error: membershipError }, cookieStore] = await Promise.all([
     supabase.from("profiles").select("full_name").eq("id", user.id).maybeSingle(),
     supabase
       .from("memberships")
@@ -82,6 +82,9 @@ export const getViewer = cache(async (): Promise<Viewer | null> => {
     cookies(),
   ]);
 
+  // A failed lookup is an error, never "no business": treating it as empty
+  // would send an owner to the setup screen whenever the database hiccups.
+  if (membershipError) throw new Error(`memberships: ${membershipError.message}`);
   const rows = (membershipRows ?? []) as MembershipRow[];
   const wanted = cookieStore.get(ACTIVE_ORG_COOKIE)?.value;
   const membership = rows.find((row) => row.org_id === wanted) ?? rows[0] ?? null;

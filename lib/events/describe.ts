@@ -64,6 +64,8 @@ export function describeEvent(
     case "campaign.sent": return { text: L.campaignSent(title, Number(payload.sent ?? 0)), href: entityId ? `/campaigns/${entityId}` : "/campaigns" };
     case "campaign.recipient_replied": return { text: L.campaignReply(title), href: typeof payload.contact_id === "string" ? `/crm/${payload.contact_id}` : "/campaigns" };
     case "integration.lead_received": return { text: L.integrationLead(title, s("source")), href: entityId ? `/crm/${entityId}` : "/crm" };
+    case "integration.key_created": return { text: L.keyCreated(title), href: "/settings/integrations" };
+    case "integration.key_revoked": return { text: L.keyRevoked(title), href: "/settings/integrations" };
     case "automation.run_failed": return { text: L.automationFailed(title, s("error")), href: "/automations" };
     case "domain.verified": return { text: L.domainVerified(s("hostname")), href: "/settings/domains" };
     default: return { text: `${type}${title ? ` · ${title}` : ""}`, href: null };
@@ -116,6 +118,8 @@ type Lines = {
   integrationLead: (t: string, source: string) => string;
   automationFailed: (t: string, error: string) => string;
   domainVerified: (host: string) => string;
+  keyCreated: (name: string) => string;
+  keyRevoked: (name: string) => string;
 };
 
 const LINES: Record<Locale, Lines> = {
@@ -159,6 +163,8 @@ const LINES: Record<Locale, Lines> = {
     integrationLead: (t, s) => `वेबसाइट से पूछताछ: ${t}${s ? ` · ${s}` : ""}`,
     automationFailed: (t, e) => `ऑटोमेशन रुका: ${t}${e ? ` · ${e}` : ""}`,
     domainVerified: (h) => `डोमेन सत्यापित: ${h}`,
+    keyCreated: (n) => `वेबसाइट कुंजी बनी: ${n}`,
+    keyRevoked: (n) => `वेबसाइट कुंजी बंद: ${n}`,
   },
   "hi-Latn": {
     taskCreated: (t, who) => `Naya kaam "${t}"${who ? ` · ${who} ko` : ""}`,
@@ -200,6 +206,8 @@ const LINES: Record<Locale, Lines> = {
     integrationLead: (t, s) => `Website se enquiry: ${t}${s ? ` · ${s}` : ""}`,
     automationFailed: (t, e) => `Automation ruka: ${t}${e ? ` · ${e}` : ""}`,
     domainVerified: (h) => `Domain verified: ${h}`,
+    keyCreated: (n) => `Website key bani: ${n}`,
+    keyRevoked: (n) => `Website key band: ${n}`,
   },
   en: {
     taskCreated: (t, who) => `New task "${t}"${who ? ` for ${who}` : ""}`,
@@ -241,5 +249,7 @@ const LINES: Record<Locale, Lines> = {
     integrationLead: (t, s) => `Website enquiry: ${t}${s ? ` · ${s}` : ""}`,
     automationFailed: (t, e) => `Automation stopped: ${t}${e ? ` · ${e}` : ""}`,
     domainVerified: (h) => `Domain verified: ${h}`,
+    keyCreated: (n) => `Website key created: ${n}`,
+    keyRevoked: (n) => `Website key revoked: ${n}`,
   },
 };

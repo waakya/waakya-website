@@ -44,6 +44,8 @@ export const DOMAIN_EVENT_TYPES = [
   "campaign.sent",
   "campaign.recipient_replied",
   "integration.lead_received",
+  "integration.key_created",
+  "integration.key_revoked",
   "automation.run_failed",
   "domain.verified",
 ] as const;

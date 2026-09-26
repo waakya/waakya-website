@@ -1306,6 +1306,104 @@ export type Database = {
           },
         ]
       }
+      integration_keys: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          key_hash: string
+          key_prefix: string
+          last_used_at: string | null
+          name: string
+          org_id: string
+          revoked_at: string | null
+          scopes: string[]
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          key_hash: string
+          key_prefix: string
+          last_used_at?: string | null
+          name: string
+          org_id: string
+          revoked_at?: string | null
+          scopes?: string[]
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          key_hash?: string
+          key_prefix?: string
+          last_used_at?: string | null
+          name?: string
+          org_id?: string
+          revoked_at?: string | null
+          scopes?: string[]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "integration_keys_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "orgs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      integration_requests: {
+        Row: {
+          created_at: string
+          endpoint: string
+          id: string
+          idempotency_key: string
+          key_id: string
+          org_id: string
+          request_hash: string
+          response: Json
+          status: number
+        }
+        Insert: {
+          created_at?: string
+          endpoint?: string
+          id?: string
+          idempotency_key: string
+          key_id: string
+          org_id: string
+          request_hash: string
+          response?: Json
+          status: number
+        }
+        Update: {
+          created_at?: string
+          endpoint?: string
+          id?: string
+          idempotency_key?: string
+          key_id?: string
+          org_id?: string
+          request_hash?: string
+          response?: Json
+          status?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "integration_requests_key_id_fkey"
+            columns: ["key_id"]
+            isOneToOne: false
+            referencedRelation: "integration_keys"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "integration_requests_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "orgs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       invites: {
         Row: {
           accepted_at: string | null
@@ -2992,6 +3090,10 @@ export type Database = {
           p_template_key: string
         }
         Returns: string
+      }
+      integration_requests_last_minute: {
+        Args: { p_key: string }
+        Returns: number
       }
       invite_preview: {
         Args: { p_token: string }
