@@ -1,3 +1,9 @@
+# Session state
+
+**Platform V1 released to production on 2026-09-26.** Release commit on `main` (ghnew): see `git log`. Migrations 0030–0040 applied to `krdmzjjmbrphzcuotfgz`; Vercel production deployment from the archived release commit; live smoke green (routes, anon RLS probes, homepage in a real browser at seven widths with axe). Pre-release backup: `~/waakya-backups/2026-09-26-pre-platform-v1/`. Rollback: `docs/ROLLBACK.md`. QA coverage: `docs/PLATFORM_V1_QA_MATRIX.md`.
+
+---
+
 # Waakya — session state (17 Sep 2026)
 
 ## Production
