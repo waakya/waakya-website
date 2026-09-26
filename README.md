@@ -71,6 +71,9 @@ chip vocabulary. It is the fastest way to see whether a change broke the kit.
 | `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET` | Proof photos on Cloudflare R2 | Falls back to a private Supabase Storage bucket (1 GB ceiling) |
 | `NEXT_PUBLIC_SITE_URL` | Invite and notification links | Links point at `localhost` |
 | `ALLOW_TEST_LOGIN` | The Playwright e2e only | The e2e cannot sign in. **Never set this in production** |
+| `MESSAGING_MOCK` | Set `true` anywhere that must never send a real message (local, preview, QA): campaign and automation providers record instead of sending | Real providers are used where configured |
+| `WHATSAPP_PROVIDER`, `WHATSAPP_ACCESS_TOKEN`, `WHATSAPP_PHONE_NUMBER_ID`, `WHATSAPP_API_VERSION` | WhatsApp campaigns and automations through the Meta Cloud API (`WHATSAPP_PROVIDER=meta`) | WhatsApp sends are recorded as not delivered; email still goes out |
+| `WHATSAPP_VERIFY_TOKEN`, `WHATSAPP_APP_SECRET` | The inbound webhook at `/api/integrations/whatsapp` (Meta verifies with the token, signs every event with the secret) | The webhook refuses every call |
 | `ALLOW_GUEST_LOGIN` | The guest form on the login screen (needs anonymous sign-ins on in Supabase) | No guest button; normal OTP login only. **Never set this in production** |
 
 `.env.local` is gitignored and must stay that way.

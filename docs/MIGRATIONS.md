@@ -6,7 +6,7 @@
 |---|---|---|
 | 0001–0022 | Phase 1 | Applied to production (`krdmzjjmbrphzcuotfgz`); ledger verified 2026-09-26 |
 | 0023–0029 | Reserved: `feature/ai-voice-local` (frozen, local-only 0023–0025) | Never applied to production; never merge without renumbering |
-| 0030+ | Platform V1 (this branch) | 0030 foundation, 0031 CRM, … |
+| 0030–0040 | Platform V1 | 0030 foundation, 0031 CRM, 0032 records, 0033 projects container, 0034 customer experience, 0035 vendors, 0036 automation, 0037 website integration, 0038 campaigns, 0039 custom domains, 0040 exact counts |
 
 Rules:
 - Four-digit sequential prefix, snake_case name, one concern per file.
