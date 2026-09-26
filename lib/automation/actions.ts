@@ -72,7 +72,7 @@ export async function deleteRule(input: unknown): Promise<ActionResult> {
 }
 
 export async function installExampleRule(input: unknown): Promise<ActionResult<{ id: string }>> {
-  const { viewer, t, refused } = await automationViewer();
+  const { t, refused } = await automationViewer();
   if (refused) return refused;
   const parsed = z.enum(Object.keys(RULE_EXAMPLES) as [string, ...string[]]).safeParse(input);
   if (!parsed.success) return fail(t.errors.badInput);
