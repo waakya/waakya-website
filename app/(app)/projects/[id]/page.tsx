@@ -27,6 +27,8 @@ import { DocumentUploader } from "@/components/waakya/document-uploader";
 import { ProjectStatusChip } from "../status-chip";
 import { ProjectControls } from "./project-controls";
 import { RevealGroup, RevealToggle } from "@/components/waakya/reveal";
+import { CustomerPanel } from "./customer-panel";
+import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = { title: "Project" };
 
@@ -41,11 +43,24 @@ export default async function ProjectPage({ params }: PageProps<"/projects/[id]"
   const ux = getUx(shell.locale);
   const manages = canManage(viewer.role);
 
-  const [documents, members, unassigned] = await Promise.all([
+  const supabaseForPanel = await createClient();
+  const [documents, members, unassigned, contactRows, recordRows] = await Promise.all([
     listProjectDocuments(viewer.org.id, id),
     manages ? getOrgMembers(viewer.org.id) : Promise.resolve([]),
     manages ? getUnassignedTasks(viewer.org.id) : Promise.resolve([]),
+    manages && viewer.modules.has("crm")
+      ? supabaseForPanel.from("crm_contacts").select("id, full_name").eq("org_id", viewer.org.id).is("archived_at", null).order("full_name").limit(300)
+      : Promise.resolve({ data: [] as { id: string; full_name: string }[] }),
+    manages && viewer.modules.has("records")
+      ? supabaseForPanel.from("records").select("id, title, record_types(statuses)").eq("org_id", viewer.org.id).eq("project_id", id).is("archived_at", null).limit(100)
+      : Promise.resolve({ data: [] as { id: string; title: string; record_types: { statuses: unknown } | null }[] }),
   ]);
+  const panelContacts = (contactRows.data ?? []).map((c) => ({ id: c.id, name: c.full_name }));
+  const panelRecords = (recordRows.data ?? []).map((r) => ({
+    id: r.id,
+    title: r.title,
+    statuses: (((r.record_types as { statuses: unknown } | null)?.statuses as { key: string; label: string }[] | null) ?? []).map((s) => ({ key: s.key, label: s.label })),
+  }));
 
   const memberIds = new Set(project.members.map((member) => member.userId));
   const d = getDesign(shell.locale);
@@ -223,6 +238,16 @@ export default async function ProjectPage({ params }: PageProps<"/projects/[id]"
           </div>
 
           <div className="flex min-w-0 flex-col gap-6">
+            <CustomerPanel
+              locale={shell.locale}
+              orgId={viewer.org.id}
+              projectId={project.id}
+              manages={manages}
+              contacts={panelContacts}
+              openTasks={openTasks.map((task) => ({ id: task.id, title: task.title }))}
+              records={panelRecords}
+              portalOn={viewer.modules.has("customer_experience")}
+            />
             <section>
               <h2 className="mb-2 text-body font-bold text-fg">{p.projects.members}</h2>
               <ul className="flex flex-wrap gap-2">

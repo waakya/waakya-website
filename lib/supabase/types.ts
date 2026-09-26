@@ -698,10 +698,277 @@ export type Database = {
           },
         ]
       }
+      customer_access: {
+        Row: {
+          accepted_at: string | null
+          contact_id: string
+          email: string | null
+          id: string
+          invite_token: string
+          invited_at: string
+          invited_by: string | null
+          last_seen_at: string | null
+          org_id: string
+          phone_e164: string | null
+          revoked_at: string | null
+          status: string
+          user_id: string | null
+        }
+        Insert: {
+          accepted_at?: string | null
+          contact_id: string
+          email?: string | null
+          id?: string
+          invite_token: string
+          invited_at?: string
+          invited_by?: string | null
+          last_seen_at?: string | null
+          org_id: string
+          phone_e164?: string | null
+          revoked_at?: string | null
+          status?: string
+          user_id?: string | null
+        }
+        Update: {
+          accepted_at?: string | null
+          contact_id?: string
+          email?: string | null
+          id?: string
+          invite_token?: string
+          invited_at?: string
+          invited_by?: string | null
+          last_seen_at?: string | null
+          org_id?: string
+          phone_e164?: string | null
+          revoked_at?: string | null
+          status?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_access_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "crm_contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_access_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "orgs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      customer_decisions: {
+        Row: {
+          blocks_record_id: string | null
+          blocks_task_id: string | null
+          created_at: string
+          decided_at: string | null
+          decided_by_access_id: string | null
+          decided_by_user_id: string | null
+          decided_note: string | null
+          decided_option_key: string | null
+          description: string | null
+          id: string
+          options: Json
+          org_id: string
+          project_id: string
+          requested_by: string | null
+          status: string
+          title: string
+          unblock_record_status: string | null
+        }
+        Insert: {
+          blocks_record_id?: string | null
+          blocks_task_id?: string | null
+          created_at?: string
+          decided_at?: string | null
+          decided_by_access_id?: string | null
+          decided_by_user_id?: string | null
+          decided_note?: string | null
+          decided_option_key?: string | null
+          description?: string | null
+          id?: string
+          options: Json
+          org_id: string
+          project_id: string
+          requested_by?: string | null
+          status?: string
+          title: string
+          unblock_record_status?: string | null
+        }
+        Update: {
+          blocks_record_id?: string | null
+          blocks_task_id?: string | null
+          created_at?: string
+          decided_at?: string | null
+          decided_by_access_id?: string | null
+          decided_by_user_id?: string | null
+          decided_note?: string | null
+          decided_option_key?: string | null
+          description?: string | null
+          id?: string
+          options?: Json
+          org_id?: string
+          project_id?: string
+          requested_by?: string | null
+          status?: string
+          title?: string
+          unblock_record_status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_decisions_blocks_record_id_fkey"
+            columns: ["blocks_record_id"]
+            isOneToOne: false
+            referencedRelation: "records"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_decisions_blocks_task_id_fkey"
+            columns: ["blocks_task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_decisions_decided_by_access_id_fkey"
+            columns: ["decided_by_access_id"]
+            isOneToOne: false
+            referencedRelation: "customer_access"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_decisions_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "orgs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_decisions_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      customer_messages: {
+        Row: {
+          author_kind: string
+          author_user_id: string | null
+          body: string
+          created_at: string
+          customer_access_id: string | null
+          id: string
+          org_id: string
+          project_id: string
+          read_by_business_at: string | null
+        }
+        Insert: {
+          author_kind: string
+          author_user_id?: string | null
+          body: string
+          created_at?: string
+          customer_access_id?: string | null
+          id?: string
+          org_id: string
+          project_id: string
+          read_by_business_at?: string | null
+        }
+        Update: {
+          author_kind?: string
+          author_user_id?: string | null
+          body?: string
+          created_at?: string
+          customer_access_id?: string | null
+          id?: string
+          org_id?: string
+          project_id?: string
+          read_by_business_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_messages_customer_access_id_fkey"
+            columns: ["customer_access_id"]
+            isOneToOne: false
+            referencedRelation: "customer_access"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_messages_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "orgs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_messages_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      customer_project_access: {
+        Row: {
+          created_at: string
+          customer_access_id: string
+          granted_by: string | null
+          id: string
+          org_id: string
+          project_id: string
+        }
+        Insert: {
+          created_at?: string
+          customer_access_id: string
+          granted_by?: string | null
+          id?: string
+          org_id: string
+          project_id: string
+        }
+        Update: {
+          created_at?: string
+          customer_access_id?: string
+          granted_by?: string | null
+          id?: string
+          org_id?: string
+          project_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_project_access_customer_access_id_fkey"
+            columns: ["customer_access_id"]
+            isOneToOne: false
+            referencedRelation: "customer_access"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_project_access_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "orgs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_project_access_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       documents: {
         Row: {
           category: Database["public"]["Enums"]["document_category"]
           created_at: string
+          customer_visible: boolean
           id: string
           message_id: string | null
           mime_type: string | null
@@ -719,6 +986,7 @@ export type Database = {
         Insert: {
           category?: Database["public"]["Enums"]["document_category"]
           created_at?: string
+          customer_visible?: boolean
           id?: string
           message_id?: string | null
           mime_type?: string | null
@@ -736,6 +1004,7 @@ export type Database = {
         Update: {
           category?: Database["public"]["Enums"]["document_category"]
           created_at?: string
+          customer_visible?: boolean
           id?: string
           message_id?: string | null
           mime_type?: string | null
@@ -1365,44 +1634,181 @@ export type Database = {
           },
         ]
       }
-      projects: {
+      project_milestones: {
         Row: {
           created_at: string
+          created_by: string | null
+          customer_visible: boolean
+          done_at: string | null
+          due_date: string | null
+          id: string
+          name: string
+          org_id: string
+          position: number
+          project_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          customer_visible?: boolean
+          done_at?: string | null
+          due_date?: string | null
+          id?: string
+          name: string
+          org_id: string
+          position?: number
+          project_id: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          customer_visible?: boolean
+          done_at?: string | null
+          due_date?: string | null
+          id?: string
+          name?: string
+          org_id?: string
+          position?: number
+          project_id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_milestones_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "orgs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_milestones_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      project_updates: {
+        Row: {
+          actor_kind: string
+          body: string
+          created_at: string
+          created_by: string | null
+          customer_visible: boolean
+          id: string
+          kind: string
+          org_id: string
+          project_id: string
+          source_event_id: string | null
+        }
+        Insert: {
+          actor_kind?: string
+          body: string
+          created_at?: string
+          created_by?: string | null
+          customer_visible?: boolean
+          id?: string
+          kind?: string
+          org_id: string
+          project_id: string
+          source_event_id?: string | null
+        }
+        Update: {
+          actor_kind?: string
+          body?: string
+          created_at?: string
+          created_by?: string | null
+          customer_visible?: boolean
+          id?: string
+          kind?: string
+          org_id?: string
+          project_id?: string
+          source_event_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_updates_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "orgs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_updates_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_updates_source_event_id_fkey"
+            columns: ["source_event_id"]
+            isOneToOne: false
+            referencedRelation: "domain_events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      projects: {
+        Row: {
+          contact_id: string | null
+          created_at: string
           created_by: string
+          customer_summary: string | null
           description: string | null
           end_date: string | null
           id: string
           name: string
           org_id: string
+          progress_percent: number
           start_date: string | null
           status: Database["public"]["Enums"]["project_status"]
           updated_at: string
         }
         Insert: {
+          contact_id?: string | null
           created_at?: string
           created_by: string
+          customer_summary?: string | null
           description?: string | null
           end_date?: string | null
           id?: string
           name: string
           org_id: string
+          progress_percent?: number
           start_date?: string | null
           status?: Database["public"]["Enums"]["project_status"]
           updated_at?: string
         }
         Update: {
+          contact_id?: string | null
           created_at?: string
           created_by?: string
+          customer_summary?: string | null
           description?: string | null
           end_date?: string | null
           id?: string
           name?: string
           org_id?: string
+          progress_percent?: number
           start_date?: string | null
           status?: Database["public"]["Enums"]["project_status"]
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "projects_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "crm_contacts"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "projects_org_id_fkey"
             columns: ["org_id"]
@@ -1417,6 +1823,7 @@ export type Database = {
           body: string | null
           created_at: string
           created_by: string
+          customer_visible: boolean
           id: string
           kind: string
           org_id: string
@@ -1427,6 +1834,7 @@ export type Database = {
           body?: string | null
           created_at?: string
           created_by: string
+          customer_visible?: boolean
           id?: string
           kind?: string
           org_id: string
@@ -1437,6 +1845,7 @@ export type Database = {
           body?: string | null
           created_at?: string
           created_by?: string
+          customer_visible?: boolean
           id?: string
           kind?: string
           org_id?: string
@@ -1773,6 +2182,7 @@ export type Database = {
           ack_minutes: number | null
           acknowledged_at: string | null
           assigned_to: string | null
+          blocked_by_decision_id: string | null
           cancelled_at: string | null
           checklist_date: string | null
           checklist_item_id: string | null
@@ -1805,6 +2215,7 @@ export type Database = {
           ack_minutes?: number | null
           acknowledged_at?: string | null
           assigned_to?: string | null
+          blocked_by_decision_id?: string | null
           cancelled_at?: string | null
           checklist_date?: string | null
           checklist_item_id?: string | null
@@ -1837,6 +2248,7 @@ export type Database = {
           ack_minutes?: number | null
           acknowledged_at?: string | null
           assigned_to?: string | null
+          blocked_by_decision_id?: string | null
           cancelled_at?: string | null
           checklist_date?: string | null
           checklist_item_id?: string | null
@@ -1865,6 +2277,13 @@ export type Database = {
           verified_at?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "tasks_blocked_by_decision_id_fkey"
+            columns: ["blocked_by_decision_id"]
+            isOneToOne: false
+            referencedRelation: "customer_decisions"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "tasks_checklist_item_id_fkey"
             columns: ["checklist_item_id"]
@@ -1921,6 +2340,30 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      accept_customer_invite: {
+        Args: { p_token: string }
+        Returns: {
+          accepted_at: string | null
+          contact_id: string
+          email: string | null
+          id: string
+          invite_token: string
+          invited_at: string
+          invited_by: string | null
+          last_seen_at: string | null
+          org_id: string
+          phone_e164: string | null
+          revoked_at: string | null
+          status: string
+          user_id: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "customer_access"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       accept_invite: { Args: { p_token: string }; Returns: string }
       add_holiday: {
         Args: { p_date: string; p_org: string; p_title: string }
@@ -2142,9 +2585,11 @@ export type Database = {
         Args: { p_conversation: string }
         Returns: boolean
       }
+      is_customer_of_org: { Args: { p_org: string }; Returns: boolean }
       is_org_admin: { Args: { p_org: string }; Returns: boolean }
       is_org_member: { Args: { p_org: string }; Returns: boolean }
       is_org_owner_admin: { Args: { p_org: string }; Returns: boolean }
+      is_project_customer: { Args: { p_project: string }; Returns: boolean }
       ist_today: { Args: never; Returns: string }
       leave_days_between: {
         Args: {
@@ -2161,6 +2606,17 @@ export type Database = {
       }
       module_default_enabled: { Args: { p_key: string }; Returns: boolean }
       module_is_core: { Args: { p_key: string }; Returns: boolean }
+      my_customer_access: {
+        Args: never
+        Returns: {
+          access_id: string
+          contact_name: string
+          org_id: string
+          org_name: string
+          project_id: string
+          project_name: string
+        }[]
+      }
       org_member_email: { Args: { p_user: string }; Returns: string }
       org_module_enabled: {
         Args: { p_key: string; p_org: string }
@@ -2169,6 +2625,26 @@ export type Database = {
       org_role: {
         Args: { p_org: string }
         Returns: Database["public"]["Enums"]["member_role"]
+      }
+      post_customer_message: {
+        Args: { p_body: string; p_project: string }
+        Returns: {
+          author_kind: string
+          author_user_id: string | null
+          body: string
+          created_at: string
+          customer_access_id: string | null
+          id: string
+          org_id: string
+          project_id: string
+          read_by_business_at: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "customer_messages"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
       post_message: {
         Args: { p_body: string; p_conversation: string }
@@ -2253,6 +2729,18 @@ export type Database = {
           p_user: string
         }
         Returns: string
+      }
+      recompute_project_progress: {
+        Args: { p_project: string }
+        Returns: number
+      }
+      record_customer_decision: {
+        Args: { p_decision: string; p_note?: string; p_option: string }
+        Returns: {
+          already_decided: boolean
+          decision_id: string
+          option_key: string
+        }[]
       }
       record_domain_event: {
         Args: {

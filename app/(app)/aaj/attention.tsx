@@ -16,6 +16,8 @@ import type { NeedsYou } from "@/lib/tasks/counters";
 import { foldGroups } from "@/lib/tasks/fold";
 import { getEnabledModules } from "@/lib/modules/queries";
 import { crmAttention } from "@/lib/crm/queries";
+import { customerAttention } from "@/lib/projects/customer";
+import { getPlatform } from "@/lib/i18n/platform";
 import { getCrm } from "@/lib/i18n/crm";
 import { cn } from "@/lib/utils";
 import { DecideAction, TaskAction } from "./attention-actions";
@@ -29,7 +31,7 @@ const TILE: Record<Tone, string> = {
   quiet: "bg-surface-muted text-fg-muted",
 };
 
-type GroupKey = "late" | "escalated" | "unseen" | "verify" | "approvals" | "leave" | "followups" | "leads" | "chats";
+type GroupKey = "late" | "escalated" | "unseen" | "verify" | "approvals" | "leave" | "followups" | "leads" | "customers" | "decisions" | "chats";
 
 /**
  * The one answer to "what needs me?" (V3 IA). Decisions and exceptions from
@@ -68,14 +70,16 @@ export async function AttentionList({
   const now = new Date(nowIso);
 
   const modules = await getEnabledModules(orgId);
-  const [approvals, leave, conversations, members, crm] = await Promise.all([
+  const [approvals, leave, conversations, members, crm, customers] = await Promise.all([
     listApprovals(orgId),
     manages ? getPendingLeave(orgId) : Promise.resolve([]),
     listConversations(orgId, userId),
     getOrgMembers(orgId),
     modules.has("crm") ? crmAttention(orgId, userId, manages, now) : Promise.resolve(null),
+    modules.has("customer_experience") && manages ? customerAttention(orgId) : Promise.resolve(null),
   ]);
   const c = getCrm(locale);
+  const pl = getPlatform(locale).today;
   const nameOf = new Map(members.map((m) => [m.userId, m.name]));
   const phoneOf = new Map(members.map((m) => [m.userId, m.phone]));
   const decisions = waitingOn(approvals, userId, manages);
@@ -255,6 +259,33 @@ export async function AttentionList({
     });
   }
 
+  // Customers: a message nobody has answered, and a question they have been
+  // sitting on for two days.
+  for (const m of customers?.unreadMessages ?? []) {
+    rows.push({
+      key: `cmsg-${m.projectId}`,
+      group: "customers",
+      tone: "neel",
+      icon: <MessageSquare />,
+      href: `/projects/${m.projectId}#customer`,
+      title: m.projectName,
+      meta: pl.customerMessages(m.count),
+      action: <Link href={`/projects/${m.projectId}#customer`} className={buttonVariants({ size: "sm", variant: "secondary", className: "h-tap" })}>{c.today.open}</Link>,
+    });
+  }
+  for (const dec of (customers?.openDecisions ?? []).filter((x) => now.getTime() - Date.parse(x.createdAt) > 48 * 3600 * 1000)) {
+    rows.push({
+      key: `cdec-${dec.id}`,
+      group: "decisions",
+      tone: "amber",
+      icon: <CalendarClock />,
+      href: `/projects/${dec.projectId}#decisions`,
+      title: dec.title,
+      meta: `${dec.projectName} · ${formatDuration(now.getTime() - Date.parse(dec.createdAt), t.time)}`,
+      action: <Link href={`/projects/${dec.projectId}#decisions`} className={buttonVariants({ size: "sm", variant: "secondary", className: "h-tap" })}>{c.today.open}</Link>,
+    });
+  }
+
   if (unread.length > 0) {
     rows.push({
       key: "chats",
@@ -279,6 +310,8 @@ export async function AttentionList({
     leave: { label: d.v3.leaveLabel, href: "/hazri#leave-requests" },
     followups: { label: c.today.followUps, href: "/crm?f=followUp" },
     leads: { label: c.today.unassigned, href: "/crm?f=unassigned" },
+    customers: { label: pl.customerMessages(customers?.unreadTotal ?? 0), href: "/projects" },
+    decisions: { label: pl.decisionsOpen(customers?.openTotal ?? 0), href: "/projects" },
     chats: { label: p.nav.conversations, href: "/baat" },
   };
   // Short days list everything; busy days fold each group to three with an

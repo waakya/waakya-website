@@ -138,7 +138,13 @@ export type OrgViewer = Viewer & { org: ViewerOrg };
 /** Use where an org is required — task screens, the dashboard, invites. */
 export async function requireOrg(): Promise<OrgViewer> {
   const viewer = await requireViewer();
-  if (!viewer.org) redirect("/setup");
+  if (!viewer.org) {
+    // A customer with no business of their own belongs on their project
+    // page, not on the business setup screen.
+    const supabase = await createClient();
+    const { data } = await supabase.rpc("my_customer_access");
+    redirect(data?.length ? "/portal" : "/setup");
+  }
   return viewer as OrgViewer;
 }
 
