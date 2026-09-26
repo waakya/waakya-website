@@ -11,6 +11,8 @@ import { Label } from "@/components/ui/label";
 import { getCrm } from "@/lib/i18n/crm";
 import type { Locale } from "@/lib/i18n";
 import { archiveContact, assignContact, convertToCustomer, createTaskForContact, logActivity, setFollowUp } from "@/lib/crm/actions";
+import { setContactOptOut } from "@/lib/campaigns/actions";
+import { getCampaigns } from "@/lib/i18n/campaigns";
 import { ACTIVITY_KINDS, type LoggableActivity } from "@/lib/crm/model";
 
 const SELECT = "h-tap w-full rounded-button border-2 border-paper-200 bg-paper-0 px-3 text-body outline-none focus:border-neel-600";
@@ -34,7 +36,7 @@ export function ContactActions({
   presetLabels,
 }: {
   locale: Locale;
-  contact: { id: string; kind: "lead" | "customer"; ownerId: string | null; archived: boolean; nextActionAt: string | null; nextActionNote: string | null; fullName: string };
+  contact: { id: string; kind: "lead" | "customer"; ownerId: string | null; archived: boolean; nextActionAt: string | null; nextActionNote: string | null; fullName: string; emailOptOut?: boolean; whatsappOptOut?: boolean };
   people: { id: string; name: string }[];
   selfId: string;
   canAssign: boolean;
@@ -53,6 +55,11 @@ export function ContactActions({
   const [preset, setPreset] = React.useState<"one_hour" | "today_evening" | "tomorrow_morning">("today_evening");
   const [followAt, setFollowAt] = React.useState(contact.nextActionAt ? toLocalInput(contact.nextActionAt) : "");
   const [followNote, setFollowNote] = React.useState(contact.nextActionNote ?? "");
+  // Consent ticks answer at once and fall back if the server says no.
+  const [emailOptOut, setEmailOptOut] = React.useState(!!contact.emailOptOut);
+  const [whatsappOptOut, setWhatsappOptOut] = React.useState(!!contact.whatsappOptOut);
+  React.useEffect(() => setEmailOptOut(!!contact.emailOptOut), [contact.emailOptOut]);
+  React.useEffect(() => setWhatsappOptOut(!!contact.whatsappOptOut), [contact.whatsappOptOut]);
 
   const run = (fn: () => Promise<{ ok: boolean; message?: string }>, after?: () => void) =>
     startTransition(async () => {
@@ -177,6 +184,45 @@ export function ContactActions({
           <UserCheck aria-hidden="true" />
           {t.actions.convert}
         </Button>
+      ) : null}
+
+      {canWrite ? (
+        <div className="flex flex-col gap-1 rounded-inner bg-paper-50 p-3 text-body-sm text-fg">
+          <label className="flex min-h-9 items-center gap-2">
+            <input
+              type="checkbox"
+              checked={emailOptOut}
+              disabled={pending}
+              onChange={(e) => {
+                const next = e.target.checked;
+                setEmailOptOut(next);
+                run(async () => {
+                  const result = await setContactOptOut({ contactId: contact.id, channel: "email", optOut: next });
+                  if (!result.ok) setEmailOptOut(!next);
+                  return result;
+                });
+              }}
+            />
+            {getCampaigns(locale).optOut.email}
+          </label>
+          <label className="flex min-h-9 items-center gap-2">
+            <input
+              type="checkbox"
+              checked={whatsappOptOut}
+              disabled={pending}
+              onChange={(e) => {
+                const next = e.target.checked;
+                setWhatsappOptOut(next);
+                run(async () => {
+                  const result = await setContactOptOut({ contactId: contact.id, channel: "whatsapp", optOut: next });
+                  if (!result.ok) setWhatsappOptOut(!next);
+                  return result;
+                });
+              }}
+            />
+            {getCampaigns(locale).optOut.whatsapp}
+          </label>
+        </div>
       ) : null}
 
       {canAssign ? (

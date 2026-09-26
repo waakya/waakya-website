@@ -296,6 +296,148 @@ export type Database = {
           },
         ]
       }
+      campaign_recipients: {
+        Row: {
+          address: string | null
+          campaign_id: string
+          contact_id: string
+          created_at: string
+          delivered_at: string | null
+          error: string | null
+          id: string
+          org_id: string
+          provider: string | null
+          provider_message_id: string | null
+          replied_at: string | null
+          sent_at: string | null
+          status: string
+        }
+        Insert: {
+          address?: string | null
+          campaign_id: string
+          contact_id: string
+          created_at?: string
+          delivered_at?: string | null
+          error?: string | null
+          id?: string
+          org_id: string
+          provider?: string | null
+          provider_message_id?: string | null
+          replied_at?: string | null
+          sent_at?: string | null
+          status?: string
+        }
+        Update: {
+          address?: string | null
+          campaign_id?: string
+          contact_id?: string
+          created_at?: string
+          delivered_at?: string | null
+          error?: string | null
+          id?: string
+          org_id?: string
+          provider?: string | null
+          provider_message_id?: string | null
+          replied_at?: string | null
+          sent_at?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campaign_recipients_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "campaign_recipients_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "crm_contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "campaign_recipients_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "orgs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      campaigns: {
+        Row: {
+          body: string | null
+          channel: string
+          counts: Json
+          created_at: string
+          created_by: string | null
+          finished_at: string | null
+          id: string
+          name: string
+          org_id: string
+          scheduled_at: string | null
+          segment: Json
+          started_at: string | null
+          status: string
+          subject: string | null
+          template_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          body?: string | null
+          channel: string
+          counts?: Json
+          created_at?: string
+          created_by?: string | null
+          finished_at?: string | null
+          id?: string
+          name: string
+          org_id: string
+          scheduled_at?: string | null
+          segment?: Json
+          started_at?: string | null
+          status?: string
+          subject?: string | null
+          template_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          body?: string | null
+          channel?: string
+          counts?: Json
+          created_at?: string
+          created_by?: string | null
+          finished_at?: string | null
+          id?: string
+          name?: string
+          org_id?: string
+          scheduled_at?: string | null
+          segment?: Json
+          started_at?: string | null
+          status?: string
+          subject?: string | null
+          template_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campaigns_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "orgs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "campaigns_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "message_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       checklist_items: {
         Row: {
           checklist_id: string
@@ -512,6 +654,13 @@ export type Database = {
           task_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "crm_activities_campaign_fk"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "crm_activities_contact_id_fkey"
             columns: ["contact_id"]
@@ -1306,6 +1455,70 @@ export type Database = {
           },
         ]
       }
+      inbound_messages: {
+        Row: {
+          body: string | null
+          campaign_id: string | null
+          channel: string
+          contact_id: string | null
+          from_address: string
+          id: string
+          org_id: string
+          provider: string
+          provider_message_id: string
+          raw: Json
+          received_at: string
+        }
+        Insert: {
+          body?: string | null
+          campaign_id?: string | null
+          channel: string
+          contact_id?: string | null
+          from_address: string
+          id?: string
+          org_id: string
+          provider: string
+          provider_message_id: string
+          raw?: Json
+          received_at?: string
+        }
+        Update: {
+          body?: string | null
+          campaign_id?: string | null
+          channel?: string
+          contact_id?: string | null
+          from_address?: string
+          id?: string
+          org_id?: string
+          provider?: string
+          provider_message_id?: string
+          raw?: Json
+          received_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inbound_messages_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inbound_messages_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "crm_contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inbound_messages_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "orgs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       integration_keys: {
         Row: {
           created_at: string
@@ -1728,6 +1941,62 @@ export type Database = {
             columns: ["task_id"]
             isOneToOne: false
             referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      organization_domains: {
+        Row: {
+          activated_at: string | null
+          created_at: string
+          created_by: string | null
+          hostname: string
+          id: string
+          kind: string
+          last_checked_at: string | null
+          last_error: string | null
+          org_id: string
+          removed_at: string | null
+          status: string
+          verification_token: string
+          verified_at: string | null
+        }
+        Insert: {
+          activated_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          hostname: string
+          id?: string
+          kind?: string
+          last_checked_at?: string | null
+          last_error?: string | null
+          org_id: string
+          removed_at?: string | null
+          status?: string
+          verification_token: string
+          verified_at?: string | null
+        }
+        Update: {
+          activated_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          hostname?: string
+          id?: string
+          kind?: string
+          last_checked_at?: string | null
+          last_error?: string | null
+          org_id?: string
+          removed_at?: string | null
+          status?: string
+          verification_token?: string
+          verified_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_domains_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "orgs"
             referencedColumns: ["id"]
           },
         ]
@@ -3321,6 +3590,14 @@ export type Database = {
           isOneToOne: true
           isSetofReturn: false
         }
+      }
+      resolve_portal_host: {
+        Args: { p_host: string }
+        Returns: {
+          org_id: string
+          org_name: string
+          status: string
+        }[]
       }
       resolve_request_notifications: {
         Args: { p_outcome: string; p_prefix: string }

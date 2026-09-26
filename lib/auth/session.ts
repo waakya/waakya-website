@@ -71,16 +71,25 @@ export const getViewer = cache(async (): Promise<Viewer | null> => {
     email: typeof claims.email === "string" ? claims.email : null,
   };
 
-  const [{ data: profile }, { data: membershipRows, error: membershipError }, cookieStore] = await Promise.all([
-    supabase.from("profiles").select("full_name").eq("id", user.id).maybeSingle(),
+  const loadMemberships = () =>
     supabase
       .from("memberships")
       .select("role, org_id, created_at, orgs(id, name, language, ack_minutes, quiet_start, quiet_end)")
       .eq("user_id", user.id)
       .order("created_at", { ascending: true })
-      .limit(20),
+      .limit(20);
+  const [{ data: profile }, first, cookieStore] = await Promise.all([
+    supabase.from("profiles").select("full_name").eq("id", user.id).maybeSingle(),
+    loadMemberships(),
     cookies(),
   ]);
+  let { data: membershipRows, error: membershipError } = first;
+  // A token minted a moment ago can look "issued in the future" to a
+  // database whose clock is a second behind; one more try a second later.
+  if (membershipError?.message.includes("issued at future")) {
+    await new Promise((resolve) => setTimeout(resolve, 1100));
+    ({ data: membershipRows, error: membershipError } = await loadMemberships());
+  }
 
   // A failed lookup is an error, never "no business": treating it as empty
   // would send an owner to the setup screen whenever the database hiccups.

@@ -143,6 +143,8 @@ export default async function ContactPage({ params }: { params: Promise<{ id: st
               nextActionAt: contact.nextActionAt,
               nextActionNote: contact.nextActionNote,
               fullName: contact.fullName,
+              emailOptOut: contact.emailOptOut,
+              whatsappOptOut: contact.whatsappOptOut,
             }}
             people={people}
             selfId={viewer.userId}
