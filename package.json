@@ -12,7 +12,9 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "e2e": "playwright test",
-    "gate": "npm run lint && npm run typecheck && npm run build && npm run test && npm run e2e"
+    "gate": "npm run lint && npm run typecheck && npm run build && npm run test && npm run e2e",
+    "test:integration": "vitest run -c vitest.integration.config.mts",
+    "seed:platform": "jiti scripts/local/seed-platform.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1126.0",
