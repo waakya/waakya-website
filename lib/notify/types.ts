@@ -16,7 +16,19 @@ export type NotifyEvent =
   | "task_verified"
   | "reassigned"
   | "cancelled"
-  | "sent_back";
+  | "sent_back"
+  | "task_reply"
+  | "lead_assigned"
+  | "lead_followup"
+  | "customer_message"
+  | "customer_decision"
+  | "decision_requested"
+  | "vendor_submitted"
+  | "vendor_verified"
+  | "vendor_rejected"
+  | "record_status"
+  | "automation_failed"
+  | "campaign_reply";
 
 export interface NotifyMessage {
   orgId: string;
@@ -34,6 +46,8 @@ export interface NotifyMessage {
   subject?: string;
   /** A link into the app, if the message points at something. */
   url?: string | null;
+  /** The in-app target when it is not a task: a relative path such as /crm/… */
+  href?: string | null;
   /**
    * Makes a resend a no-op. The SLA job keys every reminder by task, kind and
    * window, so a retry after a partial failure cannot double-send.

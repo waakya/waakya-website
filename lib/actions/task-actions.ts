@@ -145,11 +145,12 @@ export async function addMessageAction(input: unknown): Promise<ActionResult> {
     await notifyWith(supabase, {
       orgId: task.org_id,
       userId: other,
-      event: "task_assigned",
+      event: "task_reply",
       taskId: task.id,
       locale,
       body,
-      subject: writeSubject(viewer.org.name, writeMessage("task_assigned", locale, {
+      dedupeKey: `${task.id}:task_reply:${new Date().toISOString()}`,
+      subject: writeSubject(viewer.org.name, writeMessage("task_reply", locale, {
         actor: viewer.fullName?.trim() || t.org.roles.member,
         task: task.title,
       })),

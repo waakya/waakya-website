@@ -15,10 +15,13 @@ import { cn } from "@/lib/utils";
  */
 export function BottomNav({
   locale,
+  modules,
 }: {
   locale: Locale;
   variant?: "owner" | "staff";
+  modules?: string[];
 }) {
+  const attendanceOn = !modules || modules.includes("attendance");
   const n = getPhase1(locale).nav;
   const ux = getUx(locale);
   const pathname = usePathname();
@@ -32,12 +35,12 @@ export function BottomNav({
     { href: "/aaj", label: n.today, icon: Home, also: [] as string[] },
     { href: "/baat", label: n.conversations, icon: MessageSquare, also: [] as string[] },
     { href: "/work", label: n.work, icon: SquareCheckBig, also: ["/kaam", "/naya", "/hafta", "/pehle"] },
-    { href: "/hazri", label: n.attendance, icon: CalendarCheck, also: [] as string[] },
+    ...(attendanceOn ? [{ href: "/hazri", label: n.attendance, icon: CalendarCheck, also: [] as string[] }] : []),
     {
       href: "/more",
       label: n.more,
       icon: LayoutGrid,
-      also: ["/projects", "/documents", "/approvals", "/staff", "/search", "/khabar", "/settings", "/checklists"],
+      also: ["/projects", "/documents", "/approvals", "/staff", "/search", "/khabar", "/settings", "/checklists", "/crm", "/records", "/vendors", "/campaigns", "/automations", ...(attendanceOn ? [] : ["/hazri"])],
     },
   ];
 

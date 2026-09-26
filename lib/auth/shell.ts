@@ -1,6 +1,7 @@
 import "server-only";
 
 import { canManage, type Viewer } from "@/lib/auth/session";
+import type { ModuleKey } from "@/lib/modules/catalog";
 import { getDictionary, type Locale } from "@/lib/i18n";
 import { getLocale } from "@/lib/i18n/server";
 import { getUnreadCount } from "@/lib/notify/inbox";
@@ -16,6 +17,8 @@ export async function shellFor(viewer: Viewer): Promise<{
   personName: string;
   roleLabel: string;
   unread: number;
+  modules: ReadonlySet<ModuleKey>;
+  memberships: Viewer["memberships"];
 }> {
   const [locale, unread] = await Promise.all([getLocale(), getUnreadCount()]);
   const t = getDictionary(locale);
@@ -26,5 +29,7 @@ export async function shellFor(viewer: Viewer): Promise<{
     personName: viewer.fullName ?? "—",
     roleLabel: viewer.role ? t.org.roles[viewer.role] : "",
     unread,
+    modules: viewer.modules,
+    memberships: viewer.memberships,
   };
 }

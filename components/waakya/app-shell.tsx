@@ -1,6 +1,7 @@
 import { SideNav } from "@/components/waakya/side-nav";
 import { BottomNav } from "@/components/waakya/bottom-nav";
 import type { Locale } from "@/lib/i18n";
+import type { ModuleKey } from "@/lib/modules/catalog";
 import { cn } from "@/lib/utils";
 
 /**
@@ -18,6 +19,7 @@ export function AppShell({
   personName,
   roleLabel,
   unread,
+  modules,
   children,
   /**
    * Screens that lay themselves out across the full width (the dashboard) opt
@@ -31,9 +33,13 @@ export function AppShell({
   personName: string;
   roleLabel: string;
   unread: number;
+  /** The capabilities switched on; navigation shows only those. */
+  modules?: ReadonlySet<ModuleKey>;
+  memberships?: unknown;
   children: React.ReactNode;
   wide?: boolean;
 }) {
+  const moduleList = modules ? [...modules] : undefined;
   return (
     <div className="flex min-h-dvh bg-paper-50">
       {/* The wrapper carries the Neel ground so the column stays coloured for
@@ -46,6 +52,7 @@ export function AppShell({
           personName={personName}
           roleLabel={roleLabel}
           unread={unread}
+          modules={moduleList}
         />
       </div>
 
@@ -60,7 +67,7 @@ export function AppShell({
         >
           {children}
         </div>
-        <BottomNav locale={locale} variant={variant} />
+        <BottomNav locale={locale} variant={variant} modules={moduleList} />
       </div>
     </div>
   );

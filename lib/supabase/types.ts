@@ -1,5 +1,5 @@
 // Generated from the live schema with the Supabase types generator.
-// Regenerate after every migration; never hand-edit to match code.
+// Regenerate with scripts/gen-types.sh after every migration; never hand-edit.
 export type Json =
   | string
   | number
@@ -9,10 +9,30 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instantiate createClient with right options
-  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
-  __InternalSupabase: {
-    PostgrestVersion: "14.5"
+  graphql_public: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      graphql: {
+        Args: {
+          extensions?: Json
+          operationName?: string
+          query?: string
+          variables?: Json
+        }
+        Returns: Json
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
   }
   public: {
     Tables: {
@@ -408,6 +428,65 @@ export type Database = {
           },
         ]
       }
+      domain_events: {
+        Row: {
+          actor_id: string | null
+          actor_kind: string
+          depth: number
+          entity_id: string | null
+          entity_type: string
+          event_type: string
+          id: string
+          idempotency_key: string | null
+          last_error: string | null
+          occurred_at: string
+          org_id: string
+          payload: Json
+          processed_at: string | null
+          processing_attempts: number
+        }
+        Insert: {
+          actor_id?: string | null
+          actor_kind?: string
+          depth?: number
+          entity_id?: string | null
+          entity_type: string
+          event_type: string
+          id?: string
+          idempotency_key?: string | null
+          last_error?: string | null
+          occurred_at?: string
+          org_id: string
+          payload?: Json
+          processed_at?: string | null
+          processing_attempts?: number
+        }
+        Update: {
+          actor_id?: string | null
+          actor_kind?: string
+          depth?: number
+          entity_id?: string | null
+          entity_type?: string
+          event_type?: string
+          id?: string
+          idempotency_key?: string | null
+          last_error?: string | null
+          occurred_at?: string
+          org_id?: string
+          payload?: Json
+          processed_at?: string | null
+          processing_attempts?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "domain_events_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "orgs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       escalations: {
         Row: {
           id: string
@@ -760,6 +839,53 @@ export type Database = {
           },
         ]
       }
+      organization_modules: {
+        Row: {
+          configuration: Json
+          created_at: string
+          disabled_at: string | null
+          enabled: boolean
+          enabled_at: string | null
+          enabled_by: string | null
+          id: string
+          module_key: string
+          org_id: string
+          updated_at: string
+        }
+        Insert: {
+          configuration?: Json
+          created_at?: string
+          disabled_at?: string | null
+          enabled?: boolean
+          enabled_at?: string | null
+          enabled_by?: string | null
+          id?: string
+          module_key: string
+          org_id: string
+          updated_at?: string
+        }
+        Update: {
+          configuration?: Json
+          created_at?: string
+          disabled_at?: string | null
+          enabled?: boolean
+          enabled_at?: string | null
+          enabled_by?: string | null
+          id?: string
+          module_key?: string
+          org_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_modules_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "orgs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       orgs: {
         Row: {
           ack_minutes: number
@@ -1088,6 +1214,9 @@ export type Database = {
           due_at: string | null
           id: string
           org_id: string
+          origin_id: string | null
+          origin_kind: string
+          origin_label: string | null
           priority: Database["public"]["Enums"]["task_priority"]
           project_id: string | null
           proof_required: boolean
@@ -1114,6 +1243,9 @@ export type Database = {
           due_at?: string | null
           id?: string
           org_id: string
+          origin_id?: string | null
+          origin_kind?: string
+          origin_label?: string | null
           priority?: Database["public"]["Enums"]["task_priority"]
           project_id?: string | null
           proof_required?: boolean
@@ -1140,6 +1272,9 @@ export type Database = {
           due_at?: string | null
           id?: string
           org_id?: string
+          origin_id?: string | null
+          origin_kind?: string
+          origin_label?: string | null
           priority?: Database["public"]["Enums"]["task_priority"]
           project_id?: string | null
           proof_required?: boolean
@@ -1359,7 +1494,17 @@ export type Database = {
         Args: { p_conversation: string }
         Returns: undefined
       }
+      module_default_enabled: { Args: { p_key: string }; Returns: boolean }
+      module_is_core: { Args: { p_key: string }; Returns: boolean }
       org_member_email: { Args: { p_user: string }; Returns: string }
+      org_module_enabled: {
+        Args: { p_key: string; p_org: string }
+        Returns: boolean
+      }
+      org_role: {
+        Args: { p_org: string }
+        Returns: Database["public"]["Enums"]["member_role"]
+      }
       post_message: {
         Args: { p_body: string; p_conversation: string }
         Returns: {
@@ -1432,6 +1577,31 @@ export type Database = {
         }
         Returns: undefined
       }
+      push_user_notification: {
+        Args: {
+          p_body: string
+          p_dedupe?: string
+          p_event: string
+          p_href?: string
+          p_org: string
+          p_task?: string
+          p_user: string
+        }
+        Returns: string
+      }
+      record_domain_event: {
+        Args: {
+          p_actor_kind?: string
+          p_depth?: number
+          p_entity_id: string
+          p_entity_type: string
+          p_key?: string
+          p_org: string
+          p_payload?: Json
+          p_type: string
+        }
+        Returns: string
+      }
       record_otp_request: {
         Args: {
           p_identifier_hash: string
@@ -1474,6 +1644,37 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      resolve_request_notifications: {
+        Args: { p_outcome: string; p_prefix: string }
+        Returns: undefined
+      }
+      set_org_module: {
+        Args: {
+          p_configuration?: Json
+          p_enabled: boolean
+          p_key: string
+          p_org: string
+          p_requires?: string[]
+        }
+        Returns: {
+          configuration: Json
+          created_at: string
+          disabled_at: string | null
+          enabled: boolean
+          enabled_at: string | null
+          enabled_by: string | null
+          id: string
+          module_key: string
+          org_id: string
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "organization_modules"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       shares_org_with: { Args: { p_user: string }; Returns: boolean }
       start_direct_conversation: {
         Args: { p_org: string; p_other: string }
@@ -1494,6 +1695,13 @@ export type Database = {
         }
       }
       storage_org_id: { Args: { p_name: string }; Returns: string }
+      task_transition_allowed: {
+        Args: {
+          p_from: Database["public"]["Enums"]["task_state"]
+          p_to: Database["public"]["Enums"]["task_state"]
+        }
+        Returns: boolean
+      }
       update_business_profile: {
         Args: {
           p_address?: string
@@ -1684,6 +1892,9 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
   public: {
     Enums: {
       approval_status: ["pending", "approved", "rejected"],
@@ -1725,8 +1936,9 @@ export const Constants = {
   },
 } as const
 
+
 // Convenience aliases the application imports. Regenerating the file above
-// does not produce these, so they are restored after every regeneration.
+// does not produce these, so scripts/gen-types.sh restores them.
 export type TaskState = Enums<"task_state">;
 export type TaskPriority = Enums<"task_priority">;
 export type MemberRole = Enums<"member_role">;

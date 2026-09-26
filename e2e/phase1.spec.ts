@@ -162,6 +162,8 @@ test("a member cannot manage projects; an outsider sees nothing", async ({ page 
 
 for (const who of ["owner", "staff"] as const) {
   test(`every Phase 1 screen fits a 390px phone (${who})`, async ({ page }) => {
+    // Seventeen screens through a dev server on a small laptop.
+    test.setTimeout(600_000);
     await page.setViewportSize({ width: 390, height: 844 });
     await signInAs(page, who, "en");
     const paths = ["/aaj", "/baat", "/work", "/projects", "/documents", "/documents/templates", "/hazri", "/approvals", "/staff", "/search?q=a", "/settings", "/more", "/khabar"];

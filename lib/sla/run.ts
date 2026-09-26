@@ -89,10 +89,14 @@ export async function runSlaTick(
     summary.orgs += 1;
 
     // Today's routines first, so a checklist task created this minute is
-    // scanned by the same tick that made it.
-    const routines = await generateChecklistTasks(client, org.id, row.created_by, now);
-    summary.checklistTasksCreated += routines.created;
-    summary.errors.push(...routines.errors);
+    // scanned by the same tick that made it. A business that switched the
+    // routines off gets none.
+    const { data: routinesOn } = await client.rpc("org_module_enabled", { p_org: org.id, p_key: "checklists" });
+    if (routinesOn !== false) {
+      const routines = await generateChecklistTasks(client, org.id, row.created_by, now);
+      summary.checklistTasksCreated += routines.created;
+      summary.errors.push(...routines.errors);
+    }
 
     const { data: taskRows, error: taskError } = await client
       .from("tasks")

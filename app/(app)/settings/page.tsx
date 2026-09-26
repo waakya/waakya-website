@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { ListChecks, LogOut } from "lucide-react";
+import { History, ListChecks, LogOut, SlidersHorizontal } from "lucide-react";
 import Link from "next/link";
 
 import { requireViewer, canManage } from "@/lib/auth/session";
@@ -13,6 +13,9 @@ import { SettingsName } from "./settings-name";
 import { BusinessProfileForm } from "@/components/waakya/business-profile-form";
 import { createClient } from "@/lib/supabase/server";
 import { SignOutButton } from "./sign-out-button";
+import { OrgSwitcher } from "./org-switcher";
+import { getPlatform } from "@/lib/i18n/platform";
+import { viewerCan } from "@/lib/auth/session";
 
 export const metadata: Metadata = { title: "Settings" };
 
@@ -77,7 +80,35 @@ export default async function SettingsPage() {
           </section>
         ) : null}
 
-        {canManage(viewer.role) ? (
+        <OrgSwitcher locale={locale} current={viewer.org?.id ?? null} memberships={viewer.memberships} />
+
+        {viewer.org && (viewerCan(viewer, "modules.manage") || viewerCan(viewer, "audit.read")) ? (
+          <section className="mt-6">
+            <h2 className="mb-2 text-[13px] leading-[18px] font-semibold text-ink-700">
+              {getPlatform(locale).modules.title}
+            </h2>
+            <ul className="overflow-hidden rounded-card border border-paper-200 bg-paper-0 shadow-card">
+              {viewerCan(viewer, "modules.manage") ? (
+                <li className="border-b border-paper-100">
+                  <Link href="/settings/modules" className="flex min-h-tap items-center gap-3 p-4">
+                    <SlidersHorizontal className="size-5 text-neel-700" aria-hidden="true" />
+                    <span className="flex-1 text-[15px] font-semibold text-ink-900">{getPlatform(locale).modules.title}</span>
+                  </Link>
+                </li>
+              ) : null}
+              {viewerCan(viewer, "audit.read") ? (
+                <li>
+                  <Link href="/settings/history" className="flex min-h-tap items-center gap-3 p-4">
+                    <History className="size-5 text-neel-700" aria-hidden="true" />
+                    <span className="flex-1 text-[15px] font-semibold text-ink-900">{getPlatform(locale).audit.title}</span>
+                  </Link>
+                </li>
+              ) : null}
+            </ul>
+          </section>
+        ) : null}
+
+        {canManage(viewer.role) && viewer.modules.has("checklists") ? (
           <section className="mt-6">
             <h2 className="mb-2 text-[13px] leading-[18px] font-semibold text-ink-700">
               {t.checklists.title}

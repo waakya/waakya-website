@@ -89,7 +89,9 @@ test("finishing a task that needs a photo asks for one first", async ({
 
   // The owner sees the proof, and only then verifies.
   await page.goto("/aaj");
-  await onScreen(page.getByText(title)).click();
+  // Today may mention the task twice (the row and the "needs you" line); the
+  // row's own link is the exact title.
+  await onScreen(page.getByRole("link", { name: title, exact: true })).click();
   await expect(
     page.getByRole("heading", { name: "Proof", exact: true }),
   ).toBeVisible();

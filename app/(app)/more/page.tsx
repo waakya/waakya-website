@@ -21,14 +21,17 @@ export default async function MorePage() {
   // The phone bar has five slots. Templates, leave and holidays live inside
   // Documents and Attendance, so they get their own rows here too — nobody
   // should have to know which page hides them.
-  const primary = primaryNav(shell.locale, shell.variant).filter(
+  const primary = primaryNav(shell.locale, shell.variant, shell.modules).filter(
     (item) => !["/aaj", "/baat", "/work", "/hazri"].includes(item.href),
   );
   const documentsAt = primary.findIndex((item) => item.href === "/documents");
   primary.splice(documentsAt + 1, 0, { href: "/documents/templates", label: ux.nav.templates, icon: FilePlus2 });
   const groups = [
-    [...primary.slice(0, primary.length), { href: "/hazri#leave", label: ux.nav.leaveHolidays, icon: CalendarDays }],
-    utilityNav(shell.locale, shell.variant, shell.unread, t.nav.checklists),
+    [
+      ...primary.slice(0, primary.length),
+      ...(shell.modules.has("attendance") ? [{ href: "/hazri#leave", label: ux.nav.leaveHolidays, icon: CalendarDays }] : []),
+    ],
+    utilityNav(shell.locale, shell.variant, shell.unread, t.nav.checklists, shell.modules),
   ];
 
   return (

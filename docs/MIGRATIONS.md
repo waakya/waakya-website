@@ -1,0 +1,34 @@
+# Migrations — numbering and release procedure
+
+## Numbering
+
+| Range | Owner | State |
+|---|---|---|
+| 0001–0022 | Phase 1 | Applied to production (`krdmzjjmbrphzcuotfgz`); ledger verified 2026-09-26 |
+| 0023–0029 | Reserved: `feature/ai-voice-local` (frozen, local-only 0023–0025) | Never applied to production; never merge without renumbering |
+| 0030+ | Platform V1 (this branch) | 0030 foundation, 0031 CRM, … |
+
+Rules:
+- Four-digit sequential prefix, snake_case name, one concern per file.
+- Every file re-runnable where the objects allow it: `if not exists`, `drop … if exists` before `create policy`/`create trigger`, `create or replace function`, enum guards.
+- Every new function: `security definer set search_path = public, pg_temp`, then `revoke all … from public, anon` and an explicit grant. Supabase grants EXECUTE on new public functions to `anon` by default; 0030 closes that for Phase 1.
+- Every tenant table: `org_id`, RLS enabled, read/write policies that agree with the server action.
+- Regenerate `lib/supabase/types.ts` with `scripts/gen-types.sh` after every migration.
+
+## Verifying before production
+
+1. `npx supabase db reset` (clean database, every migration, the seed) — green.
+2. Upgrade path: dump the production schema (`supabase db dump --linked -s public`), load it into a scratch database, apply only the new files, compare with the clean result.
+3. `npx supabase migration list --project-ref krdmzjjmbrphzcuotfgz` shows exactly 0001–0022 before pushing.
+
+## Applying to production
+
+```
+export SUPABASE_ACCESS_TOKEN=…   # from ~/Desktop/waakya/.env.tokens, never echoed
+npx supabase db push --project-ref krdmzjjmbrphzcuotfgz --dry-run
+npx supabase db push --project-ref krdmzjjmbrphzcuotfgz
+```
+
+## Rollback
+
+Migrations are forward-only. Before pushing, take a backup (Supabase dashboard → Database → Backups, or `supabase db dump --linked`). The application release is rolled back by re-promoting the previous Vercel deployment; the new tables are additive and unused by the old build, so the schema can stay while the app is rolled back. Only 0030's policy tightening and the `notifications` insert policy removal touch Phase-1 paths; the old build's in-app channel insert would fail under the new policy, so if the app is rolled back the compensating SQL in `docs/ROLLBACK.md` restores that one policy.

@@ -3,8 +3,9 @@ import { FilePlus2 } from "lucide-react";
 
 import { createClient } from "@/lib/supabase/server";
 import { getPhase1 } from "@/lib/i18n/phase1";
-import { getUx } from "@/lib/i18n/ux";
 import type { Locale } from "@/lib/i18n";
+import { getPlatform } from "@/lib/i18n/platform";
+import { getUx } from "@/lib/i18n/ux";
 import { listTaskDocuments } from "@/lib/documents/queries";
 import { DocumentList } from "@/components/waakya/document-list";
 import { DocumentUploader } from "@/components/waakya/document-uploader";
@@ -33,7 +34,7 @@ export async function TaskContext({
   const supabase = await createClient();
   const [documents, { data: task }, { data: projects }] = await Promise.all([
     listTaskDocuments(orgId, taskId),
-    supabase.from("tasks").select("project_id").eq("id", taskId).maybeSingle(),
+    supabase.from("tasks").select("project_id, origin_kind, origin_id, origin_label").eq("id", taskId).maybeSingle(),
     manages
       ? supabase.from("projects").select("id, name").eq("org_id", orgId).order("updated_at", { ascending: false }).limit(100)
       : Promise.resolve({ data: [] as { id: string; name: string }[] }),
@@ -45,9 +46,21 @@ export async function TaskContext({
     projectName = data?.name ?? null;
   }
 
+  const origin = originLine(locale, task?.origin_kind ?? "manual", task?.origin_id ?? null, task?.origin_label ?? null);
+
   return (
     <section className="mx-auto w-full max-w-3xl min-w-0 px-4 pb-8" aria-label={p.documents.attached}>
       <div className="flex flex-col gap-4 rounded-card border border-paper-200 bg-paper-0 p-4">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-[13px] font-semibold text-ink-700">{origin.title}</span>
+          {origin.href ? (
+            <Link href={origin.href} className="text-[14px] font-semibold text-neel-700 underline-offset-2 hover:underline">
+              {origin.text}
+            </Link>
+          ) : (
+            <span className="text-[14px] text-ink-900">{origin.text}</span>
+          )}
+        </div>
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-[13px] font-semibold text-ink-700">{p.documents.linkedProject}</span>
           {manages ? (
@@ -80,4 +93,21 @@ export async function TaskContext({
       </div>
     </section>
   );
+}
+
+/**
+ * Where a task came from, in words: the origin kind is a record and the label
+ * is what the source called itself (a customer's name, a rule's name).
+ */
+function originLine(locale: Locale, kind: string, id: string | null, label: string | null) {
+  const o = getPlatform(locale).origin;
+  const word = (o as Record<string, string>)[kind] ?? o.manual;
+  const text = label ? `${word} · ${label}` : word;
+  const href =
+    kind === "crm" && id ? `/crm/${id}`
+    : kind === "automation" && id ? `/automations/${id}`
+    : kind === "vendor_action" && id ? `/vendors/assignments/${id}`
+    : kind === "customer_action" && id ? `/projects` // the decision lives on the project
+    : null;
+  return { title: o.title, text, href };
 }

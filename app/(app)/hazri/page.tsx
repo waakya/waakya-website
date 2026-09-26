@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { requireOrg, canManage } from "@/lib/auth/session";
+import { requireModule, canManage } from "@/lib/auth/session";
 import Link from "next/link";
 import { CalendarClock } from "lucide-react";
 
@@ -34,7 +34,7 @@ export const metadata: Metadata = { title: "Hazri" };
  * the team underneath, so nobody learns a second place to look.
  */
 export default async function HazriPage() {
-  const viewer = await requireOrg();
+  const viewer = await requireModule("attendance");
   const shell = await shellFor(viewer);
   const locale = shell.locale;
   const ux = getUx(locale);

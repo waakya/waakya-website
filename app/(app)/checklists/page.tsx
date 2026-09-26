@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { ListChecks } from "lucide-react";
 
-import { requireOrg, canManage } from "@/lib/auth/session";
+import { requireModule, canManage } from "@/lib/auth/session";
 import { getChecklists } from "@/lib/checklists/queries";
 import { getOrgMembers } from "@/lib/org/members";
 import { getDictionary } from "@/lib/i18n";
@@ -19,7 +19,7 @@ export const metadata: Metadata = { title: "Roz ka kaam" };
  * something to remember to use.
  */
 export default async function ChecklistsPage() {
-  const viewer = await requireOrg();
+  const viewer = await requireModule("checklists");
   if (!canManage(viewer.role)) redirect("/aaj");
 
   const locale = await getLocale();

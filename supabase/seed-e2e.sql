@@ -83,3 +83,47 @@ where u.email in ('owner@waakya.test', 'staff@waakya.test', 'noorg@waakya.test')
     select 1 from auth.identities i
     where i.user_id = u.id and i.provider = 'email'
   );
+
+-- The fixture business the local suite signs into: "Waakya Test Co" with
+-- Rakesh as owner and Raju as staff. Production carries the same fixture, so
+-- a fresh local database starts where the suite expects it to.
+do $$
+declare
+  v_owner uuid;
+  v_staff uuid;
+  v_org   uuid;
+begin
+  select id into v_owner from auth.users where email = 'owner@waakya.test';
+  select id into v_staff from auth.users where email = 'staff@waakya.test';
+  if v_owner is null or v_staff is null then return; end if;
+
+  select o.id into v_org from orgs o
+   join memberships m on m.org_id = o.id and m.user_id = v_owner and m.role = 'owner'
+   where o.name = 'Waakya Test Co' limit 1;
+  if v_org is null then
+    insert into orgs (name, language, created_by) values ('Waakya Test Co', 'hi-Latn', v_owner)
+    returning id into v_org;
+    insert into memberships (org_id, user_id, role) values (v_org, v_owner, 'owner');
+  end if;
+  insert into memberships (org_id, user_id, role) values (v_org, v_staff, 'member')
+  on conflict (org_id, user_id) do nothing;
+end $$;
+
+-- Two fixture tasks the dashboard suite expects to find: one late and unseen
+-- (an exception chip for each), written as the owner, backdated. Re-runnable.
+do $$
+declare
+  v_owner uuid;
+  v_staff uuid;
+  v_org   uuid;
+begin
+  select id into v_owner from auth.users where email = 'owner@waakya.test';
+  select id into v_staff from auth.users where email = 'staff@waakya.test';
+  select o.id into v_org from orgs o where o.name = 'Waakya Test Co' and o.created_by = v_owner limit 1;
+  if v_org is null then return; end if;
+  if not exists (select 1 from tasks t where t.org_id = v_org and t.title = 'Fixture: dukaan ka shutter theek karwao') then
+    insert into tasks (org_id, title, created_by, assigned_to, state, priority, due_at, delivered_at, created_at)
+    values (v_org, 'Fixture: dukaan ka shutter theek karwao', v_owner, v_staff, 'delivered', 'high',
+            now() - interval '1 day', now() - interval '2 days', now() - interval '2 days');
+  end if;
+end $$;

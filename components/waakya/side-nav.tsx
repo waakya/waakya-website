@@ -7,6 +7,7 @@ import { Avatar } from "@/components/ui/avatar";
 import { Wordmark } from "@/components/waakya/wordmark";
 import { getDictionary, type Locale } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
+import type { ModuleKey } from "@/lib/modules/catalog";
 import { isActive, primaryNav, utilityNav, type NavItem } from "./nav-items";
 
 /**
@@ -20,6 +21,7 @@ export function SideNav({
   personName,
   roleLabel,
   unread,
+  modules,
 }: {
   locale: Locale;
   variant: "owner" | "staff";
@@ -27,11 +29,13 @@ export function SideNav({
   personName: string;
   roleLabel: string;
   unread: number;
+  modules?: ReadonlySet<ModuleKey> | ModuleKey[];
 }) {
+  const on = modules ? new Set(modules) : undefined;
   const t = getDictionary(locale);
   const pathname = usePathname();
-  const primary = primaryNav(locale, variant);
-  const utilities = utilityNav(locale, variant, unread, t.nav.checklists);
+  const primary = primaryNav(locale, variant, on);
+  const utilities = utilityNav(locale, variant, unread, t.nav.checklists, on);
 
   const row = (item: NavItem) => {
     const active = isActive(pathname, item);

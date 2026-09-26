@@ -48,6 +48,9 @@ test("an owner creates a business, invites staff, and the staff member joins", a
     await page.getByRole("radio", { name: "Hinglish" }).first().click();
     await page.getByLabel("Business ka naam").fill("Waakya Test Co");
     await page.getByRole("button", { name: "Business banao" }).click();
+    // Step 2 asks for the business details; the fixture skips them.
+    await expect(page).toHaveURL(/\/setup\/profile$/);
+    await page.getByRole("button", { name: "Abhi rehne dein" }).click();
     await expect(page).toHaveURL(/\/staff$/);
   }
 

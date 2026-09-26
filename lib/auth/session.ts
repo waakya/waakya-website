@@ -1,33 +1,63 @@
 import "server-only";
 
 import { cache } from "react";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { toLocale, type Locale } from "@/lib/i18n";
 import type { MemberRole } from "@/lib/supabase/types";
+import { resolveEnabledModules, type ModuleKey } from "@/lib/modules/catalog";
+import { can, type Capability } from "@/lib/permissions";
+
+/** The cookie that names the business a person with several is working in. */
+export const ACTIVE_ORG_COOKIE = "waakya_org";
+
+export interface ViewerOrg {
+  id: string;
+  name: string;
+  language: Locale;
+  ackMinutes: number;
+  /** "21:00" / "08:00" in Asia/Kolkata: no reminders in between. */
+  quietStart: string;
+  quietEnd: string;
+}
 
 export interface Viewer {
   userId: string;
   email: string | null;
   fullName: string | null;
   /** null until the user creates or joins an org. */
-  org: {
-    id: string;
-    name: string;
-    language: Locale;
-    ackMinutes: number;
-    /** "21:00" / "08:00" in Asia/Kolkata: no reminders in between. */
-    quietStart: string;
-    quietEnd: string;
-  } | null;
+  org: ViewerOrg | null;
   role: MemberRole | null;
+  /** The capabilities switched on for the active business. */
+  modules: Set<ModuleKey>;
+  /** Every business this person belongs to, oldest first. */
+  memberships: { orgId: string; orgName: string; role: MemberRole }[];
 }
 
+type MembershipRow = {
+  role: MemberRole;
+  org_id: string;
+  created_at: string;
+  orgs: {
+    id: string;
+    name: string;
+    language: string;
+    ack_minutes: number;
+    quiet_start: string;
+    quiet_end: string;
+  } | null;
+};
+
 /**
- * The signed-in user plus their org, resolved once per request.
+ * The signed-in user plus their active org, resolved once per request.
  *
  * `cache` dedupes it across the layout, the page and any server action in the
  * same render, so a screen costs one round trip rather than five.
+ *
+ * A person in several businesses works in the one named by the
+ * `waakya_org` cookie; without a cookie, or with one that names a business
+ * they are not in, the oldest membership wins, as it always did.
  */
 export const getViewer = cache(async (): Promise<Viewer | null> => {
   const supabase = await createClient();
@@ -41,18 +71,25 @@ export const getViewer = cache(async (): Promise<Viewer | null> => {
     email: typeof claims.email === "string" ? claims.email : null,
   };
 
-  const [{ data: profile }, { data: membership }] = await Promise.all([
+  const [{ data: profile }, { data: membershipRows }, cookieStore] = await Promise.all([
     supabase.from("profiles").select("full_name").eq("id", user.id).maybeSingle(),
     supabase
       .from("memberships")
-      .select("role, org_id, orgs(id, name, language, ack_minutes, quiet_start, quiet_end)")
+      .select("role, org_id, created_at, orgs(id, name, language, ack_minutes, quiet_start, quiet_end)")
       .eq("user_id", user.id)
       .order("created_at", { ascending: true })
-      .limit(1)
-      .maybeSingle(),
+      .limit(20),
+    cookies(),
   ]);
 
+  const rows = (membershipRows ?? []) as MembershipRow[];
+  const wanted = cookieStore.get(ACTIVE_ORG_COOKIE)?.value;
+  const membership = rows.find((row) => row.org_id === wanted) ?? rows[0] ?? null;
   const org = membership?.orgs ?? null;
+
+  const { data: moduleRows } = org
+    ? await supabase.from("organization_modules").select("module_key, enabled").eq("org_id", org.id)
+    : { data: [] };
 
   return {
     userId: user.id,
@@ -69,6 +106,10 @@ export const getViewer = cache(async (): Promise<Viewer | null> => {
         }
       : null,
     role: membership?.role ?? null,
+    modules: resolveEnabledModules(moduleRows ?? []),
+    memberships: rows
+      .filter((row) => row.orgs)
+      .map((row) => ({ orgId: row.org_id, orgName: row.orgs!.name, role: row.role })),
   };
 });
 
@@ -79,14 +120,36 @@ export async function requireViewer(): Promise<Viewer> {
   return viewer;
 }
 
+export type OrgViewer = Viewer & { org: ViewerOrg };
+
 /** Use where an org is required — task screens, the dashboard, invites. */
-export async function requireOrg(): Promise<Viewer & { org: NonNullable<Viewer["org"]> }> {
+export async function requireOrg(): Promise<OrgViewer> {
   const viewer = await requireViewer();
   if (!viewer.org) redirect("/setup");
-  return viewer as Viewer & { org: NonNullable<Viewer["org"]> };
+  return viewer as OrgViewer;
+}
+
+/**
+ * Use at the top of a module's screens: a switched-off capability is not a
+ * blank page, it is Today.
+ */
+export async function requireModule(key: ModuleKey): Promise<OrgViewer> {
+  const viewer = await requireOrg();
+  if (!viewer.modules.has(key)) redirect("/aaj");
+  return viewer;
+}
+
+/** True when the active business has the capability switched on. */
+export function hasModule(viewer: Pick<Viewer, "modules">, key: ModuleKey): boolean {
+  return viewer.modules.has(key);
 }
 
 /** Owner and admin can verify, reassign and cancel; manager can too. */
 export function canManage(role: MemberRole | null): boolean {
   return role === "owner" || role === "admin" || role === "manager";
+}
+
+/** The permission matrix, applied to this viewer. */
+export function viewerCan(viewer: Pick<Viewer, "role">, capability: Capability): boolean {
+  return can(viewer.role, capability);
 }
