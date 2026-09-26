@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { AlertTriangle, ArrowRight, CalendarClock, Clock, Eye, EyeOff, MessageSquare, Phone, ShieldCheck } from "lucide-react";
+import { AlertTriangle, ArrowRight, CalendarClock, Clock, Contact, Eye, EyeOff, MessageSquare, Phone, ShieldCheck, UserX } from "lucide-react";
 
 import { buttonVariants } from "@/components/ui/button";
 
@@ -14,6 +14,9 @@ import { formatDuration } from "@/lib/tasks/sla";
 import { formatIndianDate } from "@/lib/tasks/format-date";
 import type { NeedsYou } from "@/lib/tasks/counters";
 import { foldGroups } from "@/lib/tasks/fold";
+import { getEnabledModules } from "@/lib/modules/queries";
+import { crmAttention } from "@/lib/crm/queries";
+import { getCrm } from "@/lib/i18n/crm";
 import { cn } from "@/lib/utils";
 import { DecideAction, TaskAction } from "./attention-actions";
 
@@ -26,7 +29,7 @@ const TILE: Record<Tone, string> = {
   quiet: "bg-surface-muted text-fg-muted",
 };
 
-type GroupKey = "late" | "escalated" | "unseen" | "verify" | "approvals" | "leave" | "chats";
+type GroupKey = "late" | "escalated" | "unseen" | "verify" | "approvals" | "leave" | "followups" | "leads" | "chats";
 
 /**
  * The one answer to "what needs me?" (V3 IA). Decisions and exceptions from
@@ -64,12 +67,15 @@ export async function AttentionList({
   const p = getPhase1(locale);
   const now = new Date(nowIso);
 
-  const [approvals, leave, conversations, members] = await Promise.all([
+  const modules = await getEnabledModules(orgId);
+  const [approvals, leave, conversations, members, crm] = await Promise.all([
     listApprovals(orgId),
     manages ? getPendingLeave(orgId) : Promise.resolve([]),
     listConversations(orgId, userId),
     getOrgMembers(orgId),
+    modules.has("crm") ? crmAttention(orgId, userId, manages, now) : Promise.resolve(null),
   ]);
+  const c = getCrm(locale);
   const nameOf = new Map(members.map((m) => [m.userId, m.name]));
   const phoneOf = new Map(members.map((m) => [m.userId, m.phone]));
   const decisions = waitingOn(approvals, userId, manages);
@@ -215,6 +221,40 @@ export async function AttentionList({
     });
   }
 
+  // Customers: a follow-up that is due is a promise about to be broken; a
+  // lead with nobody's name on it is a customer nobody is talking to.
+  for (const contact of crm?.followUps ?? []) {
+    rows.push({
+      key: `followup-${contact.id}`,
+      group: "followups",
+      tone: contact.followUp === "overdue" ? "laal" : "amber",
+      icon: <CalendarClock />,
+      href: `/crm/${contact.id}`,
+      title: contact.fullName,
+      meta: [contact.nextActionNote, contact.followUp === "overdue" ? c.followUp.overdue : c.followUp.due, contact.ownerName].filter(Boolean).join(" · "),
+      action: contact.phone ? (
+        <a href={`tel:${contact.phone}`} className={buttonVariants({ size: "sm", variant: "secondary", className: "h-tap" })}>
+          <Phone aria-hidden="true" />
+          {c.today.call}
+        </a>
+      ) : (
+        <Link href={`/crm/${contact.id}`} className={buttonVariants({ size: "sm", variant: "secondary", className: "h-tap" })}>{c.today.open}</Link>
+      ),
+    });
+  }
+  for (const contact of crm?.unassigned ?? []) {
+    rows.push({
+      key: `lead-${contact.id}`,
+      group: "leads",
+      tone: "amber",
+      icon: <UserX />,
+      href: `/crm/${contact.id}`,
+      title: contact.fullName,
+      meta: [c.kind.lead, contact.source ? (c.sources[contact.source as keyof typeof c.sources] ?? contact.source) : null, contact.companyName].filter(Boolean).join(" · "),
+      action: <Link href={`/crm/${contact.id}`} className={buttonVariants({ size: "sm", variant: "secondary", className: "h-tap" })}><Contact aria-hidden="true" />{c.actions.assign}</Link>,
+    });
+  }
+
   if (unread.length > 0) {
     rows.push({
       key: "chats",
@@ -237,13 +277,25 @@ export async function AttentionList({
     verify: { label: t.chips.verifyBaaki, href: "/work?need=verify" },
     approvals: { label: p.nav.approvals, href: "/approvals" },
     leave: { label: d.v3.leaveLabel, href: "/hazri#leave-requests" },
+    followups: { label: c.today.followUps, href: "/crm?f=followUp" },
+    leads: { label: c.today.unassigned, href: "/crm?f=unassigned" },
     chats: { label: p.nav.conversations, href: "/baat" },
   };
   // Short days list everything; busy days fold each group to three with an
   // exact link to the rest (lib/tasks/fold.ts, unit-tested).
+  // Customer groups are fetched five at a time with an exact count, so the
+  // number shown is the true one, not the size of the sample.
   const groups = foldGroups(rows, (row) => row.group).map((group) => ({
     ...group,
-    count: group.key === "chats" ? unread.length : group.total,
+    count:
+      group.key === "chats" ? unread.length
+      : group.key === "followups" ? Math.max(group.total, crm?.followUpCount ?? 0)
+      : group.key === "leads" ? Math.max(group.total, crm?.unassignedCount ?? 0)
+      : group.total,
+    rest:
+      group.key === "followups" ? Math.max(group.rest, (crm?.followUpCount ?? 0) - group.shown.length)
+      : group.key === "leads" ? Math.max(group.rest, (crm?.unassignedCount ?? 0) - group.shown.length)
+      : group.rest,
   }));
   // The heading counts what the summary counts (a chat row stands for all
   // unread chats), so the two numbers always agree.

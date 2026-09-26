@@ -45,7 +45,7 @@ export function describeEvent(
     case "lead.created": return { text: L.leadCreated(title, s("source")), href: entityId ? `/crm/${entityId}` : "/crm" };
     case "contact.assigned": return { text: L.contactAssigned(title, person("owner_id")), href: entityId ? `/crm/${entityId}` : "/crm" };
     case "contact.converted": return { text: L.contactConverted(title), href: entityId ? `/crm/${entityId}` : "/crm" };
-    case "opportunity.stage_changed": return { text: L.stageChanged(title, s("from_stage"), s("to_stage")), href: typeof payload.contact_id === "string" ? `/crm/${payload.contact_id}` : "/crm" };
+    case "opportunity.stage_changed": return { text: L.stageChanged(s("contact_name") || title, s("from_stage"), s("to_stage")), href: typeof payload.contact_id === "string" ? `/crm/${payload.contact_id}` : "/crm" };
     case "record.created": return { text: L.recordCreated(title, s("type_name")), href: recordHref(payload, entityId) };
     case "record.status_changed": return { text: L.recordStatus(title, s("from"), s("to")), href: recordHref(payload, entityId) };
     case "record.updated": return { text: L.recordUpdated(title), href: recordHref(payload, entityId) };

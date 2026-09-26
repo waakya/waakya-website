@@ -34,6 +34,29 @@ export const newTaskSchema = z
     ]),
     /** Overrides the org's acknowledge SLA for this one task. */
     ackMinutes: z.number().int().min(1).max(24 * 60).optional(),
+    /**
+     * Why this task exists. The kind is a fixed vocabulary; the id points at
+     * the source row and the label is what the source called itself, so the
+     * task can say "From a customer · Meera Joshi" without a join.
+     */
+    origin: z
+      .object({
+        kind: z.enum(["manual", "conversation", "checklist", "crm", "project", "approval", "automation", "customer_action", "vendor_action", "integration"]),
+        id: z.string().uuid().optional(),
+        label: z.string().trim().max(140).optional(),
+      })
+      .optional(),
+    /** What the task is attached to across the business. */
+    links: z
+      .object({
+        projectId: z.string().uuid().optional(),
+        contactId: z.string().uuid().optional(),
+        opportunityId: z.string().uuid().optional(),
+        recordId: z.string().uuid().optional(),
+        vendorAssignmentId: z.string().uuid().optional(),
+        blockedByDecisionId: z.string().uuid().optional(),
+      })
+      .optional(),
   })
   .strict();
 
@@ -88,6 +111,12 @@ export async function createTask(
       ack_minutes: task.ackMinutes ?? null,
       due_at: dueAt.toISOString(),
       delivered_at: now.toISOString(),
+      origin_kind: task.origin?.kind ?? "manual",
+      origin_id: task.origin?.id ?? null,
+      origin_label: task.origin?.label ?? null,
+      project_id: task.links?.projectId ?? null,
+      contact_id: task.links?.contactId ?? null,
+      opportunity_id: task.links?.opportunityId ?? null,
     })
     .select("id")
     .single();

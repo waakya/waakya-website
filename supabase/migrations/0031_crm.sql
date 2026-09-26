@@ -306,22 +306,22 @@ create trigger trg_guard_crm_opportunity_update before update on crm_opportuniti
 create or replace function events_on_crm_contact() returns trigger as $$
 declare
   actor uuid := auth.uid();
-  kind text := case when actor is null then 'system' else 'user' end;
+  v_kind text := case when actor is null then 'system' else 'user' end;
 begin
   if tg_op = 'INSERT' then
     insert into domain_events (org_id, event_type, entity_type, entity_id, actor_kind, actor_id, payload)
-    values (new.org_id, case when new.kind = 'lead' then 'lead.created' else 'contact.updated' end, 'contact', new.id, kind, coalesce(actor, new.created_by),
+    values (new.org_id, case when new.kind = 'lead' then 'lead.created' else 'contact.updated' end, 'contact', new.id, v_kind, coalesce(actor, new.created_by),
       jsonb_build_object('title', new.full_name, 'source', new.source, 'owner_id', new.owner_id, 'kind', new.kind, 'phone', new.phone_e164, 'email', new.email, 'project_id', new.project_id, 'tags', to_jsonb(new.tags)));
     insert into crm_activities (org_id, contact_id, kind, body, actor_kind, actor_id)
-    values (new.org_id, new.id, 'created', new.source, kind, coalesce(actor, new.created_by));
+    values (new.org_id, new.id, 'created', new.source, v_kind, coalesce(actor, new.created_by));
     return new;
   end if;
   if new.owner_id is distinct from old.owner_id then
     insert into domain_events (org_id, event_type, entity_type, entity_id, actor_kind, actor_id, payload)
-    values (new.org_id, 'contact.assigned', 'contact', new.id, kind, actor,
+    values (new.org_id, 'contact.assigned', 'contact', new.id, v_kind, actor,
       jsonb_build_object('title', new.full_name, 'from', old.owner_id, 'owner_id', new.owner_id, 'kind', new.kind));
     insert into crm_activities (org_id, contact_id, kind, actor_kind, actor_id, metadata)
-    values (new.org_id, new.id, 'assignment', kind, actor, jsonb_build_object('from', old.owner_id, 'to', new.owner_id));
+    values (new.org_id, new.id, 'assignment', v_kind, actor, jsonb_build_object('from', old.owner_id, 'to', new.owner_id));
     if new.owner_id is not null and new.owner_id is distinct from actor then
       perform push_notification(new.org_id, new.owner_id, 'lead_assigned',
         coalesce(display_name(actor), 'Someone') || ' → ' || new.full_name,
@@ -330,9 +330,9 @@ begin
   end if;
   if new.kind = 'customer' and old.kind = 'lead' then
     insert into domain_events (org_id, event_type, entity_type, entity_id, actor_kind, actor_id, payload)
-    values (new.org_id, 'contact.converted', 'contact', new.id, kind, actor, jsonb_build_object('title', new.full_name, 'owner_id', new.owner_id));
+    values (new.org_id, 'contact.converted', 'contact', new.id, v_kind, actor, jsonb_build_object('title', new.full_name, 'owner_id', new.owner_id));
     insert into crm_activities (org_id, contact_id, kind, actor_kind, actor_id)
-    values (new.org_id, new.id, 'converted', kind, actor);
+    values (new.org_id, new.id, 'converted', v_kind, actor);
   end if;
   return new;
 end $$ language plpgsql security definer set search_path = public, pg_temp;
@@ -345,7 +345,7 @@ create trigger trg_events_crm_contact after insert or update on crm_contacts
 create or replace function events_on_crm_opportunity() returns trigger as $$
 declare
   actor uuid := auth.uid();
-  kind text := case when actor is null then 'system' else 'user' end;
+  v_kind text := case when actor is null then 'system' else 'user' end;
   from_stage text;
   to_stage text;
   contact_name text;
@@ -354,7 +354,7 @@ begin
   if tg_op = 'INSERT' then
     select s.name into to_stage from crm_pipeline_stages s where s.id = new.stage_id;
     insert into domain_events (org_id, event_type, entity_type, entity_id, actor_kind, actor_id, payload)
-    values (new.org_id, 'opportunity.created', 'opportunity', new.id, kind, coalesce(actor, new.created_by),
+    values (new.org_id, 'opportunity.created', 'opportunity', new.id, v_kind, coalesce(actor, new.created_by),
       jsonb_build_object('title', new.title, 'contact_id', new.contact_id, 'contact_name', contact_name, 'stage', to_stage, 'value', new.value, 'owner_id', new.owner_id));
     update crm_contacts set last_activity_at = now() where id = new.contact_id;
     return new;
@@ -363,14 +363,14 @@ begin
     select s.name into from_stage from crm_pipeline_stages s where s.id = old.stage_id;
     select s.name into to_stage   from crm_pipeline_stages s where s.id = new.stage_id;
     insert into domain_events (org_id, event_type, entity_type, entity_id, actor_kind, actor_id, payload)
-    values (new.org_id, 'opportunity.stage_changed', 'opportunity', new.id, kind, actor,
+    values (new.org_id, 'opportunity.stage_changed', 'opportunity', new.id, v_kind, actor,
       jsonb_build_object('title', new.title, 'contact_id', new.contact_id, 'contact_name', contact_name,
                          'from_stage', from_stage, 'to_stage', to_stage, 'status', new.status, 'value', new.value, 'owner_id', new.owner_id));
     insert into crm_activities (org_id, contact_id, opportunity_id, kind, body, actor_kind, actor_id, metadata)
-    values (new.org_id, new.contact_id, new.id, 'stage_change', from_stage || ' → ' || to_stage, kind, actor,
+    values (new.org_id, new.contact_id, new.id, 'stage_change', from_stage || ' → ' || to_stage, v_kind, actor,
       jsonb_build_object('from', from_stage, 'to', to_stage, 'status', new.status));
     update crm_contacts set last_activity_at = now(),
-      kind = case when new.status = 'won' then 'customer' else kind end
+      kind = case when new.status = 'won' then 'customer' else crm_contacts.kind end
      where id = new.contact_id;
   end if;
   return new;
@@ -451,9 +451,9 @@ declare
   pipeline uuid;
   first_stage uuid;
   dup boolean := false;
-  phone text := nullif(btrim(coalesce(p_phone, '')), '');
-  email text := nullif(lower(btrim(coalesce(p_email, ''))), '');
-  name text := btrim(coalesce(p_full_name, ''));
+  v_phone text := nullif(btrim(coalesce(p_phone, '')), '');
+  v_email text := nullif(lower(btrim(coalesce(p_email, ''))), '');
+  v_name text := btrim(coalesce(p_full_name, ''));
 begin
   if actor is not null and not is_org_member(p_org) then
     raise exception 'not a member of this business' using errcode = '42501';
@@ -461,11 +461,11 @@ begin
   if not org_module_enabled(p_org, 'crm') then
     raise exception 'the CRM is not switched on for this business' using errcode = '42501';
   end if;
-  if phone is null and email is null then
+  if v_phone is null and v_email is null then
     raise exception 'a phone number or an email is needed' using errcode = '22023';
   end if;
-  if length(name) < 1 then
-    name := coalesce(phone, email);
+  if length(v_name) < 1 then
+    v_name := coalesce(v_phone, v_email);
   end if;
 
   -- A retried request answers the same way it did the first time.
@@ -483,26 +483,26 @@ begin
   -- person cannot both create a contact.
   perform 1 from orgs o where o.id = p_org for update;
 
-  if phone is not null then
-    select * into existing from crm_contacts c where c.org_id = p_org and c.phone_e164 = phone and c.archived_at is null;
+  if v_phone is not null then
+    select * into existing from crm_contacts c where c.org_id = p_org and c.phone_e164 = v_phone and c.archived_at is null;
   end if;
-  if existing.id is null and email is not null then
-    select * into existing from crm_contacts c where c.org_id = p_org and c.email = email and c.archived_at is null;
+  if existing.id is null and v_email is not null then
+    select * into existing from crm_contacts c where c.org_id = p_org and c.email = v_email and c.archived_at is null;
   end if;
 
   if existing.id is not null then
     contact := existing.id;
     dup := true;
-    update crm_contacts set
-      email = coalesce(crm_contacts.email, email),
-      phone_e164 = coalesce(crm_contacts.phone_e164, phone),
-      source = coalesce(crm_contacts.source, p_source),
-      metadata = crm_contacts.metadata || coalesce(p_metadata, '{}'::jsonb),
+    update crm_contacts c set
+      email = coalesce(c.email, v_email),
+      phone_e164 = coalesce(c.phone_e164, v_phone),
+      source = coalesce(c.source, p_source),
+      metadata = c.metadata || coalesce(p_metadata, '{}'::jsonb),
       last_activity_at = now()
-     where id = contact;
+     where c.id = contact;
   else
     insert into crm_contacts (org_id, kind, full_name, phone_e164, email, source, owner_id, metadata, created_by)
-    values (p_org, 'lead', left(name, 120), phone, email, p_source, p_owner, coalesce(p_metadata, '{}'::jsonb), actor)
+    values (p_org, 'lead', left(v_name, 120), v_phone, v_email, p_source, p_owner, coalesce(p_metadata, '{}'::jsonb), actor)
     returning id into contact;
   end if;
 
@@ -522,7 +522,7 @@ begin
   if kind = 'integration' then
     insert into domain_events (org_id, event_type, entity_type, entity_id, actor_kind, actor_id, payload, idempotency_key)
     values (p_org, 'integration.lead_received', 'contact', contact, 'integration', null,
-      jsonb_build_object('title', name, 'source', p_source, 'contact_id', contact, 'opportunity_id', opp, 'deduplicated', dup, 'interest', p_interest),
+      jsonb_build_object('title', v_name, 'source', p_source, 'contact_id', contact, 'opportunity_id', opp, 'deduplicated', dup, 'interest', p_interest),
       p_idempotency)
     on conflict (idempotency_key) where idempotency_key is not null do nothing;
   end if;
