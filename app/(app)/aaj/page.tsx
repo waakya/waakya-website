@@ -8,7 +8,8 @@ import { getOrgMembers } from "@/lib/org/members";
 import { getTodayChecklists } from "@/lib/checklists/queries";
 import { getDictionary } from "@/lib/i18n";
 import { getLocale } from "@/lib/i18n/server";
-import { countDay, justSentFirst, needsYou, waitingOnTeam } from "@/lib/tasks/counters";
+import { countDay, countersFromDb, justSentFirst, needsYou, waitingOnTeam } from "@/lib/tasks/counters";
+import { createClient } from "@/lib/supabase/server";
 import { groupBySection } from "@/lib/tasks/sections";
 import { isLate } from "@/lib/tasks/present";
 import { AppShell } from "@/components/waakya/app-shell";
@@ -37,15 +38,18 @@ export default async function AajPage() {
   const now = new Date();
 
   if (canManage(viewer.role)) {
-    const [tasks, unread, members, myToday, teamAttendance] = await Promise.all([
+    const supabase = await createClient();
+    const [tasks, unread, members, myToday, teamAttendance, exact] = await Promise.all([
       getOrgTasks(viewer.org.id, viewer.org.ackMinutes),
       getUnreadCount(),
       getOrgMembers(viewer.org.id),
       getMyToday(viewer.org.id, viewer.userId),
       getTeamToday(viewer.org.id),
+      supabase.rpc("org_task_counts", { p_org: viewer.org.id }),
     ]);
 
-    const counters = countDay(tasks, now);
+    // Exact from the database; the list is only the fallback.
+    const counters = countersFromDb(Array.isArray(exact.data) ? exact.data[0] : null, countDay(tasks, now));
     const attention = needsYou(tasks, now);
     const groups = groupBySection(tasks, now);
 

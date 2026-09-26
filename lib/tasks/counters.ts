@@ -123,3 +123,23 @@ export function justSentFirst(tasks: TaskListItem[], userId: string, now: Date, 
   const newestFirst = tasks.filter(fresh).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
   return [...newestFirst, ...tasks.filter((task) => !fresh(task))];
 }
+
+/**
+ * The header's numbers from the database, exact whatever the size of the
+ * business; the list-based count remains the fallback when the call fails.
+ */
+export function countersFromDb(
+  row: { sent_today: number; seen_today: number; done_today: number; verified_today: number; late: number; unseen: number } | null | undefined,
+  fallback: DayCounters,
+): DayCounters {
+  if (!row) return fallback;
+  return {
+    bheje: row.sent_today,
+    dekhe: row.seen_today,
+    hoGaye: row.done_today,
+    verified: row.verified_today,
+    late: row.late,
+    dekhaNahi: row.unseen,
+    completionRate: row.sent_today > 0 ? Math.round((row.verified_today / row.sent_today) * 100) : null,
+  };
+}

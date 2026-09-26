@@ -3420,6 +3420,19 @@ export type Database = {
         Args: { p_org: string }
         Returns: Database["public"]["Enums"]["member_role"]
       }
+      org_task_counts: {
+        Args: { p_org: string }
+        Returns: {
+          done_today: number
+          late: number
+          open_total: number
+          seen_today: number
+          sent_today: number
+          unseen: number
+          verified_today: number
+          waiting_verify: number
+        }[]
+      }
       post_customer_message: {
         Args: { p_body: string; p_project: string }
         Returns: {

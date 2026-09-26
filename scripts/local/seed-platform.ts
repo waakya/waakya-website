@@ -76,6 +76,7 @@ async function upsertUser(email: string, name: string, language: string): Promis
     await must("update user", db.auth.admin.updateUserById(id, { password: PASSWORD, email_confirm: true }));
   } else {
     const created = await must("create user", db.auth.admin.createUser({ email, password: PASSWORD, email_confirm: true, user_metadata: { full_name: name } }));
+    if (!created.user) throw new Error("create user returned no user");
     id = created.user.id;
   }
   await must("profile", db.from("profiles").upsert({ id, full_name: name, language, phone: null }));

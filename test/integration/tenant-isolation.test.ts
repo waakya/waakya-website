@@ -87,7 +87,7 @@ describe("reads never cross the tenant boundary", () => {
 describe("writes are refused across the boundary and above one's role", () => {
   it("cannot insert into another business's CRM, records, vendors, campaigns or rules", async () => {
     const uid = (await omega.owner.auth.getUser()).data.user!.id;
-    const attempts: Promise<{ error: unknown }>[] = [
+    const attempts: PromiseLike<{ error: unknown }>[] = [
       omega.owner.from("crm_contacts").insert({ org_id: shelter.id, full_name: "Intruder", phone_e164: "+919999999999", created_by: uid }),
       omega.owner.from("records").insert({ org_id: shelter.id, record_type_id: (await admin.from("record_types").select("id").eq("org_id", shelter.id).single()).data!.id, title: "Intruder", created_by: uid }),
       omega.owner.from("vendors").insert({ org_id: shelter.id, name: "Intruder", created_by: uid }),
