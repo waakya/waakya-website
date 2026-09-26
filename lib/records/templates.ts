@@ -53,7 +53,7 @@ export const RECORD_TEMPLATES: Record<string, RecordTemplate> = {
     fields: [
       f("tower", "Tower / Block", "text"),
       f("unit_number", "Unit number", "text", { required: true }),
-      f("unit_type", "Type", "select", { options: { choices: [{ key: "1bhk", label: "1 BHK" }, { key: "2bhk", label: "2 BHK" }, { key: "3bhk", label: "3 BHK" }, { key: "4bhk", label: "4 BHK" }, { key: "plot", label: "Plot" }, { key: "shop", label: "Shop" }, { key: "office", label: "Office" }] } }),
+      f("unit_type", "Type", "select", { options: { choices: [{ key: "bhk_1", label: "1 BHK" }, { key: "bhk_2", label: "2 BHK" }, { key: "bhk_3", label: "3 BHK" }, { key: "bhk_4", label: "4 BHK" }, { key: "plot", label: "Plot" }, { key: "shop", label: "Shop" }, { key: "office", label: "Office" }] } }),
       f("floor", "Floor", "number"),
       f("area_sqft", "Area", "number", { unit: "sq ft", options: { min: 0 } }),
       f("facing", "Facing", "select", { options: { choices: [{ key: "east", label: "East" }, { key: "west", label: "West" }, { key: "north", label: "North" }, { key: "south", label: "South" }] }, showInList: false }),

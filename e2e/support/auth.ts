@@ -9,6 +9,8 @@ export const TEST_USERS = {
   staff: { email: "staff@waakya.test", password: "waakya-e2e-staff-pass", name: "Raju" },
   /** Never joins an org, so the "no business yet" path stays testable. */
   noorg: { email: "noorg@waakya.test", password: "waakya-e2e-noorg-pass", name: "Naya Owner" },
+  /** The customer principal: outside the business, given a door to one project. */
+  customer: { email: "customer@waakya.test", password: "waakya-e2e-customer-pass", name: "Sterling Group" },
 } as const;
 
 export type TestUserKey = keyof typeof TEST_USERS;

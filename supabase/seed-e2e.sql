@@ -17,7 +17,10 @@ begin
       ('staff@waakya.test', 'waakya-e2e-staff-pass'),
       -- Never joins an org, so the "no business yet" path stays testable
       -- however many times the suite has run before.
-      ('noorg@waakya.test', 'waakya-e2e-noorg-pass')
+      ('noorg@waakya.test', 'waakya-e2e-noorg-pass'),
+      -- The customer principal: a person outside the business who is given a
+      -- door to one project. Kept apart from noorg so an outsider stays one.
+      ('customer@waakya.test', 'waakya-e2e-customer-pass')
     ) as t(email, password)
   loop
     if exists (select 1 from auth.users u where u.email = seed.email) then
@@ -49,10 +52,11 @@ select u.id,
        case u.email
          when 'owner@waakya.test' then 'Rakesh'
          when 'staff@waakya.test' then 'Raju'
+         when 'customer@waakya.test' then 'Sterling Group'
          else 'Naya Owner'
        end
 from auth.users u
-where u.email in ('owner@waakya.test', 'staff@waakya.test', 'noorg@waakya.test')
+where u.email in ('owner@waakya.test', 'staff@waakya.test', 'noorg@waakya.test', 'customer@waakya.test')
 on conflict (id) do update set full_name = excluded.full_name;
 
 -- GoTrue scans these varchar columns into Go strings, so NULL makes every
@@ -67,7 +71,7 @@ update auth.users
        phone_change               = coalesce(phone_change, ''),
        phone_change_token         = coalesce(phone_change_token, ''),
        reauthentication_token     = coalesce(reauthentication_token, '')
- where email in ('owner@waakya.test', 'staff@waakya.test', 'noorg@waakya.test');
+ where email in ('owner@waakya.test', 'staff@waakya.test', 'noorg@waakya.test', 'customer@waakya.test');
 
 -- Password sign-in needs an identity row for the email provider.
 insert into auth.identities (
@@ -78,7 +82,7 @@ select u.id::text, u.id,
                           'email_verified', true, 'phone_verified', false),
        'email', now(), now(), now()
 from auth.users u
-where u.email in ('owner@waakya.test', 'staff@waakya.test', 'noorg@waakya.test')
+where u.email in ('owner@waakya.test', 'staff@waakya.test', 'noorg@waakya.test', 'customer@waakya.test')
   and not exists (
     select 1 from auth.identities i
     where i.user_id = u.id and i.provider = 'email'

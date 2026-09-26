@@ -78,7 +78,9 @@ test("a new enquiry is one record however often it is typed in", async ({ page }
 
 test("the owner hands the customer to Raju, who logs a call and moves the deal", async ({ page, browser }) => {
   await signInAs(page, "owner");
-  await page.goto("/crm?f=unassigned");
+  // Found by search rather than the "no owner" filter: a rule left on by the
+  // automation suite may already have given a website enquiry an owner.
+  await page.goto(`/crm?q=${phone.slice(2, 8)}`);
   await page.getByRole("link", { name, exact: true }).click();
   await page.getByLabel("Kiske paas").selectOption({ label: "Raju" });
   await expect(page.getByText("Raju", { exact: true }).filter({ visible: true }).first()).toBeVisible();
@@ -149,6 +151,15 @@ test("an outsider sees no customers, and cannot write one into the business", as
 test("switched off, the CRM is Today and the data stays", async ({ page }) => {
   await signInAs(page, "owner");
   await page.goto("/settings/modules");
+  // Campaigns and website leads are built on the CRM, so they go first: the
+  // catalogue refuses to switch off something another module still needs.
+  for (const dependent of ["Campaigns", "Website leads"]) {
+    const dep = page.getByRole("switch", { name: dependent });
+    if ((await dep.count()) && (await dep.getAttribute("aria-checked")) === "true") {
+      await dep.click();
+      await expect(dep).toHaveAttribute("aria-checked", "false");
+    }
+  }
   const toggle = page.getByRole("switch", { name: "Customers (CRM)" });
   await toggle.click();
   await expect(toggle).toHaveAttribute("aria-checked", "false");

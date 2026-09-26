@@ -133,11 +133,11 @@ async function buildTenant(key: keyof typeof TENANTS) {
   if (key === "omega") {
     const project = await must("project", db.from("projects").insert({ org_id: orgId, name: "Omega Heights · Tower A", status: "active", created_by: owner.id! }).select("id").single());
     const units = [
-      ["101", "3bhk", 1, 1420, 8500000, "available"],
-      ["102", "3bhk", 1, 1420, 8600000, "held"],
+      ["101", "bhk_3", 1, 1420, 8500000, "available"],
+      ["102", "bhk_3", 1, 1420, 8600000, "held"],
       ["103", "4bhk", 1, 1860, 11200000, "sold"],
-      ["201", "2bhk", 2, 1040, 6200000, "available"],
-      ["202", "2bhk", 2, 1040, 6200000, "booked"],
+      ["201", "bhk_2", 2, 1040, 6200000, "available"],
+      ["202", "bhk_2", 2, 1040, 6200000, "booked"],
     ] as const;
     await must(
       "units",

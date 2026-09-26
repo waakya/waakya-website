@@ -49,7 +49,7 @@ test("a unit is created with typed fields and listed with its status", async ({ 
   await page.getByRole("button", { name: /^Naya: Property unit/ }).click();
   await page.getByLabel("Property unit").fill(unit);
   await page.getByLabel(/^Unit number/).fill(unit);
-  await page.getByLabel(/^Type/).selectOption("3bhk");
+  await page.getByLabel(/^Type/).selectOption("bhk_3");
   await page.getByLabel(/^Area/).fill("1420");
   await page.getByLabel(/^Price/).fill("8500000");
   await page.getByRole("button", { name: "Save karein" }).click();
@@ -126,11 +126,11 @@ test("the owner adds a field to the type and the form grows", async ({ page }) =
   await page.goto("/records/types?edit=property_unit");
   await page.getByRole("button", { name: "Field jodein" }).click();
   const labels = page.getByLabel("Field ka naam");
-  await labels.last().fill("Parking slots");
+  await labels.last().fill(`Parking slots ${String(run).slice(-4)}`);
   await labels.last().press("Tab");
   await page.getByLabel("Kis tarah ka").last().selectOption("number");
   await page.getByRole("button", { name: "Save karein" }).click();
   await expect(page).toHaveURL(/\/records\/property_unit$/);
   await page.getByRole("button", { name: /^Naya: Property unit/ }).click();
-  await expect(page.getByLabel(/^Parking slots/)).toBeVisible();
+  await expect(page.getByLabel(new RegExp(`^Parking slots ${String(run).slice(-4)}`))).toBeVisible();
 });

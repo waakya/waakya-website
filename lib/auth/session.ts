@@ -86,7 +86,7 @@ export const getViewer = cache(async (): Promise<Viewer | null> => {
   let { data: membershipRows, error: membershipError } = first;
   // A token minted a moment ago can look "issued in the future" to a
   // database whose clock is a second behind; one more try a second later.
-  if (membershipError?.message.includes("issued at future")) {
+  for (let attempt = 0; attempt < 3 && membershipError?.message.includes("issued at future"); attempt += 1) {
     await new Promise((resolve) => setTimeout(resolve, 1100));
     ({ data: membershipRows, error: membershipError } = await loadMemberships());
   }

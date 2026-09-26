@@ -43,7 +43,7 @@ test("the business turns the portal on, makes the project and its customer", asy
   await page.goto("/crm");
   await page.getByRole("button", { name: "New customer" }).click();
   await page.getByLabel("Name", { exact: true }).fill(customerName);
-  await page.getByLabel("Email", { exact: true }).fill(TEST_USERS.noorg.email);
+  await page.getByLabel("Email", { exact: true }).fill(TEST_USERS.customer.email);
   await page.getByRole("button", { name: "Save", exact: true }).click();
   await expect(page).toHaveURL(/\/crm\//);
   // The address is the identity: a second run lands on the same person.
@@ -102,7 +102,7 @@ test("the business asks the customer to choose, and the work waits", async ({ pa
 });
 
 test("the customer signs in with that address, sees only what was published, and chooses", async ({ page }) => {
-  await signInAs(page, "noorg", "en");
+  await signInAs(page, "customer", "en");
   await page.goto(inviteUrl);
   await page.getByRole("button", { name: "Open my project" }).click();
   await expect(page).toHaveURL(/\/portal/);
@@ -149,7 +149,7 @@ test("the choice reached the business: the work opened, Today and the history sa
   await page.getByRole("link", { name: `Shutter order ${run}` }).first().click();
   await expect(page.getByText("decision:Walnut")).toBeVisible();
   await page.goto("/aaj");
-  await expect(page.getByRole("link", { name: /customer messages unanswered/ })).toBeVisible();
+  await expect(page.getByRole("link", { name: /customer messages unanswered/ }).first()).toBeVisible();
   await page.goto("/settings/history");
   await expect(page.getByText("Customer chose Walnut (Laminate)").first()).toBeVisible();
   await expect(page.getByText(`Customer message · ${projectName}`).first()).toBeVisible();
@@ -157,7 +157,7 @@ test("the choice reached the business: the work opened, Today and the history sa
 
 test("deciding twice, or as an outsider, changes nothing", async () => {
   const customer = api();
-  await customer.auth.signInWithPassword({ email: TEST_USERS.noorg.email, password: TEST_USERS.noorg.password });
+  await customer.auth.signInWithPassword({ email: TEST_USERS.customer.email, password: TEST_USERS.customer.password });
   const { data: decisions } = await customer.from("customer_decisions").select("id, decided_option_key").eq("project_id", projectId);
   expect(decisions?.length).toBe(1);
   const { data: again } = await customer.rpc("record_customer_decision", { p_decision: decisions![0].id, p_option: "oak" });
@@ -184,7 +184,7 @@ test("revoking access closes the page, and the person is a visitor again", async
   await expect(page.getByRole("button", { name: "Give portal access" })).toBeVisible();
 
   await signOut(page);
-  await signInAs(page, "noorg");
+  await signInAs(page, "customer");
   await page.goto(`/portal/projects/${projectId}`);
   await expect(page).toHaveURL(/\/setup$/);
   await page.goto("/aaj");

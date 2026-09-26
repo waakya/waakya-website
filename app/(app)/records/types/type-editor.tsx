@@ -79,7 +79,19 @@ export function TypeEditor({ locale, initial, existing }: { locale: Locale; init
           unit: f.unit,
           options:
             f.fieldType === "select" || f.fieldType === "multi_select"
-              ? { choices: f.choices.split(",").map((c) => c.trim()).filter(Boolean).map((label) => ({ key: keyFromLabel(label), label })) }
+              ? {
+                  // A choice keeps the key it was saved with: records already
+                  // hold that key, and re-deriving it from the label would
+                  // silently orphan every one of them.
+                  choices: f.choices
+                    .split(",")
+                    .map((c) => c.trim())
+                    .filter(Boolean)
+                    .map((label) => ({
+                      key: initial?.fields.find((x) => x.key === f.key)?.options.choices?.find((c) => c.label === label)?.key ?? keyFromLabel(label),
+                      label,
+                    })),
+                }
               : {},
         })),
       });
