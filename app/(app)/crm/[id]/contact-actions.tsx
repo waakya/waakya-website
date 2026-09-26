@@ -58,8 +58,14 @@ export function ContactActions({
   // Consent ticks answer at once and fall back if the server says no.
   const [emailOptOut, setEmailOptOut] = React.useState(!!contact.emailOptOut);
   const [whatsappOptOut, setWhatsappOptOut] = React.useState(!!contact.whatsappOptOut);
-  React.useEffect(() => setEmailOptOut(!!contact.emailOptOut), [contact.emailOptOut]);
-  React.useEffect(() => setWhatsappOptOut(!!contact.whatsappOptOut), [contact.whatsappOptOut]);
+  // When the server's answer arrives, it wins (state adjusted during render,
+  // the React-sanctioned way to follow a prop).
+  const [seen, setSeen] = React.useState({ email: !!contact.emailOptOut, whatsapp: !!contact.whatsappOptOut });
+  if (seen.email !== !!contact.emailOptOut || seen.whatsapp !== !!contact.whatsappOptOut) {
+    setSeen({ email: !!contact.emailOptOut, whatsapp: !!contact.whatsappOptOut });
+    setEmailOptOut(!!contact.emailOptOut);
+    setWhatsappOptOut(!!contact.whatsappOptOut);
+  }
 
   const run = (fn: () => Promise<{ ok: boolean; message?: string }>, after?: () => void) =>
     startTransition(async () => {

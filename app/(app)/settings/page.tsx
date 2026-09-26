@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Globe, History, ListChecks, LogOut, SlidersHorizontal } from "lucide-react";
+import { Globe, History, Link2, ListChecks, LogOut, SlidersHorizontal } from "lucide-react";
 import Link from "next/link";
 
 import { requireViewer, canManage } from "@/lib/auth/session";
@@ -104,6 +104,14 @@ export default async function SettingsPage() {
                   <Link href="/settings/integrations" className="flex min-h-tap items-center gap-3 p-4 transition-colors duration-150 hover:bg-paper-50">
                     <Globe className="size-5 text-neel-700" aria-hidden="true" />
                     <span className="flex-1 text-body font-semibold text-ink-900">{getPlatform(locale).modules.names.website_integration}</span>
+                  </Link>
+                </li>
+              ) : null}
+              {viewerCan(viewer, "domains.manage") && viewer.modules.has("custom_domains") ? (
+                <li className="border-b border-line/70">
+                  <Link href="/settings/domains" className="flex min-h-tap items-center gap-3 p-4 transition-colors duration-150 hover:bg-paper-50">
+                    <Link2 className="size-5 text-neel-700" aria-hidden="true" />
+                    <span className="flex-1 text-body font-semibold text-ink-900">{getPlatform(locale).modules.names.custom_domains}</span>
                   </Link>
                 </li>
               ) : null}

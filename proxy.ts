@@ -7,6 +7,8 @@ import {
   devAuthDisabled,
   toDevRole,
 } from "@/lib/auth/dev-bypass";
+import { isPlatformHost } from "@/lib/domains/hostname";
+import { resolvePortalHost } from "@/lib/domains/resolve";
 
 /**
  * Renamed from `middleware` in Next 16. It runs before rendering and does one
@@ -17,6 +19,23 @@ import {
  * only exists in the proxy is one rewrite away from being bypassed.
  */
 export async function proxy(request: NextRequest) {
+  // A business's own hostname serves its customer portal and nothing else.
+  // The host is only trusted after the database says it is verified; the
+  // customer still signs in, and every read is theirs alone.
+  const host = request.headers.get("host");
+  if (host && !isPlatformHost(host, process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000")) {
+    const tenant = await resolvePortalHost(host);
+    if (!tenant) return new NextResponse("Not found", { status: 404 });
+    const path = request.nextUrl.pathname;
+    const allowed = path.startsWith("/portal") || path.startsWith("/login") || path.startsWith("/auth") || path.startsWith("/api/") || path.startsWith("/_next") || path.startsWith("/privacy");
+    if (!allowed) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/portal";
+      url.search = "";
+      return NextResponse.redirect(url);
+    }
+  }
+
   let response = NextResponse.next({ request });
 
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
