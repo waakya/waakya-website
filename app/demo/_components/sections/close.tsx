@@ -87,7 +87,7 @@ export function CloseSection(props: SectionProps) {
               WAAKYA
             </p>
             <p className="mt-2 text-[14px] leading-[1.5] text-[var(--d-dim)]">
-              The new era of business communication.
+              Your entire business. One workspace.
             </p>
 
             <ul className="mt-5 flex flex-col gap-2.5 border-t border-[var(--d-line)] pt-5">

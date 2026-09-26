@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { type Locale } from "@/lib/i18n";
@@ -50,18 +50,19 @@ export function NewProject({
     });
   }
 
-  if (!open) {
-    return (
-      <Button onClick={() => setOpen(true)}>
-        <Plus aria-hidden="true" />
-        {p.projects.newProject}
-      </Button>
-    );
-  }
-
   return (
-    <Card className="p-4">
-      <form onSubmit={submit} noValidate className="flex flex-col gap-3">
+    <Sheet open={open} onOpenChange={setOpen}>
+      <SheetTrigger
+        render={
+          <Button size="owner">
+            <Plus aria-hidden="true" />
+            {p.projects.newProject}
+          </Button>
+        }
+      />
+      <SheetContent aria-describedby={undefined}>
+        <SheetTitle>{p.projects.newProject}</SheetTitle>
+      <form onSubmit={submit} noValidate className="mt-4 flex flex-col gap-3">
         <div>
           <Label htmlFor="project-name">{p.projects.name}</Label>
           <Input id="project-name" className="mt-1" value={name} maxLength={120} onChange={(e) => setName(e.target.value)} />
@@ -128,6 +129,7 @@ export function NewProject({
           </Button>
         </div>
       </form>
-    </Card>
+      </SheetContent>
+    </Sheet>
   );
 }

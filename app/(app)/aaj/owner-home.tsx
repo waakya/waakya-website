@@ -106,7 +106,7 @@ export function OwnerHome({
                 {formatIndianDate(now, locale)} · {orgName}
               </p>
             </div>
-            <Link href={primary.href} className={buttonVariants({ className: "shadow-mic" })}>
+            <Link href={primary.href} className={buttonVariants()}>
               <primary.icon />
               {primary.label}
             </Link>

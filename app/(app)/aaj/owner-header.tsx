@@ -54,7 +54,9 @@ export function OwnerHeader({
       {/* The numbers are today's: after midnight they restart at zero, so
           the period is said, not left to guess (V3 critique). */}
       <p className="mt-3 text-label font-semibold text-white/70">{d.today.dayStrip}</p>
-      <div className="mt-1 flex items-end gap-4">
+      {/* Four numbers in a row; the two exceptions wrap under them on a narrow
+          phone instead of pushing past its edge. */}
+      <div className="mt-1 flex flex-col gap-3 sm:flex-row sm:items-end sm:gap-4">
         <dl className="flex flex-1 gap-4">
           <Counter label={t.lists.bheje} value={counters.bheje} />
           <Counter label={t.lists.dekhe} value={counters.dekhe} />
@@ -62,7 +64,7 @@ export function OwnerHeader({
           <Counter label={t.lists.verifiedCount} value={counters.verified} />
         </dl>
 
-        <div className="flex shrink-0 flex-col items-end gap-1.5">
+        <div className="flex flex-wrap gap-1.5 sm:shrink-0 sm:flex-col sm:items-end">
           {counters.late > 0 ? (
             <span className="num inline-flex items-center gap-1.5 rounded-chip bg-laal-600 px-2.5 py-1 text-label font-semibold text-white">
               <Clock className="size-3.5" aria-hidden="true" />

@@ -4,7 +4,7 @@ import { horizontalOverflow } from "./support/overflow";
 import { signOut } from "./support/auth";
 
 /**
- * The homepage as released: the V3.5 story with real doors. Signed-out
+ * The homepage: one business's story told on one grid, with real doors. Signed-out
  * visitors get the story; every call to action goes somewhere real; the page
  * composes at every width a customer is likely to hold, with nothing
  * reaching past the edge and nothing interactive too small for a finger.
@@ -35,11 +35,20 @@ test("the story is served signed out, with real doors", async ({ page }) => {
 
 test("the stories respond to the reader", async ({ page }) => {
   await page.goto("/");
-  // Picking a step in the loop pauses it and holds the picked step.
+  // Picking a line in the ledger pauses the loop and holds that line.
   const chain = page.locator(".w35-chain-card");
   await chain.nth(3).click();
   await expect(page.locator(".w35-chain-item").nth(3)).toHaveAttribute("data-now", "true");
   await expect(page.getByRole("button", { name: /Play the loop/ })).toBeVisible();
+
+  // Monday: the record is on the page before anything moves, and it fills.
+  const monday = page.locator(".w4-monday");
+  await monday.scrollIntoViewIfNeeded();
+  await expect(monday.getByText("Meera Joshi")).toBeVisible();
+  await expect(monday.getByText("nobody yet")).toBeVisible();
+  await page.getByRole("button", { name: /Bring it together/ }).click();
+  await expect(monday.getByText("Neha Singh")).toBeVisible();
+  await expect(monday.getByText("Website enquiry")).toBeVisible();
 
   // The laminate the customer picks is the one that flows through the business.
   const loop = page.locator(".w35-cx");
@@ -53,10 +62,12 @@ test("the stories respond to the reader", async ({ page }) => {
   await page.locator(".w35-dots").last().locator("button").nth(6).click();
   await expect(loop.getByText("Ordered · Oak")).toBeVisible();
   await expect(loop.getByText("Deccan gets the order · Oak, 12 units")).toBeVisible();
+  await expect(loop.getByText("Oak · approved by Sterling, 2:20 pm")).toBeVisible();
 
   // Switching business changes the workspace with it.
   await page.getByRole("button", { name: /Omega Builders/ }).click();
-  await expect(page.getByText("Omega Heights · Tower A")).toBeVisible();
+  await expect(page.getByText(/Omega Heights · Tower A/)).toBeVisible();
+  await expect(page.getByRole("navigation", { name: "Omega Builders" }).getByText("Properties")).toBeVisible();
 });
 
 for (const width of WIDTHS) {

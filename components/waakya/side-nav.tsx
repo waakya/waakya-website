@@ -87,14 +87,17 @@ export function SideNav({
 
   return (
     <nav aria-label={orgName || "Waakya"} className="sticky top-0 flex h-dvh flex-col overflow-y-auto p-4 text-white">
-      <Link href="/aaj" className="flex items-center gap-2 px-2 py-3">
+      {/* The nav scrolls when More is open; nothing above the list may be
+          squeezed to make room (a flex child with no minimum collapsed the
+          business name to 0 px on every screen inside More). */}
+      <Link href="/aaj" className="flex shrink-0 items-center gap-2 px-2 py-3">
         <Wordmark size={24} onNeel />
       </Link>
-      <p className="mt-1 truncate px-3 text-body font-bold" title={orgName}>{orgName}</p>
+      <p className="mt-1 shrink-0 truncate px-3 text-body font-bold" title={orgName}>{orgName}</p>
 
       <Link
         href="/search"
-        className="mt-4 flex min-h-10 items-center gap-2 rounded-button bg-white/10 px-3 text-body-sm text-white/65 transition-colors duration-150 hover:bg-white/15 hover:text-white"
+        className="mt-4 flex min-h-10 shrink-0 items-center gap-2 rounded-button bg-white/10 px-3 text-body-sm text-white/65 transition-colors duration-150 hover:bg-white/15 hover:text-white"
       >
         <Search className="size-4 shrink-0" aria-hidden="true" />
         <span className="flex-1 truncate">{d.v3.searchHint}</span>
@@ -119,7 +122,7 @@ export function SideNav({
         <ul className="flex flex-col gap-0.5">{more.tools.map((item) => row(item, true))}</ul>
       </details>
 
-      <div className="mt-auto flex items-center gap-3 rounded-card bg-white/10 p-3">
+      <div className="mt-auto flex shrink-0 items-center gap-3 rounded-card bg-white/10 p-3 pt-3">
         <Avatar name={personName} size={34} className="bg-white text-neel-700" />
         <div className="min-w-0">
           <p className="truncate text-body-sm leading-tight font-bold">{personName}</p>

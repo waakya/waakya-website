@@ -37,15 +37,22 @@ export default async function PortalProjectPage({ params }: { params: Promise<{ 
       <h1 className="text-title-lg font-bold text-fg">{project.name}</h1>
       {project.summary ? <p className="mt-1 text-body text-fg-muted">{project.summary}</p> : null}
 
-      <section className="mt-5 rounded-card border border-line bg-surface p-4 shadow-card" aria-label={t.progress(project.progress)}>
-        <p className="num flex items-baseline justify-between text-body font-bold text-fg">
-          <span>{t.progress(project.progress)}</span>
-          <span className="text-label font-semibold text-fg-subtle">{project.progress >= 100 ? t.allDone : t.onTrack}</span>
-        </p>
-        <div role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={project.progress} aria-label={t.progress(project.progress)} className="mt-2 h-2 overflow-hidden rounded-full bg-paper-200">
-          <div className="h-full rounded-full bg-neel-600" style={{ width: `${project.progress}%` }} />
+      {/* The one glance: how far along, in a number you can read from across
+          the room; then the latest thing, the next thing, and whether anything
+          waits on them — answered in words before any list begins. */}
+      <section className="mt-5 rounded-card border border-line bg-surface p-4 shadow-card sm:p-5" aria-label={t.progress(project.progress)}>
+        <div className="grid gap-4 sm:grid-cols-[auto_minmax(0,1fr)] sm:items-end sm:gap-6">
+          <p className="num flex items-baseline gap-2">
+            <span className="font-display text-[44px] leading-none font-extrabold text-fg">{project.progress}%</span>
+            <span className={project.progress >= 100 ? "text-label font-semibold text-hara-700" : "text-label font-semibold text-fg-subtle"}>
+              {project.progress >= 100 ? t.allDone : t.onTrack}
+            </span>
+          </p>
+          <div role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={project.progress} aria-label={t.progress(project.progress)} className="h-2 overflow-hidden rounded-full bg-paper-200 sm:mb-2">
+            <div className={project.progress >= 100 ? "h-full rounded-full bg-hara-600" : "h-full rounded-full bg-neel-600"} style={{ width: `${Math.max(project.progress, 1)}%` }} />
+          </div>
         </div>
-        <dl className="mt-4 grid gap-3 sm:grid-cols-2">
+        <dl className="mt-4 grid gap-3 border-t border-line pt-4 sm:grid-cols-2">
           <div>
             <dt className="text-caption font-semibold text-fg-subtle">{t.latestUpdate}</dt>
             <dd className="text-body text-fg">{project.latestUpdate ? project.latestUpdate.body : t.nothingYet}</dd>
@@ -57,13 +64,16 @@ export default async function PortalProjectPage({ params }: { params: Promise<{ 
             {project.nextMilestone?.dueDate ? <dd className="num text-caption text-fg-subtle">{formatIndianDate(`${project.nextMilestone.dueDate}T12:00:00Z`, locale)}</dd> : null}
           </div>
         </dl>
+        <p className={open.length ? "mt-4 border-t border-line pt-3 text-body font-semibold text-neel-700" : "mt-4 border-t border-line pt-3 text-body-sm text-fg-subtle"}>
+          {open.length ? <a href="#needs-you">{t.needsYou} · {open.length}</a> : t.nothingNeedsYou}
+        </p>
       </section>
 
       {open.length ? (
         <Section title={t.needsYou} count={open.length} id="needs-you">
           <ul className="flex flex-col gap-3">
             {open.map((d) => (
-              <li key={d.id} className="rounded-card border-2 border-neel-200 bg-surface p-4 shadow-card">
+              <li key={d.id} className="rounded-card border border-line border-l-4 border-l-neel-600 bg-surface p-4 shadow-card">
                 <p className="text-body-lg font-bold text-fg">{d.title}</p>
                 {d.description ? <p className="mt-1 text-body text-fg-muted">{d.description}</p> : null}
                 <DecideForm locale={locale} decision={{ id: d.id, options: d.options }} />

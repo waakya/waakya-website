@@ -6,6 +6,7 @@ import { Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { getVendors } from "@/lib/i18n/vendors";
@@ -47,16 +48,7 @@ export function VendorForm({ locale, vendor, onDone }: { locale: Locale; vendor?
     });
   }
 
-  if (!open) {
-    return (
-      <Button onClick={() => setOpen(true)}>
-        <Plus aria-hidden="true" />
-        {t.newVendor}
-      </Button>
-    );
-  }
-  return (
-    <Card className="p-4">
+  const form = (
       <form onSubmit={submit} noValidate className="flex flex-col gap-3">
         <div>
           <Label htmlFor="v-name">{t.fields.name}</Label>
@@ -99,6 +91,25 @@ export function VendorForm({ locale, vendor, onDone }: { locale: Locale; vendor?
           <Button type="button" variant="outline" onClick={() => (vendor ? onDone?.() : setOpen(false))}>{t.work.cancel}</Button>
         </div>
       </form>
-    </Card>
+  );
+
+  if (vendor) return <Card className="p-4">{form}</Card>;
+
+  // A new vendor: the screen's one primary in the header, the form as a sheet.
+  return (
+    <Sheet open={open} onOpenChange={setOpen}>
+      <SheetTrigger
+        render={
+          <Button size="owner">
+            <Plus aria-hidden="true" />
+            {t.newVendor}
+          </Button>
+        }
+      />
+      <SheetContent aria-describedby={undefined}>
+        <SheetTitle>{t.newVendor}</SheetTitle>
+        <div className="mt-4">{form}</div>
+      </SheetContent>
+    </Sheet>
   );
 }

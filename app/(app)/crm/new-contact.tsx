@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { type Locale } from "@/lib/i18n";
@@ -58,18 +58,21 @@ export function NewContact({
     });
   }
 
-  if (!open) {
-    return (
-      <Button onClick={() => setOpen(true)}>
-        <Plus aria-hidden="true" />
-        {t.newContact}
-      </Button>
-    );
-  }
-
+  // The one primary of the screen lives in the header; the form opens as a
+  // sheet so the list underneath never jumps (design constitution §9).
   return (
-    <Card className="p-4">
-      <form onSubmit={submit} noValidate className="flex flex-col gap-3">
+    <Sheet open={open} onOpenChange={setOpen}>
+      <SheetTrigger
+        render={
+          <Button size="owner">
+            <Plus aria-hidden="true" />
+            {t.newContact}
+          </Button>
+        }
+      />
+      <SheetContent aria-describedby={undefined}>
+        <SheetTitle>{t.newContact}</SheetTitle>
+      <form onSubmit={submit} noValidate className="mt-4 flex flex-col gap-3">
         <div>
           <Label htmlFor="c-name">{t.fields.name}</Label>
           <Input id="c-name" name="fullName" className="mt-1" maxLength={120} required aria-invalid={field === "fullName" || undefined} />
@@ -122,6 +125,7 @@ export function NewContact({
           <Button type="button" variant="outline" onClick={() => setOpen(false)}>{t.actions.cancel}</Button>
         </div>
       </form>
-    </Card>
+      </SheetContent>
+    </Sheet>
   );
 }

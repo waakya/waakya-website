@@ -25,18 +25,21 @@ export default async function PipelinePage() {
         <PageHeader back={{ href: "/crm", label: t.title }} title={t.pipeline.title} description={t.pipeline.subtitle} />
         <div className="mt-5 flex flex-col gap-4 lg:grid lg:auto-cols-[minmax(15rem,1fr)] lg:grid-flow-col lg:overflow-x-auto">
           {board.columns.map((col) => (
-            <section key={col.id} aria-labelledby={`stage-${col.id}`} className={cn("rounded-card border border-line bg-surface-muted p-3", col.kind !== "open" && "border-dashed")}>
-              <h2 id={`stage-${col.id}`} className="flex items-baseline justify-between gap-2 text-body font-bold text-fg">
-                <span>{col.name}</span>
-                <span className="num text-caption font-normal text-fg-subtle">{col.count}{col.value > 0 ? ` · ${money.format(col.value)}` : ""}</span>
+            /* A stage is a heading over one surface, not a grey slab: an
+               empty stage is a heading and one quiet line, and takes no
+               more height than that. */
+            <section key={col.id} aria-labelledby={`stage-${col.id}`} className={cn("min-w-0 border-t-2 pt-2", col.kind === "open" ? "border-neel-600" : col.kind === "won" ? "border-hara-600" : "border-paper-300")}>
+              <h2 id={`stage-${col.id}`} className="flex items-baseline justify-between gap-2 px-1 text-body font-bold text-fg">
+                <span className="truncate">{col.name}</span>
+                <span className="num shrink-0 text-caption font-normal text-fg-subtle">{col.count}{col.value > 0 ? ` · ${money.format(col.value)}` : ""}</span>
               </h2>
               {col.deals.length === 0 ? (
-                <p className="mt-2 text-caption text-fg-subtle">{t.pipeline.empty}</p>
+                <p className="mt-2 px-1 text-caption text-fg-subtle">{t.pipeline.empty}</p>
               ) : (
-                <ul className="mt-2 flex flex-col gap-2">
+                <ul className="mt-2 divide-y divide-line overflow-hidden rounded-card border border-line bg-surface shadow-card">
                   {col.deals.map((deal) => (
                     <li key={deal.id}>
-                      <Link href={`/crm/${deal.contactId}`} className="block rounded-inner border border-line bg-surface p-3 shadow-card transition-colors duration-150 hover:border-neel-300">
+                      <Link href={`/crm/${deal.contactId}`} className="block px-3 py-2.5 transition-colors duration-150 hover:bg-paper-50/70">
                         <span className="block truncate text-body font-semibold text-fg">{deal.contactName}</span>
                         <span className="num block truncate text-caption text-fg-subtle">
                           {deal.title}{deal.value !== null ? ` · ${money.format(deal.value)}` : ""}{deal.ownerName ? ` · ${deal.ownerName}` : ""}

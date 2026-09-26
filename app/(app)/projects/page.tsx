@@ -8,7 +8,7 @@ import { listProjects } from "@/lib/projects/queries";
 import { getOrgMembers } from "@/lib/org/members";
 import { formatIndianDate } from "@/lib/tasks/format-date";
 import { AppShell } from "@/components/waakya/app-shell";
-import { PageHeader } from "@/components/waakya/page";
+import { ListSurface, PageHeader } from "@/components/waakya/page";
 import { Illustration } from "@/components/waakya/illustrations";
 import { ProjectStatusChip } from "./status-chip";
 import { NewProject } from "./new-project";
@@ -34,18 +34,20 @@ export default async function ProjectsPage() {
   return (
     <AppShell {...shell} width="list">
       <main className="flex-1 p-4 pb-8 lg:px-0">
-        <PageHeader title={p.projects.title} description={p.projects.subtitle} />
-
-        {manages ? (
-          <div className="mt-5">
-            <NewProject
-              locale={shell.locale}
-              people={members
-                .filter((member) => member.userId !== viewer.userId)
-                .map((member) => ({ id: member.userId, name: member.name }))}
-            />
-          </div>
-        ) : null}
+        <PageHeader
+          title={p.projects.title}
+          description={p.projects.subtitle}
+          actions={
+            manages ? (
+              <NewProject
+                locale={shell.locale}
+                people={members
+                  .filter((member) => member.userId !== viewer.userId)
+                  .map((member) => ({ id: member.userId, name: member.name }))}
+              />
+            ) : undefined
+          }
+        />
 
         {projects.length === 0 ? (
           <div className="mt-8 flex flex-col items-center rounded-card border border-dashed border-paper-300 px-6 py-10 text-center">
@@ -56,39 +58,51 @@ export default async function ProjectsPage() {
             </p>
           </div>
         ) : (
-          <ul className="mt-5 grid grid-cols-[minmax(0,1fr)] gap-2.5 md:grid-cols-[repeat(2,minmax(0,1fr))]">
-            {projects.map((project) => (
-              <li key={project.id} className="min-w-0">
-                <Link
-                  href={`/projects/${project.id}`}
-                  className="flex h-full flex-col rounded-card border border-line bg-surface p-4 shadow-card transition-colors duration-150 hover:border-neel-300"
-                >
-                  <span className="flex items-start gap-3">
-                    <span className="min-w-0 flex-1 text-body-lg font-semibold text-fg">
-                      {project.name}
-                    </span>
-                    <ProjectStatusChip locale={shell.locale} status={project.status} />
-                  </span>
-                  {project.description ? (
-                    <span className="mt-1 line-clamp-2 text-body-sm leading-[20px] text-ink-500">
-                      {project.description}
-                    </span>
-                  ) : null}
-                  <span className="num mt-auto flex flex-wrap gap-x-4 gap-y-1 pt-3 text-label text-fg-subtle">
-                    <span>{p.projects.openTasks(project.openTasks)}</span>
-                    <span>
-                      {project.documents} {p.projects.documents.toLowerCase()}
-                    </span>
-                    {project.endDate ? (
-                      <span>
-                        {p.projects.end}: {formatIndianDate(`${project.endDate}T12:00:00Z`, shell.locale)}
+          /* One surface, one project per row: how far along, how much is
+             open, where the papers are, when it is due. */
+          <ListSurface className="mt-5" label={p.projects.title}>
+            {projects.map((project) => {
+              const done = Math.max(0, project.totalTasks - project.openTasks);
+              const pct = project.totalTasks > 0 ? Math.round((done / project.totalTasks) * 100) : null;
+              return (
+                <li key={project.id}>
+                  <Link
+                    href={`/projects/${project.id}`}
+                    className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-1.5 px-4 py-3 transition-colors duration-150 hover:bg-paper-50/70 lg:grid-cols-[minmax(0,1fr)_10rem_auto]"
+                  >
+                    <span className="min-w-0">
+                      <span className="block truncate text-body font-semibold text-fg">{project.name}</span>
+                      <span className="num block truncate text-caption text-fg-subtle">
+                        {[
+                          p.projects.openTasks(project.openTasks),
+                          `${project.documents} ${p.projects.documents.toLowerCase()}`,
+                          project.endDate ? `${p.projects.end}: ${formatIndianDate(`${project.endDate}T12:00:00Z`, shell.locale)}` : null,
+                        ]
+                          .filter(Boolean)
+                          .join(" · ")}
                       </span>
-                    ) : null}
-                  </span>
-                </Link>
-              </li>
-            ))}
-          </ul>
+                    </span>
+                    <span className="col-span-2 flex items-center gap-2 lg:col-span-1" aria-hidden={pct === null}>
+                      {pct !== null ? (
+                        <>
+                          <span className="h-1.5 flex-1 overflow-hidden rounded-full bg-paper-200">
+                            <span
+                              className={project.status === "completed" ? "block h-full rounded-full bg-hara-600" : "block h-full rounded-full bg-neel-600"}
+                              style={{ width: `${Math.max(pct, 2)}%` }}
+                            />
+                          </span>
+                          <span className="num w-9 text-right text-caption font-semibold text-fg-muted">{pct}%</span>
+                        </>
+                      ) : null}
+                    </span>
+                    <span className="row-start-1 col-start-2 lg:col-start-3">
+                      <ProjectStatusChip locale={shell.locale} status={project.status} />
+                    </span>
+                  </Link>
+                </li>
+              );
+            })}
+          </ListSurface>
         )}
       </main>
     </AppShell>

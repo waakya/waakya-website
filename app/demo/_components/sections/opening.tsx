@@ -21,13 +21,13 @@ export function OpeningSection(props: SectionProps) {
           </p>
 
           <Title size="xl" className="wk-rise wk-d1 mt-6">
-            The new era of business communication.
+            Your entire business. One workspace.
           </Title>
 
           <p className="wk-rise wk-d2 mt-7 font-display text-[clamp(20px,2.1vw,28px)] leading-[1.25] font-semibold text-[var(--d-accent-bright)]">
-            All your business work.
+            Conversation → commitment → execution
             <br />
-            One workspace.
+            → proof → record.
           </p>
 
           <Lead className="wk-rise wk-d3 mt-5">

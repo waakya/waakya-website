@@ -30,8 +30,7 @@ export default async function VendorsPage() {
   return (
     <AppShell {...shell} width="list">
       <main className="flex-1 p-4 pb-8 lg:px-0">
-        <PageHeader title={t.title} description={t.subtitle} />
-        {canWrite ? <div className="mt-5"><VendorForm locale={shell.locale} /></div> : null}
+        <PageHeader title={t.title} description={t.subtitle} actions={canWrite ? <VendorForm locale={shell.locale} /> : undefined} />
 
         {vendors.length === 0 ? (
           <EmptyState className="mt-6" icon={<Truck />} title={t.empty} body={t.emptyHelp} />
@@ -43,7 +42,11 @@ export default async function VendorsPage() {
                   <Link href={`/vendors/${v.id}`} className="block truncate text-body font-semibold text-fg after:absolute after:inset-0">{v.name}</Link>
                   <p className="num truncate text-caption text-fg-subtle">{[v.category, v.phone, v.email].filter(Boolean).join(" · ")}</p>
                 </div>
-                {v.openWork > 0 ? <StateChip tone="neel">{v.openWork}</StateChip> : null}
+                {v.openWork > 0 ? (
+                  <span className="num shrink-0 text-label font-semibold text-neel-700">
+                    {v.openWork} · {t.work.title}
+                  </span>
+                ) : null}
                 {v.status === "inactive" ? <StateChip tone="muted">{t.status.inactive}</StateChip> : null}
                 {v.phone ? (
                   <a href={`tel:${v.phone}`} aria-label={`${v.name}`} className={cn(buttonVariants({ variant: "ghost", size: "icon" }), "relative z-10")}>

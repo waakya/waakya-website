@@ -33,6 +33,7 @@ export interface PortalCopy {
     business: string;
     nothingYet: string;
     allDone: string;
+    nothingNeedsYou: string;
     open: string;
     done: string;
     planned: string;
@@ -101,7 +102,7 @@ const copy: Record<Locale, PortalCopy> = {
     portal: {
       title: "आपका प्रोजेक्ट", yourProjects: "आपके प्रोजेक्ट", noProjects: "अभी कोई प्रोजेक्ट नहीं", noProjectsHelp: "जब कारोबार आपको जोड़ेगा, यहाँ दिखेगा।", signOut: "साइन आउट",
       progress: (p) => `${p}% पूरा`, onTrack: "चल रहा है", latestUpdate: "ताज़ा अपडेट", nextMilestone: "अगला पड़ाव", needsYou: "आपसे चाहिए", decided: (o) => `आपने चुना: ${o}`, choose: "चुनें", yourChoice: "आपकी पसंद", noteOptional: "कुछ कहना है (वैकल्पिक)", confirm: "पक्का करें",
-      photos: "साइट की तस्वीरें", documents: "दस्तावेज़", records: "काम की सूची", milestones: "पड़ाव", updates: "अपडेट", messages: "बातचीत", writeToUs: "हमें लिखें", send: "भेजें", you: "आप", business: "टीम", nothingYet: "अभी कुछ नहीं", allDone: "सब हो गया",
+      photos: "साइट की तस्वीरें", documents: "दस्तावेज़", records: "काम की सूची", milestones: "पड़ाव", updates: "अपडेट", messages: "बातचीत", writeToUs: "हमें लिखें", send: "भेजें", you: "आप", business: "टीम", nothingYet: "अभी कुछ नहीं", allDone: "सब हो गया", nothingNeedsYou: "अभी आपसे कुछ नहीं चाहिए।",
       open: "बाकी", done: "हो गया", planned: "तय", inProgress: "चल रहा",
       invite: { title: "आपका प्रोजेक्ट पेज", help: "साइन इन करें और अपना प्रोजेक्ट देखें।", accept: "प्रोजेक्ट खोलें", wrongAccount: "उसी ईमेल से साइन इन करें जिस पर यह लिंक आया।", used: "यह लिंक किसी और ने इस्तेमाल किया।", notFound: "यह लिंक नहीं मिला।", signInFirst: "पहले साइन इन करें" },
       errors: { notYours: "यह आपका प्रोजेक्ट नहीं है।", closed: "यह फ़ैसला पहले हो चुका है। पेज ताज़ा करें।", badOption: "यह विकल्प नहीं है।", generic: "नहीं हुआ। फिर कोशिश करें।", empty: "पहले कुछ लिखें।" },
@@ -119,7 +120,7 @@ const copy: Record<Locale, PortalCopy> = {
     portal: {
       title: "Aapka project", yourProjects: "Aapke projects", noProjects: "Abhi koi project nahi", noProjectsHelp: "Jab business aapko jodega, yahan dikhega.", signOut: "Sign out",
       progress: (p) => `${p}% poora`, onTrack: "Chal raha hai", latestUpdate: "Taaza update", nextMilestone: "Agla milestone", needsYou: "Aapse chahiye", decided: (o) => `Aapne chuna: ${o}`, choose: "Chunein", yourChoice: "Aapki pasand", noteOptional: "Kuch kehna hai (optional)", confirm: "Pakka karein",
-      photos: "Site ki photos", documents: "Documents", records: "Kaam ki list", milestones: "Milestones", updates: "Updates", messages: "Baat-cheet", writeToUs: "Humein likhein", send: "Bhejein", you: "Aap", business: "Team", nothingYet: "Abhi kuch nahi", allDone: "Sab ho gaya",
+      photos: "Site ki photos", documents: "Documents", records: "Kaam ki list", milestones: "Milestones", updates: "Updates", messages: "Baat-cheet", writeToUs: "Humein likhein", send: "Bhejein", you: "Aap", business: "Team", nothingYet: "Abhi kuch nahi", allDone: "Sab ho gaya", nothingNeedsYou: "Abhi aapse kuch nahi chahiye.",
       open: "Baaki", done: "Ho gaya", planned: "Tay", inProgress: "Chal raha",
       invite: { title: "Aapka project page", help: "Sign in karein aur apna project dekhein.", accept: "Project kholein", wrongAccount: "Usi email se sign in karein jis par yeh link aaya.", used: "Yeh link kisi aur ne istemaal kiya.", notFound: "Yeh link nahi mila.", signInFirst: "Pehle sign in karein" },
       errors: { notYours: "Yeh aapka project nahi hai.", closed: "Yeh faisla pehle ho chuka hai. Page refresh karein.", badOption: "Yeh option nahi hai.", generic: "Nahi hua. Phir koshish karein.", empty: "Pehle kuch likhein." },
@@ -137,7 +138,7 @@ const copy: Record<Locale, PortalCopy> = {
     portal: {
       title: "Your project", yourProjects: "Your projects", noProjects: "No projects yet", noProjectsHelp: "When the business adds you, it appears here.", signOut: "Sign out",
       progress: (p) => `${p}% complete`, onTrack: "In progress", latestUpdate: "Latest update", nextMilestone: "Next milestone", needsYou: "Needs you", decided: (o) => `You chose ${o}`, choose: "Choose", yourChoice: "Your choice", noteOptional: "Anything to add (optional)", confirm: "Confirm",
-      photos: "Site photos", documents: "Documents", records: "Work list", milestones: "Milestones", updates: "Updates", messages: "Messages", writeToUs: "Write to us", send: "Send", you: "You", business: "Team", nothingYet: "Nothing yet", allDone: "All done",
+      photos: "Site photos", documents: "Documents", records: "Work list", milestones: "Milestones", updates: "Updates", messages: "Messages", writeToUs: "Write to us", send: "Send", you: "You", business: "Team", nothingYet: "Nothing yet", allDone: "All done", nothingNeedsYou: "Nothing needs you right now.",
       open: "Open", done: "Done", planned: "Planned", inProgress: "In progress",
       invite: { title: "Your project page", help: "Sign in to see your project.", accept: "Open my project", wrongAccount: "Sign in with the email this link was sent to.", used: "This link was used by someone else.", notFound: "This link was not found.", signInFirst: "Sign in first" },
       errors: { notYours: "This project is not yours.", closed: "This was already decided. Refresh the page.", badOption: "That option is not offered.", generic: "That did not go through. Try again.", empty: "Write something first." },

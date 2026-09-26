@@ -62,6 +62,7 @@ export interface CrmCopy {
   pipeline: { title: string; subtitle: string; empty: string; manage: string; stageName: string; addStage: string; kinds: { open: string; won: string; lost: string }; cannotDelete: string };
   related: { title: string; tasks: string; records: string; noTasks: string; taskFor: (name: string) => string };
   counts: { showing: (from: number, to: number, total: number) => string; next: string; previous: string };
+  list: { kind: string; lastActivity: string; nothingYet: string; none: string };
   errors: {
     notAllowed: string;
     moduleOff: string;
@@ -94,6 +95,7 @@ const copy: Record<Locale, CrmCopy> = {
     pipeline: { title: "पाइपलाइन", subtitle: "हर डील किस स्टेज पर है।", empty: "इस स्टेज में कोई डील नहीं", manage: "स्टेज बदलें", stageName: "स्टेज का नाम", addStage: "स्टेज जोड़ें", kinds: { open: "चल रही", won: "जीती", lost: "गई" }, cannotDelete: "इस स्टेज में डील हैं" },
     related: { title: "जुड़ा हुआ", tasks: "काम", records: "रिकॉर्ड", noTasks: "कोई काम नहीं", taskFor: (n) => `${n} के लिए` },
     counts: { showing: (a, b, n) => `${a}–${b}, कुल ${n}`, next: "अगला", previous: "पिछला" },
+    list: { kind: "क्या है", lastActivity: "आख़िरी हलचल", nothingYet: "अभी कुछ नहीं", none: "तय नहीं" },
     errors: { notAllowed: "यह आप नहीं कर सकते।", moduleOff: "ग्राहक (CRM) इस कारोबार में चालू नहीं है।", badInput: "कुछ जानकारी सही नहीं है।", needReach: "फ़ोन या ईमेल में से एक चाहिए।", duplicate: "इस फ़ोन या ईमेल का ग्राहक पहले से है।", notFound: "यह ग्राहक नहीं मिला।", generic: "सेव नहीं हुआ। फिर कोशिश करें।", stageOutside: "यह स्टेज इस पाइपलाइन की नहीं है।", closed: "यह डील बंद हो चुकी है।" },
     today: { followUps: "फ़ॉलो-अप", unassigned: "बिना मालिक", open: "खोलें", call: "कॉल" },
   },
@@ -114,6 +116,7 @@ const copy: Record<Locale, CrmCopy> = {
     pipeline: { title: "Pipeline", subtitle: "Har deal kis stage par hai.", empty: "Is stage mein koi deal nahi", manage: "Stages badlein", stageName: "Stage ka naam", addStage: "Stage jodein", kinds: { open: "Chal rahi", won: "Jeeti", lost: "Gayi" }, cannotDelete: "Is stage mein deals hain" },
     related: { title: "Juda hua", tasks: "Kaam", records: "Records", noTasks: "Koi kaam nahi", taskFor: (n) => `${n} ke liye` },
     counts: { showing: (a, b, n) => `${a}–${b}, kul ${n}`, next: "Agla", previous: "Pichla" },
+    list: { kind: "Kya hai", lastActivity: "Aakhri halchal", nothingYet: "Abhi kuch nahi", none: "Tay nahi" },
     errors: { notAllowed: "Yeh aap nahi kar sakte.", moduleOff: "Customers (CRM) is business mein chalu nahi hai.", badInput: "Kuch jaankari sahi nahi hai.", needReach: "Phone ya email mein se ek chahiye.", duplicate: "Is phone ya email ka customer pehle se hai.", notFound: "Yeh customer nahi mila.", generic: "Save nahi hua. Phir koshish karein.", stageOutside: "Yeh stage is pipeline ki nahi hai.", closed: "Yeh deal band ho chuki hai." },
     today: { followUps: "Follow-up", unassigned: "Bina owner", open: "Kholein", call: "Call" },
   },
@@ -134,6 +137,7 @@ const copy: Record<Locale, CrmCopy> = {
     pipeline: { title: "Pipeline", subtitle: "Where every deal stands.", empty: "No deals at this stage", manage: "Edit stages", stageName: "Stage name", addStage: "Add stage", kinds: { open: "Open", won: "Won", lost: "Lost" }, cannotDelete: "This stage still has deals" },
     related: { title: "Related", tasks: "Tasks", records: "Records", noTasks: "No tasks", taskFor: (n) => `For ${n}` },
     counts: { showing: (a, b, n) => `${a}–${b} of ${n}`, next: "Next", previous: "Previous" },
+    list: { kind: "Kind", lastActivity: "Last activity", nothingYet: "Nothing yet", none: "Not set" },
     errors: { notAllowed: "You cannot do that.", moduleOff: "Customers (CRM) is not switched on for this business.", badInput: "Some of that is not right.", needReach: "A phone number or an email is needed.", duplicate: "A customer with that phone or email already exists.", notFound: "That customer was not found.", generic: "Not saved. Try again.", stageOutside: "That stage is not in this pipeline.", closed: "This deal is already closed." },
     today: { followUps: "Follow-ups", unassigned: "Unassigned", open: "Open", call: "Call" },
   },
