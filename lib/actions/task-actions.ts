@@ -13,6 +13,7 @@ import { requireOrg } from "@/lib/auth/session";
 import { notifyWith, writeMessage, writeSubject } from "@/lib/notify";
 import { getDictionary } from "@/lib/i18n";
 import { fail, ok, uuidSchema, type ActionResult } from "@/lib/validation";
+import { kickAutomation } from "@/lib/automation/kick";
 import type { TaskState } from "@/lib/supabase/types";
 
 const moveSchema = z.object({
@@ -40,7 +41,11 @@ export async function moveTaskAction(
   }
 
   const result = await moveTask(parsed.data);
-  if (result.ok) refresh(parsed.data.taskId);
+  if (result.ok) {
+    refresh(parsed.data.taskId);
+    const viewer = await requireOrg();
+    kickAutomation(viewer.org.id);
+  }
   return result;
 }
 

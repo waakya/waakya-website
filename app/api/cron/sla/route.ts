@@ -5,6 +5,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { getViewer, canManage } from "@/lib/auth/session";
 import { runSlaTick } from "@/lib/sla/run";
+import { processAutomation } from "@/lib/automation/run";
 
 /**
  * One tick of the SLA and escalation job.
@@ -72,7 +73,10 @@ async function runAsScheduler(request: Request): Promise<NextResponse | null> {
     // The scheduler stores this reply, so the run time is on record.
     const startedAt = Date.now();
     const summary = await runSlaTick(admin);
-    return NextResponse.json({ ok: true, scope: "all", durationMs: Date.now() - startedAt, summary });
+    // Automation rides the same tick: unprocessed events across every
+    // business, and failed runs that still have attempts left.
+    const automation = await processAutomation(admin);
+    return NextResponse.json({ ok: true, scope: "all", durationMs: Date.now() - startedAt, summary, automation });
   }
   return null;
 }

@@ -9,6 +9,7 @@ import { getVendors } from "@/lib/i18n/vendors";
 import { fail, ok, uuidSchema, type ActionResult } from "@/lib/validation";
 import { createTask } from "@/lib/tasks/create";
 import { normalizeEmail, normalizePhone } from "@/lib/crm/model";
+import { kickAutomation } from "@/lib/automation/kick";
 
 async function vendorsViewer() {
   const viewer = await requireOrg();
@@ -149,6 +150,7 @@ export async function progressVendorWork(input: unknown): Promise<ActionResult> 
   if (error) return fail(error.code === "42501" ? t.errors.notAllowed : error.code === "22023" ? t.errors.notSubmitted : t.errors.generic);
   if (!data) return fail(t.errors.notAllowed);
   refresh(data.id, data.project_id);
+  kickAutomation(viewer.org.id);
   return ok();
 }
 
@@ -178,6 +180,7 @@ export async function verifyVendorWork(input: unknown): Promise<ActionResult> {
     if (task?.state === "done") await supabase.from("tasks").update({ state: "verified", verified_at: new Date().toISOString() }).eq("id", data.task_id);
   }
   refresh(data.id, data.project_id);
+  kickAutomation(viewer.org.id);
   return ok();
 }
 

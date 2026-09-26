@@ -13,6 +13,7 @@ import { DEADLINE_PRESETS } from "@/lib/tasks/deadlines";
 import { FIELD_TYPES, keyFromLabel, validateValues, type FieldDefinition } from "./schema";
 import { RECORD_TEMPLATES } from "./templates";
 import { getRecordType } from "./queries";
+import { kickAutomation } from "@/lib/automation/kick";
 
 async function recordsViewer() {
   const viewer = await requireOrg();
@@ -244,6 +245,7 @@ export async function changeRecordStatus(input: unknown): Promise<ActionResult> 
   void data;
   revalidatePath("/records", "layout");
   revalidatePath("/aaj");
+  kickAutomation(viewer.org.id);
   return ok();
 }
 

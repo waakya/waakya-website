@@ -8,6 +8,7 @@ import { getLocale } from "@/lib/i18n/server";
 import { getPortal } from "@/lib/i18n/portal";
 import { fail, ok, uuidSchema, type ActionResult } from "@/lib/validation";
 import { customerProject, getCustomerPrincipal } from "./principal";
+import { kickAutomation } from "@/lib/automation/kick";
 
 /**
  * What a customer can do: claim their invite, choose, write. Every action
@@ -41,6 +42,8 @@ export async function decide(input: unknown): Promise<ActionResult<{ optionKey: 
   const row = Array.isArray(data) ? data[0] : null;
   if (!row) return fail(t.errors.generic);
   revalidatePath("/portal", "layout");
+  const { data: owner } = await supabase.from("customer_decisions").select("org_id").eq("id", parsed.data.decisionId).maybeSingle();
+  if (owner?.org_id) kickAutomation(owner.org_id);
   return ok({ optionKey: row.option_key ?? parsed.data.optionKey, alreadyDecided: row.already_decided });
 }
 

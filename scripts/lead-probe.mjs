@@ -1,0 +1,18 @@
+import { chromium } from "@playwright/test";
+const base = "http://127.0.0.1:3400";
+const browser = await chromium.launch();
+const page = await (await browser.newContext()).newPage();
+await page.request.post(`${base}/api/test-login`, { data: { email: "owner@waakya.test", password: "waakya-e2e-owner-pass" } });
+await page.context().addCookies([{ name: "waakya_lang", value: "en", domain: "127.0.0.1", path: "/" }]);
+await page.goto(`${base}/crm`);
+await page.getByRole("button", { name: "New customer" }).click();
+const run = Date.now();
+await page.getByLabel("Name", { exact: true }).fill(`Probe lead ${run}`);
+await page.getByLabel("Phone", { exact: true }).fill(`95${String(run).slice(-8)}`);
+await page.getByLabel("Source").selectOption("website");
+await page.getByRole("button", { name: "Save", exact: true }).click();
+await page.waitForURL(/\/crm\//);
+await new Promise((r) => setTimeout(r, 6000));
+await page.reload();
+console.log("call task links:", await page.getByRole("link", { name: /^Call Probe lead/ }).count());
+await browser.close();

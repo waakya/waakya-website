@@ -1,5 +1,8 @@
 "use server";
 
+import { kickAutomation } from "@/lib/automation/kick";
+import { requireOrg } from "@/lib/auth/session";
+
 import { revalidatePath } from "next/cache";
 import { createTask as createTaskCore, type NewTask } from "@/lib/tasks/create";
 import type { ActionResult } from "@/lib/validation";
@@ -16,6 +19,8 @@ export async function createTask(
   if (result.ok) {
     revalidatePath("/aaj");
     revalidatePath("/hafta");
+    const viewer = await requireOrg();
+    kickAutomation(viewer.org.id);
   }
   return result;
 }

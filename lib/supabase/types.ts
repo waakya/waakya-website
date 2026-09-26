@@ -176,6 +176,126 @@ export type Database = {
           },
         ]
       }
+      automation_rules: {
+        Row: {
+          actions: Json
+          conditions: Json
+          created_at: string
+          created_by: string | null
+          enabled: boolean
+          fail_count: number
+          id: string
+          last_run_at: string | null
+          name: string
+          org_id: string
+          run_count: number
+          trigger_event: string
+          updated_at: string
+        }
+        Insert: {
+          actions?: Json
+          conditions?: Json
+          created_at?: string
+          created_by?: string | null
+          enabled?: boolean
+          fail_count?: number
+          id?: string
+          last_run_at?: string | null
+          name: string
+          org_id: string
+          run_count?: number
+          trigger_event: string
+          updated_at?: string
+        }
+        Update: {
+          actions?: Json
+          conditions?: Json
+          created_at?: string
+          created_by?: string | null
+          enabled?: boolean
+          fail_count?: number
+          id?: string
+          last_run_at?: string | null
+          name?: string
+          org_id?: string
+          run_count?: number
+          trigger_event?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "automation_rules_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "orgs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      automation_runs: {
+        Row: {
+          attempts: number
+          created_at: string
+          error: string | null
+          event_id: string
+          finished_at: string | null
+          id: string
+          log: Json
+          org_id: string
+          rule_id: string
+          started_at: string | null
+          status: string
+        }
+        Insert: {
+          attempts?: number
+          created_at?: string
+          error?: string | null
+          event_id: string
+          finished_at?: string | null
+          id?: string
+          log?: Json
+          org_id: string
+          rule_id: string
+          started_at?: string | null
+          status?: string
+        }
+        Update: {
+          attempts?: number
+          created_at?: string
+          error?: string | null
+          event_id?: string
+          finished_at?: string | null
+          id?: string
+          log?: Json
+          org_id?: string
+          rule_id?: string
+          started_at?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "automation_runs_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "domain_events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "automation_runs_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "orgs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "automation_runs_rule_id_fkey"
+            columns: ["rule_id"]
+            isOneToOne: false
+            referencedRelation: "automation_rules"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       checklist_items: {
         Row: {
           checklist_id: string
@@ -1358,6 +1478,59 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "memberships_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "orgs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      message_templates: {
+        Row: {
+          body: string
+          channel: string
+          created_at: string
+          created_by: string | null
+          id: string
+          name: string
+          org_id: string
+          provider_language: string
+          provider_template_name: string | null
+          status: string
+          subject: string | null
+          updated_at: string
+        }
+        Insert: {
+          body: string
+          channel: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          name: string
+          org_id: string
+          provider_language?: string
+          provider_template_name?: string | null
+          status?: string
+          subject?: string | null
+          updated_at?: string
+        }
+        Update: {
+          body?: string
+          channel?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          name?: string
+          org_id?: string
+          provider_language?: string
+          provider_template_name?: string | null
+          status?: string
+          subject?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "message_templates_org_id_fkey"
             columns: ["org_id"]
             isOneToOne: false
             referencedRelation: "orgs"
@@ -2653,6 +2826,16 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      automation_apply: {
+        Args: {
+          p_action: Json
+          p_depth: number
+          p_event: Json
+          p_org: string
+          p_run: string
+        }
+        Returns: Json
+      }
       create_group_conversation: {
         Args: { p_members: string[]; p_org: string; p_title: string }
         Returns: {
@@ -2856,6 +3039,7 @@ export type Database = {
           project_name: string
         }[]
       }
+      notify_automation_failure: { Args: { p_run: string }; Returns: undefined }
       org_member_email: { Args: { p_user: string }; Returns: string }
       org_module_enabled: {
         Args: { p_key: string; p_org: string }

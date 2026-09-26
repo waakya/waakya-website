@@ -13,6 +13,7 @@ import { DEADLINE_PRESETS } from "@/lib/tasks/deadlines";
 import { recordEvent } from "@/lib/events/emit";
 import { notifyWith, writeMessage, writeSubject } from "@/lib/notify";
 import { normalizeEmail, normalizePhone, ACTIVITY_KINDS, CONTACT_SOURCES } from "./model";
+import { kickAutomation } from "@/lib/automation/kick";
 
 /**
  * The CRM's writes. Every one: the module must be on, the person must hold
@@ -87,6 +88,7 @@ export async function createContact(input: unknown): Promise<ActionResult<{ id: 
       .eq("org_id", viewer.org.id);
   }
   refresh(row.contact_id);
+  kickAutomation(viewer.org.id);
   return ok({ id: row.contact_id, existed: row.deduplicated });
 }
 
@@ -291,6 +293,7 @@ export async function moveOpportunity(input: unknown): Promise<ActionResult<{ st
   }
   const row = data as { contact_id: string; status: string } | null;
   refresh(row?.contact_id);
+  kickAutomation(viewer.org.id);
   return ok({ status: row?.status ?? "open" });
 }
 
