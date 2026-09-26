@@ -106,11 +106,10 @@ test("the customer signs in with that address, sees only what was published, and
   await page.goto(inviteUrl);
   await page.getByRole("button", { name: "Open my project" }).click();
   await expect(page).toHaveURL(/\/portal/);
-  if (!page.url().endsWith(projectId)) {
-    // Several projects from earlier runs: pick this one from the list.
-    await page.goto("/portal");
-    await page.getByRole("link", { name: projectName }).click();
-  }
+  // One project lands on it directly; several (from earlier runs) are a list.
+  await page.goto("/portal");
+  const pick = page.getByRole("link", { name: projectName });
+  if (await pick.count()) await pick.click();
   await expect(page).toHaveURL(`/portal/projects/${projectId}`);
   await expect(page.getByRole("heading", { name: projectName })).toBeVisible();
   await expect(page.getByText("False ceiling complete").first()).toBeVisible();

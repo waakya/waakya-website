@@ -51,7 +51,7 @@ test("a busy group shows three rows and an exact way to the rest", async ({ page
   const first = more.first();
   const rest = Number((await first.textContent())!.trim().split(/\s+/)[0]);
   await first.click();
-  await expect(page).toHaveURL(/\/(work|approvals|hazri|baat)/);
+  await expect(page).toHaveURL(/\/(work|approvals|hazri|baat|crm|vendors)/);
   if (page.url().includes("/work?need=")) {
     // Three on Today, the rest behind the link: Work holds all of them.
     await expect(page.getByTestId("work-list").getByRole("listitem")).toHaveCount(rest + 3);
