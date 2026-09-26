@@ -87,3 +87,8 @@ function istOffsetMs(at: Date): number {
 function asDate(value: string | Date): Date {
   return value instanceof Date ? value : new Date(value);
 }
+
+/** Today's calendar date in Asia/Kolkata as YYYY-MM-DD, for date-only comparisons. */
+export function istDateKey(now: Date = new Date()): string {
+  return new Date(now.getTime() + 5.5 * 3600 * 1000).toISOString().slice(0, 10);
+}

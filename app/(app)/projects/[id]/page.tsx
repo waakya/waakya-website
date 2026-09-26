@@ -28,6 +28,7 @@ import { ProjectStatusChip } from "../status-chip";
 import { ProjectControls } from "./project-controls";
 import { RevealGroup, RevealToggle } from "@/components/waakya/reveal";
 import { CustomerPanel } from "./customer-panel";
+import { VendorSection } from "./vendor-section";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = { title: "Project" };
@@ -238,6 +239,7 @@ export default async function ProjectPage({ params }: PageProps<"/projects/[id]"
           </div>
 
           <div className="flex min-w-0 flex-col gap-6">
+            {viewer.modules.has("vendors") ? <VendorSection locale={shell.locale} orgId={viewer.org.id} projectId={project.id} manages={manages} /> : null}
             <CustomerPanel
               locale={shell.locale}
               orgId={viewer.org.id}

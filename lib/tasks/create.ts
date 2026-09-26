@@ -118,6 +118,7 @@ export async function createTask(
       contact_id: task.links?.contactId ?? null,
       opportunity_id: task.links?.opportunityId ?? null,
       record_id: task.links?.recordId ?? null,
+      vendor_assignment_id: task.links?.vendorAssignmentId ?? null,
     })
     .select("id")
     .single();

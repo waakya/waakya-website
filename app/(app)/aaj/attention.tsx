@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { AlertTriangle, ArrowRight, CalendarClock, Clock, Contact, Eye, EyeOff, MessageSquare, Phone, ShieldCheck, UserX } from "lucide-react";
+import { AlertTriangle, ArrowRight, CalendarClock, Clock, Contact, Eye, EyeOff, MessageSquare, Phone, ShieldCheck, Truck, UserX } from "lucide-react";
 
 import { buttonVariants } from "@/components/ui/button";
 
@@ -17,6 +17,8 @@ import { foldGroups } from "@/lib/tasks/fold";
 import { getEnabledModules } from "@/lib/modules/queries";
 import { crmAttention } from "@/lib/crm/queries";
 import { customerAttention } from "@/lib/projects/customer";
+import { vendorAttention } from "@/lib/vendors/queries";
+import { getVendors } from "@/lib/i18n/vendors";
 import { getPlatform } from "@/lib/i18n/platform";
 import { getCrm } from "@/lib/i18n/crm";
 import { cn } from "@/lib/utils";
@@ -31,7 +33,7 @@ const TILE: Record<Tone, string> = {
   quiet: "bg-surface-muted text-fg-muted",
 };
 
-type GroupKey = "late" | "escalated" | "unseen" | "verify" | "approvals" | "leave" | "followups" | "leads" | "customers" | "decisions" | "chats";
+type GroupKey = "late" | "escalated" | "unseen" | "verify" | "approvals" | "leave" | "followups" | "leads" | "customers" | "decisions" | "vendorVerify" | "vendorLate" | "chats";
 
 /**
  * The one answer to "what needs me?" (V3 IA). Decisions and exceptions from
@@ -70,14 +72,16 @@ export async function AttentionList({
   const now = new Date(nowIso);
 
   const modules = await getEnabledModules(orgId);
-  const [approvals, leave, conversations, members, crm, customers] = await Promise.all([
+  const [approvals, leave, conversations, members, crm, customers, vendors] = await Promise.all([
     listApprovals(orgId),
     manages ? getPendingLeave(orgId) : Promise.resolve([]),
     listConversations(orgId, userId),
     getOrgMembers(orgId),
     modules.has("crm") ? crmAttention(orgId, userId, manages, now) : Promise.resolve(null),
     modules.has("customer_experience") && manages ? customerAttention(orgId) : Promise.resolve(null),
+    modules.has("vendors") && manages ? vendorAttention(orgId, new Date(now.getTime() + 5.5 * 3600 * 1000).toISOString().slice(0, 10)) : Promise.resolve(null),
   ]);
+  const vt = getVendors(locale);
   const c = getCrm(locale);
   const pl = getPlatform(locale).today;
   const nameOf = new Map(members.map((m) => [m.userId, m.name]));
@@ -286,6 +290,32 @@ export async function AttentionList({
     });
   }
 
+  // Vendors: work handed in and waiting for a manager's word; work past its date.
+  for (const a of vendors?.toVerify ?? []) {
+    rows.push({
+      key: `vverify-${a.id}`,
+      group: "vendorVerify",
+      tone: "neel",
+      icon: <Truck />,
+      href: `/vendors/assignments/${a.id}`,
+      title: a.title,
+      meta: [a.vendorName, a.projectName, a.taskAssigneeName].filter(Boolean).join(" · "),
+      action: <Link href={`/vendors/assignments/${a.id}`} className={buttonVariants({ size: "sm", variant: "secondary", className: "h-tap" })}>{vt.work.verify}</Link>,
+    });
+  }
+  for (const a of vendors?.late ?? []) {
+    rows.push({
+      key: `vlate-${a.id}`,
+      group: "vendorLate",
+      tone: "laal",
+      icon: <Truck />,
+      href: `/vendors/assignments/${a.id}`,
+      title: a.title,
+      meta: [a.vendorName, a.projectName, a.dueDate ? formatIndianDate(`${a.dueDate}T12:00:00Z`, locale) : null].filter(Boolean).join(" · "),
+      action: <Link href={`/vendors/assignments/${a.id}`} className={buttonVariants({ size: "sm", variant: "secondary", className: "h-tap" })}>{vt.today.open}</Link>,
+    });
+  }
+
   if (unread.length > 0) {
     rows.push({
       key: "chats",
@@ -312,6 +342,8 @@ export async function AttentionList({
     leads: { label: c.today.unassigned, href: "/crm?f=unassigned" },
     customers: { label: pl.customerMessages(customers?.unreadTotal ?? 0), href: "/projects" },
     decisions: { label: pl.decisionsOpen(customers?.openTotal ?? 0), href: "/projects" },
+    vendorVerify: { label: vt.today.toVerify, href: "/vendors" },
+    vendorLate: { label: vt.today.late, href: "/vendors" },
     chats: { label: p.nav.conversations, href: "/baat" },
   };
   // Short days list everything; busy days fold each group to three with an
@@ -324,6 +356,8 @@ export async function AttentionList({
       group.key === "chats" ? unread.length
       : group.key === "followups" ? Math.max(group.total, crm?.followUpCount ?? 0)
       : group.key === "leads" ? Math.max(group.total, crm?.unassignedCount ?? 0)
+      : group.key === "vendorVerify" ? Math.max(group.total, vendors?.toVerifyCount ?? 0)
+      : group.key === "vendorLate" ? Math.max(group.total, vendors?.lateCount ?? 0)
       : group.total,
     rest:
       group.key === "followups" ? Math.max(group.rest, (crm?.followUpCount ?? 0) - group.shown.length)

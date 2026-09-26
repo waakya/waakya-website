@@ -2084,6 +2084,13 @@ export type Database = {
             referencedRelation: "record_types"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "records_vendor_fk"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
         ]
       }
       task_events: {
@@ -2208,6 +2215,7 @@ export type Database = {
           state: Database["public"]["Enums"]["task_state"]
           title: string
           updated_at: string
+          vendor_assignment_id: string | null
           verified_at: string | null
         }
         Insert: {
@@ -2241,6 +2249,7 @@ export type Database = {
           state?: Database["public"]["Enums"]["task_state"]
           title: string
           updated_at?: string
+          vendor_assignment_id?: string | null
           verified_at?: string | null
         }
         Update: {
@@ -2274,6 +2283,7 @@ export type Database = {
           state?: Database["public"]["Enums"]["task_state"]
           title?: string
           updated_at?: string
+          vendor_assignment_id?: string | null
           verified_at?: string | null
         }
         Relationships: [
@@ -2331,6 +2341,234 @@ export type Database = {
             columns: ["source_message_id"]
             isOneToOne: false
             referencedRelation: "messages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tasks_vendor_assignment_id_fkey"
+            columns: ["vendor_assignment_id"]
+            isOneToOne: false
+            referencedRelation: "vendor_assignments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      vendor_assignments: {
+        Row: {
+          amount: number | null
+          created_at: string
+          created_by: string | null
+          customer_visible: boolean
+          details: string | null
+          due_date: string | null
+          execution_status: string
+          id: string
+          org_id: string
+          payment_status: string
+          project_id: string | null
+          record_id: string | null
+          record_status_on_submit: string | null
+          record_status_on_verify: string | null
+          rejection_note: string | null
+          started_at: string | null
+          submitted_at: string | null
+          submitted_note: string | null
+          task_id: string | null
+          title: string
+          updated_at: string
+          vendor_id: string
+          verified_at: string | null
+          verified_by: string | null
+        }
+        Insert: {
+          amount?: number | null
+          created_at?: string
+          created_by?: string | null
+          customer_visible?: boolean
+          details?: string | null
+          due_date?: string | null
+          execution_status?: string
+          id?: string
+          org_id: string
+          payment_status?: string
+          project_id?: string | null
+          record_id?: string | null
+          record_status_on_submit?: string | null
+          record_status_on_verify?: string | null
+          rejection_note?: string | null
+          started_at?: string | null
+          submitted_at?: string | null
+          submitted_note?: string | null
+          task_id?: string | null
+          title: string
+          updated_at?: string
+          vendor_id: string
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Update: {
+          amount?: number | null
+          created_at?: string
+          created_by?: string | null
+          customer_visible?: boolean
+          details?: string | null
+          due_date?: string | null
+          execution_status?: string
+          id?: string
+          org_id?: string
+          payment_status?: string
+          project_id?: string | null
+          record_id?: string | null
+          record_status_on_submit?: string | null
+          record_status_on_verify?: string | null
+          rejection_note?: string | null
+          started_at?: string | null
+          submitted_at?: string | null
+          submitted_note?: string | null
+          task_id?: string | null
+          title?: string
+          updated_at?: string
+          vendor_id?: string
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vendor_assignments_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "orgs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vendor_assignments_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vendor_assignments_record_id_fkey"
+            columns: ["record_id"]
+            isOneToOne: false
+            referencedRelation: "records"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vendor_assignments_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vendor_assignments_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      vendor_payments: {
+        Row: {
+          amount: number
+          assignment_id: string
+          created_at: string
+          id: string
+          note: string | null
+          org_id: string
+          paid_at: string
+          recorded_by: string | null
+        }
+        Insert: {
+          amount: number
+          assignment_id: string
+          created_at?: string
+          id?: string
+          note?: string | null
+          org_id: string
+          paid_at?: string
+          recorded_by?: string | null
+        }
+        Update: {
+          amount?: number
+          assignment_id?: string
+          created_at?: string
+          id?: string
+          note?: string | null
+          org_id?: string
+          paid_at?: string
+          recorded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vendor_payments_assignment_id_fkey"
+            columns: ["assignment_id"]
+            isOneToOne: false
+            referencedRelation: "vendor_assignments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vendor_payments_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "orgs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      vendors: {
+        Row: {
+          archived_at: string | null
+          category: string | null
+          created_at: string
+          created_by: string | null
+          email: string | null
+          gstin: string | null
+          id: string
+          name: string
+          notes: string | null
+          org_id: string
+          phone_e164: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          archived_at?: string | null
+          category?: string | null
+          created_at?: string
+          created_by?: string | null
+          email?: string | null
+          gstin?: string | null
+          id?: string
+          name: string
+          notes?: string | null
+          org_id: string
+          phone_e164?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          archived_at?: string | null
+          category?: string | null
+          created_at?: string
+          created_by?: string | null
+          email?: string | null
+          gstin?: string | null
+          id?: string
+          name?: string
+          notes?: string | null
+          org_id?: string
+          phone_e164?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vendors_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "orgs"
             referencedColumns: ["id"]
           },
         ]
@@ -2590,6 +2828,7 @@ export type Database = {
       is_org_member: { Args: { p_org: string }; Returns: boolean }
       is_org_owner_admin: { Args: { p_org: string }; Returns: boolean }
       is_project_customer: { Args: { p_project: string }; Returns: boolean }
+      is_system_write: { Args: never; Returns: boolean }
       ist_today: { Args: never; Returns: string }
       leave_days_between: {
         Args: {
