@@ -35,10 +35,10 @@ test("the story is served signed out, with real doors", async ({ page }) => {
 
 test("the stories respond to the reader", async ({ page }) => {
   await page.goto("/");
-  // Picking a line in the ledger pauses the loop and holds that line.
-  const chain = page.locator(".w35-chain-card");
-  await chain.nth(3).click();
-  await expect(page.locator(".w35-chain-item").nth(3)).toHaveAttribute("data-now", "true");
+  // Picking a step on the record's Line pauses the loop and holds that step.
+  const marks = page.locator(".w4-rec-line button");
+  await marks.nth(3).click();
+  await expect(page.locator(".w4-rec-line li").nth(3)).toHaveAttribute("data-now", "true");
   await expect(page.getByRole("button", { name: /Play the loop/ })).toBeVisible();
 
   // Monday: the record is on the page before anything moves, and it fills.

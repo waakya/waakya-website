@@ -98,6 +98,12 @@ export function ConversationToWork() {
           ) : null}
         </div>
 
+        {/* the Line: the sentence becoming a commitment */}
+        <div className="w4-talk-link" data-on={read} aria-hidden="true">
+          <i className="w4-talk-link-rule" />
+          <i className="w4-talk-link-dot" />
+        </div>
+
         {/* ---------------------------------------------- the commitment */}
         <div className="w4-work" data-on={read}>
           <p className="w4-kicker">Work · from a conversation</p>

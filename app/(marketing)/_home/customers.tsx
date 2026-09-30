@@ -2,7 +2,6 @@
 
 import * as React from "react";
 
-import { Character } from "./characters";
 import { DemoPhoto } from "./demo-photo";
 import { StoryControl, StoryDots, useSequence } from "./v35-seq";
 
@@ -147,7 +146,7 @@ export function CustomerLoop() {
             <li className="w4-row" data-changed={crossed}>
               <span className="min-w-0 flex-1">
                 <b>Laminate</b>
-                <span className="w4-row-meta">{crossed ? `${laminate} · approved by Sterling, 2:20 pm` : "sent to Sterling to choose"}</span>
+                <span className="w4-row-meta">{crossed ? `${laminate} · approved by Sterling, 2:20 pm` : team ? "" : "Neha · sent to Sterling to choose"}</span>
               </span>
               <span className="w32-status" data-tone={crossed ? "done" : "wait"}>
                 {crossed ? "Approved" : "Waiting on customer"}
@@ -156,7 +155,7 @@ export function CustomerLoop() {
             <li className="w4-row" data-changed={next}>
               <span className="min-w-0 flex-1">
                 <b>Shutters · Deccan</b>
-                <span className="w4-row-meta">12 units · ₹1,10,000</span>
+                <span className="w4-row-meta">{next ? "Deccan · order received, 12 units" : "Deccan · 12 units, waiting"}</span>
               </span>
               <span className="w32-status" data-tone={next ? "go" : "wait"}>
                 {next ? `Ordered · ${laminate}` : "Waiting on laminate"}
@@ -165,7 +164,7 @@ export function CustomerLoop() {
             <li className="w4-row" data-changed={next}>
               <span className="min-w-0 flex-1">
                 <b>Conference room lighting</b>
-                <span className="w4-row-meta">{next ? "Rahul’s next job · Friday" : "Blocked by the shutters"}</span>
+                <span className="w4-row-meta">{next ? "Rahul · next job, Friday" : "Rahul · blocked by the shutters"}</span>
               </span>
               <span className="w32-status" data-tone={next ? "go" : "wait"}>
                 {next ? "Active" : "Waiting"}
@@ -173,31 +172,20 @@ export function CustomerLoop() {
             </li>
           </ul>
 
-          <div className="w4-cx-people" aria-hidden="true">
-            <span data-on={team}>
-              <Character name="manager" action={team ? "working" : "waiting"} className="w-12" />
-              <em>{team ? "Neha · stops waiting" : "Neha · waiting"}</em>
-            </span>
-            <span data-on={next}>
-              <Character name="road" action={next ? "walking" : "idle"} className="w-11" />
-              <em>{next ? "Deccan · order received" : "Deccan · no order yet"}</em>
-            </span>
-            <span data-on={next}>
-              <Character name="site" action={next ? "working" : "waiting"} className="w-11" />
-              <em>{next ? "Rahul · next job open" : "Rahul · blocked"}</em>
-            </span>
-          </div>
-
           <ol className="w4-effects-list" aria-label="What that one tap did">
-            {[
-              ["Approval recorded on the project", crossed],
-              ["Neha stops waiting", team],
-              [`Deccan gets the order · ${laminate}, 12 units`, next],
-              ["Rahul’s next job opens", next],
-            ].map(([label, on]) => (
-              <li key={label as string} data-on={Boolean(on)}>
+            {/* Each consequence is written in its waiting state first, so the
+                list is complete before her tap and changes because of it. */}
+            {(
+              [
+                ["Approval not recorded yet", "Approval recorded on the project", crossed],
+                ["Neha is waiting on Sterling", "Neha stops waiting", team],
+                ["Deccan has no order yet", `Deccan gets the order · ${laminate}, 12 units`, next],
+                ["Rahul’s lighting job is blocked", "Rahul’s next job opens", next],
+              ] as const
+            ).map(([before, after, on]) => (
+              <li key={after} data-on={Boolean(on)}>
                 <i aria-hidden="true" />
-                {label}
+                {on ? after : before}
               </li>
             ))}
           </ol>

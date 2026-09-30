@@ -4,42 +4,34 @@ import Link from "next/link";
 import * as React from "react";
 
 import { Ticks, type TicksState } from "@/components/waakya/ticks";
-import { Character, type CharacterName } from "./characters";
+import { Character } from "./characters";
 import { DemoPhoto } from "./demo-photo";
 import { StoryControl, useSequence } from "./v35-seq";
 
 /**
- * The first viewport: the promise on the left, the evidence on the right.
- *
- * The evidence is one customer's record — a ledger page from ABC Interiors
- * with six entries, from her first message to her own page. All six lines are
- * on the page from the first frame; the story moves a reading mark down the
- * ledger and the ticks glyph on each line reports its real state as it is
- * reached. Nothing appears out of nowhere, so the frame is complete before,
- * during and after.
+ * The first viewport: the promise on the left; on the right, ONE customer's
+ * record changing state (Visual V2). The Line along its top fills as the
+ * work moves — enquiry, owner, site, proof, verified, her page — the state
+ * word and the ticks glyph say where it stands, and the panel beneath shows
+ * the thing each step produced. All six panels are laid out from the first
+ * frame in the same place, so the record is complete before, during and
+ * after the story runs.
  */
-type Entry = {
-  when: string;
-  kicker: string;
-  head: string;
-  meta: string;
-  ticks?: TicksState;
-  who?: CharacterName;
-  photos?: boolean;
-  phone?: boolean;
-};
+type Step = { key: string; mark: string; state: string; ticks: TicksState };
 
-const LEDGER: Entry[] = [
-  { when: "Mon 9:12", kicker: "A customer", head: "Meera Joshi writes from your website", meta: "2,400 sq ft office · Baner · budget shared", who: "desk" },
-  { when: "Mon 9:12", kicker: "Your business", head: "She becomes a customer", meta: "requirement, budget and the thread, in one record", ticks: "sent" },
-  { when: "Mon 9:14", kicker: "Your team", head: "Neha owns it", meta: "follow-up by 11:00 — not “someone will call”", who: "manager", ticks: "seen" },
-  { when: "Thu 4:00", kicker: "The work", head: "Site measured", meta: "Rahul · Thursday, 4:00 pm · on time", who: "site", ticks: "accepted" },
-  { when: "Thu 4:38", kicker: "The proof", head: "3 photos, on the job", meta: "attached to the work, not lost in a chat", photos: true, ticks: "done" },
-  { when: "Thu 4:40", kicker: "Back to her", head: "She can see it", meta: "her own page · what is done, what is next", phone: true, ticks: "verified" },
+const STEPS: Step[] = [
+  { key: "enquiry", mark: "Enquiry", state: "New enquiry", ticks: "sent" },
+  { key: "owner", mark: "Owner", state: "Owned by Neha", ticks: "seen" },
+  { key: "site", mark: "Site", state: "Site visit accepted", ticks: "accepted" },
+  { key: "proof", mark: "Proof", state: "Measured · proof in", ticks: "done" },
+  { key: "verified", mark: "Verified", state: "Verified", ticks: "verified" },
+  { key: "page", mark: "Her page", state: "She can see it", ticks: "verified" },
 ];
 
 export function Hero() {
-  const { ref, step, playing, setPlaying, pick, replay, done } = useSequence(LEDGER.length, 1500, { threshold: 0.25 });
+  const { ref, step, playing, setPlaying, pick, replay, done } = useSequence(STEPS.length, 1300, { threshold: 0.25 });
+  const verified = step >= 4;
+  const now = STEPS[step];
 
   return (
     <section className="w4-hero">
@@ -64,67 +56,94 @@ export function Hero() {
                 Watch a business run →
               </a>
             </div>
-            <p className="w4-hero-note">
-              A customer comes in. Waakya knows who she is. Someone owns the work. The work happens. Proof returns.
-              She knows.
-            </p>
           </div>
 
           <div ref={ref} className="w4-hero-evidence">
-            <figure className="w4-ledger" aria-label="One customer's record at ABC Interiors">
-              <figcaption className="w4-ledger-top">
-                <span className="w4-kicker">Customer record · ABC Interiors</span>
-                <span className="w4-ledger-name">Meera Joshi</span>
-                <span className="w4-ledger-sub num">2,400 sq ft office · from your website</span>
-                <span className="w4-ledger-state" data-done={done}>
-                  <Ticks state={done ? "verified" : step >= 2 ? "seen" : "sent"} size={16} />
-                  {done ? "Verified" : step >= 3 ? "In progress" : step >= 2 ? "Owned" : "New"}
+            <figure className="w4-rec" data-verified={verified} aria-label="One customer's record at ABC Interiors">
+              <figcaption className="w4-rec-top">
+                <span className="w4-kicker">ABC Interiors · customer record</span>
+                <span className="w4-rec-name">Meera Joshi</span>
+                <span className="num w4-rec-sub">2,400 sq ft office · Baner · from your website</span>
+                <span className="w4-rec-state" aria-live="polite">
+                  <Ticks state={now.ticks} size={20} animate={step === 4} />
+                  <b>{now.state}</b>
                 </span>
               </figcaption>
 
-              <ol className="w35-chain w4-ledger-rows">
-                {LEDGER.map((e, i) => (
-                  <li key={e.head} className="w35-chain-item w4-ledger-row" data-on={i <= step} data-now={i === step}>
-                    <button
-                      type="button"
-                      className="w35-chain-card w4-ledger-btn"
-                      onClick={() => pick(i)}
-                      aria-current={i === step ? "step" : undefined}
-                    >
-                      <span className="num w4-ledger-when">{e.when}</span>
-                      <span className="w4-ledger-spine" aria-hidden="true">
-                        <i />
-                      </span>
-                      <span className="w4-ledger-main">
-                        <span className="w4-kicker">{e.kicker}</span>
-                        <span className="w4-ledger-head">{e.head}</span>
-                        <span className="w4-ledger-meta">{e.meta}</span>
-                        {e.photos ? (
-                          <span className="w4-ledger-photos" aria-hidden="true">
-                            <DemoPhoto scene="reception" className="w4-ledger-photo" label={false} />
-                            <DemoPhoto scene="openfloor" className="w4-ledger-photo" label={false} />
-                            <DemoPhoto scene="site" className="w4-ledger-photo" label={false} />
-                          </span>
-                        ) : null}
-                        {e.phone ? (
-                          <span className="w4-ledger-page" aria-hidden="true">
-                            <span className="w4-ledger-page-bar">
-                              <i style={{ width: i <= step ? "38%" : "0%" }} />
-                            </span>
-                            <span className="num">waakya.abcinteriors.com/meera · 38% · next: quotation</span>
-                          </span>
-                        ) : null}
-                      </span>
-                      <span className="w4-ledger-end" aria-hidden="true">
-                        {e.who ? <Character name={e.who} action={i === step ? "working" : "idle"} className="w-9" /> : null}
-                        {e.ticks ? <Ticks state={i <= step ? e.ticks : "sent"} size={14} className="w4-ledger-ticks" /> : null}
-                      </span>
+              {/* the Line: where this record's work has got to */}
+              <ol className="w4-rec-line" aria-label="Where the work is">
+                {STEPS.map((s, i) => (
+                  <li key={s.key} data-on={i <= step} data-now={i === step} data-verified={i >= 4 && i <= step}>
+                    <button type="button" onClick={() => pick(i)} aria-current={i === step ? "step" : undefined} aria-label={`${s.mark}: ${s.state}`}>
+                      <i aria-hidden="true" />
+                      <span>{s.mark}</span>
                     </button>
                   </li>
                 ))}
               </ol>
 
-              <div className="w4-ledger-foot">
+              {/* what each step produced — every panel present, one shown */}
+              <div className="w4-rec-stage">
+                <div className="w4-rec-panel" data-on={step === 0} aria-hidden={step !== 0}>
+                  <p className="w4-kicker">From abcinteriors.com · Mon 9:12</p>
+                  <p className="w4-rec-quote">“Need a quote for a 2,400 sq ft office in Baner. Can someone come and measure?”</p>
+                  <p className="w4-rec-meta">Waakya made her a customer record, with the requirement and the thread.</p>
+                </div>
+                <div className="w4-rec-panel" data-on={step === 1} aria-hidden={step !== 1}>
+                  <div className="w4-rec-row">
+                    <Character name="manager" action="working" className="w-12" />
+                    <div>
+                      <p className="w4-kicker">Owner</p>
+                      <p className="w4-rec-big">Neha Singh</p>
+                      <p className="num w4-rec-meta">Call Meera by 11:00 today — not “someone will call”.</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="w4-rec-panel" data-on={step === 2} aria-hidden={step !== 2}>
+                  <div className="w4-rec-row">
+                    <Character name="site" action="walking" className="w-12" />
+                    <div className="min-w-0 flex-1">
+                      <p className="w4-kicker">Work · accepted by Rahul</p>
+                      <p className="w4-rec-big">Site measurement</p>
+                      <p className="num w4-rec-meta">Thursday, 4:00 pm · reminders at 50% and 90%</p>
+                      <span className="w4-rec-clock" aria-hidden="true">
+                        <i style={{ width: step >= 2 ? "34%" : "0%" }} />
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div className="w4-rec-panel" data-on={step === 3} aria-hidden={step !== 3}>
+                  <p className="w4-kicker">Proof · Rahul · Thu 4:38</p>
+                  <div className="w4-rec-photos">
+                    <DemoPhoto scene="openfloor" className="w4-rec-photo" label={false} />
+                    <DemoPhoto scene="site" className="w4-rec-photo" label={false} />
+                    <DemoPhoto scene="reception" className="w4-rec-photo" label={false} />
+                  </div>
+                  <p className="w4-rec-meta">Attached to the work, not lost in a chat.</p>
+                </div>
+                <div className="w4-rec-panel" data-on={step === 4} aria-hidden={step !== 4}>
+                  <div className="w4-rec-row">
+                    <Ticks state="verified" size={40} animate={step === 4} />
+                    <div>
+                      <p className="w4-kicker">Verified · Thu 5:10</p>
+                      <p className="w4-rec-big">Neha checked the measurements</p>
+                      <p className="w4-rec-meta">It stays on Meera’s record, for good.</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="w4-rec-panel" data-on={step === 5} aria-hidden={step !== 5}>
+                  <div className="w4-rec-page">
+                    <p className="num w4-rec-url">waakya.abcinteriors.com/meera</p>
+                    <p className="w4-rec-big">Hello Meera.</p>
+                    <ul>
+                      <li data-done="true">Site measured · Thursday</li>
+                      <li>Quotation · Friday</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <div className="w4-rec-foot">
                 <p className="w4-loop" data-on={done}>
                   <span aria-hidden="true">↻</span> and the next job starts in the same place
                 </p>

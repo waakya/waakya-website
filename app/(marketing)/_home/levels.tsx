@@ -2,7 +2,6 @@
 
 import * as React from "react";
 
-import { Character } from "./characters";
 
 /**
  * How far it goes: four depths on one line, each further in than the last.
@@ -18,14 +17,6 @@ const LEVELS = [
   { word: "Built for you", say: "The workflow that only your business has." },
 ];
 
-const ABC_FLOW: { node: string; kind: "web" | "doc" | "record" | "chat" | "person" | "project" }[] = [
-  { node: "Estimator on abcinteriors.com", kind: "web" },
-  { node: "Floor plan", kind: "doc" },
-  { node: "Customer record", kind: "record" },
-  { node: "WhatsApp to Meera", kind: "chat" },
-  { node: "Neha’s day", kind: "person" },
-  { node: "Project", kind: "project" },
-];
 
 export function AdaptLevels({ intro }: { intro: React.ReactNode }) {
   const [i, setI] = React.useState(3);
@@ -49,24 +40,6 @@ export function AdaptLevels({ intro }: { intro: React.ReactNode }) {
         </p>
       </div>
 
-      <div className="w4-custom" data-deep={i === 3}>
-        <p className="w4-kicker">What “built for you” means, once</p>
-        <p className="w4-display w4-custom-line">ABC Interiors wins work with a cost estimator on their own website.</p>
-        <ol className="w4-pipe" aria-label="Where an estimate goes">
-          {ABC_FLOW.map((f, n) => (
-            <li key={f.node} data-kind={f.kind} style={{ animationDelay: `${n * 70}ms` }}>
-              <span className="w4-pipe-node">
-                {f.kind === "person" ? <Character name="manager" action="working" className="w-7" /> : <i aria-hidden="true" />}
-                {f.node}
-              </span>
-            </li>
-          ))}
-        </ol>
-        <p className="w4-sentence mt-3 max-w-[56ch]">
-          That estimator is theirs alone — and it still lands in the same customer record, the same salesperson’s day
-          and the same project as everything else.
-        </p>
-      </div>
     </div>
   );
 }

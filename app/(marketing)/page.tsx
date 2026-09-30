@@ -220,7 +220,7 @@ export default async function HomePage() {
           say="Switch the business and the whole workspace re-forms: what the navigation is called, what a record is, where the work happens and who does it."
         >
           <TwoBusinesses />
-          <div className="w4-rule mt-16 pt-12">
+          <div className="w4-rule mt-12 pt-10">
             <AdaptLevels
               intro={
                 <>
@@ -248,20 +248,26 @@ export default async function HomePage() {
         {/* ------------------------------------------------------ 9 · close */}
         <section className="w4-close">
           <div className="w4-wrap">
-            <VerifiedMark />
-            <h2 className="w4-display mt-6 max-w-[16ch] text-[38px] leading-[1.02] sm:text-[60px]">
-              You built the business. You should not have to hold it together.
-            </h2>
-            <p className="w4-display mt-7 text-[22px] leading-tight text-[#b8bdf0] sm:text-[30px]">
-              Your entire business. One workspace.
-            </p>
-            <div className="mt-9 flex flex-wrap items-center gap-x-7 gap-y-3">
-              <Link href="/login" className="w4-primary w4-primary-light" style={{ minHeight: 52 }}>
-                Start with my business
-              </Link>
-              <Link href="/demo" className="inline-flex min-h-11 items-center font-bold text-white underline underline-offset-4">
-                See the product demonstration
-              </Link>
+            <div className="w4-grid w4-close-grid">
+              <div className="w4-close-copy">
+                <h2 className="w4-display text-[38px] leading-[1.02] sm:text-[56px]">
+                  You built the business. You should not have to hold it together.
+                </h2>
+                <p className="w4-display mt-7 text-[22px] leading-tight text-[#b8bdf0] sm:text-[30px]">
+                  Your entire business. One workspace.
+                </p>
+                <div className="mt-9 flex flex-wrap items-center gap-x-7 gap-y-3">
+                  <Link href="/login" className="w4-primary w4-primary-light" style={{ minHeight: 52 }}>
+                    Start with my business
+                  </Link>
+                  <Link href="/demo" className="inline-flex min-h-11 items-center font-bold text-white underline underline-offset-4">
+                    See the product demonstration
+                  </Link>
+                </div>
+              </div>
+              <div className="w4-close-figure">
+                <VerifiedMark />
+              </div>
             </div>
           </div>
         </section>
