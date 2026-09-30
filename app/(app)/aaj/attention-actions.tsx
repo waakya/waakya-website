@@ -3,7 +3,6 @@
 import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Bell, Check, RefreshCw } from "lucide-react";
 
 import { Button, buttonVariants } from "@/components/ui/button";
 import { toast } from "@/components/ui/sonner";
@@ -33,8 +32,7 @@ export function TaskAction({
 
   if (kind === "reassign") {
     return (
-      <Button size="sm" className="h-tap" variant="outline" render={<Link href={`/kaam/${taskId}`} />} nativeButton={false}>
-        <RefreshCw />
+      <Button size="sm" className="h-tap" variant="verb" render={<Link href={`/kaam/${taskId}`} />} nativeButton={false}>
         {t.actions.kisiAurKo}
       </Button>
     );
@@ -45,7 +43,7 @@ export function TaskAction({
       <Button
         size="sm"
         className="h-tap"
-        variant="secondary"
+        variant="verb"
         disabled={pending}
         onClick={() =>
           startTransition(async () => {
@@ -56,7 +54,6 @@ export function TaskAction({
           })
         }
       >
-        <Check strokeWidth={3} />
         {t.actions.verify}
       </Button>
     );
@@ -66,7 +63,7 @@ export function TaskAction({
     <Button
       size="sm"
       className="h-tap"
-      variant="outline"
+      variant="verb"
       disabled={pending}
       onClick={() =>
         startTransition(async () => {
@@ -75,7 +72,6 @@ export function TaskAction({
         })
       }
     >
-      <Bell />
       {t.actions.yaadDilao}
     </Button>
   );
@@ -115,11 +111,10 @@ export function DecideAction({
 
   return (
     <div className="flex items-center gap-1">
-      <Button size="sm" className="h-tap" variant="secondary" disabled={pending} onClick={approve}>
-        <Check strokeWidth={3} />
+      <Button size="sm" className="h-tap" variant="verb" disabled={pending} onClick={approve}>
         {p.approvals.approve}
       </Button>
-      <Link href={rejectHref} className={buttonVariants({ size: "sm", variant: "ghost", className: "h-tap" })}>
+      <Link href={rejectHref} className={buttonVariants({ size: "sm", variant: "verb", className: "h-tap text-fg-muted decoration-paper-300 hover:text-fg" })}>
         {p.approvals.reject}
       </Link>
     </div>

@@ -87,9 +87,42 @@ export interface DesignCopy {
     allTeam: (n: number) => string;
     choosePerson: string;
   };
+  /** Visual V2: Today as needs you → stuck → changed → moving normally. */
+  today2: {
+    needs: (n: number) => string;
+    allClear: string;
+    stuck: string;
+    stuckCount: (n: number) => string;
+    stuckEmpty: string;
+    changed: string;
+    changedCount: (n: number) => string;
+    changedEmpty: string;
+    moving: string;
+    movingCount: (n: number) => string;
+    movingLine: (onTime: number, dueToday: number, doneToday: number) => string;
+    byPerson: string;
+    yesterday: string;
+    history: string;
+  };
 }
 
 const en: DesignCopy = {
+  today2: {
+    needs: (n) => (n === 1 ? "1 thing needs you." : `${n} things need you.`),
+    allClear: "Nothing needs you right now.",
+    stuck: "Stuck",
+    stuckCount: (n) => `${n} stuck`,
+    stuckEmpty: "Nothing is stuck.",
+    changed: "Changed since yesterday",
+    changedCount: (n) => `${n} changed since yesterday`,
+    changedEmpty: "Nothing new since yesterday.",
+    moving: "Moving normally",
+    movingCount: (n) => `${n} moving on time`,
+    movingLine: (a, b, c) => `${a} on time · ${b} due today · ${c} done today`,
+    byPerson: "Who is behind",
+    yesterday: "yesterday",
+    history: "Everything that happened",
+  },
   today: {
     staffProgress: (done, total) => `${done} of ${total} done`,
     rateEmpty: "Shows once work is verified this week.",
@@ -165,6 +198,22 @@ const en: DesignCopy = {
 };
 
 const hiLatn: DesignCopy = {
+  today2: {
+    needs: (n) => (n === 1 ? "1 cheez aapka intezaar kar rahi hai." : `${n} cheezein aapka intezaar kar rahi hain.`),
+    allClear: "Abhi aapke liye kuch baaki nahi.",
+    stuck: "Atka hua",
+    stuckCount: (n) => `${n} atke hue`,
+    stuckEmpty: "Kuch atka nahi.",
+    changed: "Kal se kya badla",
+    changedCount: (n) => `kal se ${n} badlaav`,
+    changedEmpty: "Kal se kuch naya nahi.",
+    moving: "Baaki sab chal raha hai",
+    movingCount: (n) => `${n} time par chal rahe`,
+    movingLine: (a, b, c) => `${a} time par · aaj ${b} due · aaj ${c} ho gaye`,
+    byPerson: "Kaun peeche hai",
+    yesterday: "kal",
+    history: "Sab kuch jo hua",
+  },
   today: {
     staffProgress: (done, total) => `${total} mein ${done} ho gaye`,
     rateEmpty: "Is hafte kaam verify hone par dikhega.",
@@ -240,6 +289,22 @@ const hiLatn: DesignCopy = {
 };
 
 const hi: DesignCopy = {
+  today2: {
+    needs: (n) => (n === 1 ? "1 चीज़ आपका इंतज़ार कर रही है।" : `${n} चीज़ें आपका इंतज़ार कर रही हैं।`),
+    allClear: "अभी आपके लिए कुछ बाक़ी नहीं।",
+    stuck: "अटका हुआ",
+    stuckCount: (n) => `${n} अटके हुए`,
+    stuckEmpty: "कुछ अटका नहीं।",
+    changed: "कल से क्या बदला",
+    changedCount: (n) => `कल से ${n} बदलाव`,
+    changedEmpty: "कल से कुछ नया नहीं।",
+    moving: "बाक़ी सब चल रहा है",
+    movingCount: (n) => `${n} समय पर चल रहे`,
+    movingLine: (a, b, c) => `${a} समय पर · आज ${b} ड्यू · आज ${c} हो गए`,
+    byPerson: "कौन पीछे है",
+    yesterday: "कल",
+    history: "सब कुछ जो हुआ",
+  },
   today: {
     staffProgress: (done, total) => `${total} में ${done} हो गए`,
     rateEmpty: "इस हफ़्ते काम वेरिफ़ाई होने पर दिखेगा।",

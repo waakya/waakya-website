@@ -51,14 +51,15 @@ test("the exception chips carry a word and a number, not just a colour", async (
   await expect(header.getByText(/\d+ Dekha nahi/)).toBeVisible();
 });
 
-test("Aapke liye offers the action inline, without opening the task", async ({
+test("Today offers the nudge inline, without opening the task", async ({
   page,
 }) => {
   await signInAs(page, "owner");
   await page.goto("/aaj");
 
+  // Late work sits in "Atka hua" (Stuck), grouped; its first row offers Remind.
   const section = page
-    .getByRole("list", { name: "Aapke liye" })
+    .getByRole("list", { name: "Atka hua" })
     .getByRole("listitem")
     .first();
   await expect(section.getByRole("button", { name: "Yaad dilao" })).toBeVisible();

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 
-import { requireOrg, canManage } from "@/lib/auth/session";
+import { requireOrg, canManage, viewerCan } from "@/lib/auth/session";
 import { getMyTasks, getOrgTasks } from "@/lib/tasks/queries";
 import { getUnreadCount } from "@/lib/notify/inbox";
 import { getOrgMembers } from "@/lib/org/members";
@@ -99,6 +99,7 @@ export default async function AajPage() {
           teamAttendance={teamAttendance}
           myToday={myToday}
           showPunch={viewer.role !== "owner" || Boolean(myToday?.punchInAt)}
+          canSeeHistory={viewerCan(viewer, "audit.read")}
           unread={unread}
           nowIso={now.toISOString()}
           guide={

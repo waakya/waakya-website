@@ -34,6 +34,11 @@ const buttonVariants = cva(
         danger: "bg-laal-100 text-laal-600 hover:bg-laal-100/70",
         /** Laal 600 solid — only for a destructive confirmation. */
         dangerSolid: "bg-laal-600 text-white hover:bg-laal-700",
+        /**
+         * The action a row asks for, said as a word (Visual V2 attention
+         * grammar): an underlined verb, no box, with the full tap target.
+         */
+        verb: "bg-transparent px-2 text-neel-700 underline decoration-[1.5px] underline-offset-[5px] hover:bg-neel-50 hover:text-neel-800",
       },
       size: {
         /** Inline actions inside a card row. */

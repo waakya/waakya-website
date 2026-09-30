@@ -87,7 +87,7 @@ export async function SetupGuide({ locale, orgId }: { locale: Locale; orgId: str
           const isNext = next?.key === step.key;
           return (
             <li key={step.key} className="border-b border-paper-100 last:border-b-0">
-              <div className={cn("flex items-center gap-3 px-4 sm:px-5", isNext ? "bg-neel-50 py-3" : "py-2")}>
+              <div className={cn("flex flex-wrap items-center gap-x-3 gap-y-2 px-4 sm:flex-nowrap sm:px-5", isNext ? "bg-neel-50 py-3" : "py-2")}>
                 <span
                   className={cn(
                     "num grid size-8 shrink-0 place-items-center rounded-full text-label font-bold",
@@ -97,7 +97,7 @@ export async function SetupGuide({ locale, orgId }: { locale: Locale; orgId: str
                 >
                   {step.done ? <Check className="size-4" strokeWidth={3} /> : index + 1}
                 </span>
-                <span className="min-w-0 flex-1">
+                <span className="min-w-0 flex-1 basis-[calc(100%-3rem)] sm:basis-auto">
                   <span className={cn("flex items-center gap-1.5 text-body font-semibold", step.done ? "text-ink-500 line-through decoration-ink-400/60" : "text-ink-900")}>
                     <Icon className="size-4 shrink-0 text-neel-700" aria-hidden="true" />
                     {step.copy.title}
@@ -113,7 +113,7 @@ export async function SetupGuide({ locale, orgId }: { locale: Locale; orgId: str
                 ) : !isNext ? null : (
                   <Link
                     href={step.href}
-                    className="inline-flex min-h-10 shrink-0 items-center gap-1 rounded-button bg-neel-600 px-3 text-body-sm font-semibold text-white hover:bg-neel-700"
+                    className="ml-10 inline-flex min-h-10 shrink-0 items-center gap-1 rounded-button bg-neel-600 px-3 text-body-sm font-semibold text-white hover:bg-neel-700 sm:ml-0"
                   >
                     {step.copy.action}
                     <ChevronRight className="size-4" aria-hidden="true" />

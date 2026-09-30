@@ -30,11 +30,14 @@ test("a busy owner sees every kind of waiting work, with counts", async ({ page 
   // them once the business passed 200 tasks.
   expect(Number(/(\d+) Late/.exec(text)?.[1])).toBeGreaterThanOrEqual(60);
   // Busy: each group folds to three rows and says how many more.
-  const list = page.getByRole("list", { name: "Needs you" });
-  await expect(list.getByRole("link", { name: /^\d+ more · Late/ })).toBeVisible();
-  // The page stays bounded however busy the business is.
-  const rows = await list.getByRole("listitem").count();
-  expect(rows).toBeLessThanOrEqual(7 * 4);
+  // Late work is in Stuck; decisions are in Needs you. Both fold.
+  const stuck = page.getByRole("list", { name: "Stuck" });
+  await expect(stuck.getByRole("link", { name: /^\d+ more · Late/ })).toBeVisible();
+  // The page stays bounded however busy the business is: at most three rows,
+  // a "more" link and a group title per kind of waiting thing.
+  const needs = page.getByRole("list", { name: "Needs you" });
+  const rows = (await needs.getByRole("listitem").count()) + (await stuck.getByRole("listitem").count());
+  expect(rows).toBeLessThanOrEqual(13 * 5);
 });
 
 test("every count on a busy Today matches the list it leads to", async ({ page }) => {

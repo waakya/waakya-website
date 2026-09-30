@@ -45,8 +45,8 @@ test("a busy group shows three rows and an exact way to the rest", async ({ page
   await signOut(page);
   await signInAs(page, "owner");
   await page.goto("/aaj");
-  const list = page.getByRole("list", { name: "Aapke liye" });
-  const more = list.getByRole("link", { name: /^\d+ aur · / });
+  // Groups fold in both bands, "Aapke liye" (Needs you) and "Atka hua" (Stuck).
+  const more = page.getByRole("main").getByRole("link", { name: /^\d+ aur · (?!Team par baaki)/ });
   if ((await more.count()) === 0) test.skip(true, "Today is not busy enough to fold");
   const first = more.first();
   const rest = Number((await first.textContent())!.trim().split(/\s+/)[0]);

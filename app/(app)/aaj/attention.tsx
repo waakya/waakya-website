@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { AlertTriangle, ArrowRight, CalendarClock, Clock, Contact, Eye, EyeOff, MessageSquare, Phone, ShieldCheck, Truck, UserX } from "lucide-react";
+import { AlertTriangle, ArrowRight, CalendarClock, Clock, Eye, EyeOff, MessageSquare, Phone, ShieldCheck, Truck, UserX } from "lucide-react";
 
 import { buttonVariants } from "@/components/ui/button";
 
@@ -21,17 +21,11 @@ import { vendorAttention } from "@/lib/vendors/queries";
 import { getVendors } from "@/lib/i18n/vendors";
 import { getPlatform } from "@/lib/i18n/platform";
 import { getCrm } from "@/lib/i18n/crm";
+import { getPortal } from "@/lib/i18n/portal";
 import { cn } from "@/lib/utils";
 import { DecideAction, TaskAction } from "./attention-actions";
 
 type Tone = "laal" | "amber" | "neel" | "quiet";
-
-const TILE: Record<Tone, string> = {
-  laal: "bg-laal-100 text-laal-700",
-  amber: "bg-amber-100 text-amber-700",
-  neel: "bg-neel-50 text-neel-700",
-  quiet: "bg-surface-muted text-fg-muted",
-};
 
 type GroupKey = "late" | "escalated" | "unseen" | "verify" | "approvals" | "leave" | "followups" | "leads" | "customers" | "decisions" | "vendorVerify" | "vendorLate" | "chats";
 
@@ -48,24 +42,30 @@ type GroupKey = "late" | "escalated" | "unseen" | "verify" | "approvals" | "leav
  * shows its first three with a link to exactly the rest — Work filtered by the
  * same rule that put them here, so the two can never disagree.
  */
-export async function AttentionList({
-  locale,
-  orgId,
-  userId,
-  manages,
-  attention,
-  nowIso,
-  hideWhenEmpty = false,
-}: {
+export type AttentionArgs = {
   locale: Locale;
   orgId: string;
   userId: string;
   manages: boolean;
   attention: NeedsYou[];
   nowIso: string;
-  /** Staff Today shows this list only when something is actually waiting. */
-  hideWhenEmpty?: boolean;
-}) {
+};
+
+/**
+ * Everything that waits on this person, gathered once and folded per group.
+ * Today draws it in two bands (what needs your decision, what is stuck);
+ * staff Today draws it as one list. The groups, their counts and the "N more"
+ * links are the same either way, so a count always leads to exactly that
+ * many things.
+ */
+export async function collectAttention({
+  locale,
+  orgId,
+  userId,
+  manages,
+  attention,
+  nowIso,
+}: AttentionArgs) {
   const t = getDictionary(locale);
   const d = getDesign(locale);
   const p = getPhase1(locale);
@@ -112,6 +112,8 @@ export async function AttentionList({
     group: GroupKey;
     tone: Tone;
     icon: React.ReactNode;
+    /** An exception said as a word ("Late 2 days"), shown before the meta. */
+    state?: string;
     href: string;
     title: string;
     meta: string;
@@ -138,7 +140,8 @@ export async function AttentionList({
         tone: "laal",
         icon: <Clock />,
         title: task.title,
-        meta: `${task.dueAt ? t.chips.lateBy(formatDuration(now.getTime() - Date.parse(task.dueAt), t.time)) : t.chips.late} · ${who}`,
+        state: task.dueAt ? t.chips.lateBy(formatDuration(now.getTime() - Date.parse(task.dueAt), t.time)) : t.chips.late,
+        meta: who,
         action: withCall(<TaskAction locale={locale} taskId={task.id} kind="remind" />, task.assigneeId, who),
       });
     } else if (reason === "escalated") {
@@ -147,7 +150,8 @@ export async function AttentionList({
         tone: "amber",
         icon: <AlertTriangle />,
         title: task.title,
-        meta: `${t.chips.escalated} · ${who}`,
+        state: t.chips.escalated,
+        meta: who,
         action: <TaskAction locale={locale} taskId={task.id} kind="reassign" />,
       });
     } else if (reason === "unseen") {
@@ -156,7 +160,8 @@ export async function AttentionList({
         tone: "amber",
         icon: <EyeOff />,
         title: task.title,
-        meta: `${t.chips.dekhaNahi} · ${who}`,
+        state: t.chips.dekhaNahi,
+        meta: who,
         action: withCall(<TaskAction locale={locale} taskId={task.id} kind="remind" />, task.assigneeId, who),
       });
     } else {
@@ -167,8 +172,8 @@ export async function AttentionList({
         title: task.title,
         // Verification is the owner's control point: the row says if it came
         // in late, and when a photo was required the owner sees it first.
+        state: t.chips.verifyBaaki,
         meta: [
-          t.chips.verifyBaaki,
           who,
           task.dueAt && task.doneAt && Date.parse(task.doneAt) > Date.parse(task.dueAt)
             ? d.v3.doneLate(formatDuration(Date.parse(task.doneAt) - Date.parse(task.dueAt), t.time))
@@ -178,8 +183,7 @@ export async function AttentionList({
           .filter(Boolean)
           .join(" · "),
         action: task.proofRequired ? (
-          <Link href={`/kaam/${task.id}`} className={buttonVariants({ size: "sm", variant: "secondary", className: "h-tap" })}>
-            <Eye aria-hidden="true" />
+          <Link href={`/kaam/${task.id}`} className={buttonVariants({ size: "sm", variant: "verb", className: "h-tap" })}>
             {d.v3.seeProof}
           </Link>
         ) : (
@@ -241,12 +245,11 @@ export async function AttentionList({
       title: contact.fullName,
       meta: [contact.nextActionNote, contact.followUp === "overdue" ? c.followUp.overdue : c.followUp.due, contact.ownerName].filter(Boolean).join(" · "),
       action: contact.phone ? (
-        <a href={`tel:${contact.phone}`} className={buttonVariants({ size: "sm", variant: "secondary", className: "h-tap" })}>
-          <Phone aria-hidden="true" />
+        <a href={`tel:${contact.phone}`} className={buttonVariants({ size: "sm", variant: "verb", className: "h-tap" })}>
           {c.today.call}
         </a>
       ) : (
-        <Link href={`/crm/${contact.id}`} className={buttonVariants({ size: "sm", variant: "secondary", className: "h-tap" })}>{c.today.open}</Link>
+        <Link href={`/crm/${contact.id}`} className={buttonVariants({ size: "sm", variant: "verb", className: "h-tap" })}>{c.today.open}</Link>
       ),
     });
   }
@@ -259,7 +262,7 @@ export async function AttentionList({
       href: `/crm/${contact.id}`,
       title: contact.fullName,
       meta: [c.kind.lead, contact.source ? (c.sources[contact.source as keyof typeof c.sources] ?? contact.source) : null, contact.companyName].filter(Boolean).join(" · "),
-      action: <Link href={`/crm/${contact.id}`} className={buttonVariants({ size: "sm", variant: "secondary", className: "h-tap" })}><Contact aria-hidden="true" />{c.actions.assign}</Link>,
+      action: <Link href={`/crm/${contact.id}`} className={buttonVariants({ size: "sm", variant: "verb", className: "h-tap" })}>{c.actions.assign}</Link>,
     });
   }
 
@@ -274,7 +277,7 @@ export async function AttentionList({
       href: `/projects/${m.projectId}#customer`,
       title: m.projectName,
       meta: pl.customerMessages(m.count),
-      action: <Link href={`/projects/${m.projectId}#customer`} className={buttonVariants({ size: "sm", variant: "secondary", className: "h-tap" })}>{c.today.open}</Link>,
+      action: <Link href={`/projects/${m.projectId}#customer`} className={buttonVariants({ size: "sm", variant: "verb", className: "h-tap" })}>{c.today.open}</Link>,
     });
   }
   for (const dec of (customers?.openDecisions ?? []).filter((x) => now.getTime() - Date.parse(x.createdAt) > 48 * 3600 * 1000)) {
@@ -285,8 +288,9 @@ export async function AttentionList({
       icon: <CalendarClock />,
       href: `/projects/${dec.projectId}#decisions`,
       title: dec.title,
+      state: getPortal(locale).business.waiting,
       meta: `${dec.projectName} · ${formatDuration(now.getTime() - Date.parse(dec.createdAt), t.time)}`,
-      action: <Link href={`/projects/${dec.projectId}#decisions`} className={buttonVariants({ size: "sm", variant: "secondary", className: "h-tap" })}>{c.today.open}</Link>,
+      action: <Link href={`/projects/${dec.projectId}#decisions`} className={buttonVariants({ size: "sm", variant: "verb", className: "h-tap" })}>{c.today.open}</Link>,
     });
   }
 
@@ -300,7 +304,7 @@ export async function AttentionList({
       href: `/vendors/assignments/${a.id}`,
       title: a.title,
       meta: [a.vendorName, a.projectName, a.taskAssigneeName].filter(Boolean).join(" · "),
-      action: <Link href={`/vendors/assignments/${a.id}`} className={buttonVariants({ size: "sm", variant: "secondary", className: "h-tap" })}>{vt.work.verify}</Link>,
+      action: <Link href={`/vendors/assignments/${a.id}`} className={buttonVariants({ size: "sm", variant: "verb", className: "h-tap" })}>{vt.work.verify}</Link>,
     });
   }
   for (const a of vendors?.late ?? []) {
@@ -311,8 +315,9 @@ export async function AttentionList({
       icon: <Truck />,
       href: `/vendors/assignments/${a.id}`,
       title: a.title,
+      state: t.chips.late,
       meta: [a.vendorName, a.projectName, a.dueDate ? formatIndianDate(`${a.dueDate}T12:00:00Z`, locale) : null].filter(Boolean).join(" · "),
-      action: <Link href={`/vendors/assignments/${a.id}`} className={buttonVariants({ size: "sm", variant: "secondary", className: "h-tap" })}>{vt.today.open}</Link>,
+      action: <Link href={`/vendors/assignments/${a.id}`} className={buttonVariants({ size: "sm", variant: "verb", className: "h-tap" })}>{vt.today.open}</Link>,
     });
   }
 
@@ -340,8 +345,8 @@ export async function AttentionList({
     leave: { label: d.v3.leaveLabel, href: "/hazri#leave-requests" },
     followups: { label: c.today.followUps, href: "/crm?f=followUp" },
     leads: { label: c.today.unassigned, href: "/crm?f=unassigned" },
-    customers: { label: pl.customerMessages(customers?.unreadTotal ?? 0), href: "/projects" },
-    decisions: { label: pl.decisionsOpen(customers?.openTotal ?? 0), href: "/projects" },
+    customers: { label: pl.customerMessages(2).replace(/^\d+\s*/, ""), href: "/projects" },
+    decisions: { label: pl.decisionsOpen(2).replace(/^\d+\s*/, ""), href: "/projects" },
     vendorVerify: { label: vt.today.toVerify, href: "/vendors" },
     vendorLate: { label: vt.today.late, href: "/vendors" },
     chats: { label: p.nav.conversations, href: "/baat" },
@@ -368,91 +373,147 @@ export async function AttentionList({
   // unread chats), so the two numbers always agree.
   const total = groups.reduce((sum, group) => sum + group.count, 0);
 
-  const heading = (
-    <div className="mb-3">
-      <h2 className="text-body-lg font-bold text-fg">
-        {t.lists.aapkeLiye}
-        {total > 0 ? <span className="num ml-1.5 font-normal text-fg-subtle">{total}</span> : null}
-      </h2>
-      {/* Every kind of thing waiting, with its count, even when rows are
-          folded — the owner sees the shape of the day before reading. */}
-      {groups.length > 1 ? (
-        <p data-testid="attention-summary" className="num mt-1 flex flex-wrap gap-x-3 gap-y-1 text-label text-fg-subtle">
-          {groups.map((group) => (
-            <Link
-              key={group.key}
-              href={GROUPS[group.key].href}
-              className={cn(
-                "inline-flex min-h-7 items-center hover:text-fg hover:underline",
-                group.key === "late" && "font-semibold text-laal-700",
-                (group.key === "unseen" || group.key === "escalated") && "text-amber-700",
-              )}
-            >
-              {group.count} {GROUPS[group.key].label}
-            </Link>
-          ))}
-        </p>
-      ) : null}
-    </div>
-  );
+  return { groups, labels: GROUPS, total, empty: rows.length === 0 };
+}
 
-  if (rows.length === 0) {
-    if (hideWhenEmpty) return null;
-    return (
-      <section>
-        {heading}
-        <div className="rounded-card border border-dashed border-line-strong px-5 py-8 text-center">
-          <p className="text-body-lg font-bold text-fg">{d.v3.allClear}</p>
-          <p className="mx-auto mt-1 max-w-sm text-body text-fg-subtle">{d.v3.allClearHelp}</p>
-        </div>
-      </section>
-    );
-  }
+export type Attention = Awaited<ReturnType<typeof collectAttention>>;
+type Group = Attention["groups"][number];
 
+/** Decisions only this person can make. */
+export const NEEDS_KEYS: GroupKey[] = ["escalated", "verify", "approvals", "leave", "followups", "leads", "customers", "vendorVerify", "chats"];
+/** Work that cannot move until someone nudges it. */
+export const STUCK_KEYS: GroupKey[] = ["late", "unseen", "vendorLate", "decisions"];
+
+/**
+ * Every kind of waiting thing, with its count, each count a link to exactly
+ * those items — even when rows are folded. One line, whichever band a group
+ * is drawn in.
+ */
+export function AttentionSummary({ attention, className }: { attention: Attention; className?: string }) {
+  if (attention.groups.length === 0) return null;
   return (
-    <section>
-      {heading}
-      <ul
-        aria-label={t.lists.aapkeLiye}
-        className="divide-y divide-line overflow-hidden rounded-card border border-line bg-surface shadow-card"
-      >
-        {groups.flatMap(({ key, shown, rest }) => {
-          const items = shown.map((row) => (
-            <li key={row.key} className="flex items-start gap-3 px-4 py-3">
-              <span className={cn("mt-0.5 grid size-9 shrink-0 place-items-center rounded-inner [&_svg]:size-[18px]", TILE[row.tone])} aria-hidden="true">
-                {row.icon}
-              </span>
-              <div className="min-w-0 flex-1">
-                {/* The title is the way in — its own target, never lying under the
-                    row's buttons (WCAG 2.5.8: no overlapping targets). */}
-                <Link href={row.href} className="-my-1 flex min-h-11 items-center py-1 text-body font-semibold text-fg hover:text-neel-700 hover:underline">
-                  <span className="line-clamp-2">{row.title}</span>
-                </Link>
-                {/* The why and the one thing to do share a line. */}
-                {/* On a phone the actions wrap below, so who and why are never cut. */}
-                <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1.5">
-                  <p className="num line-clamp-2 min-w-[12rem] flex-1 text-label text-fg-subtle">{row.meta}</p>
-                  {row.action ? <div className="-my-1 shrink-0">{row.action}</div> : null}
+    <p data-testid="attention-summary" className={cn("num flex flex-wrap gap-x-3 gap-y-1 text-label text-fg-subtle", className)}>
+      {attention.groups.map((group) => (
+        <Link
+          key={group.key}
+          href={attention.labels[group.key].href}
+          className={cn(
+            "inline-flex min-h-7 items-center hover:text-fg hover:underline",
+            group.key === "late" && "font-semibold text-laal-700",
+            (group.key === "unseen" || group.key === "escalated") && "text-amber-700",
+          )}
+        >
+          {group.count} {attention.labels[group.key].label}
+        </Link>
+      ))}
+    </p>
+  );
+}
+
+const STATE_TONE: Record<Tone, string> = {
+  laal: "text-laal-700",
+  amber: "text-amber-700",
+  neel: "text-neel-700",
+  quiet: "text-fg-muted",
+};
+
+/**
+ * The rows of one band. A row is a sentence, not a card: what, then why and
+ * who, then the one thing to do, said as a word. Rows that need this
+ * person's decision carry the attention rule on their left edge; stuck rows
+ * lead with their exception in words instead.
+ */
+export function AttentionRows({
+  attention,
+  keys,
+  label,
+  mode,
+  locale,
+}: {
+  attention: Attention;
+  keys?: GroupKey[];
+  label: string;
+  mode: "needs" | "stuck";
+  locale: Locale;
+}) {
+  const d = getDesign(locale);
+  const groups: Group[] = keys ? attention.groups.filter((g) => keys.includes(g.key)) : attention.groups;
+  if (groups.length === 0) return null;
+  return (
+    <ul aria-label={label} className="flex flex-col gap-5">
+      {groups.map(({ key, shown, rest, count }) => (
+        <li key={key}>
+          <p className="num mb-1 flex items-baseline gap-1.5 text-caption font-semibold text-fg-subtle">
+            <span className={cn(mode === "stuck" && key === "late" && "text-laal-700", mode === "stuck" && key === "unseen" && "text-amber-700")}>
+              {attention.labels[key].label}
+            </span>
+            <span className="font-normal">{count}</span>
+          </p>
+          <ul className="border-y border-line">
+            {shown.map((row) => (
+              <li key={row.key} className="relative border-b border-line last:border-b-0">
+                {mode === "needs" ? (
+                  <span aria-hidden="true" className="absolute top-3 bottom-3 left-0 w-[3px] rounded-full bg-neel-600" />
+                ) : null}
+                <div className="grid grid-cols-[minmax(0,1fr)] gap-x-4 gap-y-0.5 py-2 pl-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
+                  <div className="min-w-0">
+                    {/* The title is the way in — its own target, never lying
+                        under the row's buttons (WCAG 2.5.8). */}
+                    <Link href={row.href} className="-my-1 flex min-h-11 items-center py-1 text-body font-semibold text-fg hover:text-neel-700 hover:underline">
+                      <span className="line-clamp-2">{row.title}</span>
+                    </Link>
+                    {/* Stuck rows lead with how late; in Needs you the group
+                        title already says what kind of decision it is. */}
+                    {(mode === "stuck" && row.state) || row.meta ? (
+                      <p className="num line-clamp-2 text-label text-fg-subtle">
+                        {mode === "stuck" && row.state ? <span className={cn("font-semibold", STATE_TONE[row.tone])}>{row.state}</span> : null}
+                        {mode === "stuck" && row.state && row.meta ? " · " : null}
+                        {row.meta}
+                      </p>
+                    ) : null}
+                  </div>
+                  {row.action ? <div className="-ml-2 flex shrink-0 items-center sm:ml-0">{row.action}</div> : null}
                 </div>
-              </div>
-            </li>
-          ));
-          if (rest > 0) {
-            items.push(
-              <li key={`${key}-more`}>
+              </li>
+            ))}
+            {rest > 0 ? (
+              <li>
                 <Link
-                  href={GROUPS[key].href}
-                  className="num flex min-h-11 items-center gap-1.5 px-4 pl-16 text-label font-semibold text-neel-700 transition-colors duration-150 hover:bg-paper-50"
+                  href={attention.labels[key].href}
+                  className="num flex min-h-11 items-center gap-1.5 pl-4 text-label font-semibold text-neel-700 transition-colors duration-150 hover:bg-paper-100/60"
                 >
-                  {d.v3.moreOf(rest)} · {GROUPS[key].label}
+                  {d.v3.moreOf(rest)} · {attention.labels[key].label}
                   <ArrowRight className="size-3.5" aria-hidden="true" />
                 </Link>
-              </li>,
-            );
-          }
-          return items;
-        })}
-      </ul>
+              </li>
+            ) : null}
+          </ul>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+/** Staff Today (and anyone without the owner's bands): one list, everything that waits on them. */
+export async function AttentionList(props: AttentionArgs & { hideWhenEmpty?: boolean }) {
+  const t = getDictionary(props.locale);
+  const d = getDesign(props.locale);
+  const attention = await collectAttention(props);
+  if (attention.empty && props.hideWhenEmpty) return null;
+  return (
+    <section>
+      <div className="mb-3">
+        <h2 className="text-body-lg font-bold text-fg">
+          {t.lists.aapkeLiye}
+          {attention.total > 0 ? <span className="num ml-1.5 font-normal text-fg-subtle">{attention.total}</span> : null}
+        </h2>
+        {attention.groups.length > 1 ? <AttentionSummary attention={attention} className="mt-1" /> : null}
+      </div>
+      {attention.empty ? (
+        <p className="border-y border-line py-6 text-body text-fg-subtle">{d.v3.allClear}</p>
+      ) : (
+        <AttentionRows attention={attention} label={t.lists.aapkeLiye} mode="needs" locale={props.locale} />
+      )}
     </section>
   );
 }
