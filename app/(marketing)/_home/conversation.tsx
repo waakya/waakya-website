@@ -70,6 +70,16 @@ export function ConversationToWork() {
               <span className="num w4-chat-time">Wednesday · 9:05 am</span>
             </div>
           </div>
+          <dl className="w4-chat-legend" data-on={read} aria-hidden={!read}>
+            <dt>Who</dt>
+            <dd>Rahul</dd>
+            <dt>What</dt>
+            <dd>Conference room lighting</dd>
+            <dt>When</dt>
+            <dd>Friday</dd>
+            <dt>For</dt>
+            <dd>Sterling</dd>
+          </dl>
           <p className="w4-chat-read" data-on={read}>
             <Ticks state={verified ? "verified" : proved ? "done" : accepted ? "accepted" : "seen"} size={14} />
             {verified ? "Verified · on the project" : proved ? "Ho gaya · proof attached" : accepted ? "Maana · Rahul accepted" : "Waakya read it"}

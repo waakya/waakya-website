@@ -262,6 +262,18 @@ export function DayBoard() {
                   <span className="w4-day-item-head">{m.head}</span>
                 </span>
               </button>
+              {i === step ? (
+                <ul className="w4-day-item-effects">
+                  {m.effects.map((e) => (
+                    <li key={e}>{e}</li>
+                  ))}
+                  {LINKS.filter((l) => l.from === m.key).map((l) => (
+                    <li key={l.label} data-cross="true">
+                      Opens in {LANES.find((x) => x.key === l.toLane)!.label}: {l.label}
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
             </li>
           ))}
         </ol>

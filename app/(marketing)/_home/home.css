@@ -62,6 +62,11 @@
 .w4-chapter[data-tone="ink"] .w4-lede,
 .w4-chapter[data-tone="ink"] .w4-sentence { color: rgba(255, 255, 255, 0.76); }
 .w4-chapter[data-tone="ink"] .w4-kicker { color: rgba(255, 255, 255, 0.6); }
+/* light surfaces inside the indigo chapter (the phone, the business rows)
+   are paper again: their labels go back to ink, never white on white */
+.w4-chapter[data-tone="ink"] .w4-phone .w4-kicker,
+.w4-chapter[data-tone="ink"] .w4-rows .w4-kicker { color: var(--ink-subtle); }
+.w4-chapter[data-tone="ink"] .w4-phone .w4-phone-kicker { color: var(--amber); }
 .w4-chapter-grid { row-gap: 28px; }
 .w4-head { grid-column: 1 / -1; }
 .w4-aside { grid-column: 1 / -1; }
@@ -335,7 +340,7 @@
   background: var(--sheet);
   box-shadow: 0 1px 0 rgba(28, 26, 23, 0.04), 0 40px 70px -50px rgba(27, 32, 96, 0.7);
 }
-.w4-ledger::before {
+.w4-ledger-rows::before {
   /* the punched margin of a ledger */
   content: "";
   position: absolute;
@@ -358,7 +363,7 @@
 .w4-ledger-sub { grid-area: sub; margin-top: 4px; font-size: 12.5px; color: var(--ink-subtle); }
 .w4-ledger-state { grid-area: s; align-self: start; display: inline-flex; align-items: center; gap: 6px; border-radius: 999px; border: 1px solid var(--rule-strong); padding: 4px 10px 4px 8px; font-size: 12px; font-weight: 700; color: var(--ink-muted); transition: border-color var(--base) ease-out, color var(--base) ease-out; }
 .w4-ledger-state[data-done="true"] { border-color: var(--hara); color: var(--hara); }
-.w4-ledger-rows { display: flex; flex-direction: column; }
+.w4-ledger-rows { position: relative; display: flex; flex-direction: column; }
 .w4-ledger-row { position: relative; }
 .w4-ledger-btn {
   display: grid;
@@ -408,7 +413,7 @@
 .w4-ledger-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; border-top: 1px solid var(--rule-strong); padding: 12px 14px; background: #fbfaf5; border-radius: 0 0 6px 6px; }
 @media (min-width: 640px) {
   .w4-ledger-btn { grid-template-columns: 56px 18px minmax(0, 1fr) auto; padding: 12px 18px 12px 12px; }
-  .w4-ledger::before { left: 70px; }
+  .w4-ledger-rows::before { left: 70px; }
   .w4-ledger-top { padding: 16px 18px 14px; }
   .w4-ledger-foot { padding: 12px 18px; }
 }
@@ -543,6 +548,11 @@
 .w4-day-item[data-lane="you"] .w4-day-item-lane { color: var(--amber); }
 .w4-day-item-head { display: block; font-size: 15px; font-weight: 700; line-height: 1.3; }
 .w4-day-item[data-now="true"] .w4-day-item-btn { color: var(--ink); }
+.w4-day-item-effects { display: flex; flex-direction: column; gap: 3px; margin-top: -4px; padding: 0 0 14px 74px; }
+.w4-day-item-effects li { position: relative; padding-left: 16px; font-size: 13.5px; line-height: 1.45; font-weight: 500; color: var(--ink-muted); animation: w4-rise 260ms var(--enter) both; }
+.w4-day-item-effects li::before { content: ""; position: absolute; left: 2px; top: 0.55em; height: 6px; width: 6px; border-radius: 999px; background: var(--neel); }
+.w4-day-item-effects li[data-cross="true"] { color: var(--hara); font-weight: 700; }
+.w4-day-item-effects li[data-cross="true"]::before { background: var(--hara); }
 
 .w4-tally { border-top: 2px solid var(--rule-strong); padding-top: 16px; }
 .w4-tally dl { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 20px; margin-top: 10px; }
@@ -572,7 +582,8 @@
   .w4-lane[data-lane="you"] .w4-board-lanelabel { color: var(--amber); }
   .w4-lane-track { position: relative; flex: 1; }
   .w4-lane-track::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: var(--rule-strong); }
-  .w4-mark { position: absolute; top: 50%; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; gap: 3px; min-width: 44px; min-height: 44px; padding: 0 4px; color: var(--ink-subtle); background: transparent; z-index: 2; transition: color var(--base) ease-out; }
+  .w4-mark { position: absolute; top: 50%; transform: translate(-50%, -7px); display: flex; flex-direction: column; align-items: center; gap: 0; min-width: 44px; min-height: 44px; padding: 0 4px; color: var(--ink-subtle); background: transparent; z-index: 2; transition: color var(--base) ease-out; }
+  .w4-mark i { margin-bottom: 9px; }
   .w4-mark i { display: block; height: 14px; width: 14px; border-radius: 999px; border: 2px solid var(--rule-strong); background: #fff; transition: border-color var(--base) ease-out, background-color var(--base) ease-out, transform var(--base) var(--enter); }
   .w4-mark[data-on="true"] { color: var(--ink); }
   .w4-mark[data-on="true"] i { border-color: var(--neel); background: var(--neel); }
@@ -591,7 +602,8 @@
   .w4-board-links path { fill: none; stroke: var(--rule-strong); stroke-width: 1.5; stroke-dasharray: 1; stroke-dashoffset: 0; vector-effect: non-scaling-stroke; transition: stroke var(--slow) ease-out; }
   .w4-board-links path[data-on="true"] { stroke: var(--hara); stroke-width: 2; animation: w4-draw 700ms var(--enter) both; }
   .w4-board-now { position: absolute; top: 0; bottom: 0; width: 1px; margin-left: -0.5px; background: var(--neel); opacity: 0.55; transition: left 600ms var(--enter); z-index: 0; }
-  .w4-board-now b { position: absolute; top: -22px; left: 50%; transform: translateX(-50%); border-radius: 999px; background: var(--neel); padding: 1px 7px; font-size: 10.5px; font-weight: 700; color: #fff; white-space: nowrap; }
+  .w4-board-now b { position: absolute; bottom: -22px; left: 50%; transform: translateX(-50%); border-radius: 999px; background: var(--neel); padding: 1px 7px; font-size: 10.5px; font-weight: 700; color: #fff; white-space: nowrap; }
+  .w4-board-lanes { margin-bottom: 26px; }
 
   .w4-moment { grid-template-columns: 64px minmax(0, 1fr) 200px; gap: 20px; align-items: start; animation: w4-rise 320ms var(--enter) both; }
   .w4-moment-fig { padding-top: 6px; }
@@ -626,6 +638,14 @@
 .w4-chat-text mark small { display: inline-block; max-width: 0; overflow: hidden; vertical-align: top; margin-right: 0; font-size: 8.5px; line-height: 1.2; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--neel); opacity: 0; transition: opacity var(--base) ease-out, max-width var(--base) var(--enter), margin var(--base) var(--enter); white-space: nowrap; }
 .w4-chat-text mark[data-on="true"] { border-color: var(--neel); background: var(--neel-soft); }
 .w4-chat-text mark[data-on="true"] small { opacity: 1; max-width: 40px; margin-right: 3px; }
+.w4-chat-legend { display: none; }
+@media (max-width: 639px) {
+  .w4-chat-text mark small { display: none; }
+  .w4-chat-legend { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 3px 10px; margin: 10px 0 0 44px; font-size: 12.5px; }
+  .w4-chat-legend dt { font-size: 10px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--neel); padding-top: 2px; }
+  .w4-chat-legend dd { font-weight: 600; color: var(--ink-muted); }
+  .w4-chat-legend[data-on="false"] { visibility: hidden; }
+}
 .w4-chat-text mark[data-part="who"][data-on="true"] { transition-delay: 0ms; }
 .w4-chat-text mark[data-part="for"][data-on="true"] { transition-delay: 240ms; }
 .w4-chat-text mark[data-part="what"][data-on="true"] { transition-delay: 120ms; }

@@ -30,7 +30,7 @@ const SWATCHES = [
 ] as const;
 
 export function CustomerLoop() {
-  const { ref, step, playing, setPlaying, pick, replay, done } = useSequence(LOOP.length, 2000);
+  const { ref, step, playing, setPlaying, pick, replay, done } = useSequence(LOOP.length, 1100);
   const at = (k: (typeof LOOP)[number]["key"]) => LOOP.findIndex((s) => s.key === k);
   const opened = step >= at("open");
   const needs = step >= at("needs");
@@ -119,10 +119,12 @@ export function CustomerLoop() {
             <path d="M0 100 C 40 100, 80 100, 120 100" className="w4-cross-rail" pathLength={1} />
             <path d="M0 100 C 40 100, 80 100, 120 100" className="w4-cross-live" pathLength={1} />
           </svg>
-          <span className="w4-cross-chip">
-            <i style={{ background: swatch.colour }} />
-            {laminate} ✓
-          </span>
+          {chosen ? (
+            <span className="w4-cross-chip">
+              <i style={{ background: swatch.colour }} />
+              {laminate} ✓
+            </span>
+          ) : null}
           <span className="w4-cross-word">{crossed ? "approved" : chosen ? "sending" : "waiting on her"}</span>
         </div>
 
