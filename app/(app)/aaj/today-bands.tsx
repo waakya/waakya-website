@@ -14,7 +14,6 @@ import { formatTime, isToday } from "@/lib/tasks/time";
 import { rowMeta } from "@/lib/tasks/present";
 import { ticksFor } from "@/lib/tasks/state-machine";
 import { formatDuration } from "@/lib/tasks/sla";
-import { cn } from "@/lib/utils";
 import { AttentionRows, AttentionSummary, NEEDS_KEYS, STUCK_KEYS, collectAttention } from "./attention";
 import { PunchLine } from "./punch-line";
 import { TeamToday, type TeamPulse } from "./team-today";

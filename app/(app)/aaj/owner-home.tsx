@@ -36,7 +36,6 @@ export function OwnerHome({
   attention,
   done,
   waiting,
-  hasAnyWork,
   staff,
   teamAttendance,
   myToday,

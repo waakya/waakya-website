@@ -94,7 +94,8 @@ export function ListSurface({
     <ul
       aria-label={label}
       className={cn(
-        "divide-y divide-line overflow-hidden rounded-card border border-line bg-surface shadow-card",
+        // Visual V2: a list is ruled lines on the page, not a box.
+        "divide-y divide-line border-y border-line",
         className,
       )}
     >
@@ -123,7 +124,7 @@ export function EmptyState({
   return (
     <div
       className={cn(
-        "flex flex-col items-center gap-2 rounded-card border border-dashed border-line-strong px-6 py-10 text-center",
+        "flex flex-col items-center gap-2 border-y border-line px-6 py-10 text-center",
         className,
       )}
     >
