@@ -2,7 +2,6 @@ import {
   Bell,
   CalendarCheck,
   Contact,
-  FilePlus2,
   FileText,
   FolderKanban,
   Home,
@@ -23,6 +22,8 @@ import {
 import { getPhase1 } from "@/lib/i18n/phase1";
 import { getUx } from "@/lib/i18n/ux";
 import { getPlatform } from "@/lib/i18n/platform";
+import { getDesign } from "@/lib/i18n/design";
+import { getCrm } from "@/lib/i18n/crm";
 import type { Locale } from "@/lib/i18n";
 import type { ModuleKey } from "@/lib/modules/catalog";
 
@@ -72,58 +73,87 @@ export function mainNav(locale: Locale, variant: "owner" | "staff", modules: Rea
   );
 }
 
-/** Everything else, in two groups: the business, then the tools. */
+export interface NavGroup {
+  key: "sales" | "operations" | "people" | "setup";
+  label: string;
+  items: NavItem[];
+}
+
+/**
+ * Everything that is not a daily place (Visual V2): a few named groups — the
+ * smallest set that still tells someone where a thing lives — then the
+ * tools. Groups with nothing switched on disappear. `business` and `tools`
+ * keep the flat lists older callers use.
+ */
 export function moreNav(
   locale: Locale,
   variant: "owner" | "staff",
   unread: number,
   routineLabel: string,
   modules: ReadonlySet<ModuleKey> = ALL_ON,
-): { business: NavItem[]; tools: NavItem[] } {
+): { groups: NavGroup[]; business: NavItem[]; tools: NavItem[] } {
   const n = getPhase1(locale).nav;
   const ux = getUx(locale).nav;
   const m = getPlatform(locale).modules.names;
-  return {
-    business: onlyEnabled(
-      [
+  const g = getDesign(locale).navGroups;
+  const owner = variant === "owner";
+  const raw: NavGroup[] = [
+    {
+      key: "sales",
+      label: g.sales,
+      items: [
+        { href: "/crm", label: getCrm(locale).title, icon: Contact, module: "crm" },
+        ...(owner ? [{ href: "/campaigns", label: m.campaigns, icon: Megaphone, module: "campaigns" as ModuleKey }] : []),
+      ],
+    },
+    {
+      key: "operations",
+      label: g.operations,
+      items: [
         // Staff reach their own full list from here (Today shows the day).
-        ...(variant === "staff"
-          ? [{ href: "/work", label: n.work, icon: SquareCheckBig, also: ["/kaam", "/hafta", "/pehle"] }]
-          : []),
-        { href: "/crm", label: m.crm, icon: Contact, module: "crm" },
+        ...(variant === "staff" ? [{ href: "/work", label: n.work, icon: SquareCheckBig, also: ["/kaam", "/hafta", "/pehle"] }] : []),
         { href: "/projects", label: n.projects, icon: FolderKanban },
         { href: "/records", label: m.records, icon: Layers, module: "records" },
         { href: "/vendors", label: m.vendors, icon: Truck, module: "vendors" },
-        { href: "/documents", label: n.documents, icon: FileText },
-        { href: "/documents/templates", label: ux.templates, icon: FilePlus2 },
-        { href: "/hazri", label: ux.attendance, icon: CalendarCheck, module: "attendance" },
+        // Templates live inside Documents; one place for paper.
+        { href: "/documents", label: n.documents, icon: FileText, also: ["/documents/templates"] },
         { href: "/approvals", label: n.approvals, icon: ShieldCheck },
-        ...(variant === "owner"
-          ? [
-              { href: "/campaigns", label: m.campaigns, icon: Megaphone, module: "campaigns" as ModuleKey },
-              { href: "/automations", label: m.automation, icon: Workflow, module: "automation" as ModuleKey },
-              { href: "/staff", label: n.team, icon: Users },
-            ]
-          : []),
+        ...(owner ? [{ href: "/checklists", label: routineLabel, icon: ListChecks, module: "checklists" as ModuleKey, also: ["/checklist"] }] : []),
       ],
-      modules,
-    ),
-    tools: onlyEnabled(
-      [
-        { href: "/search", label: n.search, icon: Search },
-        { href: "/khabar", label: n.updates, icon: Bell, badge: unread },
-        ...(variant === "owner" ? [{ href: "/checklists", label: routineLabel, icon: ListChecks, module: "checklists" as ModuleKey }] : []),
+    },
+    {
+      key: "people",
+      label: g.people,
+      items: [
+        ...(owner ? [{ href: "/staff", label: n.team, icon: Users }] : []),
+        { href: "/hazri", label: ux.attendance, icon: CalendarCheck, module: "attendance" },
+      ],
+    },
+    {
+      key: "setup",
+      label: g.setup,
+      items: [
+        ...(owner ? [{ href: "/automations", label: m.automation, icon: Workflow, module: "automation" as ModuleKey }] : []),
         { href: "/settings", label: n.settings, icon: Settings },
       ],
-      modules,
-    ),
-  };
+    },
+  ];
+  const groups = raw.map((group) => ({ ...group, items: onlyEnabled(group.items, modules) })).filter((group) => group.items.length > 0);
+  const tools = onlyEnabled(
+    [
+      { href: "/search", label: n.search, icon: Search },
+      { href: "/khabar", label: n.updates, icon: Bell, badge: unread },
+    ],
+    modules,
+  );
+  const business = groups.filter((group) => group.key !== "setup").flatMap((group) => group.items);
+  return { groups, business, tools: [...tools, ...groups.filter((group) => group.key === "setup").flatMap((group) => group.items)] };
 }
 
 /** @deprecated V2 name, kept so nothing outside the shell breaks. */
 export function primaryNav(locale: Locale, variant: "owner" | "staff", modules: ReadonlySet<ModuleKey> = ALL_ON): NavItem[] {
   const more = moreNav(locale, variant, 0, "", modules);
-  return [...mainNav(locale, variant, modules), ...more.business.filter((item) => item.href !== "/documents/templates")];
+  return [...mainNav(locale, variant, modules), ...more.business];
 }
 
 /** @deprecated V2 name. */
@@ -138,10 +168,6 @@ export function utilityNav(
 }
 
 export function isActive(pathname: string, item: NavItem): boolean {
-  if (item.href === "/documents") {
-    // Templates has its own row; Documents is not "active" there.
-    return pathname === "/documents" || (pathname.startsWith("/documents/") && !pathname.startsWith("/documents/templates"));
-  }
   const paths = [item.href, ...(item.also ?? [])];
   return paths.some((path) => pathname === path || pathname.startsWith(`${path}/`));
 }

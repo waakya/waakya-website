@@ -60,7 +60,7 @@ export function NewProject({
           </Button>
         }
       />
-      <SheetContent aria-describedby={undefined}>
+      <SheetContent side="drawer" aria-describedby={undefined}>
         <SheetTitle>{p.projects.newProject}</SheetTitle>
       <form onSubmit={submit} noValidate className="mt-4 flex flex-col gap-3">
         <div>

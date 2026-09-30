@@ -200,8 +200,8 @@ const copy: Record<Locale, PlatformCopy> = {
       project: "From a project", approval: "From an approval", automation: "From an automation", customer_action: "From a customer decision", vendor_action: "From vendor work", integration: "From the website",
     },
     today: {
-      needsYou: "Needs you", approvalsWaiting: (n) => `${n} approvals waiting`, decisionsOpen: (n) => `${n} customer decisions open`,
-      customerMessages: (n) => `${n} customer messages unanswered`, vendorToVerify: (n) => `${n} vendor jobs to verify`, vendorLate: (n) => `${n} vendors late`,
+      needsYou: "Needs you", approvalsWaiting: (n) => `${n} approvals waiting`, decisionsOpen: (n) => (n === 1 ? "1 customer decision open" : `${n} customer decisions open`),
+      customerMessages: (n) => (n === 1 ? "1 customer message unanswered" : `${n} customer messages unanswered`), vendorToVerify: (n) => `${n} vendor jobs to verify`, vendorLate: (n) => `${n} vendors late`,
       followUpsDue: (n) => `${n} follow-ups due`, leadsUnassigned: (n) => `${n} new enquiries unassigned`, automationsFailed: (n) => `${n} automations stopped`,
     },
   },

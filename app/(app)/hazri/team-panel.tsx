@@ -1,14 +1,15 @@
 "use client";
 
 import * as React from "react";
-import { CalendarDays, Check, Clock, LogIn, LogOut, Palmtree, Plus, X } from "lucide-react";
+import { Check, Plus, X } from "lucide-react";
 
 import { RevealGroup, RevealToggle } from "@/components/waakya/reveal";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { StateChip } from "@/components/ui/state-chip";
+
+import { StateWord } from "@/components/waakya/state-word";
 import { Avatar } from "@/components/ui/avatar";
 import { getDictionary, type Locale } from "@/lib/i18n";
 import { getUx } from "@/lib/i18n/ux";
@@ -156,17 +157,17 @@ export function TeamPanel({
                 </span>
               </span>
               {member.status === "leave" ? (
-                <StateChip tone="neel" icon={<Palmtree />}>{t.hazri.onLeave}</StateChip>
+                <StateWord tone="quiet">{t.hazri.onLeave}</StateWord>
               ) : member.status === "half_day" ? (
-                <StateChip tone="outline" icon={<CalendarDays />}>{t.hazri.halfDay}</StateChip>
+                <StateWord tone="quiet">{t.hazri.halfDay}</StateWord>
               ) : member.status === "holiday" ? (
-                <StateChip tone="outline" icon={<CalendarDays />}>{t.hazri.holiday}</StateChip>
+                <StateWord tone="quiet">{t.hazri.holiday}</StateWord>
               ) : member.punchOutAt ? (
-                <StateChip tone="outline" icon={<LogOut />}>{t.hazri.completed}</StateChip>
+                <StateWord tone="done">{t.hazri.completed}</StateWord>
               ) : member.punchInAt ? (
-                <StateChip tone="neel" icon={<LogIn />}>{t.hazri.working}</StateChip>
+                <StateWord tone="go">{t.hazri.working}</StateWord>
               ) : (
-                <StateChip tone="outline" icon={<Clock />}>{t.hazri.notPunched}</StateChip>
+                <StateWord tone="quiet">{t.hazri.notPunched}</StateWord>
               )}
             </li>
           ))}

@@ -7,7 +7,8 @@ import { shellFor } from "@/lib/auth/shell";
 import { getAutomation } from "@/lib/i18n/automation";
 import { listRules, RULE_EXAMPLES } from "@/lib/automation/queries";
 import { AppShell } from "@/components/waakya/app-shell";
-import { EmptyState, ListSurface, PageHeader, Section } from "@/components/waakya/page";
+import { EmptyState, PageHeader, Section } from "@/components/waakya/page";
+import { StateWord } from "@/components/waakya/state-word";
 import { buttonVariants } from "@/components/ui/button";
 import { StateChip } from "@/components/ui/state-chip";
 import { formatIndianDate } from "@/lib/tasks/format-date";
@@ -34,29 +35,33 @@ export default async function AutomationsPage() {
         {rules.length === 0 ? (
           <EmptyState className="mt-6" icon={<Workflow />} title={t.empty} body={t.emptyHelp} />
         ) : (
-          <ListSurface className="mt-5" label={t.title}>
+          <ul aria-label={t.title} className="mt-5 border-y border-line">
             {rules.map((r) => (
-              <li key={r.id} className="flex flex-wrap items-center gap-3 px-4 py-3">
+              <li key={r.id} className="flex flex-wrap items-center gap-x-4 gap-y-2 border-b border-line py-3 last:border-b-0">
                 <span className="min-w-0 flex-1">
-                  <Link href={`/automations/${r.id}`} className="block truncate text-body font-semibold text-fg hover:text-neel-700">{r.name}</Link>
-                  <span className="num block truncate text-caption text-fg-subtle">
-                    {t.when} {r.triggerEvent} · {r.actions.length} {t.doWord.toLowerCase()} · {t.runs.count(r.runCount, r.failCount)}
+                  <Link href={`/automations/${r.id}`} className="block text-body font-semibold text-fg hover:text-neel-700 hover:underline">{r.name}</Link>
+                  {/* The rule as a sentence: when this happens, it does N things. */}
+                  <span className="num block text-caption text-fg-subtle">
+                    {t.when} {t.triggerNames[r.triggerEvent] ?? r.triggerEvent} · {r.actions.length} {t.doWord.toLowerCase()} · {t.runs.count(r.runCount, r.failCount)}
                     {r.lastRunAt ? ` · ${formatIndianDate(r.lastRunAt, shell.locale)}` : ""}
                   </span>
                 </span>
                 {!r.valid ? <StateChip tone="laal">{t.errors.badInput}</StateChip> : null}
-                {manages ? <RuleToggle locale={shell.locale} id={r.id} enabled={r.enabled} /> : <StateChip tone={r.enabled ? "hara" : "muted"}>{r.enabled ? t.enabled : t.disabled}</StateChip>}
+                {manages ? <RuleToggle locale={shell.locale} id={r.id} enabled={r.enabled} /> : <StateWord tone={r.enabled ? "done" : "quiet"}>{r.enabled ? t.enabled : t.disabled}</StateWord>}
               </li>
             ))}
-          </ListSurface>
+          </ul>
         )}
         {manages ? (
           <Section title={t.examples.title}>
-            <div className="flex flex-wrap gap-2">
+            <ul className="border-y border-line">
               {Object.keys(RULE_EXAMPLES).map((key) => (
-                <InstallExample key={key} locale={shell.locale} exampleKey={key} label={t.examples[key as keyof typeof t.examples] as string} />
+                <li key={key} className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 border-b border-line py-2 last:border-b-0">
+                  <span className="min-w-0 flex-1 text-body-sm text-fg">{t.examples[key as keyof typeof t.examples] as string}</span>
+                  <InstallExample locale={shell.locale} exampleKey={key} label={t.examples[key as keyof typeof t.examples] as string} />
+                </li>
               ))}
-            </div>
+            </ul>
           </Section>
         ) : null}
       </main>

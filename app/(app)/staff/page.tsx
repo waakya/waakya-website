@@ -1,12 +1,11 @@
 import type { Metadata } from "next";
-import { Crown, User, UserCog, Users } from "lucide-react";
+import { Users } from "lucide-react";
 
 import { requireOrg, canManage } from "@/lib/auth/session";
 import { getOrgMembers } from "@/lib/org/members";
 import { createClient } from "@/lib/supabase/server";
 import { getDictionary } from "@/lib/i18n";
 import { Avatar } from "@/components/ui/avatar";
-import { StateChip } from "@/components/ui/state-chip";
 import { AppShell } from "@/components/waakya/app-shell";
 import { PageHeader } from "@/components/waakya/page";
 import { InviteSheet } from "./invite-sheet";
@@ -64,10 +63,10 @@ export default async function StaffPage() {
           }
         />
 
-        <ul aria-label={t.org.teamTitle} className="mt-6 divide-y divide-line overflow-hidden rounded-card border border-line bg-surface shadow-card">
+        <ul aria-label={t.org.teamTitle} className="mt-6 divide-y divide-line border-y border-line">
           {members.map((member) => (
             <li key={member.userId}>
-              <div className="flex min-h-16 items-center gap-3 px-4 py-3">
+              <div className="flex min-h-16 items-center gap-3 py-3">
               <Avatar name={member.name} size={40} />
               <div className="min-w-0 flex-1">
                 <p className="text-body font-semibold text-fg">
@@ -95,20 +94,15 @@ export default async function StaffPage() {
                   </p>
                 ) : null}
               </div>
-                <StateChip
-                  tone={member.role === "owner" ? "neel" : "muted"}
-                  icon={member.role === "owner" ? <Crown /> : member.role === "member" ? <User /> : <UserCog />}
-                  className="shrink-0"
-                >
-                  {t.org.roles[member.role]}
-                </StateChip>
+                {/* A role is a fact about a person, not a state: a word. */}
+                <span className="shrink-0 text-label font-semibold text-fg-muted">{t.org.roles[member.role]}</span>
               </div>
             </li>
           ))}
         </ul>
 
         {members.length === 1 && !invites?.length ? (
-          <div className="mt-6 flex flex-col items-center gap-2 rounded-card border border-dashed border-paper-300 p-6 text-center">
+          <div className="mt-6 flex flex-col items-center gap-2 border-y border-line p-6 text-center">
             <Users className="size-7 text-ink-400" aria-hidden="true" />
             <p className="text-body-lg font-bold text-ink-900">{t.org.noStaffYet}</p>
             <p className="text-body leading-[20px] text-ink-500">

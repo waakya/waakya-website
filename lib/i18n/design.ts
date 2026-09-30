@@ -104,9 +104,12 @@ export interface DesignCopy {
     yesterday: string;
     history: string;
   };
+  /** Visual V2: the groups under More, smallest set that still says where things are. */
+  navGroups: { sales: string; operations: string; people: string; setup: string };
 }
 
 const en: DesignCopy = {
+  navGroups: { sales: "Sales", operations: "Operations", people: "People", setup: "Setup" },
   today2: {
     needs: (n) => (n === 1 ? "1 thing needs you." : `${n} things need you.`),
     allClear: "Nothing needs you right now.",
@@ -198,6 +201,7 @@ const en: DesignCopy = {
 };
 
 const hiLatn: DesignCopy = {
+  navGroups: { sales: "Sales", operations: "Kaam-kaaj", people: "Log", setup: "Setup" },
   today2: {
     needs: (n) => (n === 1 ? "1 cheez aapka intezaar kar rahi hai." : `${n} cheezein aapka intezaar kar rahi hain.`),
     allClear: "Abhi aapke liye kuch baaki nahi.",
@@ -289,6 +293,7 @@ const hiLatn: DesignCopy = {
 };
 
 const hi: DesignCopy = {
+  navGroups: { sales: "बिक्री", operations: "कामकाज", people: "लोग", setup: "सेटअप" },
   today2: {
     needs: (n) => (n === 1 ? "1 चीज़ आपका इंतज़ार कर रही है।" : `${n} चीज़ें आपका इंतज़ार कर रही हैं।`),
     allClear: "अभी आपके लिए कुछ बाक़ी नहीं।",

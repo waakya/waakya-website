@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { getVendors } from "@/lib/i18n/vendors";
@@ -22,7 +22,7 @@ export interface AssignChoices {
 }
 
 /** Give a vendor one piece of work, with an owner inside the business and what it changes when done. */
-export function AssignForm({ locale, choices, fixedVendorId, fixedProjectId }: { locale: Locale; choices: AssignChoices; fixedVendorId?: string; fixedProjectId?: string }) {
+export function AssignForm({ locale, choices, fixedVendorId, fixedProjectId, verb = false }: { locale: Locale; choices: AssignChoices; fixedVendorId?: string; fixedProjectId?: string; /** Inside a section heading: said as a verb. */ verb?: boolean }) {
   const t = getVendors(locale).work;
   const router = useRouter();
   const [open, setOpen] = React.useState(false);
@@ -60,17 +60,21 @@ export function AssignForm({ locale, choices, fixedVendorId, fixedProjectId }: {
     });
   }
 
-  if (!open) {
-    return (
-      <Button variant="secondary" onClick={() => setOpen(true)}>
-        <Plus aria-hidden="true" />
-        {t.assign}
-      </Button>
-    );
-  }
+  // Visual V2: assigning work opens a drawer (a sheet on a phone), so the
+  // project or vendor page it starts from is never pushed down by a form.
   return (
-    <Card className="p-4">
-      <form onSubmit={submit} noValidate className="flex flex-col gap-3">
+    <Sheet open={open} onOpenChange={setOpen}>
+      <SheetTrigger
+        render={
+          <Button variant={verb ? "verb" : "secondary"} size={verb ? "sm" : "owner"} className={verb ? "h-tap" : undefined}>
+            {verb ? null : <Plus aria-hidden="true" />}
+            {t.assign}
+          </Button>
+        }
+      />
+      <SheetContent side="drawer" aria-describedby={undefined}>
+        <SheetTitle>{t.assign}</SheetTitle>
+      <form onSubmit={submit} noValidate className="mt-4 flex flex-col gap-3">
         {!fixedVendorId ? (
           <div>
             <Label htmlFor="a-vendor">{getVendors(locale).title}</Label>
@@ -164,6 +168,7 @@ export function AssignForm({ locale, choices, fixedVendorId, fixedProjectId }: {
           <Button type="button" variant="outline" onClick={() => setOpen(false)}>{t.cancel}</Button>
         </div>
       </form>
-    </Card>
+      </SheetContent>
+    </Sheet>
   );
 }

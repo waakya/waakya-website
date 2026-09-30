@@ -22,13 +22,16 @@ export default async function MorePage() {
   // holidays live inside Attendance, so they get their own row too — nobody
   // should have to know which page hides them.
   const more = moreNav(shell.locale, shell.variant, shell.unread, t.nav.checklists, shell.modules);
-  const attendanceAt = more.business.findIndex((item) => item.href === "/hazri");
-  const business = [...more.business];
-  if (attendanceAt >= 0) {
-    business.splice(attendanceAt + 1, 0, { href: "/hazri#leave", label: ux.nav.leaveHolidays, icon: CalendarDays });
-  }
+  // Leave and holidays live inside Attendance, so they get their own row —
+  // nobody should have to know which page hides them.
+  const groups = more.groups.map((group) => {
+    const items = [...group.items];
+    const at = items.findIndex((item) => item.href === "/hazri");
+    if (at >= 0) items.splice(at + 1, 0, { href: "/hazri#leave", label: ux.nav.leaveHolidays, icon: CalendarDays });
+    return { key: group.key, label: group.label, items };
+  });
   const search = more.tools.find((item) => item.href === "/search");
-  const groups = [business, more.tools.filter((item) => item.href !== "/search")];
+  const updates = more.tools.filter((item) => item.href === "/khabar");
   return (
     <AppShell {...shell}>
       <main className="flex-1 p-4 pb-8">
@@ -43,26 +46,29 @@ export default async function MorePage() {
             {search.label}
           </Link>
         ) : null}
-        {groups.map((items, index) => (
-          <ul key={index} className="mt-5 overflow-hidden rounded-card border border-line bg-surface shadow-card">
-            {items.map((item) => {
-              const Icon = item.icon;
-              return (
-                <li key={item.href} className="border-b border-line/70 last:border-b-0">
-                  <Link href={item.href} className="flex min-h-tap items-center gap-3 px-4 py-3 hover:bg-paper-50">
-                    <Icon className="size-5 text-neel-700" aria-hidden="true" />
-                    <span className="flex-1 text-body-lg font-semibold text-fg">{item.label}</span>
-                    {item.badge ? (
-                      <span className="num rounded-chip bg-neel-600 px-2 text-caption font-bold text-white">
-                        {item.badge > 9 ? "9+" : item.badge}
-                      </span>
-                    ) : null}
-                    <ChevronRight className="size-4 text-ink-400" aria-hidden="true" />
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
+        {[...groups, { key: "tools", label: "", items: updates }].filter((g) => g.items.length).map((group) => (
+          <section key={group.key} className="mt-6">
+            {group.label ? <h2 className="mb-1 text-caption font-bold tracking-[0.08em] text-fg-subtle uppercase">{group.label}</h2> : null}
+            <ul className="border-y border-line">
+              {group.items.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <li key={item.href} className="border-b border-line last:border-b-0">
+                    <Link href={item.href} className="flex min-h-tap items-center gap-3 py-2 hover:bg-paper-100/60">
+                      <Icon className="size-5 text-fg-subtle" aria-hidden="true" />
+                      <span className="flex-1 text-body-lg font-semibold text-fg">{item.label}</span>
+                      {item.badge ? (
+                        <span className="num rounded-chip bg-neel-600 px-2 text-caption font-bold text-white">
+                          {item.badge > 9 ? "9+" : item.badge}
+                        </span>
+                      ) : null}
+                      <ChevronRight className="size-4 text-ink-400" aria-hidden="true" />
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
         ))}
       </main>
     </AppShell>

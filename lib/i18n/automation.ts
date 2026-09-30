@@ -26,6 +26,8 @@ export interface AutomationCopy {
   empty: string;
   emptyHelp: string;
   examples: { title: string; websiteLead: string; vendorVerify: string; decision: string; install: string };
+  /** What a trigger means, in words; unknown ones fall back to their key. */
+  triggerNames: Record<string, string>;
   errors: { notAllowed: string; moduleOff: string; badInput: string; notFound: string; generic: string };
 }
 
@@ -40,6 +42,7 @@ const copy: Record<Locale, AutomationCopy> = {
     runs: { title: "चला कब", empty: "अभी चला नहीं।", status: { queued: "कतार में", running: "चल रहा", succeeded: "हो गया", failed: "रुका", skipped: "छोड़ा" }, attempts: (n) => `${n} कोशिश`, count: (n, f) => `${n} बार चला${f ? ` · ${f} रुके` : ""}`, log: "क्या हुआ" },
     empty: "अभी कोई नियम नहीं", emptyHelp: "एक तैयार नियम जोड़ें या अपना बनाएँ।",
     examples: { title: "तैयार नियम", websiteLead: "वेबसाइट पूछताछ: किसी को दें और फ़ॉलो-अप बनाएँ", vendorVerify: "वेंडर काम भेजे: मैनेजर से जाँच कराएँ", decision: "ग्राहक चुने: टीम को बताएँ", install: "जोड़ें" },
+    triggerNames: { "lead.created": "नई पूछताछ आए", "integration.lead_received": "वेबसाइट से पूछताछ आए", "task.created": "काम बने", "task.submitted": "काम पूरा बताया जाए", "task.verified": "काम वेरिफ़ाई हो", "proof.submitted": "सबूत आए", "customer_decision.recorded": "ग्राहक फ़ैसला करे", "vendor_work.submitted": "वेंडर काम भेजे", "contact.assigned": "ग्राहक किसी को दिया जाए", "approval.requested": "मंज़ूरी माँगी जाए" },
     errors: { notAllowed: "यह आप नहीं कर सकते।", moduleOff: "ऑटोमेशन इस कारोबार में चालू नहीं है।", badInput: "कुछ जानकारी सही नहीं है।", notFound: "नहीं मिला।", generic: "सेव नहीं हुआ। फिर कोशिश करें।" },
   },
   "hi-Latn": {
@@ -50,6 +53,7 @@ const copy: Record<Locale, AutomationCopy> = {
     runs: { title: "Kab chala", empty: "Abhi chala nahi.", status: { queued: "Line mein", running: "Chal raha", succeeded: "Ho gaya", failed: "Ruka", skipped: "Chhoda" }, attempts: (n) => `${n} koshish`, count: (n, f) => `${n} baar chala${f ? ` · ${f} ruke` : ""}`, log: "Kya hua" },
     empty: "Abhi koi rule nahi", emptyHelp: "Ek ready rule jodein ya apna banayein.",
     examples: { title: "Ready rules", websiteLead: "Website enquiry: kisi ko dein aur follow-up banayein", vendorVerify: "Vendor kaam bheje: manager se jaanch karayein", decision: "Customer chune: team ko batayein", install: "Jodein" },
+    triggerNames: { "lead.created": "nayi enquiry aaye", "integration.lead_received": "website se enquiry aaye", "task.created": "kaam bane", "task.submitted": "kaam poora bataya jaaye", "task.verified": "kaam verify ho", "proof.submitted": "saboot aaye", "customer_decision.recorded": "customer faisla kare", "vendor_work.submitted": "vendor kaam bheje", "contact.assigned": "customer kisi ko diya jaaye", "approval.requested": "manzoori maangi jaaye" },
     errors: { notAllowed: "Yeh aap nahi kar sakte.", moduleOff: "Automation is business mein chalu nahi hai.", badInput: "Kuch jaankari sahi nahi hai.", notFound: "Nahi mila.", generic: "Save nahi hua. Phir koshish karein." },
   },
   en: {
@@ -60,6 +64,7 @@ const copy: Record<Locale, AutomationCopy> = {
     runs: { title: "Runs", empty: "Has not run yet.", status: { queued: "Queued", running: "Running", succeeded: "Done", failed: "Stopped", skipped: "Skipped" }, attempts: (n) => `${n} attempts`, count: (n, f) => `${n} runs${f ? ` · ${f} stopped` : ""}`, log: "What happened" },
     empty: "No rules yet", emptyHelp: "Add a ready-made rule or write your own.",
     examples: { title: "Ready-made rules", websiteLead: "Website enquiry: assign it and create a follow-up", vendorVerify: "Vendor submits work: ask a manager to verify", decision: "Customer decides: tell the team", install: "Add" },
+    triggerNames: { "lead.created": "a new enquiry arrives", "integration.lead_received": "an enquiry arrives from the website", "task.created": "work is created", "task.submitted": "work is handed in", "task.verified": "work is verified", "proof.submitted": "proof arrives", "customer_decision.recorded": "a customer decides", "vendor_work.submitted": "a vendor hands in work", "contact.assigned": "a customer is given an owner", "approval.requested": "an approval is asked for" },
     errors: { notAllowed: "You cannot do that.", moduleOff: "Automation is not switched on for this business.", badInput: "Some of that is not right.", notFound: "Not found.", generic: "Not saved. Try again." },
   },
 };

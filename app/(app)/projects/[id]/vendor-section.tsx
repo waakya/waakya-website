@@ -5,7 +5,6 @@ import { istDateKey } from "@/lib/tasks/time";
 import type { Locale } from "@/lib/i18n";
 import { listAssignments } from "@/lib/vendors/queries";
 import { assignChoices } from "@/lib/vendors/choices";
-import { ListSurface, Section } from "@/components/waakya/page";
 import { AssignForm } from "@/app/(app)/vendors/assign-form";
 import { AssignmentChips } from "@/app/(app)/vendors/assignment-chips";
 
@@ -15,14 +14,20 @@ export async function VendorSection({ locale, orgId, projectId, manages }: { loc
   const [work, choices] = await Promise.all([listAssignments(orgId, { projectId }), manages ? assignChoices(orgId) : Promise.resolve(null)]);
   const today = istDateKey();
   return (
-    <Section title={t.work.title} count={work.length} action={choices ? <AssignForm locale={locale} choices={choices} fixedProjectId={projectId} /> : null}>
+    <section aria-labelledby="vendor-h">
+      <div className="flex items-baseline justify-between gap-3">
+        <h2 id="vendor-h" className="text-body font-bold text-fg">
+          {t.work.title} <span className="num font-normal text-fg-subtle">{work.length}</span>
+        </h2>
+        {choices ? <AssignForm locale={locale} choices={choices} fixedProjectId={projectId} verb /> : null}
+      </div>
       {work.length === 0 ? (
-        <p className="text-body-sm text-fg-subtle">{t.work.empty}</p>
+        <p className="mt-2 border-y border-line py-3 text-body-sm text-fg-subtle">{t.work.empty}</p>
       ) : (
-        <ListSurface>
+        <ul className="mt-2 border-y border-line">
           {work.map((a) => (
-            <li key={a.id}>
-              <Link href={`/vendors/assignments/${a.id}`} className="flex flex-wrap items-center gap-2 px-3.5 py-3 hover:bg-paper-50/70">
+            <li key={a.id} className="border-b border-line last:border-b-0">
+              <Link href={`/vendors/assignments/${a.id}`} className="flex flex-wrap items-center gap-x-3 gap-y-1 py-2.5 hover:bg-paper-100/60">
                 <span className="min-w-0 flex-1">
                   <span className="block truncate text-body-sm font-semibold text-fg">{a.title}</span>
                   <span className="num block truncate text-caption text-fg-subtle">{[a.vendorName, a.taskAssigneeName].filter(Boolean).join(" · ")}</span>
@@ -31,8 +36,8 @@ export async function VendorSection({ locale, orgId, projectId, manages }: { loc
               </Link>
             </li>
           ))}
-        </ListSurface>
+        </ul>
       )}
-    </Section>
+    </section>
   );
 }

@@ -3,7 +3,6 @@
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
@@ -40,9 +39,11 @@ export function InstallExample({ locale, exampleKey, label }: { locale: Locale; 
   const [pending, startTransition] = useTransition();
   return (
     <Button
-      variant="secondary"
+      variant="verb"
+      size="sm"
       disabled={pending}
-      className="h-auto max-w-full whitespace-normal py-2 text-left"
+      aria-label={`${t.examples.install}: ${label}`}
+      className="h-tap"
       onClick={() =>
         startTransition(async () => {
           const result = await installExampleRule(exampleKey);
@@ -54,8 +55,7 @@ export function InstallExample({ locale, exampleKey, label }: { locale: Locale; 
         })
       }
     >
-      <Plus aria-hidden="true" />
-      {t.examples.install}: {label}
+      {t.examples.install}
     </Button>
   );
 }

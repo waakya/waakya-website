@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ChevronRight, FilePlus2, FileText } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
 import { requireOrg, canManage } from "@/lib/auth/session";
 import { shellFor } from "@/lib/auth/shell";
@@ -10,6 +10,7 @@ import { TEMPLATES } from "@/lib/documents/templates";
 import { listDocuments } from "@/lib/documents/queries";
 import { AppShell } from "@/components/waakya/app-shell";
 import { PageHeader } from "@/components/waakya/page";
+import { buttonVariants } from "@/components/ui/button";
 import { DocumentUploader } from "@/components/waakya/document-uploader";
 import { Illustration } from "@/components/waakya/illustrations";
 import { DocumentLibrary } from "./document-library";
@@ -39,8 +40,7 @@ export default async function DocumentsPage() {
             top of the library rather than behind a button. */}
         <section aria-labelledby="templates-heading" className="mt-6" data-testid="templates-entry">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
-            <h2 id="templates-heading" className="flex items-center gap-2 text-body font-bold text-fg">
-              <FilePlus2 className="size-4 text-neel-700" aria-hidden="true" />
+            <h2 id="templates-heading" className="text-body font-bold text-fg">
               {ux.templates.createFromTemplate}
             </h2>
             <Link href="/documents/templates" className="inline-flex min-h-8 items-center gap-0.5 text-body-sm font-semibold text-neel-700 hover:text-neel-800">
@@ -49,20 +49,16 @@ export default async function DocumentsPage() {
             </Link>
           </div>
           <p className="mt-0.5 text-body-sm text-fg-subtle">{ux.templates.rowLead}</p>
-          <ul className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
+          {/* Four starting points as words, not four cards. */}
+          <ul className="mt-2 flex flex-wrap gap-x-1 gap-y-1">
             {quick.map((template) => (
               <li key={template.key}>
                 <Link
                   href={`/documents/templates?template=${template.key}`}
-                  className="group flex h-full min-h-14 items-center gap-2.5 rounded-card border border-line bg-surface px-3 py-2.5 shadow-card transition-colors duration-150 hover:border-neel-300"
+                  title={template.blurb}
+                  className={buttonVariants({ size: "sm", variant: "verb", className: "h-tap" })}
                 >
-                  <span className="grid size-8 shrink-0 place-items-center rounded-inner bg-neel-50 text-neel-700">
-                    <FileText className="size-4" aria-hidden="true" />
-                  </span>
-                  <span className="min-w-0">
-                    <span className="block text-body-sm font-semibold text-fg">{template.title}</span>
-                    <span className="block truncate text-caption text-fg-subtle">{template.blurb}</span>
-                  </span>
+                  {template.title}
                 </Link>
               </li>
             ))}
@@ -77,7 +73,7 @@ export default async function DocumentsPage() {
         </div>
 
         {documents.length === 0 ? (
-          <div className="mt-3 flex flex-col items-center rounded-card border border-dashed border-line-strong px-6 py-10 text-center">
+          <div className="mt-3 flex flex-col items-center border-y border-line px-6 py-10 text-center">
             <Illustration name="documents" className="h-28 w-auto" />
             <p className="mt-4 text-title-sm font-bold text-fg">{p.documents.empty}</p>
             <p className="mt-1 max-w-sm text-body text-fg-subtle">{p.documents.emptyHelp}</p>

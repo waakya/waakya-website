@@ -106,7 +106,7 @@ export function VendorForm({ locale, vendor, onDone }: { locale: Locale; vendor?
           </Button>
         }
       />
-      <SheetContent aria-describedby={undefined}>
+      <SheetContent side="drawer" aria-describedby={undefined}>
         <SheetTitle>{t.newVendor}</SheetTitle>
         <div className="mt-4">{form}</div>
       </SheetContent>

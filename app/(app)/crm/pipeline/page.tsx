@@ -23,12 +23,14 @@ export default async function PipelinePage() {
     <AppShell {...shell} width="full">
       <main className="flex-1 p-4 pb-8 lg:px-8">
         <PageHeader back={{ href: "/crm", label: t.title }} title={t.pipeline.title} description={t.pipeline.subtitle} />
-        <div className="mt-5 flex flex-col gap-4 lg:grid lg:auto-cols-[minmax(15rem,1fr)] lg:grid-flow-col lg:overflow-x-auto">
+        {/* Stages with deals take room; an empty stage is a narrow column
+            with its name and nothing else, so the deals stay on screen. */}
+        <div className="mt-5 flex flex-col gap-4 lg:flex-row lg:gap-3 lg:overflow-x-auto lg:pb-2">
           {board.columns.map((col) => (
             /* A stage is a heading over one surface, not a grey slab: an
                empty stage is a heading and one quiet line, and takes no
                more height than that. */
-            <section key={col.id} aria-labelledby={`stage-${col.id}`} className={cn("min-w-0 border-t-2 pt-2", col.kind === "open" ? "border-neel-600" : col.kind === "won" ? "border-hara-600" : "border-paper-300")}>
+            <section key={col.id} aria-labelledby={`stage-${col.id}`} className={cn("min-w-0 border-t-2 pt-2 lg:shrink-0", col.deals.length ? "lg:min-w-64 lg:flex-1" : "lg:w-36", col.kind === "open" ? "border-neel-600" : col.kind === "won" ? "border-hara-600" : "border-paper-300")}>
               <h2 id={`stage-${col.id}`} className="flex items-baseline justify-between gap-2 px-1 text-body font-bold text-fg">
                 <span className="truncate">{col.name}</span>
                 <span className="num shrink-0 text-caption font-normal text-fg-subtle">{col.count}{col.value > 0 ? ` · ${money.format(col.value)}` : ""}</span>

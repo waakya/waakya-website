@@ -1,33 +1,24 @@
-import { CheckCircle2, CircleDot, CalendarClock, PauseCircle } from "lucide-react";
-
-import { StateChip } from "@/components/ui/state-chip";
+import { StateWord, type StateTone } from "@/components/waakya/state-word";
 import { type Locale } from "@/lib/i18n";
 import { getPhase1 } from "@/lib/i18n/phase1";
 import type { ProjectStatus } from "@/lib/projects/queries";
 
 /**
- * A project's status, as an icon and a word. Amber is kept for clocks and
- * Laal for lateness, so "on hold" is a quiet chip rather than a warning; only
- * "completed" takes Hara, the colour of finished work.
+ * A project's status as a state word (Visual V2): running is Neel, finished
+ * is Hara, paused waits in Amber, planned is a plain fact. A project status
+ * is a normal state, so it is never a chip.
  */
-const TONE: Record<ProjectStatus, "outline" | "neel" | "muted" | "hara"> = {
-  planned: "outline",
-  active: "neel",
-  on_hold: "muted",
-  completed: "hara",
+const TONE: Record<ProjectStatus, StateTone> = {
+  planned: "quiet",
+  active: "go",
+  on_hold: "wait",
+  completed: "done",
 };
 
-const ICON: Record<ProjectStatus, React.ReactNode> = {
-  planned: <CalendarClock />,
-  active: <CircleDot />,
-  on_hold: <PauseCircle />,
-  completed: <CheckCircle2 />,
-};
-
-export function ProjectStatusChip({ locale, status }: { locale: Locale; status: ProjectStatus }) {
+export function ProjectStatusChip({ locale, status, className }: { locale: Locale; status: ProjectStatus; className?: string }) {
   return (
-    <StateChip tone={TONE[status]} icon={ICON[status]} className="shrink-0">
+    <StateWord tone={TONE[status]} className={className}>
       {getPhase1(locale).projects.statuses[status]}
-    </StateChip>
+    </StateWord>
   );
 }

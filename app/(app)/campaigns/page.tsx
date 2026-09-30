@@ -8,10 +8,10 @@ import { getCampaigns } from "@/lib/i18n/campaigns";
 import { listCampaigns } from "@/lib/campaigns/queries";
 import { formatIndianDate } from "@/lib/tasks/format-date";
 import { AppShell } from "@/components/waakya/app-shell";
-import { EmptyState, ListSurface, PageHeader } from "@/components/waakya/page";
+import { EmptyState, PageHeader } from "@/components/waakya/page";
 import { buttonVariants } from "@/components/ui/button";
 import { StateChip } from "@/components/ui/state-chip";
-import { Section } from "@/components/waakya/page";
+import { StateWord } from "@/components/waakya/state-word";
 import { getModuleStatuses } from "@/lib/modules/queries";
 import { WhatsAppSettings } from "./whatsapp-settings";
 
@@ -44,26 +44,35 @@ export default async function CampaignsPage() {
         {campaigns.length === 0 ? (
           <EmptyState className="mt-6" icon={<Megaphone />} title={t.empty} body={t.emptyHelp} />
         ) : (
-          <ListSurface className="mt-5" label={t.title}>
-            {campaigns.map((c) => (
-              <li key={c.id}>
-                <Link href={`/campaigns/${c.id}`} className="flex flex-wrap items-center gap-3 px-4 py-3 hover:bg-paper-50/70">
-                  <span className="min-w-0 flex-1">
-                    <span className="block truncate text-body font-semibold text-fg">{c.name}</span>
-                    <span className="num block truncate text-caption text-fg-subtle">
-                      {t.channels[c.channel]} · {c.status === "draft" ? formatIndianDate(c.createdAt, shell.locale) : t.counts(c.counts.sent ?? 0, c.counts.failed ?? 0, c.counts.suppressed ?? 0, c.counts.replied ?? 0)}
+          <ul aria-label={t.title} className="mt-5 border-y border-line">
+            {campaigns.map((c) => {
+              const tone = TONE[c.status] ?? "outline";
+              const label = t.statuses[c.status as keyof typeof t.statuses] ?? c.status;
+              return (
+                <li key={c.id} className="border-b border-line last:border-b-0">
+                  <Link href={`/campaigns/${c.id}`} className="flex flex-wrap items-center gap-x-4 gap-y-1 py-3 hover:bg-paper-100/60">
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate text-body font-semibold text-fg">{c.name}</span>
+                      <span className="num block truncate text-caption text-fg-subtle">
+                        {t.channels[c.channel]} · {c.status === "draft" ? formatIndianDate(c.createdAt, shell.locale) : t.counts(c.counts.sent ?? 0, c.counts.failed ?? 0, c.counts.suppressed ?? 0, c.counts.replied ?? 0)}
+                      </span>
                     </span>
-                  </span>
-                  <StateChip tone={TONE[c.status] ?? "outline"}>{t.statuses[c.status as keyof typeof t.statuses] ?? c.status}</StateChip>
-                </Link>
-              </li>
-            ))}
-          </ListSurface>
+                    {/* Partly failed is the one campaign state worth a chip. */}
+                    {tone === "amber" || tone === "laal" ? <StateChip tone={tone}>{label}</StateChip> : <StateWord tone={tone === "hara" ? "done" : tone === "neel" ? "go" : "quiet"}>{label}</StateWord>}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
         )}
         {viewerCan(viewer, "campaigns.send") ? (
-          <Section title={t.channels.whatsapp}>
-            <WhatsAppSettings initial={waPhoneId} label="WhatsApp phone number id" save={t.save} />
-          </Section>
+          // Channel setup is a setting, not a campaign: a quiet row at the foot.
+          <section aria-labelledby="channel-h" className="mt-12 border-t border-line pt-4">
+            <h2 id="channel-h" className="text-caption font-semibold text-fg-subtle">{t.channels.whatsapp}</h2>
+            <div className="mt-2 max-w-xl">
+              <WhatsAppSettings initial={waPhoneId} label="WhatsApp phone number id" save={t.save} />
+            </div>
+          </section>
         ) : null}
       </main>
     </AppShell>

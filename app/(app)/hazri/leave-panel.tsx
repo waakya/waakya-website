@@ -1,13 +1,14 @@
 "use client";
 
 import * as React from "react";
-import { CalendarPlus, Check, Hourglass, X } from "lucide-react";
+import { CalendarPlus, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { StateChip } from "@/components/ui/state-chip";
+import { StateWord } from "@/components/waakya/state-word";
 import { getDictionary, type Locale } from "@/lib/i18n";
 import { applyLeave } from "@/lib/actions/attendance";
 import { formatDays, leaveDaysFor, type LeaveKind } from "@/lib/attendance/leave";
@@ -186,11 +187,11 @@ export function LeavePanel({
                 </span>
                 <span className="ml-auto">
                   {request.status === "approved" ? (
-                    <StateChip tone="hara" icon={<Check />}>{t.hazri.approved}</StateChip>
+                    <StateWord tone="done">{t.hazri.approved}</StateWord>
                   ) : request.status === "rejected" ? (
                     <StateChip tone="laal" icon={<X />}>{t.hazri.rejected}</StateChip>
                   ) : (
-                    <StateChip tone="neel" icon={<Hourglass />}>{t.hazri.pending}</StateChip>
+                    <StateWord tone="wait">{t.hazri.pending}</StateWord>
                   )}
                 </span>
               </li>

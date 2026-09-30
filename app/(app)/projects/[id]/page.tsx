@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ChevronDown, FilePlus2, FileText } from "lucide-react";
+import { ChevronDown, FilePlus2 } from "lucide-react";
 
 import { requireOrg, canManage } from "@/lib/auth/session";
 import { shellFor } from "@/lib/auth/shell";
@@ -27,7 +27,12 @@ import { DocumentUploader } from "@/components/waakya/document-uploader";
 import { ProjectStatusChip } from "../status-chip";
 import { ProjectControls } from "./project-controls";
 import { RevealGroup, RevealToggle } from "@/components/waakya/reveal";
-import { CustomerPanel } from "./customer-panel";
+import { CustomerPanel, ProjectMilestones } from "./customer-panel";
+import { getProjectCustomerView } from "@/lib/projects/customer";
+import { getPortal } from "@/lib/i18n/portal";
+import { getPlatform } from "@/lib/i18n/platform";
+import { ChangeLine, type LineMark } from "@/components/waakya/change-line";
+import { buttonVariants } from "@/components/ui/button";
 import { VendorSection } from "./vendor-section";
 import { createClient } from "@/lib/supabase/server";
 
@@ -88,8 +93,8 @@ export default async function ProjectPage({ params }: PageProps<"/projects/[id]"
     const ticks = ticksFor(task.state);
     const late = isLateTask(task);
     return (
-      <li key={task.id}>
-        <Link href={`/kaam/${task.id}`} className="flex items-center gap-3 px-3.5 py-3 transition-colors duration-150 hover:bg-paper-50">
+      <li key={task.id} className="border-b border-line last:border-b-0">
+        <Link href={`/kaam/${task.id}`} className="flex min-h-12 items-center gap-3 py-2 transition-colors duration-150 hover:bg-paper-100/60">
           <span className="min-w-0 flex-1">
             <span className="line-clamp-2 text-body-sm font-semibold text-fg">{task.title}</span>
             <span className="num block truncate text-caption text-fg-subtle">
@@ -111,52 +116,120 @@ export default async function ProjectPage({ params }: PageProps<"/projects/[id]"
     );
   };
 
+  const view = await getProjectCustomerView(viewer.org.id, project.id);
+  const portal = getPortal(shell.locale);
+  const nextMilestone = view.milestones.find((m) => m.status !== "done") ?? null;
+  const lateCount = openTasks.filter(isLateTask).length;
+  const openDecisions = view.decisions.filter((dc) => dc.status === "open").length;
+  // Progress from the work; with no tasks yet, from the milestones — both real.
+  const msDone = view.milestones.filter((m) => m.status === "done").length;
+  const byTasks = counted.length > 0;
+  const pct = byTasks ? Math.round((finished / counted.length) * 100) : view.milestones.length ? Math.round((msDone / view.milestones.length) * 100) : null;
+  const progressLabel = byTasks ? d.today.staffProgress(finished, counted.length) : `${d.today.staffProgress(msDone, view.milestones.length)} · ${portal.business.milestones}`;
+  const MARK = (entry: (typeof project.activity)[number]): LineMark =>
+    entry.kind === "document" ? "moved" : entry.toState === "verified" ? "verified" : entry.toState === "done" ? "proof" : "moved";
+
   return (
     <AppShell {...shell} width="list">
-      <main className="flex-1 p-4 pb-8 lg:px-0">
+      <main className="flex-1 p-4 pb-10 lg:px-0">
         <PageHeader
           back={{ href: "/projects", label: p.projects.title }}
-          title={
-            <span className="flex flex-wrap items-center gap-x-3 gap-y-1">
-              {project.name}
+          title={project.name}
+          description={
+            <span className="inline-flex flex-wrap items-center gap-x-3 gap-y-1">
               <ProjectStatusChip locale={shell.locale} status={project.status} />
+              <span>
+                {project.startDate ? `${p.projects.start}: ${formatIndianDate(`${project.startDate}T12:00:00Z`, shell.locale)}` : ""}
+                {project.startDate && project.endDate ? " · " : ""}
+                {project.endDate ? `${p.projects.end}: ${formatIndianDate(`${project.endDate}T12:00:00Z`, shell.locale)}` : ""}
+              </span>
             </span>
           }
-          description={
-            <>
-              {project.startDate ? `${p.projects.start}: ${formatIndianDate(`${project.startDate}T12:00:00Z`, shell.locale)}` : ""}
-              {project.startDate && project.endDate ? " · " : ""}
-              {project.endDate ? `${p.projects.end}: ${formatIndianDate(`${project.endDate}T12:00:00Z`, shell.locale)}` : ""}
-            </>
-          }
         />
-        {project.description ? (
-          <p className="mt-3 max-w-2xl text-body text-fg-muted">{project.description}</p>
-        ) : null}
+        {project.description ? <p className="mt-3 max-w-2xl text-body text-fg-muted">{project.description}</p> : null}
 
-        {counted.length > 0 ? (
-          <div className="mt-4 max-w-md">
-            <p className="num flex items-baseline justify-between text-label text-fg-subtle">
-              <span className="font-semibold text-fg-muted">{d.today.staffProgress(finished, counted.length)}</span>
-              <span>{p.projects.openTasks(project.openTasks)}</span>
-            </p>
-            <div
-              role="progressbar"
-              aria-label={d.today.staffProgress(finished, counted.length)}
-              aria-valuemin={0}
-              aria-valuemax={counted.length}
-              aria-valuenow={finished}
-              className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-paper-200"
-            >
-              <div className="h-full rounded-full bg-neel-600" style={{ width: `${(finished / counted.length) * 100}%` }} />
-            </div>
+        {/* Current state, in one band: how far, what is next, for whom, with whom. */}
+        <div className="mt-5 grid gap-5 border-y border-line py-4 sm:grid-cols-[auto_minmax(0,1fr)] lg:grid-cols-[auto_minmax(0,1fr)_minmax(0,1fr)] lg:items-center lg:gap-10">
+          <div className="min-w-0">
+            {pct !== null ? (
+              <>
+                <p className="num flex items-baseline gap-2">
+                  <span className="font-display text-[40px] leading-none font-extrabold text-fg">{pct}%</span>
+                  <span className="text-label text-fg-subtle">{progressLabel}</span>
+                </p>
+                <div
+                  role="progressbar"
+                  aria-label={progressLabel}
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                  aria-valuenow={pct}
+                  className="mt-2 h-1.5 w-40 overflow-hidden rounded-full bg-paper-200"
+                >
+                  <div className="h-full rounded-full bg-neel-600" style={{ width: `${Math.max(pct, 2)}%` }} />
+                </div>
+              </>
+            ) : (
+              <p className="text-body-sm text-fg-subtle">{p.projects.noTasks}</p>
+            )}
           </div>
+          <div className="min-w-0">
+            <p className="text-caption font-semibold text-fg-subtle">{portal.portal.nextMilestone}</p>
+            <p className="truncate text-body font-semibold text-fg">{nextMilestone ? nextMilestone.name : "—"}</p>
+            {nextMilestone?.dueDate ? <p className="num text-caption text-fg-subtle">{formatIndianDate(`${nextMilestone.dueDate}T12:00:00Z`, shell.locale)}</p> : null}
+          </div>
+          <div className="flex min-w-0 items-center gap-4 sm:col-span-2 lg:col-span-1">
+            <div className="min-w-0 flex-1">
+              <p className="text-caption font-semibold text-fg-subtle">{portal.business.customer}</p>
+              {view.contact ? (
+                <Link href={`/crm/${view.contact.id}`} className="block truncate text-body font-semibold text-neel-700 hover:underline">{view.contact.name}</Link>
+              ) : (
+                <p className="text-body text-fg-subtle">—</p>
+              )}
+            </div>
+            <ul aria-label={p.projects.members} className="flex shrink-0 -space-x-2">
+              {project.members.slice(0, 5).map((member) => (
+                <li key={member.userId} title={member.name}>
+                  <Avatar name={member.name} size={30} className="ring-2 ring-paper-50" />
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        {/* What on this project needs someone, in words, each a way there. */}
+        {lateCount || view.unreadMessages || openDecisions ? (
+          <ul className="mt-4 flex flex-col gap-1">
+            {lateCount ? (
+              <li className="relative pl-4">
+                <span aria-hidden="true" className="absolute top-1 bottom-1 left-0 w-[3px] rounded-full bg-laal-600" />
+                <a href="#work" className="num inline-flex min-h-9 items-center text-body-sm font-semibold text-laal-700 hover:underline">
+                  {lateCount} {t.chips.late}
+                </a>
+              </li>
+            ) : null}
+            {view.unreadMessages ? (
+              <li className="relative pl-4">
+                <span aria-hidden="true" className="absolute top-1 bottom-1 left-0 w-[3px] rounded-full bg-neel-600" />
+                <a href="#customer" className="num inline-flex min-h-9 items-center text-body-sm font-semibold text-neel-700 underline decoration-[1.5px] underline-offset-4">
+                  {getPlatform(shell.locale).today.customerMessages(view.unreadMessages)}
+                </a>
+              </li>
+            ) : null}
+            {openDecisions ? (
+              <li className="relative pl-4">
+                <span aria-hidden="true" className="absolute top-1 bottom-1 left-0 w-[3px] rounded-full bg-amber-600" />
+                <a href="#decisions" className="num inline-flex min-h-9 items-center text-body-sm font-semibold text-amber-700 hover:underline">
+                  {getPlatform(shell.locale).today.decisionsOpen(openDecisions)} · {portal.business.waiting}
+                </a>
+              </li>
+            ) : null}
+          </ul>
         ) : null}
 
         {manages ? (
           // Changing a project is occasional; reading it is daily. The
           // controls wait behind one line.
-          <details className="group mt-4">
+          <details className="group mt-3">
             <summary className="inline-flex min-h-10 cursor-pointer list-none items-center gap-1.5 text-body-sm font-semibold text-neel-700">
               {d.v3.manageProject}
               <ChevronDown className="size-4 transition-transform duration-150 group-open:rotate-180" aria-hidden="true" />
@@ -175,47 +248,40 @@ export default async function ProjectPage({ params }: PageProps<"/projects/[id]"
           </details>
         ) : null}
 
-        <div className="mt-6 grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
-          <div className="flex min-w-0 flex-col gap-6">
-            <section>
-              <h2 className="mb-2 text-body font-bold text-fg">{p.projects.tasks}</h2>
-              {/* AI/Voice (later): the project summary belongs here, above the
-                  work it summarises — not in a side panel. */}
+        <div className="mt-8 grid grid-cols-[minmax(0,1fr)] gap-10 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] lg:gap-12">
+          <div className="flex min-w-0 flex-col gap-10">
+            <section id="work" aria-labelledby="work-h" className="scroll-mt-6">
+              <h2 id="work-h" className="mb-2 text-body font-bold text-fg">
+                {p.projects.tasks} <span className="num font-normal text-fg-subtle">{openTasks.length}</span>
+              </h2>
               {project.tasks.length === 0 ? (
-                <p className="rounded-card border border-dashed border-paper-300 px-4 py-5 text-center text-body-sm text-ink-500">
-                  {p.projects.noTasks}
-                </p>
+                <p className="border-y border-line py-3 text-body-sm text-fg-subtle">{p.projects.noTasks}</p>
               ) : (
                 <>
-                  {openTasks.length > 0 ? (
-                    <ul className="divide-y divide-line overflow-hidden rounded-card border border-line bg-surface shadow-card">
-                      {openTasks.map(taskItem)}
-                    </ul>
-                  ) : null}
+                  {openTasks.length > 0 ? <ul className="border-y border-line">{openTasks.map(taskItem)}</ul> : null}
                   {closedTasks.length > 0 ? (
-                    <details className="group/closed mt-3" open={openTasks.length === 0 || undefined}>
+                    <details className="group/closed mt-2" open={openTasks.length === 0 || undefined}>
                       <summary className="flex min-h-11 cursor-pointer list-none items-center gap-2 text-body-sm font-semibold text-fg-muted">
                         {d.v3.finished}
                         <span className="num font-normal text-fg-subtle">{closedTasks.length}</span>
                         <ChevronDown className="size-4 text-fg-subtle transition-transform duration-150 group-open/closed:rotate-180" aria-hidden="true" />
                       </summary>
-                      <ul className="divide-y divide-line overflow-hidden rounded-card border border-line bg-surface">
-                        {closedTasks.map(taskItem)}
-                      </ul>
+                      <ul className="border-y border-line">{closedTasks.map(taskItem)}</ul>
                     </details>
                   ) : null}
                 </>
               )}
             </section>
 
-            <section>
+            <ProjectMilestones locale={shell.locale} orgId={viewer.org.id} projectId={project.id} manages={manages} />
+
+            <section aria-labelledby="docs-h">
               <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-                <h2 className="text-body font-bold text-fg">{p.projects.documents}</h2>
-                <div className="flex min-w-0 flex-wrap items-center gap-2">
-                  <Link
-                    href={`/documents/templates?project=${project.id}`}
-                    className="inline-flex h-9 items-center gap-1.5 rounded-button border border-neel-200 bg-paper-0 px-3 text-label font-semibold text-neel-700 hover:bg-neel-50"
-                  >
+                <h2 id="docs-h" className="text-body font-bold text-fg">
+                  {p.projects.documents} <span className="num font-normal text-fg-subtle">{documents.length}</span>
+                </h2>
+                <div className="flex min-w-0 flex-wrap items-center gap-1">
+                  <Link href={`/documents/templates?project=${project.id}`} className={buttonVariants({ size: "sm", variant: "verb", className: "h-tap" })}>
                     <FilePlus2 className="size-4" aria-hidden="true" />
                     {ux.templates.createFromTemplate}
                   </Link>
@@ -223,23 +289,14 @@ export default async function ProjectPage({ params }: PageProps<"/projects/[id]"
                 </div>
               </div>
               {documents.length === 0 ? (
-                <p className="rounded-card border border-dashed border-paper-300 px-4 py-5 text-center text-body-sm text-ink-500">
-                  {p.projects.noDocuments}
-                </p>
+                <p className="border-y border-line py-3 text-body-sm text-fg-subtle">{p.projects.noDocuments}</p>
               ) : (
-                <DocumentList
-                  locale={shell.locale}
-                  documents={documents}
-                  viewerId={viewer.userId}
-                  manages={manages}
-                  showLinks={false}
-                />
+                <DocumentList locale={shell.locale} documents={documents} viewerId={viewer.userId} manages={manages} showLinks={false} />
               )}
             </section>
           </div>
 
-          <div className="flex min-w-0 flex-col gap-6">
-            {viewer.modules.has("vendors") ? <VendorSection locale={shell.locale} orgId={viewer.org.id} projectId={project.id} manages={manages} /> : null}
+          <div className="flex min-w-0 flex-col gap-10">
             <CustomerPanel
               locale={shell.locale}
               orgId={viewer.org.id}
@@ -250,46 +307,50 @@ export default async function ProjectPage({ params }: PageProps<"/projects/[id]"
               records={panelRecords}
               portalOn={viewer.modules.has("customer_experience")}
             />
-            <section>
-              <h2 className="mb-2 text-body font-bold text-fg">{p.projects.members}</h2>
-              <ul className="flex flex-wrap gap-2">
-                {project.members.map((member) => (
-                  <li key={member.userId} className="flex max-w-full items-center gap-2 rounded-chip border border-line bg-surface py-1 pr-3 pl-1">
-                    <Avatar name={member.name} size={24} />
-                    <span className="truncate text-label font-semibold text-fg">{member.name}</span>
-                  </li>
-                ))}
-              </ul>
-            </section>
+            {viewer.modules.has("vendors") ? <VendorSection locale={shell.locale} orgId={viewer.org.id} projectId={project.id} manages={manages} /> : null}
 
             <RevealGroup as="section" id="project-activity" className="group/activity">
-              <h2 className="mb-2 text-body font-bold text-fg">{p.projects.activity}</h2>
+              <h2 className="text-body font-bold text-fg">{p.projects.activity}</h2>
               {project.activity.length === 0 ? (
-                <p className="text-body-sm text-ink-500">—</p>
+                <p className="mt-2 text-body-sm text-fg-subtle">—</p>
               ) : (
-                <ol id="project-activity" className="flex flex-col gap-3">
-                  {project.activity.map((entry, index) => (
-                    <li key={entry.id} className={index < 3 ? "flex gap-2.5" : "hidden gap-2.5 group-data-[open=true]/activity:flex"}>
-                      {entry.kind === "document" ? (
-                        <FileText aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-fg-subtle" />
-                      ) : entry.toState && ticksFor(entry.toState) ? (
-                        <span className="mt-0.5 shrink-0">
-                          <Ticks state={ticksFor(entry.toState)!} locale={shell.locale} size={16} />
-                        </span>
-                      ) : (
-                        <span aria-hidden="true" className="mt-[7px] size-1.5 shrink-0 rounded-full bg-paper-300" />
-                      )}
-                      <span className="min-w-0 text-label text-fg-muted">
-                        <span className="font-semibold text-fg">{entry.actor}</span>
-                        {entry.kind === "task" && entry.toState ? ` · ${stateWord(entry.toState, shell.locale)}` : ""}
-                        <span className="block truncate text-fg-muted">{entry.subject}</span>
-                        <span className="num block text-caption text-fg-subtle">
-                          {formatIndianDate(entry.at, shell.locale)} · {formatTime(entry.at)}
-                        </span>
-                      </span>
-                    </li>
-                  ))}
-                </ol>
+                <>
+                  <ChangeLine
+                    className="mt-2"
+                    label={p.projects.activity}
+                    items={project.activity.slice(0, 3).map((entry) => ({
+                      id: entry.id,
+                      mark: MARK(entry),
+                      text: (
+                        <>
+                          <span className="font-semibold">{entry.actor}</span>
+                          {entry.kind === "task" && entry.toState ? ` · ${stateWord(entry.toState, shell.locale)}` : ""}
+                          <span className="block text-fg-muted">{entry.subject}</span>
+                        </>
+                      ),
+                      meta: `${formatIndianDate(entry.at, shell.locale)} · ${formatTime(entry.at)}`,
+                    }))}
+                  />
+                  {project.activity.length > 3 ? (
+                    <div className="hidden group-data-[open=true]/activity:block">
+                      <ChangeLine
+                        label={p.projects.activity}
+                        items={project.activity.slice(3).map((entry) => ({
+                          id: entry.id,
+                          mark: MARK(entry),
+                          text: (
+                            <>
+                              <span className="font-semibold">{entry.actor}</span>
+                              {entry.kind === "task" && entry.toState ? ` · ${stateWord(entry.toState, shell.locale)}` : ""}
+                              <span className="block text-fg-muted">{entry.subject}</span>
+                            </>
+                          ),
+                          meta: `${formatIndianDate(entry.at, shell.locale)} · ${formatTime(entry.at)}`,
+                        }))}
+                      />
+                    </div>
+                  ) : null}
+                </>
               )}
               {project.activity.length > 3 ? (
                 <RevealToggle className="mt-1 text-label font-semibold text-neel-700" more={d.v3.showAll(project.activity.length)} less={d.v3.showLess} />

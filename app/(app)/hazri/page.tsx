@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 import { requireModule, canManage } from "@/lib/auth/session";
 import Link from "next/link";
-import { CalendarClock, ChevronRight } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
 import { shellFor } from "@/lib/auth/shell";
 import { getUx } from "@/lib/i18n/ux";
@@ -76,15 +76,14 @@ export default async function HazriPage() {
         </nav>
 
         {manages && pendingForMe.length > 0 ? (
-          <Link
-            href="#leave-requests"
-            className="mt-4 flex items-center gap-3 rounded-card border border-neel-100 bg-neel-50 px-4 py-3 text-body font-semibold text-neel-800 transition-colors duration-150 hover:border-neel-200"
-          >
-            {/* A decision waiting, not a clock running out: Neel, not amber. */}
-            <CalendarClock className="size-5 shrink-0" aria-hidden="true" />
-            <span className="flex-1">{ux.attendance.pendingCount(pendingForMe.length)}</span>
-            <ChevronRight className="size-4 shrink-0" aria-hidden="true" />
-          </Link>
+          <p className="relative mt-4 pl-4">
+            {/* A decision waiting on you: the attention rule and a verb (Visual V2). */}
+            <span aria-hidden="true" className="absolute top-1 bottom-1 left-0 w-[3px] rounded-full bg-neel-600" />
+            <Link href="#leave-requests" className="inline-flex min-h-10 items-center gap-1 text-body font-semibold text-neel-700 underline decoration-[1.5px] underline-offset-4 hover:text-neel-800">
+              {ux.attendance.pendingCount(pendingForMe.length)}
+              <ChevronRight className="size-4 shrink-0" aria-hidden="true" />
+            </Link>
+          </p>
         ) : null}
 
         {/* Desktop: you on the left, the team on the right — the manager's

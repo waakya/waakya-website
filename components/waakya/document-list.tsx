@@ -90,7 +90,7 @@ export function DocumentList({
           {error}
         </p>
       ) : null}
-      <ul className="overflow-hidden rounded-card border border-line bg-surface shadow-card">
+      <ul className="border-y border-line">
         {documents.map((doc) => {
           const Icon = iconFor(doc.mimeType);
           const canDelete = doc.uploadedBy === viewerId || manages;
@@ -101,11 +101,10 @@ export function DocumentList({
             <li
               key={doc.id}
               data-testid="document-row"
-              className="flex items-center gap-3 border-b border-line/70 px-3.5 py-3 transition-colors duration-150 last:border-b-0 hover:bg-paper-50"
+              className="flex items-center gap-3 border-b border-line py-2.5 transition-colors duration-150 last:border-b-0 hover:bg-paper-100/60"
             >
-              <span className="grid size-9 shrink-0 place-items-center rounded-inner bg-neel-50">
-                <Icon className="size-4 text-neel-700" aria-hidden="true" />
-              </span>
+              {/* The file's kind as a small mark, not a tinted tile. */}
+              <Icon className="size-4 shrink-0 text-fg-subtle" aria-hidden="true" />
               <span className="min-w-0 flex-1">
                 <button
                   type="button"

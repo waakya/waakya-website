@@ -5,7 +5,7 @@ import Link from "next/link";
 import { requireViewer, canManage } from "@/lib/auth/session";
 import { getDictionary, toLocale } from "@/lib/i18n";
 import { getLocale } from "@/lib/i18n/server";
-import { Card } from "@/components/ui/card";
+
 import { AppShell } from "@/components/waakya/app-shell";
 import { PageHeader } from "@/components/waakya/page";
 import { getUnreadCount } from "@/lib/notify/inbox";
@@ -61,9 +61,9 @@ export default async function SettingsPage() {
             <h2 className="mb-2 text-body font-bold text-fg lg:mb-0 lg:pt-2.5">
               {t.settings.business}
             </h2>
-            <Card className="min-w-0 p-4">
+            <div className="min-w-0">
               <BusinessProfileForm locale={locale} initial={await businessProfile(viewer.org.id, viewer.org.name)} />
-            </Card>
+            </div>
           </section>
         ) : null}
 
@@ -72,14 +72,14 @@ export default async function SettingsPage() {
             <h2 className="mb-2 text-body font-bold text-fg lg:mb-0 lg:pt-2.5">
               {t.settings.business}
             </h2>
-            <Card className="p-4">
+            <div>
               <p className="text-body-lg font-bold text-ink-900">
                 {viewer.org.name}
               </p>
               <p className="mt-0.5 text-label text-ink-500">
                 {viewer.role ? t.org.roles[viewer.role] : null}
               </p>
-            </Card>
+            </div>
           </section>
         ) : null}
 
@@ -90,26 +90,26 @@ export default async function SettingsPage() {
             <h2 className="mb-2 text-body font-bold text-fg lg:mb-0 lg:pt-2.5">
               {getPlatform(locale).modules.title}
             </h2>
-            <ul className="min-w-0 overflow-hidden rounded-card border border-line bg-surface shadow-card">
+            <ul className="min-w-0 border-y border-line">
               {viewerCan(viewer, "modules.manage") ? (
-                <li className="border-b border-line/70">
-                  <Link href="/settings/modules" className="flex min-h-tap items-center gap-3 p-4 transition-colors duration-150 hover:bg-paper-50">
+                <li className="border-b border-line">
+                  <Link href="/settings/modules" className="flex min-h-tap items-center gap-3 py-3 transition-colors duration-150 hover:bg-paper-100/60">
                     <SlidersHorizontal className="size-5 text-neel-700" aria-hidden="true" />
                     <span className="flex-1 text-body font-semibold text-ink-900">{getPlatform(locale).modules.title}</span>
                   </Link>
                 </li>
               ) : null}
               {viewerCan(viewer, "integrations.manage") && viewer.modules.has("website_integration") ? (
-                <li className="border-b border-line/70">
-                  <Link href="/settings/integrations" className="flex min-h-tap items-center gap-3 p-4 transition-colors duration-150 hover:bg-paper-50">
+                <li className="border-b border-line">
+                  <Link href="/settings/integrations" className="flex min-h-tap items-center gap-3 py-3 transition-colors duration-150 hover:bg-paper-100/60">
                     <Globe className="size-5 text-neel-700" aria-hidden="true" />
                     <span className="flex-1 text-body font-semibold text-ink-900">{getPlatform(locale).modules.names.website_integration}</span>
                   </Link>
                 </li>
               ) : null}
               {viewerCan(viewer, "domains.manage") && viewer.modules.has("custom_domains") ? (
-                <li className="border-b border-line/70">
-                  <Link href="/settings/domains" className="flex min-h-tap items-center gap-3 p-4 transition-colors duration-150 hover:bg-paper-50">
+                <li className="border-b border-line">
+                  <Link href="/settings/domains" className="flex min-h-tap items-center gap-3 py-3 transition-colors duration-150 hover:bg-paper-100/60">
                     <Link2 className="size-5 text-neel-700" aria-hidden="true" />
                     <span className="flex-1 text-body font-semibold text-ink-900">{getPlatform(locale).modules.names.custom_domains}</span>
                   </Link>
@@ -117,7 +117,7 @@ export default async function SettingsPage() {
               ) : null}
               {viewerCan(viewer, "audit.read") ? (
                 <li>
-                  <Link href="/settings/history" className="flex min-h-tap items-center gap-3 p-4 transition-colors duration-150 hover:bg-paper-50">
+                  <Link href="/settings/history" className="flex min-h-tap items-center gap-3 py-3 transition-colors duration-150 hover:bg-paper-100/60">
                     <History className="size-5 text-neel-700" aria-hidden="true" />
                     <span className="flex-1 text-body font-semibold text-ink-900">{getPlatform(locale).audit.title}</span>
                   </Link>
@@ -134,7 +134,7 @@ export default async function SettingsPage() {
             </h2>
             <Link
               href="/checklists"
-              className="flex min-h-tap items-center gap-3 rounded-card border border-line bg-surface p-4 shadow-card transition-colors duration-150 hover:border-neel-300"
+              className="flex min-h-tap items-center gap-3 border-y border-line py-3 transition-colors duration-150 hover:bg-paper-100/60"
             >
               <ListChecks className="size-5 text-neel-700" aria-hidden="true" />
               <span className="flex-1 text-body font-semibold text-ink-900">
@@ -150,9 +150,9 @@ export default async function SettingsPage() {
           </h2>
           <div className="min-w-0">
             {viewer.email ? (
-              <Card className="p-4">
+              <div>
                 <p className="text-body break-all text-fg-muted">{viewer.email}</p>
-              </Card>
+              </div>
             ) : null}
             <SignOutButton label={t.auth.signOut} icon={<LogOut />} />
           </div>

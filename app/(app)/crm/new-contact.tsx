@@ -70,7 +70,7 @@ export function NewContact({
           </Button>
         }
       />
-      <SheetContent aria-describedby={undefined}>
+      <SheetContent side="drawer" aria-describedby={undefined}>
         <SheetTitle>{t.newContact}</SheetTitle>
       <form onSubmit={submit} noValidate className="mt-4 flex flex-col gap-3">
         <div>

@@ -1,11 +1,12 @@
 "use client";
 
 import * as React from "react";
-import { CalendarDays, Clock, LogIn, LogOut, Palmtree } from "lucide-react";
+import { Clock, LogIn, LogOut } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { StateChip } from "@/components/ui/state-chip";
+
+import { StateWord } from "@/components/waakya/state-word";
 import { getDictionary, type Locale } from "@/lib/i18n";
 import { punchIn, punchOut } from "@/lib/actions/attendance";
 import { formatPunchTime } from "@/lib/attendance/time";
@@ -50,17 +51,17 @@ export function PunchCard({
         <h2 className="text-body font-bold text-fg">{t.hazri.today}</h2>
         <span className="ml-auto">
           {onLeave ? (
-            <StateChip tone="neel" icon={<Palmtree />}>{t.hazri.onLeave}</StateChip>
+            <StateWord tone="quiet">{t.hazri.onLeave}</StateWord>
           ) : isHoliday ? (
-            <StateChip tone="outline" icon={<CalendarDays />}>{t.hazri.holiday}</StateChip>
+            <StateWord tone="quiet">{t.hazri.holiday}</StateWord>
           ) : status === "half_day" ? (
-            <StateChip tone="outline" icon={<CalendarDays />}>{t.hazri.halfDay}</StateChip>
+            <StateWord tone="quiet">{t.hazri.halfDay}</StateWord>
           ) : done ? (
-            <StateChip tone="outline" icon={<LogOut />}>{t.hazri.completed}</StateChip>
+            <StateWord tone="done">{t.hazri.completed}</StateWord>
           ) : working ? (
-            <StateChip tone="neel" icon={<LogIn />}>{t.hazri.working}</StateChip>
+            <StateWord tone="go">{t.hazri.working}</StateWord>
           ) : (
-            <StateChip tone="outline" icon={<Clock />}>{t.hazri.notPunched}</StateChip>
+            <StateWord tone="quiet">{t.hazri.notPunched}</StateWord>
           )}
         </span>
       </div>

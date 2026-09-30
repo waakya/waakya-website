@@ -3,9 +3,10 @@
 import * as React from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Check, Copy, Plus, Trash2, UserPlus, X } from "lucide-react";
+import { Check, Copy, Eye, EyeOff, Plus, Trash2, UserPlus, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { useCloseDrawer } from "@/components/waakya/drawer-action";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { getPortal } from "@/lib/i18n/portal";
@@ -28,8 +29,11 @@ import {
 const SELECT = "h-tap w-full rounded-button border-2 border-paper-200 bg-paper-0 px-3 text-body outline-none focus:border-neel-600";
 const TEXTAREA = "w-full rounded-button border-2 border-paper-200 bg-paper-0 px-3 py-2 text-body outline-none focus:border-neel-600";
 
-function useRun() {
+function useRun({ keepOpen = false }: { keepOpen?: boolean } = {}) {
   const router = useRouter();
+  // Inside a drawer, a successful save closes it (Visual V2) — unless what
+  // was just made has to be read there, like a portal invite link.
+  const closeDrawer = useCloseDrawer();
   const [pending, startTransition] = React.useTransition();
   const run = (fn: () => Promise<{ ok: boolean; message?: string }>, after?: () => void) =>
     startTransition(async () => {
@@ -39,6 +43,7 @@ function useRun() {
         return;
       }
       after?.();
+      if (!keepOpen) closeDrawer?.();
       router.refresh();
     });
   return { pending, run };
@@ -64,7 +69,7 @@ export function CustomerControls({
   hasEmail: boolean;
 }) {
   const t = getPortal(locale).business;
-  const { pending, run } = useRun();
+  const { pending, run } = useRun({ keepOpen: true });
   // The path only: the origin is added when copying, so server and client
   // render the same text.
   const [link, setLink] = React.useState<string | null>(access && access.status !== "revoked" ? `/portal/join/${access.token}` : null);
@@ -153,7 +158,7 @@ export function MilestoneControls({ locale, projectId, milestone }: { locale: Lo
   if (!milestone) {
     return (
       <form
-        className="mt-2 flex flex-wrap items-end gap-2"
+        className="flex flex-col gap-3"
         onSubmit={(e) => {
           e.preventDefault();
           run(() => addMilestone({ projectId, name, dueDate: due, customerVisible: visible }), () => { setName(""); setDue(""); });
@@ -181,17 +186,17 @@ export function MilestoneControls({ locale, projectId, milestone }: { locale: Lo
   return (
     <span className="flex shrink-0 items-center gap-1">
       {milestone.status !== "done" ? (
-        <Button size="sm" variant="secondary" disabled={pending} onClick={() => run(() => updateMilestone({ id: milestone.id, projectId, status: "done" }))}>
-          <Check aria-hidden="true" />
+        <Button size="sm" variant="verb" disabled={pending} onClick={() => run(() => updateMilestone({ id: milestone.id, projectId, status: "done" }))}>
           {t.markDone}
         </Button>
       ) : (
-        <Button size="sm" variant="ghost" disabled={pending} onClick={() => run(() => updateMilestone({ id: milestone.id, projectId, status: "in_progress" }))}>{t.reopen}</Button>
+        <Button size="sm" variant="verb" className="text-fg-muted decoration-paper-300" disabled={pending} onClick={() => run(() => updateMilestone({ id: milestone.id, projectId, status: "in_progress" }))}>{t.reopen}</Button>
       )}
-      <Button size="sm" variant="ghost" aria-label={milestone.customerVisible ? t.internalOnly : t.visibleToCustomer} disabled={pending} onClick={() => run(() => updateMilestone({ id: milestone.id, projectId, customerVisible: !milestone.customerVisible }))}>
-        {milestone.customerVisible ? t.internalOnly : t.visibleToCustomer}
+      {/* The row already says who can see it; the toggle is a quiet eye. */}
+      <Button size="icon" variant="ghost" className="text-fg-subtle" aria-label={milestone.customerVisible ? t.internalOnly : t.visibleToCustomer} title={milestone.customerVisible ? t.internalOnly : t.visibleToCustomer} disabled={pending} onClick={() => run(() => updateMilestone({ id: milestone.id, projectId, customerVisible: !milestone.customerVisible }))}>
+        {milestone.customerVisible ? <EyeOff aria-hidden="true" /> : <Eye aria-hidden="true" />}
       </Button>
-      <Button size="icon" variant="ghost" aria-label={t.remove} disabled={pending} onClick={() => run(() => updateMilestone({ id: milestone.id, projectId, remove: true }))}>
+      <Button size="icon" variant="ghost" className="text-fg-subtle hover:text-laal-700" aria-label={t.remove} title={t.remove} disabled={pending} onClick={() => run(() => updateMilestone({ id: milestone.id, projectId, remove: true }))}>
         <Trash2 aria-hidden="true" />
       </Button>
     </span>
@@ -220,16 +225,19 @@ export function DecisionControls({
   decisionId,
   tasks = [],
   records = [],
+  startOpen = false,
 }: {
   locale: Locale;
   projectId: string;
   decisionId: string | null;
+  /** Already inside a drawer: show the form, not the button that reveals it. */
+  startOpen?: boolean;
   tasks?: { id: string; title: string }[];
   records?: { id: string; title: string; statuses: { key: string; label: string }[] }[];
 }) {
   const t = getPortal(locale).business;
   const { pending, run } = useRun();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(startOpen);
   const [title, setTitle] = React.useState("");
   const [detail, setDetail] = React.useState("");
   const [options, setOptions] = React.useState("");

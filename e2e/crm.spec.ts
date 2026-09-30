@@ -43,7 +43,7 @@ test("the owner switches the CRM on, and it appears in More", async ({ page }) =
     await expect(toggle).toHaveAttribute("aria-checked", "true");
   }
   await page.goto("/more");
-  await expect(page.getByRole("link", { name: "Customers (CRM)" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Customers", exact: true })).toBeVisible();
 });
 
 test("a new enquiry is one record however often it is typed in", async ({ page }) => {
@@ -166,7 +166,7 @@ test("switched off, the CRM is Today and the data stays", async ({ page }) => {
   await page.goto("/crm");
   await expect(page).toHaveURL(/\/aaj$/);
   await page.goto("/more");
-  await expect(page.getByRole("link", { name: "Customers (CRM)" })).toHaveCount(0);
+  await expect(page.getByRole("link", { name: "Customers", exact: true })).toHaveCount(0);
 
   await toggle.waitFor({ state: "detached" }).catch(() => {});
   await page.goto("/settings/modules");

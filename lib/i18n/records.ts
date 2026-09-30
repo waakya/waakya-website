@@ -74,6 +74,9 @@ export interface RecordsCopy {
     yes: string;
     no: string;
     none: string;
+    emptyFields: (n: number) => string;
+    currentStatus: string;
+    moveTo: string;
     unit: string;
   };
   errors: {
@@ -101,7 +104,7 @@ const copy: Record<Locale, RecordsCopy> = {
       fieldTypes: { text: "छोटा टेक्स्ट", long_text: "लंबा टेक्स्ट", number: "संख्या", money: "रकम", date: "तारीख़", boolean: "हाँ/नहीं", select: "एक विकल्प", multi_select: "कई विकल्प", phone: "फ़ोन", email: "ईमेल", url: "लिंक", member: "टीम का सदस्य", contact: "ग्राहक", project: "प्रोजेक्ट", vendor: "वेंडर", record: "दूसरा रिकॉर्ड" },
     },
     list: { newRecord: "नया", search: "खोजें", all: "सब", empty: (p) => `अभी कोई ${p} नहीं`, emptyHelp: "पहला जोड़ें।", showing: (a, b, n) => `${a}–${b}, कुल ${n}`, next: "अगला", previous: "पिछला", byStatus: "स्टेटस", byProject: "प्रोजेक्ट" },
-    record: { title: "रिकॉर्ड", status: "स्टेटस", changeStatus: "स्टेटस बदलें", why: "क्यों (वैकल्पिक)", project: "प्रोजेक्ट", contact: "ग्राहक", vendor: "वेंडर", assignee: "ज़िम्मेदार", customerVisible: "ग्राहक को दिखता है", customerHidden: "सिर्फ़ अंदर", edit: "बदलें", save: "सेव करें", cancel: "रहने दें", archive: "आर्काइव", restore: "वापस लाएँ", history: "इतिहास", tasks: "काम", createTask: "काम बनाएँ", noTasks: "कोई काम नहीं", yes: "हाँ", no: "नहीं", none: "—", unit: "इकाई" },
+    record: { title: "रिकॉर्ड", status: "स्टेटस", changeStatus: "स्टेटस बदलें", why: "क्यों (वैकल्पिक)", project: "प्रोजेक्ट", contact: "ग्राहक", vendor: "वेंडर", assignee: "ज़िम्मेदार", customerVisible: "ग्राहक को दिखता है", customerHidden: "सिर्फ़ अंदर", edit: "बदलें", save: "सेव करें", cancel: "रहने दें", archive: "आर्काइव", restore: "वापस लाएँ", history: "इतिहास", tasks: "काम", createTask: "काम बनाएँ", noTasks: "कोई काम नहीं", yes: "हाँ", no: "नहीं", none: "—", unit: "इकाई", emptyFields: (n) => `${n} खाली फ़ील्ड`, currentStatus: "अभी", moveTo: "नया स्टेटस" },
     errors: { notAllowed: "यह आप नहीं कर सकते।", moduleOff: "रिकॉर्ड इस कारोबार में चालू नहीं हैं।", badInput: "कुछ जानकारी सही नहीं है।", required: (l) => `${l} ज़रूरी है।`, badStatus: "यह स्टेटस इस प्रकार में नहीं है।", notFound: "यह रिकॉर्ड नहीं मिला।", generic: "सेव नहीं हुआ। फिर कोशिश करें।", keyTaken: "इस नाम का प्रकार पहले से है।" },
   },
   "hi-Latn": {
@@ -116,7 +119,7 @@ const copy: Record<Locale, RecordsCopy> = {
       fieldTypes: { text: "Chhota text", long_text: "Lamba text", number: "Number", money: "Rakam", date: "Tareekh", boolean: "Haan/Nahi", select: "Ek option", multi_select: "Kai options", phone: "Phone", email: "Email", url: "Link", member: "Team member", contact: "Customer", project: "Project", vendor: "Vendor", record: "Doosra record" },
     },
     list: { newRecord: "Naya", search: "Khojein", all: "Sab", empty: (p) => `Abhi koi ${p} nahi`, emptyHelp: "Pehla jodein.", showing: (a, b, n) => `${a}–${b}, kul ${n}`, next: "Agla", previous: "Pichla", byStatus: "Status", byProject: "Project" },
-    record: { title: "Record", status: "Status", changeStatus: "Status badlein", why: "Kyon (optional)", project: "Project", contact: "Customer", vendor: "Vendor", assignee: "Zimmedar", customerVisible: "Customer ko dikhta hai", customerHidden: "Sirf andar", edit: "Badlein", save: "Save karein", cancel: "Rehne dein", archive: "Archive", restore: "Wapas layein", history: "History", tasks: "Kaam", createTask: "Kaam banayein", noTasks: "Koi kaam nahi", yes: "Haan", no: "Nahi", none: "—", unit: "Unit" },
+    record: { title: "Record", status: "Status", changeStatus: "Status badlein", why: "Kyon (optional)", project: "Project", contact: "Customer", vendor: "Vendor", assignee: "Zimmedar", customerVisible: "Customer ko dikhta hai", customerHidden: "Sirf andar", edit: "Badlein", save: "Save karein", cancel: "Rehne dein", archive: "Archive", restore: "Wapas layein", history: "History", tasks: "Kaam", createTask: "Kaam banayein", noTasks: "Koi kaam nahi", yes: "Haan", no: "Nahi", none: "—", unit: "Unit", emptyFields: (n) => `${n} khaali field`, currentStatus: "Abhi", moveTo: "Naya status" },
     errors: { notAllowed: "Yeh aap nahi kar sakte.", moduleOff: "Records is business mein chalu nahi hain.", badInput: "Kuch jaankari sahi nahi hai.", required: (l) => `${l} zaroori hai.`, badStatus: "Yeh status is type mein nahi hai.", notFound: "Yeh record nahi mila.", generic: "Save nahi hua. Phir koshish karein.", keyTaken: "Is naam ka type pehle se hai." },
   },
   en: {
@@ -131,7 +134,7 @@ const copy: Record<Locale, RecordsCopy> = {
       fieldTypes: { text: "Short text", long_text: "Long text", number: "Number", money: "Money", date: "Date", boolean: "Yes/No", select: "One choice", multi_select: "Several choices", phone: "Phone", email: "Email", url: "Link", member: "Team member", contact: "Customer", project: "Project", vendor: "Vendor", record: "Another record" },
     },
     list: { newRecord: "New", search: "Search", all: "All", empty: (p) => `No ${p.toLowerCase()} yet`, emptyHelp: "Add the first one.", showing: (a, b, n) => `${a}–${b} of ${n}`, next: "Next", previous: "Previous", byStatus: "Status", byProject: "Project" },
-    record: { title: "Record", status: "Status", changeStatus: "Change status", why: "Why (optional)", project: "Project", contact: "Customer", vendor: "Vendor", assignee: "Owner", customerVisible: "Visible to the customer", customerHidden: "Internal only", edit: "Edit", save: "Save", cancel: "Cancel", archive: "Archive", restore: "Restore", history: "History", tasks: "Tasks", createTask: "Create task", noTasks: "No tasks", yes: "Yes", no: "No", none: "—", unit: "Unit" },
+    record: { title: "Record", status: "Status", changeStatus: "Change status", why: "Why (optional)", project: "Project", contact: "Customer", vendor: "Vendor", assignee: "Owner", customerVisible: "Visible to the customer", customerHidden: "Internal only", edit: "Edit", save: "Save", cancel: "Cancel", archive: "Archive", restore: "Restore", history: "History", tasks: "Tasks", createTask: "Create task", noTasks: "No tasks", yes: "Yes", no: "No", none: "—", unit: "Unit", emptyFields: (n) => (n === 1 ? "1 empty field" : `${n} empty fields`), currentStatus: "Now", moveTo: "New status" },
     errors: { notAllowed: "You cannot do that.", moduleOff: "Records are not switched on for this business.", badInput: "Some of that is not right.", required: (l) => `${l} is required.`, badStatus: "That status is not one this type uses.", notFound: "That record was not found.", generic: "Not saved. Try again.", keyTaken: "A type with that name already exists." },
   },
 };

@@ -48,6 +48,8 @@ export function RecordForm({
   record,
   canSetVisibility,
   onDone,
+  bare = false,
+  onCancel,
 }: {
   locale: Locale;
   type: FormType;
@@ -57,10 +59,14 @@ export function RecordForm({
   record?: FormRecord;
   canSetVisibility: boolean;
   onDone?: () => void;
+  /** Render just the form, already open (inside a drawer or sheet). */
+  bare?: boolean;
+  /** Cancel when the form lives in a drawer: close the drawer. */
+  onCancel?: () => void;
 }) {
   const t = getRecords(locale);
   const router = useRouter();
-  const [open, setOpen] = React.useState(!!record);
+  const [open, setOpen] = React.useState(!!record || bare);
   const [error, setError] = React.useState<string | null>(null);
   const [field, setField] = React.useState<string | null>(null);
   const [pending, startTransition] = React.useTransition();
@@ -112,8 +118,7 @@ export function RecordForm({
 
   const v = (key: string) => record?.values[key];
 
-  return (
-    <Card className="p-4">
+  const body = (
       <form onSubmit={submit} noValidate className="flex flex-col gap-3">
         <div>
           <Label htmlFor="r-title">{type.name}</Label>
@@ -255,9 +260,9 @@ export function RecordForm({
         {error ? <p role="alert" className="text-body-sm text-laal-600">{error}</p> : null}
         <div className="flex gap-2">
           <Button type="submit" disabled={pending}>{t.record.save}</Button>
-          <Button type="button" variant="outline" onClick={() => (record ? onDone?.() : setOpen(false))}>{t.record.cancel}</Button>
+          <Button type="button" variant="outline" onClick={() => (onCancel ? onCancel() : record ? onDone?.() : setOpen(false))}>{t.record.cancel}</Button>
         </div>
       </form>
-    </Card>
   );
+  return bare ? body : <Card className="p-4">{body}</Card>;
 }

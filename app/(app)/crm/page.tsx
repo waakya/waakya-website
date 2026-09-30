@@ -11,7 +11,7 @@ import { formatIndianDate } from "@/lib/tasks/format-date";
 import { AppShell } from "@/components/waakya/app-shell";
 import { EmptyState, ListSurface, PageHeader } from "@/components/waakya/page";
 import { buttonVariants } from "@/components/ui/button";
-import { StateChip } from "@/components/ui/state-chip";
+import { StateWord } from "@/components/waakya/state-word";
 import { cn } from "@/lib/utils";
 import type { Locale } from "@/lib/i18n";
 import { NewContact } from "./new-contact";
@@ -199,7 +199,7 @@ function ContactTableRow({ c, locale, t }: { c: ContactRow; locale: Locale; t: R
         </span>
       </td>
       <td className="px-3 py-2.5 align-middle">
-        <StateChip tone={c.kind === "customer" ? "hara" : "neel"}>{t.kind[c.kind]}</StateChip>
+        <StateWord tone={c.kind === "customer" ? "done" : "go"}>{t.kind[c.kind]}</StateWord>
       </td>
       <td className="px-3 py-2.5 align-middle">
         {c.ownerName ? (

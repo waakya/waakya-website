@@ -43,7 +43,7 @@ export function SideNav({
   const router = useRouter();
   const main = mainNav(locale, variant, on);
   const more = moreNav(locale, variant, unread, t.nav.checklists, on);
-  const insideMore = [...more.business, ...more.tools].some((item) => isActive(pathname, item));
+  const insideMore = [...more.groups.flatMap((g) => g.items), ...more.tools].some((item) => isActive(pathname, item));
 
   // ⌘K / Ctrl+K from anywhere: search is how you go somewhere you rarely go.
   React.useEffect(() => {
@@ -117,9 +117,15 @@ export function SideNav({
           ) : null}
           <ChevronDown className="ml-auto size-4 transition-transform duration-150 group-open:rotate-180" aria-hidden="true" />
         </summary>
-        <ul className="mt-1 flex flex-col gap-0.5">{more.business.map((item) => row(item, true))}</ul>
-        <div className="mx-3 my-2 h-px bg-white/10" aria-hidden="true" />
-        <ul className="flex flex-col gap-0.5">{more.tools.map((item) => row(item, true))}</ul>
+        {/* Named groups, so a place is found by what it is for (Visual V2). */}
+        {more.groups.map((group) => (
+          <div key={group.key} className="mt-3">
+            <p className="px-3 pb-1 text-micro font-bold tracking-[0.1em] text-white/45 uppercase">{group.label}</p>
+            <ul className="flex flex-col gap-0.5">{group.items.map((item) => row(item, true))}</ul>
+          </div>
+        ))}
+        <div className="mx-3 my-3 h-px bg-white/10" aria-hidden="true" />
+        <ul className="flex flex-col gap-0.5">{more.tools.filter((item) => !more.groups.some((g) => g.items.includes(item))).map((item) => row(item, true))}</ul>
       </details>
 
       <div className="mt-auto flex shrink-0 items-center gap-3 rounded-card bg-white/10 p-3 pt-3">
