@@ -58,10 +58,7 @@ test("Today offers the nudge inline, without opening the task", async ({
   await page.goto("/aaj");
 
   // Late work sits in "Atka hua" (Stuck), grouped; its first row offers Remind.
-  const section = page
-    .getByRole("list", { name: "Atka hua" })
-    .getByRole("listitem")
-    .first();
+  const section = page.locator('ul[aria-label="Atka hua"] ul > li').first();
   await expect(section.getByRole("button", { name: "Yaad dilao" })).toBeVisible();
 
   // Reminding is a message, not a state change: the page stays where it is.

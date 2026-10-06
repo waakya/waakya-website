@@ -68,11 +68,10 @@ test("the owner's Today on a desk: few places, the day in one line, one list of 
   await sidebar.locator("summary", { hasText: "More" }).click();
   await expect(sidebar.getByRole("link", { name: "Team" })).toBeVisible();
 
-  // The six numbers of the day, as one line of words.
-  const counters = page.getByRole("list", { name: "Today" }).first();
-  await expect(counters.getByText("Sent", { exact: true })).toBeVisible();
-  await expect(counters.getByText("Not seen", { exact: true })).toBeVisible();
-  await expect(counters.getByRole("listitem")).toHaveCount(6);
+  // The day in one sentence (Visual V2): how many things need the owner,
+  // with every kind of waiting thing counted beside it.
+  await expect(page.getByRole("heading", { name: /things? needs? you\.|Nothing needs you/ })).toBeVisible();
+  await expect(page.getByTestId("attention-summary")).toBeVisible();
 
   // What needs the owner, in one place, and who is on today.
   await expect(page.getByRole("heading", { name: /^Needs you/ })).toBeVisible();

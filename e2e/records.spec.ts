@@ -47,7 +47,7 @@ test("a unit is created with typed fields and listed with its status", async ({ 
   await signInAs(page, "owner");
   await page.goto("/records/property_unit");
   await page.getByRole("button", { name: /^Naya: Property unit/ }).click();
-  await page.getByLabel("Property unit").fill(unit);
+  await page.getByLabel("Property unit", { exact: true }).fill(unit);
   await page.getByLabel(/^Unit number/).fill(unit);
   await page.getByLabel(/^Type/).selectOption("bhk_3");
   await page.getByLabel(/^Area/).fill("1420");
@@ -55,8 +55,9 @@ test("a unit is created with typed fields and listed with its status", async ({ 
   await page.getByRole("button", { name: "Save karein" }).click();
   await expect(page).toHaveURL(/\/records\/property_unit\/[0-9a-f-]{36}$/);
   await expect(page.getByRole("heading", { name: unit })).toBeVisible();
-  await expect(page.getByText("₹85,00,000")).toBeVisible();
-  await expect(page.getByText("1,420 sq ft")).toBeVisible();
+  // The price is in the record's one-line summary and in its ledger.
+  await expect(page.getByText("₹85,00,000").first()).toBeVisible();
+  await expect(page.getByText("1,420 sq ft").first()).toBeVisible();
   await expect(page.getByText("Available", { exact: true }).filter({ visible: true }).first()).toBeVisible();
 
   await page.goto("/records/property_unit?status=available");
@@ -69,16 +70,18 @@ test("a bad value is refused, and the status moves only to one the type declares
   await signInAs(page, "owner");
   await page.goto("/records/property_unit");
   await page.getByRole("link", { name: unit, exact: true }).click();
-  await page.getByRole("button", { name: "Badlein" }).click();
+  await page.getByRole("button", { name: "Badlein", exact: true }).click();
   await page.getByLabel(/^Price/).fill("-5");
   await page.getByRole("button", { name: "Save karein" }).click();
   await expect(page.getByRole("alert").filter({ hasText: "Kuch jaankari sahi nahi hai" })).toBeVisible();
   await page.getByLabel(/^Price/).fill("8500000");
   await page.getByLabel(/^Area/).fill("1500");
   await page.getByRole("button", { name: "Save karein" }).click();
-  await expect(page.getByText("1,500 sq ft")).toBeVisible();
+  await expect(page.getByText("1,500 sq ft").first()).toBeVisible();
 
-  await page.getByLabel("Status badlein").selectOption({ label: "Held" });
+  // Visual V2: moving the status opens a drawer with the allowed next states.
+  await page.getByRole("button", { name: "Status badlein" }).click();
+  await page.getByRole("dialog").getByLabel("Held").check();
   await page.getByLabel("Kyon (optional)").fill("Token received from Meera");
   await page.getByRole("button", { name: "Save karein" }).click();
   await expect(page.getByText("Held", { exact: true }).filter({ visible: true }).first()).toBeVisible();

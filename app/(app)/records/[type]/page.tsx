@@ -144,14 +144,15 @@ export default async function RecordListPage({
                   .slice(0, 3)
                   .map(({ c, v }) => formatValue(c, v, words, { names }));
                 return (
-                  <li key={r.id} className="border-b border-line last:border-b-0">
-                    <Link href={`/records/${type.key}/${r.id}`} className="flex min-h-14 items-center gap-3 py-2.5 hover:bg-paper-100/60">
-                      <span className="min-w-0 flex-1">
-                        <span className="block truncate text-body font-semibold text-fg">{r.title}</span>
-                        {facts.length ? <span className="num block truncate text-caption text-fg-subtle">{facts.join(" · ")}</span> : null}
-                      </span>
-                      <RecordStatus status={status} />
-                    </Link>
+                  <li key={r.id} className="relative flex min-h-14 items-center gap-3 border-b border-line py-2.5 last:border-b-0 hover:bg-paper-100/60">
+                    <span className="min-w-0 flex-1">
+                      {/* The title is the link; the whole row is its target. */}
+                      <Link href={`/records/${type.key}/${r.id}`} className="block truncate text-body font-semibold text-fg after:absolute after:inset-0">
+                        {r.title}
+                      </Link>
+                      {facts.length ? <span className="num block truncate text-caption text-fg-subtle">{facts.join(" · ")}</span> : null}
+                    </span>
+                    <RecordStatus status={status} />
                   </li>
                 );
               })}

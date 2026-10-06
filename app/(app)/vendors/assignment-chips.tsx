@@ -28,7 +28,8 @@ export function AssignmentChips({ locale, assignment, today }: { locale: Locale;
       {late ? <StateChip tone="laal" icon={<Clock />}>{t.late}</StateChip> : null}
       {assignment.amount !== null ? (
         <span className={assignment.paymentStatus === "paid" ? "text-label font-semibold text-hara-700" : "text-label text-fg-subtle"}>
-          ₹ {t.payment[assignment.paymentStatus]}
+          <span aria-hidden="true">₹ </span>
+          <span>{t.payment[assignment.paymentStatus]}</span>
         </span>
       ) : null}
     </span>

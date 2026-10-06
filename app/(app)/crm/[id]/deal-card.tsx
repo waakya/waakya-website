@@ -53,6 +53,7 @@ export function DealCard({
             <p className="text-body font-semibold text-fg">{deal.title}</p>
             {deal.value !== null ? <p className="num text-body font-semibold text-fg">{money.format(deal.value)}</p> : null}
           </div>
+          <StateWord tone="go" className="mt-1">{deal.stageName}</StateWord>
           {canWrite ? (
             <div className="mt-2 flex flex-wrap items-center gap-2">
               <Label htmlFor="deal-stage" className="text-fg-subtle">{t.actions.moveStage}</Label>
@@ -62,9 +63,7 @@ export function DealCard({
                 ))}
               </select>
             </div>
-          ) : (
-            <StateWord tone="go" className="mt-1">{deal.stageName}</StateWord>
-          )}
+          ) : null}
         </div>
       ) : (
         <div className="flex flex-wrap items-center justify-between gap-2 border-y border-line py-2">

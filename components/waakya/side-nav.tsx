@@ -120,7 +120,7 @@ export function SideNav({
         {/* Named groups, so a place is found by what it is for (Visual V2). */}
         {more.groups.map((group) => (
           <div key={group.key} className="mt-3">
-            <p className="px-3 pb-1 text-micro font-bold tracking-[0.1em] text-white/45 uppercase">{group.label}</p>
+            <p className="px-3 pb-1 text-micro font-bold tracking-[0.1em] text-white/70 uppercase">{group.label}</p>
             <ul className="flex flex-col gap-0.5">{group.items.map((item) => row(item, true))}</ul>
           </div>
         ))}

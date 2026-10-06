@@ -27,7 +27,9 @@ export function textOnScreen(page: Page, text: string): Locator {
  */
 export async function rowFromToday(page: Page, title: string, group: string): Promise<Locator> {
   await page.goto("/aaj");
-  const onToday = onScreen(page.getByRole("list", { name: "Aapke liye" }).locator("li", { hasText: title }));
+  // Visual V2: decisions are in "Aapke liye", late and unseen work in "Atka
+  // hua"; rows sit inside each band's groups.
+  const onToday = onScreen(page.locator('ul[aria-label="Aapke liye"] ul > li, ul[aria-label="Atka hua"] ul > li').filter({ hasText: title }));
   if ((await onToday.count()) > 0) return onToday.first();
   await onScreen(page.getByRole("link", { name: new RegExp(`^\\d+ aur · ${group}`) })).first().click();
   await page.waitForURL(/\/work\?need=/);

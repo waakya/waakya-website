@@ -56,24 +56,31 @@ test("the business turns the portal on, makes the project and its customer", asy
   await expect(page).toHaveURL(/\/projects\/[0-9a-f-]{36}$/);
   projectId = page.url().split("/").pop()!;
 
-  await page.getByLabel("Choose customer").selectOption({ label: customerName });
-  await expect(page.getByRole("link", { name: customerName })).toBeVisible();
-  await page.getByRole("button", { name: "Give portal access" }).click();
-  const link = page.locator("code").filter({ hasText: "/portal/join/" });
+  // Visual V2: the customer side is read first; each change opens a drawer.
+  await page.getByRole("button", { name: "Portal access" }).click();
+  const drawer = page.getByRole("dialog");
+  await drawer.getByLabel("Choose customer").selectOption({ label: customerName });
+  await drawer.getByRole("button", { name: "Give portal access" }).click();
+  const link = drawer.locator("code").filter({ hasText: "/portal/join/" });
   await expect(link).toBeVisible();
   inviteUrl = (await link.innerText()).trim();
+  await page.keyboard.press("Escape");
+  await expect(drawer).toHaveCount(0);
+  // The page behind the drawer now names the customer.
+  await expect(page.getByRole("link", { name: customerName }).first()).toBeVisible();
 
   // A milestone the customer will see, and a customer-visible update.
-  await page.getByLabel("Milestone name").fill("Reception");
   await page.getByRole("button", { name: "Add milestone" }).click();
-  await expect(page.getByLabel("Milestone name")).toHaveValue("");
-  await expect(page.getByText("Reception", { exact: true })).toBeVisible();
-  const updateBox = page.getByLabel("What happened");
-  await updateBox.fill("False ceiling complete");
-  await page.getByRole("button", { name: "Show the customer", exact: true }).click();
-  // The box empties only once the server has the update.
-  await expect(updateBox).toHaveValue("");
-  await expect(page.getByRole("paragraph").filter({ hasText: "False ceiling complete" })).toBeVisible();
+  await page.getByRole("dialog").getByLabel("Milestone name").fill("Reception");
+  await page.getByRole("dialog").getByRole("button", { name: "Add milestone" }).click();
+  // The drawer closes once the server has the milestone.
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await expect(page.getByText("Reception", { exact: true }).first()).toBeVisible();
+  await page.getByRole("button", { name: "Write an update" }).click();
+  await page.getByRole("dialog").getByLabel("What happened").fill("False ceiling complete");
+  await page.getByRole("dialog").getByRole("button", { name: "Show the customer", exact: true }).click();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await expect(page.getByText("False ceiling complete").first()).toBeVisible();
 });
 
 test("the business asks the customer to choose, and the work waits", async ({ page }) => {
@@ -98,7 +105,7 @@ test("the business asks the customer to choose, and the work waits", async ({ pa
   await page.getByLabel("Options").fill("Walnut, Oak, Teak");
   await page.getByLabel("Blocks this task").selectOption({ label: `Shutter order ${run}` });
   await page.getByRole("button", { name: "Ask", exact: true }).click();
-  await expect(page.getByText("Waiting on the customer")).toBeVisible();
+  await expect(page.getByText("Waiting on the customer", { exact: true })).toBeVisible();
 });
 
 test("the customer signs in with that address, sees only what was published, and chooses", async ({ page }) => {
@@ -179,8 +186,9 @@ test("deciding twice, or as an outsider, changes nothing", async () => {
 test("revoking access closes the page, and the person is a visitor again", async ({ page }) => {
   await signInAs(page, "owner", "en");
   await page.goto(`/projects/${projectId}`);
-  await page.getByRole("button", { name: "Revoke access" }).click();
-  await expect(page.getByRole("button", { name: "Give portal access" })).toBeVisible();
+  await page.getByRole("button", { name: "Portal access" }).click();
+  await page.getByRole("dialog").getByRole("button", { name: "Revoke access" }).click();
+  await expect(page.getByRole("dialog").getByRole("button", { name: "Give portal access" })).toBeVisible();
 
   await signOut(page);
   await signInAs(page, "customer");

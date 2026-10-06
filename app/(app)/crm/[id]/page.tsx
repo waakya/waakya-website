@@ -6,6 +6,7 @@ import { Mail, Phone, MessageCircle, UserX } from "lucide-react";
 import { requireModule, viewerCan } from "@/lib/auth/session";
 import { shellFor } from "@/lib/auth/shell";
 import { getCrm } from "@/lib/i18n/crm";
+import { getCampaigns } from "@/lib/i18n/campaigns";
 import { getDictionary } from "@/lib/i18n";
 import { getContact, getPipeline } from "@/lib/crm/queries";
 import { getOrgMembers } from "@/lib/org/members";
@@ -78,13 +79,15 @@ export default async function ContactPage({ params }: { params: Promise<{ id: st
         <div className="mt-4 flex flex-col gap-3 border-y border-line py-4 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex min-w-0 flex-wrap items-center gap-x-4 gap-y-2">
             <StateWord tone={contact.kind === "customer" ? "done" : "go"} className="text-body">{t.kind[contact.kind]}</StateWord>
+            {!contact.ownerId ? <StateChip tone="amber" icon={<UserX />}>{t.actions.unassigned}</StateChip> : null}
+            {/* Consent is an exception everyone must see: they said no. */}
+            {contact.whatsappOptOut ? <StateChip tone="muted" icon={<MessageCircle />}>{getCampaigns(shell.locale).optOut.whatsapp}</StateChip> : null}
+            {contact.emailOptOut ? <StateChip tone="muted" icon={<Mail />}>{getCampaigns(shell.locale).optOut.email}</StateChip> : null}
             {viewerCan(viewer, "crm.assign") ? (
               <OwnerSelect locale={shell.locale} contactId={contact.id} ownerId={contact.ownerId} people={people} />
             ) : contact.ownerName ? (
               <span className="text-body-sm text-fg-muted">{t.fields.owner}: <span className="font-semibold text-fg">{contact.ownerName}</span></span>
-            ) : (
-              <StateChip tone="amber" icon={<UserX />}>{t.actions.unassigned}</StateChip>
-            )}
+            ) : null}
             <span className="num text-body-sm text-fg-muted">
               {t.fields.nextAction}:{" "}
               {contact.nextActionAt ? (

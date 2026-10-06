@@ -83,7 +83,7 @@ test("the owner hands the customer to Raju, who logs a call and moves the deal",
   await page.goto(`/crm?q=${phone.slice(2, 8)}`);
   await page.getByRole("link", { name, exact: true }).click();
   await page.getByLabel("Kiske paas").selectOption({ label: "Raju" });
-  await expect(page.getByText("Raju", { exact: true }).filter({ visible: true }).first()).toBeVisible();
+  await expect(page.getByLabel("Kiske paas").locator("option:checked")).toHaveText("Raju");
 
   const staffContext = await browser.newContext();
   const staff = await staffContext.newPage();

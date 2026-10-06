@@ -12,7 +12,7 @@ import { admin, PASSWORD } from "./support";
  */
 test.describe.configure({ mode: "serial" });
 
-const MAILPIT = "http://127.0.0.1:56424";
+const MAILPIT = process.env.MAILPIT_URL ?? "http://127.0.0.1:56424";
 
 // The app allows 5 codes per address per 15 minutes, and this file asks for
 // several. The rule is not relaxed: the LOCAL stack's counter rows are cleared

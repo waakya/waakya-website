@@ -43,6 +43,8 @@ test("the owner sets up campaigns and two contacts, one of whom said no", async 
     void tag;
   }
   // The second one said no to email.
+  // Message preferences live behind one action on the customer (Visual V2).
+  await page.getByRole("button", { name: "Messages and archive" }).click();
   await page.getByRole("checkbox", { name: "No email" }).check();
   await expect(page.getByRole("checkbox", { name: "No email" })).toBeChecked();
 
@@ -98,6 +100,9 @@ test("a WhatsApp reply comes back through the signed webhook, and STOP is honour
   await page.goto("/crm");
   await page.getByRole("link", { name: willing, exact: true }).click();
   await expect(page.getByText("Interested, call me tomorrow")).toHaveCount(1);
+  // The opt-out is visible on the customer at a glance, and checked in the drawer.
+  await expect(page.getByText("No WhatsApp", { exact: true }).first()).toBeVisible();
+  await page.getByRole("button", { name: "Messages and archive" }).click();
   await expect(page.getByRole("checkbox", { name: "No WhatsApp" })).toBeChecked();
   await page.goto("/aaj");
   await expect(page.getByRole("link", { name: /Updates/ })).toBeVisible();
